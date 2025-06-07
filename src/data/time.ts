@@ -1,10 +1,10 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const setTimeValue = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   time: string | undefined = undefined
 ) => {
   const param = { entity_id: entityId, time: time };
-  hass.callService("time", "set_value", param);
+  menuai.callService("time", "set_value", param);
 };

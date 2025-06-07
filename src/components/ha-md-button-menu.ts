@@ -99,7 +99,7 @@ declare global {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     opening: undefined;
     closing: undefined;
   }

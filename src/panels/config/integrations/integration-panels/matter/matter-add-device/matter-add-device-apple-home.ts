@@ -5,12 +5,12 @@ import "../../../../../../components/ha-icon-next";
 import "../../../../../../components/ha-md-list-item";
 import "../../../../../../components/ha-md-list";
 import "../../../../../../components/ha-textfield";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 
 @customElement("matter-add-device-apple-home")
 class MatterAddDeviceAppleHome extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _code = "";
 
@@ -19,11 +19,11 @@ class MatterAddDeviceAppleHome extends LitElement {
       <div class="content">
         <ol>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.dialogs.matter-add-device.apple_home.step_1",
               {
                 accessory_settings: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.dialogs.matter-add-device.apple_home.accessory_settings"
                   )}</b
                 >`,
@@ -31,11 +31,11 @@ class MatterAddDeviceAppleHome extends LitElement {
             )}
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.dialogs.matter-add-device.apple_home.step_2",
               {
                 turn_on_pairing_mode: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.dialogs.matter-add-device.apple_home.turn_on_pairing_mode"
                   )}</b
                 >`,
@@ -43,19 +43,19 @@ class MatterAddDeviceAppleHome extends LitElement {
             )}
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.dialogs.matter-add-device.apple_home.step_3"
             )}
           </li>
         </ol>
         <br />
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.dialogs.matter-add-device.apple_home.code_instructions"
           )}
         </p>
         <ha-textfield
-          label=${this.hass.localize(
+          label=${this.menuai.localize(
             "ui.dialogs.matter-add-device.apple_home.setup_code"
           )}
           .value=${this._code}

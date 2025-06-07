@@ -10,24 +10,24 @@ import "../../../../src/components/ha-formfield";
 import "../../../../src/components/ha-form/ha-form";
 import type { HaFormSchema } from "../../../../src/components/ha-form/types";
 import type {
-  HassioAddonDetails,
-  HassioAddonSetOptionParams,
-} from "../../../../src/data/hassio/addon";
-import { setHassioAddonOption } from "../../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+  menuaiioAddonDetails,
+  menuaiioAddonSetOptionParams,
+} from "../../../../src/data/menuaiio/addon";
+import { setmenuaiioAddonOption } from "../../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import { suggestAddonRestart } from "../../dialogs/suggestAddonRestart";
-import { hassioStyle } from "../../resources/hassio-style";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
 
-@customElement("hassio-addon-network")
-class HassioAddonNetwork extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-network")
+class menuaiioAddonNetwork extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public addon!: HassioAddonDetails;
+  @property({ attribute: false }) public addon!: menuaiioAddonDetails;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -79,7 +79,7 @@ class HassioAddonNetwork extends LitElement {
             .schema=${this._createSchema(
               this._config,
               this._showOptional,
-              this.hass.userData?.showAdvanced || false
+              this.menuai.userData?.showAdvanced || false
             )}
           ></ha-form>
         </div>
@@ -148,7 +148,7 @@ class HassioAddonNetwork extends LitElement {
   private _computeLabel = (_: HaFormSchema): string => "";
 
   private _computeHelper = (item: HaFormSchema): string =>
-    this.addon.translations[this.hass.language]?.network?.[item.name] ||
+    this.addon.translations[this.menuai.language]?.network?.[item.name] ||
     this.addon.translations.en?.network?.[item.name] ||
     this.addon.network_description?.[item.name] ||
     item.name;
@@ -168,12 +168,12 @@ class HassioAddonNetwork extends LitElement {
     }
 
     const button = ev.currentTarget as any;
-    const data: HassioAddonSetOptionParams = {
+    const data: menuaiioAddonSetOptionParams = {
       network: null,
     };
 
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       this._configHasChanged = false;
       const eventdata = {
         success: true,
@@ -181,9 +181,9 @@ class HassioAddonNetwork extends LitElement {
         path: "option",
       };
       button.actionSuccess();
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
       if (this.addon?.state === "started") {
-        await suggestAddonRestart(this, this.hass, this.supervisor, this.addon);
+        await suggestAddonRestart(this, this.menuai, this.supervisor, this.addon);
       }
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_reset", {
@@ -210,12 +210,12 @@ class HassioAddonNetwork extends LitElement {
       networkconfiguration[key] = value ?? null;
     });
 
-    const data: HassioAddonSetOptionParams = {
+    const data: menuaiioAddonSetOptionParams = {
       network: networkconfiguration,
     };
 
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       this._configHasChanged = false;
       const eventdata = {
         success: true,
@@ -223,9 +223,9 @@ class HassioAddonNetwork extends LitElement {
         path: "option",
       };
       button.actionSuccess();
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
       if (this.addon?.state === "started") {
-        await suggestAddonRestart(this, this.hass, this.supervisor, this.addon);
+        await suggestAddonRestart(this, this.menuai, this.supervisor, this.addon);
       }
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
@@ -238,7 +238,7 @@ class HassioAddonNetwork extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         :host {
           display: block;
@@ -260,6 +260,6 @@ class HassioAddonNetwork extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-network": HassioAddonNetwork;
+    "menuaiio-addon-network": menuaiioAddonNetwork;
   }
 }

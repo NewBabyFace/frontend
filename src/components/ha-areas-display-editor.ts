@@ -5,7 +5,7 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { getAreaContext } from "../common/entity/context/get_area_context";
 import { areaCompare } from "../data/area_registry";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-expansion-panel";
 import "./ha-items-display-editor";
 import type { DisplayItem, DisplayValue } from "./ha-items-display-editor";
@@ -19,7 +19,7 @@ export interface AreasDisplayValue {
 
 @customElement("ha-areas-display-editor")
 export class HaAreasDisplayEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -37,14 +37,14 @@ export class HaAreasDisplayEditor extends LitElement {
   public showNavigationButton = false;
 
   protected render(): TemplateResult {
-    const compare = areaCompare(this.hass.areas);
+    const compare = areaCompare(this.menuai.areas);
 
-    const areas = Object.values(this.hass.areas).sort((areaA, areaB) =>
+    const areas = Object.values(this.menuai.areas).sort((areaA, areaB) =>
       compare(areaA.area_id, areaB.area_id)
     );
 
     const items: DisplayItem[] = areas.map((area) => {
-      const { floor } = getAreaContext(area, this.hass!);
+      const { floor } = getAreaContext(area, this.menuai!);
       return {
         value: area.area_id,
         label: area.name,
@@ -67,7 +67,7 @@ export class HaAreasDisplayEditor extends LitElement {
       >
         <ha-svg-icon slot="leading-icon" .path=${mdiTextureBox}></ha-svg-icon>
         <ha-items-display-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .items=${items}
           .value=${value}
           @value-changed=${this._areaDisplayChanged}

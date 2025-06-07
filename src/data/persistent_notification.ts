@@ -1,10 +1,10 @@
 import type {
   Connection,
-  HassEntity,
+  menuaiEntity,
   UnsubscribeFunc,
 } from "home-assistant-js-websocket";
 
-export interface PersitentNotificationEntity extends HassEntity {
+export interface PersitentNotificationEntity extends menuaiEntity {
   notification_id?: string;
   created_at?: string;
   title?: string;

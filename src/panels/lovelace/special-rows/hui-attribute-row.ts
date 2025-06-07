@@ -3,7 +3,7 @@ import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import checkValidDate from "../../../common/datetime/check_valid_date";
 import "../../../components/ha-attribute-value";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import "../components/hui-timestamp-display";
@@ -12,7 +12,7 @@ import type { AttributeRowConfig, LovelaceRow } from "../entity-rows/types";
 
 @customElement("hui-attribute-row")
 class HuiAttributeRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: AttributeRowConfig;
 
@@ -34,16 +34,16 @@ class HuiAttributeRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -55,11 +55,11 @@ class HuiAttributeRow extends LitElement implements LovelaceRow {
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         ${this._config.prefix}
         ${this._config.format && checkValidDate(date)
           ? html` <hui-timestamp-display
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .ts=${date}
               .format=${this._config.format}
               capitalize
@@ -68,7 +68,7 @@ class HuiAttributeRow extends LitElement implements LovelaceRow {
             ? html`
                 <ha-attribute-value
                   .hideUnit=${this._config.suffix}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .stateObj=${stateObj}
                   .attribute=${this._config.attribute}
                 >

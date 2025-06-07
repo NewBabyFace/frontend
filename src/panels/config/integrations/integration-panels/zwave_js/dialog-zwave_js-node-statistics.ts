@@ -23,7 +23,7 @@ import {
   subscribeZwaveNodeStatistics,
 } from "../../../../../data/zwave_js";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZWaveJSNodeStatisticsDialogParams } from "./show-dialog-zwave_js-node-statistics";
 
 type WorkingRouteStatistics =
@@ -36,7 +36,7 @@ type WorkingRouteStatistics =
 
 @customElement("dialog-zwave_js-node-statistics")
 class DialogZWaveJSNodeStatistics extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device?: DeviceRegistryEntry;
 
@@ -80,19 +80,19 @@ class DialogZWaveJSNodeStatistics extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.zwave_js.node_statistics.title")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.zwave_js.node_statistics.title")
         )}
       >
         <ha-list noninteractive>
           <ha-list-item twoline hasmeta>
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_tx.label"
               )}</span
             >
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_tx.tooltip"
               )}
             </span>
@@ -100,12 +100,12 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           </ha-list-item>
           <ha-list-item twoline hasmeta>
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_rx.label"
               )}</span
             >
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_rx.tooltip"
               )}
             </span>
@@ -113,12 +113,12 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           </ha-list-item>
           <ha-list-item twoline hasmeta>
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_dropped_tx.label"
               )}</span
             >
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_dropped_tx.tooltip"
               )}
             </span>
@@ -128,12 +128,12 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           </ha-list-item>
           <ha-list-item twoline hasmeta>
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_dropped_rx.label"
               )}</span
             >
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.commands_dropped_rx.tooltip"
               )}
             </span>
@@ -143,12 +143,12 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           </ha-list-item>
           <ha-list-item twoline hasmeta>
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.timeout_response.label"
               )}</span
             >
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_statistics.timeout_response.tooltip"
               )}
             </span>
@@ -157,12 +157,12 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           ${this._nodeStatistics?.rtt
             ? html`<ha-list-item twoline hasmeta>
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.node_statistics.rtt.label"
                   )}</span
                 >
                 <span slot="secondary">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.node_statistics.rtt.tooltip"
                   )}
                 </span>
@@ -172,12 +172,12 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           ${this._nodeStatistics?.rssi_translated
             ? html`<ha-list-item twoline hasmeta>
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.node_statistics.rssi.label"
                   )}</span
                 >
                 <span slot="secondary">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.node_statistics.rssi.tooltip"
                   )}
                 </span>
@@ -189,23 +189,23 @@ class DialogZWaveJSNodeStatistics extends LitElement {
           wrValue
             ? html`
                 <ha-expansion-panel
-                  .header=${this.hass.localize(
+                  .header=${this.menuai.localize(
                     `ui.panel.config.zwave_js.node_statistics.${wrKey}`
                   )}
                 >
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.route_statistics.protocol.label"
                       )}<ha-help-tooltip
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.zwave_js.route_statistics.protocol.tooltip"
                         )}
                       >
                       </ha-help-tooltip
                     ></span>
                     <span
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         `ui.panel.config.zwave_js.route_statistics.protocol.protocol_data_rate.${
                           ProtocolDataRate[wrValue.protocol_data_rate]
                         }`
@@ -214,17 +214,17 @@ class DialogZWaveJSNodeStatistics extends LitElement {
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.route_statistics.data_rate.label"
                       )}<ha-help-tooltip
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.zwave_js.route_statistics.data_rate.tooltip"
                         )}
                       >
                       </ha-help-tooltip
                     ></span>
                     <span
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         `ui.panel.config.zwave_js.route_statistics.data_rate.protocol_data_rate.${
                           ProtocolDataRate[wrValue.protocol_data_rate]
                         }`
@@ -234,10 +234,10 @@ class DialogZWaveJSNodeStatistics extends LitElement {
                   ${wrValue.rssi_translated
                     ? html`<div class="row">
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.route_statistics.rssi.label"
                           )}<ha-help-tooltip
-                            .label=${this.hass.localize(
+                            .label=${this.menuai.localize(
                               "ui.panel.config.zwave_js.route_statistics.rssi.tooltip"
                             )}
                           >
@@ -248,10 +248,10 @@ class DialogZWaveJSNodeStatistics extends LitElement {
                     : ``}
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.route_statistics.route_failed_between.label"
                       )}<ha-help-tooltip
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.zwave_js.route_statistics.route_failed_between.tooltip"
                         )}
                       >
@@ -264,17 +264,17 @@ class DialogZWaveJSNodeStatistics extends LitElement {
                               .path=${mdiSwapHorizontal}
                             ></ha-svg-icon
                             >${wrValue.route_failed_between_translated[1]}`
-                        : this.hass.localize(
+                        : this.menuai.localize(
                             "ui.panel.config.zwave_js.route_statistics.route_failed_between.not_applicable"
                           )}
                     </span>
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.route_statistics.repeaters.label"
                       )}<ha-help-tooltip
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.zwave_js.route_statistics.repeaters.tooltip"
                         )}
                       >
@@ -284,21 +284,21 @@ class DialogZWaveJSNodeStatistics extends LitElement {
                         ? html`<div class="row">
                               <span class="key-cell"
                                 ><b
-                                  >${this.hass.localize(
+                                  >${this.menuai.localize(
                                     "ui.panel.config.zwave_js.route_statistics.repeaters.repeaters"
                                   )}:</b
                                 ></span
                               >
                               <span class="value-cell"
                                 ><b
-                                  >${this.hass.localize(
+                                  >${this.menuai.localize(
                                     "ui.panel.config.zwave_js.route_statistics.repeaters.rssi"
                                   )}:</b
                                 ></span
                               >
                             </div>
                             ${wrValue.repeater_rssi_table}`
-                        : html`${this.hass.localize(
+                        : html`${this.menuai.localize(
                             "ui.panel.config.zwave_js.route_statistics.repeaters.direct"
                           )}`}</span
                     >
@@ -317,14 +317,14 @@ class DialogZWaveJSNodeStatistics extends LitElement {
   ): TemplateResult | string {
     if (Object.values(RssiError).includes(rssi)) {
       return html`<ha-help-tooltip
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           `ui.panel.config.zwave_js.rssi.rssi_error.${RssiError[rssi]}`
         )}
       ></ha-help-tooltip>`;
     }
     if (includeUnit) {
       return `${rssi}
-      ${this.hass.localize("ui.panel.config.zwave_js.rssi.unit")}`;
+      ${this.menuai.localize("ui.panel.config.zwave_js.rssi.unit")}`;
     }
     return rssi.toString();
   }
@@ -342,11 +342,11 @@ class DialogZWaveJSNodeStatistics extends LitElement {
   }
 
   private _subscribeNodeStatistics(): void {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._subscribedNodeStatistics = subscribeZwaveNodeStatistics(
-      this.hass,
+      this.menuai,
       this.device!.id,
       (message: ZWaveJSNodeStatisticsUpdatedMessage) => {
         this._nodeStatistics = {
@@ -409,17 +409,17 @@ class DialogZWaveJSNodeStatistics extends LitElement {
   }
 
   private _subscribeDeviceRegistry(): void {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._subscribedDeviceRegistry = subscribeDeviceRegistry(
-      this.hass.connection,
+      this.menuai.connection,
       (devices: DeviceRegistryEntry[]) => {
         const devicesIdToName = {};
         devices.forEach((device) => {
           devicesIdToName[device.id] = computeDeviceNameDisplay(
             device,
-            this.hass
+            this.menuai
           );
         });
         this._deviceIDsToName = devicesIdToName;

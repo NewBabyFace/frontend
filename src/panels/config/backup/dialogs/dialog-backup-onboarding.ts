@@ -26,12 +26,12 @@ import {
   CORE_LOCAL_AGENT,
   downloadEmergencyKit,
   generateEncryptionKey,
-  HASSIO_LOCAL_AGENT,
+  menuaiIO_LOCAL_AGENT,
   updateBackupConfig,
 } from "../../../../data/backup";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 import "../components/config/ha-backup-config-agents";
 import "../components/config/ha-backup-config-data";
@@ -83,8 +83,8 @@ const RECOMMENDED_CONFIG: BackupConfig = {
 };
 
 @customElement("ha-dialog-backup-onboarding")
-class DialogBackupOnboarding extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogBackupOnboarding extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -152,7 +152,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       automatic_backups_configured: done,
     };
 
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       params.create_backup!.include_folders =
         this._config.create_backup.include_folders || [];
       params.create_backup!.include_all_addons =
@@ -161,7 +161,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
         this._config.create_backup.include_addons || [];
     }
 
-    await updateBackupConfig(this.hass, params);
+    await updateBackupConfig(this.menuai, params);
   }
 
   private async _done() {
@@ -216,7 +216,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
             ? html`
                 <ha-icon-button
                   slot="navigationIcon"
-                  .label=${this.hass.localize("ui.common.close")}
+                  .label=${this.menuai.localize("ui.common.close")}
                   .path=${mdiClose}
                   @click=${this.closeDialog}
                 ></ha-icon-button>
@@ -240,7 +240,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
                         @click=${this._done}
                         .disabled=${!this._isStepValid()}
                       >
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.backup.dialogs.onboarding.save_and_create"
                         )}
                       </ha-button>
@@ -250,7 +250,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
                         @click=${this._nextStep}
                         .disabled=${!this._isStepValid()}
                       >
-                        ${this.hass.localize("ui.common.next")}
+                        ${this.menuai.localize("ui.common.next")}
                       </ha-button>
                     `}
               </div>
@@ -263,8 +263,8 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
   private get _defaultAgents(): string[] {
     const agents: string[] = [];
     // Enable local location by default
-    if (isComponentLoaded(this.hass, "hassio")) {
-      agents.push(HASSIO_LOCAL_AGENT);
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
+      agents.push(menuaiIO_LOCAL_AGENT);
     } else {
       agents.push(CORE_LOCAL_AGENT);
     }
@@ -299,7 +299,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       case "schedule":
       case "data":
       case "locations":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.backup.dialogs.onboarding.${this._step}.title`
         );
       default:
@@ -335,15 +335,15 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
           <div class="welcome">
             <img
               src="/static/images/voice-assistant/hi.png"
-              alt="Casita Home Assistant logo"
+              alt="Casita MenuAI logo"
             />
             <h1>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.dialogs.onboarding.welcome.title"
               )}
             </h1>
             <p class="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.dialogs.onboarding.welcome.description"
               )}
             </p>
@@ -352,7 +352,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       case "key":
         return html`
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.onboarding.key.description"
             )}
           </p>
@@ -366,18 +366,18 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
           <ha-md-list>
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit_description"
                 )}
               </span>
               <ha-button slot="end" @click=${this._downloadKey}>
                 <ha-svg-icon .path=${mdiDownload} slot="icon"></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit_action"
                 )}
               </ha-button>
@@ -389,12 +389,12 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
           <ha-md-list class="full">
             <ha-md-list-item type="button" @click=${this._useRecommended}>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.onboarding.setup.recommended_heading"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.onboarding.setup.recommended_description"
                 )}
               </span>
@@ -402,12 +402,12 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
             </ha-md-list-item>
             <ha-md-list-item type="button" @click=${this._nextStep}>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.onboarding.setup.custom_heading"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.onboarding.setup.custom_description"
                 )}
               </span>
@@ -418,12 +418,12 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       case "schedule":
         return html`
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.onboarding.schedule.description"
             )}
           </p>
           <ha-backup-config-schedule
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this._config}
             @value-changed=${this._scheduleChanged}
           ></ha-backup-config-schedule>
@@ -431,12 +431,12 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       case "data":
         return html`
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.onboarding.data.description"
             )}
           </p>
           <ha-backup-config-data
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this._dataConfig(this._config)}
             @value-changed=${this._dataChanged}
             force-home-assistant
@@ -446,12 +446,12 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       case "locations":
         return html`
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.onboarding.locations.description"
             )}
           </p>
           <ha-backup-config-agents
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this._config.create_backup.agent_ids}
             .cloudStatus=${this._params!.cloudStatus}
             @value-changed=${this._agentsConfigChanged}
@@ -466,7 +466,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
     if (!key) {
       return;
     }
-    downloadEmergencyKit(this.hass, key);
+    downloadEmergencyKit(this.menuai, key);
   }
 
   private async _copyKeyToClipboard() {
@@ -475,7 +475,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
       this.renderRoot.querySelector("div")!
     );
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -488,7 +488,7 @@ class DialogBackupOnboarding extends LitElement implements HassDialog {
     } = config.create_backup;
 
     return {
-      include_homeassistant: true,
+      include_menuai: true,
       include_database,
       include_folders: include_folders || undefined,
       include_all_addons,

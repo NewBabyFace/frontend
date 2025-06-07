@@ -6,13 +6,13 @@ import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { nextRender } from "../common/util/render-status";
 import { haStyleDialog } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { DatePickerDialogParams } from "./ha-date-input";
 import "./ha-dialog";
 
 @customElement("ha-dialog-date-picker")
 export class HaDialogDatePicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: string;
 
@@ -56,17 +56,17 @@ export class HaDialogDatePicker extends LitElement {
             @click=${this._clear}
             class="warning"
           >
-            ${this.hass.localize("ui.dialogs.date-picker.clear")}
+            ${this.menuai.localize("ui.dialogs.date-picker.clear")}
           </mwc-button>`
         : nothing}
       <mwc-button slot="secondaryAction" @click=${this._setToday}>
-        ${this.hass.localize("ui.dialogs.date-picker.today")}
+        ${this.menuai.localize("ui.dialogs.date-picker.today")}
       </mwc-button>
       <mwc-button slot="primaryAction" dialogaction="cancel" class="cancel-btn">
-        ${this.hass.localize("ui.common.cancel")}
+        ${this.menuai.localize("ui.common.cancel")}
       </mwc-button>
       <mwc-button slot="primaryAction" @click=${this._setValue}>
-        ${this.hass.localize("ui.common.ok")}
+        ${this.menuai.localize("ui.common.ok")}
       </mwc-button>
     </ha-dialog>`;
   }

@@ -2,7 +2,7 @@ import "@material/mwc-button";
 
 import type { IFuseOptions } from "fuse.js";
 import Fuse from "fuse.js";
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import type { PropertyValues, TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
@@ -47,7 +47,7 @@ import {
 } from "../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog, haStyleScrollbar } from "../../../resources/styles";
 import { loadVirtualizer } from "../../../resources/virtualizer";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./ha-domain-integrations";
 import "./ha-integration-list-item";
 import type { AddIntegrationDialogParams } from "./show-add-integration-dialog";
@@ -71,7 +71,7 @@ export interface IntegrationListItem {
 
 @customElement("dialog-add-integration")
 class AddIntegrationDialog extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _integrations?: Brands;
 
@@ -161,7 +161,7 @@ class AddIntegrationDialog extends LitElement {
     (
       i: Brands,
       h: Integrations,
-      components: HassConfig["components"],
+      components: menuaiConfig["components"],
       localize: LocalizeFunc,
       filter?: string
     ): IntegrationListItem[] => {
@@ -179,7 +179,7 @@ class AddIntegrationDialog extends LitElement {
           caseInsensitiveStringCompare(
             a.name,
             b.name,
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         );
 
@@ -292,7 +292,7 @@ class AddIntegrationDialog extends LitElement {
           caseInsensitiveStringCompare(
             a.name || "",
             b.name || "",
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         ),
       ];
@@ -303,8 +303,8 @@ class AddIntegrationDialog extends LitElement {
     return this._filterIntegrations(
       this._integrations!,
       this._helpers!,
-      this.hass.config.components,
-      this.hass.localize,
+      this.menuai.config.components,
+      this.menuai.localize,
       this._filter
     );
   }
@@ -328,8 +328,8 @@ class AddIntegrationDialog extends LitElement {
       scrimClickAction
       hideActions
       .heading=${createCloseHeading(
-        this.hass,
-        this.hass.localize("ui.panel.config.integrations.new")
+        this.menuai,
+        this.menuai.localize("ui.panel.config.integrations.new")
       )}
     >
       ${this._pickedBrand && (!this._integrations || pickedIntegration)
@@ -352,7 +352,7 @@ class AddIntegrationDialog extends LitElement {
       !("integrations" in integration) &&
       !this._flowsInProgress?.length
     ) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.integrations.what_device_type"
       );
     }
@@ -362,18 +362,18 @@ class AddIntegrationDialog extends LitElement {
       !("integrations" in integration) &&
       this._flowsInProgress?.length
     ) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.integrations.confirm_add_discovered"
       );
     }
-    return this.hass.localize("ui.panel.config.integrations.what_to_add");
+    return this.menuai.localize("ui.panel.config.integrations.what_to_add");
   }
 
   private _renderIntegration(
     integration: Brand | Integration | undefined
   ): TemplateResult {
     return html`<ha-domain-integrations
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .domain=${this._pickedBrand}
       .integration=${integration}
       .flowsInProgress=${this._flowsInProgress}
@@ -402,21 +402,21 @@ class AddIntegrationDialog extends LitElement {
       integration.supported_by
     );
     showConfirmationDialog(this, {
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.integrations.config_flow.supported_brand_flow",
         {
           supported_brand:
             integration.name ||
-            domainToName(this.hass.localize, integration.domain),
+            domainToName(this.menuai.localize, integration.domain),
           flow_domain_name:
             supportIntegration?.name ||
-            domainToName(this.hass.localize, integration.supported_by),
+            domainToName(this.menuai.localize, integration.supported_by),
         }
       ),
       confirm: () => {
         this.closeDialog();
         if (PROTOCOL_INTEGRATIONS.includes(integration.supported_by)) {
-          protocolIntegrationPicked(this, this.hass, integration.supported_by);
+          protocolIntegrationPicked(this, this.menuai, integration.supported_by);
           return;
         }
         if (supportIntegration) {
@@ -424,7 +424,7 @@ class AddIntegrationDialog extends LitElement {
             domain: integration.supported_by,
             name:
               supportIntegration.name ||
-              domainToName(this.hass.localize, integration.supported_by),
+              domainToName(this.menuai.localize, integration.supported_by),
             config_flow: supportIntegration.config_flow,
             iot_standards: supportIntegration.iot_standards,
           });
@@ -440,11 +440,11 @@ class AddIntegrationDialog extends LitElement {
 
   private _renderAll(integrations?: IntegrationListItem[]): TemplateResult {
     return html`<search-input
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         dialogInitialFocus=${ifDefined(this._narrow ? undefined : "")}
         .filter=${this._filter}
         @value-changed=${this._filterChanged}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.integrations.search_brand"
         )}
         @keypress=${this._maybeSubmit}
@@ -484,7 +484,7 @@ class AddIntegrationDialog extends LitElement {
     return html`
       <ha-integration-list-item
         brand
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .integration=${integration}
         tabindex="0"
       >
@@ -493,7 +493,7 @@ class AddIntegrationDialog extends LitElement {
   };
 
   private async _load() {
-    const descriptions = await getIntegrationDescriptions(this.hass);
+    const descriptions = await getIntegrationDescriptions(this.menuai);
     for (const integration in descriptions.custom.integration) {
       if (
         !Object.prototype.hasOwnProperty.call(
@@ -524,7 +524,7 @@ class AddIntegrationDialog extends LitElement {
       ...descriptions.core.helper,
       ...descriptions.custom.helper,
     };
-    this.hass.loadBackendTranslation(
+    this.menuai.loadBackendTranslation(
       "title",
       descriptions.core.translated_name,
       true
@@ -556,7 +556,7 @@ class AddIntegrationDialog extends LitElement {
     }
 
     if (integration.is_add) {
-      protocolIntegrationPicked(this, this.hass, integration.domain);
+      protocolIntegrationPicked(this, this.menuai, integration.domain);
       this.closeDialog();
       return;
     }
@@ -582,7 +582,7 @@ class AddIntegrationDialog extends LitElement {
       (PROTOCOL_INTEGRATIONS as readonly string[]).includes(
         integration.domain
       ) &&
-      isComponentLoaded(this.hass, integration.domain)
+      isComponentLoaded(this.menuai, integration.domain)
     ) {
       this._pickedBrand = integration.domain;
       return;
@@ -594,20 +594,20 @@ class AddIntegrationDialog extends LitElement {
     }
 
     if (integration.single_config_entry) {
-      const configEntries = await getConfigEntries(this.hass, {
+      const configEntries = await getConfigEntries(this.menuai, {
         domain: integration.domain,
       });
       if (configEntries.length > 0) {
         this.closeDialog();
-        const localize = await this.hass.loadBackendTranslation(
+        const localize = await this.menuai.loadBackendTranslation(
           "title",
           integration.name
         );
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.integrations.config_flow.single_config_entry_title"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.integrations.config_flow.single_config_entry",
             {
               integration_name: domainToName(localize, integration.name),
@@ -625,7 +625,7 @@ class AddIntegrationDialog extends LitElement {
 
     if (
       integration.domain === "cloud" &&
-      isComponentLoaded(this.hass, "cloud")
+      isComponentLoaded(this.menuai, "cloud")
     ) {
       this.closeDialog();
       navigate("/config/cloud");
@@ -634,7 +634,7 @@ class AddIntegrationDialog extends LitElement {
 
     if (
       ["google_assistant", "alexa"].includes(integration.domain) &&
-      isComponentLoaded(this.hass, "cloud")
+      isComponentLoaded(this.menuai, "cloud")
     ) {
       this.closeDialog();
       navigate("/config/voice-assistants/assistants");
@@ -642,7 +642,7 @@ class AddIntegrationDialog extends LitElement {
     }
 
     const manifest = await fetchIntegrationManifest(
-      this.hass,
+      this.menuai,
       integration.domain
     );
     showYamlIntegrationDialog(this, { manifest });
@@ -656,13 +656,13 @@ class AddIntegrationDialog extends LitElement {
       return;
     }
 
-    const manifest = await fetchIntegrationManifest(this.hass, domain);
+    const manifest = await fetchIntegrationManifest(this.menuai, domain);
 
     this.closeDialog();
 
     showConfigFlowDialog(this, {
       startFlowHandler: domain,
-      showAdvanced: this.hass.userData?.showAdvanced,
+      showAdvanced: this.menuai.userData?.showAdvanced,
       manifest,
       navigateToResult: true,
     });
@@ -670,7 +670,7 @@ class AddIntegrationDialog extends LitElement {
 
   private async _fetchFlowsInProgress(domains: string[]) {
     const flowsInProgress = (
-      await fetchConfigFlowInProgress(this.hass.connection)
+      await fetchConfigFlowInProgress(this.menuai.connection)
     ).filter(
       (flow) =>
         // filter config flows that are not for the integration we are looking for

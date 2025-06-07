@@ -5,18 +5,18 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-card";
 import { showConfirmationDialog } from "../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant, MFAModule } from "../../types";
+import type { menuai, MFAModule } from "../../types";
 import { showMfaModuleSetupFlowDialog } from "./show-ha-mfa-module-setup-flow-dialog";
 
 @customElement("ha-mfa-modules-card")
 class HaMfaModulesCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public mfaModules!: MFAModule[];
 
   protected render(): TemplateResult {
     return html`
-      <ha-card .header=${this.hass.localize("ui.panel.profile.mfa.header")}>
+      <ha-card .header=${this.menuai.localize("ui.panel.profile.mfa.header")}>
         ${this.mfaModules.map(
           (module) =>
             html`<ha-settings-row two-line>
@@ -24,12 +24,12 @@ class HaMfaModulesCard extends LitElement {
               <span slot="description">${module.id}</span>
               ${module.enabled
                 ? html`<mwc-button .module=${module} @click=${this._disable}
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.profile.mfa.disable"
                     )}</mwc-button
                   >`
                 : html`<mwc-button .module=${module} @click=${this._enable}
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.profile.mfa.enable"
                     )}</mwc-button
                   >`}
@@ -58,7 +58,7 @@ class HaMfaModulesCard extends LitElement {
     const mfamodule = ev.currentTarget.module;
     if (
       !(await showConfirmationDialog(this, {
-        text: this.hass.localize("ui.panel.profile.mfa.confirm_disable", {
+        text: this.menuai.localize("ui.panel.profile.mfa.confirm_disable", {
           name: mfamodule.name,
         }),
       }))
@@ -68,7 +68,7 @@ class HaMfaModulesCard extends LitElement {
 
     const mfaModuleId = mfamodule.id;
 
-    this.hass
+    this.menuai
       .callWS({
         type: "auth/depose_mfa",
         mfa_module_id: mfaModuleId,
@@ -79,7 +79,7 @@ class HaMfaModulesCard extends LitElement {
   }
 
   private _refreshCurrentUser() {
-    fireEvent(this, "hass-refresh-current-user");
+    fireEvent(this, "menuai-refresh-current-user");
   }
 }
 

@@ -7,11 +7,11 @@ import "../../components/ha-list-item";
 import "../../components/ha-select";
 import "../../components/ha-settings-row";
 import { FirstWeekday } from "../../data/translation";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-pick-first-weekday-row")
 class FirstWeekdayRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -19,17 +19,17 @@ class FirstWeekdayRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.first_weekday.header")}
+          ${this.menuai.localize("ui.panel.profile.first_weekday.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.first_weekday.description")}
+          ${this.menuai.localize("ui.panel.profile.first_weekday.description")}
         </span>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.profile.first_weekday.dropdown_label"
           )}
-          .disabled=${this.hass.locale === undefined}
-          .value=${this.hass.locale.first_weekday}
+          .disabled=${this.menuai.locale === undefined}
+          .value=${this.menuai.locale.first_weekday}
           @selected=${this._handleFormatSelection}
           naturalMenuWidth
         >
@@ -39,7 +39,7 @@ class FirstWeekdayRow extends LitElement {
             FirstWeekday.saturday,
             FirstWeekday.sunday,
           ].map((day) => {
-            const value = this.hass.localize(
+            const value = this.menuai.localize(
               `ui.panel.profile.first_weekday.values.${day}`
             );
             const twoLine = day === FirstWeekday.language;
@@ -49,9 +49,9 @@ class FirstWeekdayRow extends LitElement {
                 ${twoLine
                   ? html`
                       <span slot="secondary"
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           `ui.panel.profile.first_weekday.values.${firstWeekday(
-                            this.hass.locale
+                            this.menuai.locale
                           )}`
                         )}</span
                       >
@@ -66,7 +66,7 @@ class FirstWeekdayRow extends LitElement {
   }
 
   private async _handleFormatSelection(ev) {
-    fireEvent(this, "hass-first-weekday-select", ev.target.value);
+    fireEvent(this, "menuai-first-weekday-select", ev.target.value);
   }
 }
 

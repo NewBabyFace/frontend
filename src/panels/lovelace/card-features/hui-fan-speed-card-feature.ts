@@ -19,7 +19,7 @@ import {
   fanPercentageToSpeed,
   fanSpeedToPercentage,
 } from "../../../data/fan";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -28,11 +28,11 @@ import type {
 } from "./types";
 
 export const supportsFanSpeedCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -43,17 +43,17 @@ export const supportsFanSpeedCardFeature = (
 
 @customElement("hui-fan-speed-card-feature")
 class HuiFanSpeedCardFeature extends LitElement implements LovelaceCardFeature {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: FanSpeedCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as FanEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as FanEntity | undefined;
   }
 
   static getStubConfig(): FanSpeedCardFeatureConfig {
@@ -71,18 +71,18 @@ class HuiFanSpeedCardFeature extends LitElement implements LovelaceCardFeature {
 
   private _localizeSpeed(speed: FanSpeed) {
     if (speed === "on" || speed === "off") {
-      return this.hass!.formatEntityState(this._stateObj!, speed);
+      return this.menuai!.formatEntityState(this._stateObj!, speed);
     }
-    return this.hass!.localize(`ui.card.fan.speed.${speed}`) || speed;
+    return this.menuai!.localize(`ui.card.fan.speed.${speed}`) || speed;
   }
 
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsFanSpeedCardFeature(this.hass, this.context)
+      !supportsFanSpeedCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -111,9 +111,9 @@ class HuiFanSpeedCardFeature extends LitElement implements LovelaceCardFeature {
           @value-changed=${this._speedValueChanged}
           hide-label
           .ariaLabel=${computeAttributeNameDisplay(
-            this.hass.localize,
+            this.menuai.localize,
             this._stateObj,
-            this.hass.entities,
+            this.menuai.entities,
             "percentage"
           )}
           .disabled=${this._stateObj!.state === UNAVAILABLE}
@@ -132,14 +132,14 @@ class HuiFanSpeedCardFeature extends LitElement implements LovelaceCardFeature {
         .step=${this._stateObj.attributes.percentage_step ?? 1}
         @value-changed=${this._valueChanged}
         .ariaLabel=${computeAttributeNameDisplay(
-          this.hass.localize,
+          this.menuai.localize,
           this._stateObj,
-          this.hass.entities,
+          this.menuai.entities,
           "percentage"
         )}
         .disabled=${this._stateObj!.state === UNAVAILABLE}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.fan.percentage}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       ></ha-control-slider>
     `;
   }
@@ -149,7 +149,7 @@ class HuiFanSpeedCardFeature extends LitElement implements LovelaceCardFeature {
 
     const percentage = fanSpeedToPercentage(this._stateObj!, speed);
 
-    this.hass!.callService("fan", "set_percentage", {
+    this.menuai!.callService("fan", "set_percentage", {
       entity_id: this._stateObj!.entity_id,
       percentage: percentage,
     });
@@ -159,7 +159,7 @@ class HuiFanSpeedCardFeature extends LitElement implements LovelaceCardFeature {
     const value = (ev.detail as any).value;
     if (isNaN(value)) return;
 
-    this.hass!.callService("fan", "set_percentage", {
+    this.menuai!.callService("fan", "set_percentage", {
       entity_id: this._stateObj!.entity_id,
       percentage: value,
     });

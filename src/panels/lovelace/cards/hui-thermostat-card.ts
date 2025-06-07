@@ -12,7 +12,7 @@ import "../../../components/ha-card";
 import "../../../components/ha-icon-button";
 import type { ClimateEntity } from "../../../data/climate";
 import "../../../state-control/climate/ha-state-control-climate-temperature";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../card-features/hui-card-features";
 import type { LovelaceCardFeatureContext } from "../card-features/types";
 import { findEntities } from "../common/find-entities";
@@ -41,14 +41,14 @@ export class HuiThermostatCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): ThermostatCardConfig {
     const includeDomains = ["climate"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -58,7 +58,7 @@ export class HuiThermostatCard extends LitElement implements LovelaceCard {
     return { type: "thermostat", entity: foundEntities[0] || "" };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ThermostatCardConfig;
 
@@ -80,7 +80,7 @@ export class HuiThermostatCard extends LitElement implements LovelaceCard {
   }
 
   private _handleMoreInfo() {
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: this._config!.entity,
     });
   }
@@ -90,37 +90,37 @@ export class HuiThermostatCard extends LitElement implements LovelaceCard {
 
     if (
       !this._config ||
-      !this.hass ||
-      (!changedProps.has("hass") && !changedProps.has("_config"))
+      !this.menuai ||
+      (!changedProps.has("menuai") && !changedProps.has("_config"))
     ) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | ThermostatCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
-    const stateObj = this.hass.states[this._config.entity] as ClimateEntity;
+    const stateObj = this.menuai.states[this._config.entity] as ClimateEntity;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -144,13 +144,13 @@ export class HuiThermostatCard extends LitElement implements LovelaceCard {
             prevent-interaction-on-scroll
             .showCurrentAsPrimary=${this._config.show_current_as_primary}
             show-secondary
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .stateObj=${stateObj}
           ></ha-state-control-climate-temperature>
         </div>
         <ha-icon-button
           class="more-info"
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.panel.lovelace.cards.show_more_info"
           )}
           .path=${mdiDotsVertical}
@@ -162,7 +162,7 @@ export class HuiThermostatCard extends LitElement implements LovelaceCard {
               style=${styleMap({
                 "--feature-color": color,
               })}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .context=${this._featureContext}
               .features=${this._config.features}
             ></hui-card-features>`

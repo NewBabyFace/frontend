@@ -1,4 +1,4 @@
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -18,7 +18,7 @@ import {
   getStatisticMetadata,
   isExternalStatistic,
 } from "../../../data/recorder";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeCardSize } from "../common/compute-card-size";
 import { findEntities } from "../common/find-entities";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
@@ -42,19 +42,19 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFill: string[]
   ) {
     const includeDomains = ["sensor"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFill,
       includeDomains,
-      (stateObj: HassEntity) => "state_class" in stateObj.attributes
+      (stateObj: menuaiEntity) => "state_class" in stateObj.attributes
     );
 
     return {
@@ -63,7 +63,7 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StatisticCardConfig;
 
@@ -100,7 +100,7 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
 
   private _subscribeEnergy() {
     if (!this._energySub) {
-      this._energySub = getEnergyDataCollection(this.hass!, {
+      this._energySub = getEnergyDataCollection(this.menuai!, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._energyStart = data.start;
@@ -157,7 +157,7 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
@@ -165,10 +165,10 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
       return html` <ha-alert alert-type="error">${this._error}</ha-alert> `;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
     const name =
       this._config.name ||
-      getStatisticLabel(this.hass, this._config.entity, this._metadata);
+      getStatisticLabel(this.menuai, this._config.entity, this._metadata);
 
     return html`
       <ha-card @click=${this._handleClick} tabindex="0">
@@ -178,7 +178,7 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
             <ha-state-icon
               .icon=${this._config.icon}
               .stateObj=${stateObj}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-state-icon>
           </div>
         </div>
@@ -188,12 +188,12 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
               ? ""
               : this._value === null
                 ? "?"
-                : formatNumber(this._value, this.hass.locale)}</span
+                : formatNumber(this._value, this.menuai.locale)}</span
           >
           <span class="measurement"
             >${this._config.unit ||
             getDisplayUnit(
-              this.hass,
+              this.menuai,
               this._config.entity,
               this._metadata
             )}</span
@@ -205,9 +205,9 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    // Side Effect used to update footer hass while keeping optimizations
+    // Side Effect used to update footer menuai while keeping optimizations
     if (this._footerElement) {
-      this._footerElement.hass = this.hass;
+      this._footerElement.menuai = this.menuai;
     }
     if (
       changedProps.has("_value") ||
@@ -233,7 +233,7 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
       | StatisticCardConfig
       | undefined;
 
-    if (this.hass) {
+    if (this.menuai) {
       if (this._config.period === PERIOD_ENERGY && !this._energySub) {
         this._subscribeEnergy();
         return;
@@ -271,22 +271,22 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | EntityCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config!.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config!.theme);
     }
   }
 
@@ -303,12 +303,12 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
   }
 
   private async _fetchStatistic() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return;
     }
     try {
       const stats = await fetchStatistic(
-        this.hass,
+        this.menuai,
         this._config.entity,
         this._energyStart && this._energyEnd
           ? { fixed_period: { start: this._energyStart, end: this._energyEnd } }
@@ -324,12 +324,12 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
   }
 
   private async _fetchMetadata() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return;
     }
     try {
       this._metadata = (
-        await getStatisticMetadata(this.hass, [this._config.entity])
+        await getStatisticMetadata(this.menuai, [this._config.entity])
       )?.[0];
     } catch (e: any) {
       this._error = e.message;
@@ -337,7 +337,7 @@ export class HuiStatisticCard extends LitElement implements LovelaceCard {
   }
 
   private _handleClick(): void {
-    fireEvent(this, "hass-more-info", { entityId: this._config!.entity });
+    fireEvent(this, "menuai-more-info", { entityId: this._config!.entity });
   }
 
   public getGridOptions(): LovelaceGridOptions {

@@ -1,19 +1,19 @@
 import type { DeviceRegistryEntry } from "../../../../../../data/device_registry";
 import { fetchZwaveNodeAlerts } from "../../../../../../data/zwave_js";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import type { DeviceAlert } from "../../../ha-config-device-page";
 
 export const getZwaveDeviceAlerts = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   device: DeviceRegistryEntry
 ): Promise<DeviceAlert[]> => {
-  const nodeAlerts = await fetchZwaveNodeAlerts(hass, device.id);
+  const nodeAlerts = await fetchZwaveNodeAlerts(menuai, device.id);
   const deviceAlerts: DeviceAlert[] = [];
 
   if (nodeAlerts?.is_embedded === false) {
     deviceAlerts.push({
       level: "info",
-      text: hass.localize(
+      text: menuai.localize(
         "ui.panel.config.zwave_js.device_info.custom_device_config"
       ),
     });

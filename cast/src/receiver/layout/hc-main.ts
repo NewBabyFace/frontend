@@ -7,7 +7,7 @@ import { CAST_NS } from "../../../../src/cast/const";
 import type {
   ConnectMessage,
   GetStatusMessage,
-  HassMessage,
+  menuaiMessage,
   ShowDemoMessage,
   ShowLovelaceViewMessage,
 } from "../../../../src/cast/receiver_messages";
@@ -30,7 +30,7 @@ import type {
 import { isStrategyDashboard } from "../../../../src/data/lovelace/config/types";
 import { fetchResources } from "../../../../src/data/lovelace/resource";
 import { loadLovelaceResources } from "../../../../src/panels/lovelace/common/load-resources";
-import { HassElement } from "../../../../src/state/hass-element";
+import { menuaiElement } from "../../../../src/state/menuai-element";
 import { castContext } from "../cast_context";
 import "./hc-launch-screen";
 import { getPanelTitleFromUrlPath } from "../../../../src/data/panel";
@@ -44,7 +44,7 @@ const DEFAULT_CONFIG: LovelaceDashboardStrategyConfig = {
 
 let resourcesLoaded = false;
 @customElement("hc-main")
-export class HcMain extends HassElement {
+export class HcMain extends menuaiElement {
   @state() private _showDemo = false;
 
   @state() private _lovelaceConfig?: LovelaceConfig;
@@ -55,11 +55,11 @@ export class HcMain extends HassElement {
 
   @state() private _error?: string;
 
-  private _hassUUID?: string;
+  private _menuaiUUID?: string;
 
   private _unsubLovelace?: UnsubscribeFunc;
 
-  public processIncomingMessage(msg: HassMessage) {
+  public processIncomingMessage(msg: menuaiMessage) {
     if (msg.type === "connect") {
       this._handleConnectMessage(msg);
     } else if (msg.type === "show_lovelace_view") {
@@ -83,21 +83,21 @@ export class HcMain extends HassElement {
       !this._lovelaceConfig ||
       this._urlPath === undefined ||
       // Guard against part of HA not being loaded yet.
-      !this.hass ||
-      !this.hass.states ||
-      !this.hass.config ||
-      !this.hass.services
+      !this.menuai ||
+      !this.menuai.states ||
+      !this.menuai.config ||
+      !this.menuai.services
     ) {
       return html`
         <hc-launch-screen
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .error=${this._error}
         ></hc-launch-screen>
       `;
     }
     return html`
       <hc-lovelace
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .lovelaceConfig=${this._lovelaceConfig}
         .urlPath=${this._urlPath}
         .viewPath=${this._lovelacePath}
@@ -132,13 +132,13 @@ export class HcMain extends HassElement {
   private _sendStatus(senderId?: string) {
     const status: ReceiverStatusMessage = {
       type: "receiver_status",
-      connected: !!this.hass,
+      connected: !!this.menuai,
       showDemo: this._showDemo,
     };
 
-    if (this.hass) {
-      status.hassUrl = this.hass.auth.data.hassUrl;
-      status.hassUUID = this._hassUUID;
+    if (this.menuai) {
+      status.menuaiUrl = this.menuai.auth.data.menuaiUrl;
+      status.menuaiUUID = this._menuaiUUID;
       status.lovelacePath = this._lovelacePath;
       status.urlPath = this._urlPath;
     }
@@ -178,10 +178,10 @@ export class HcMain extends HassElement {
 
   private async _handleGetStatusMessage(msg: GetStatusMessage) {
     if (
-      (this.hass && msg.hassUUID && msg.hassUUID !== this._hassUUID) ||
-      (this.hass && msg.hassUrl && msg.hassUrl !== this.hass.auth.data.hassUrl)
+      (this.menuai && msg.menuaiUUID && msg.menuaiUUID !== this._menuaiUUID) ||
+      (this.menuai && msg.menuaiUrl && msg.menuaiUrl !== this.menuai.auth.data.menuaiUrl)
     ) {
-      this._error = "Not connected to the same Home Assistant instance.";
+      this._error = "Not connected to the same MenuAI instance.";
       this._sendError(
         ReceiverErrorCode.WRONG_INSTANCE,
         this._error,
@@ -197,7 +197,7 @@ export class HcMain extends HassElement {
     try {
       auth = await getAuth({
         loadTokens: async () => ({
-          hassUrl: msg.hassUrl,
+          menuaiUrl: msg.menuaiUrl,
           clientId: msg.clientId,
           refresh_token: msg.refreshToken,
           access_token: "",
@@ -220,12 +220,12 @@ export class HcMain extends HassElement {
       this._sendError(err, errorMessage);
       return;
     }
-    if (this.hass) {
-      this.hass.connection.close();
+    if (this.menuai) {
+      this.menuai.connection.close();
     }
-    this.initializeHass(auth, connection);
-    if (this._hassUUID !== msg.hassUUID) {
-      this._hassUUID = msg.hassUUID;
+    this.initializemenuai(auth, connection);
+    if (this._menuaiUUID !== msg.menuaiUUID) {
+      this._menuaiUUID = msg.menuaiUUID;
       this._lovelaceConfig = undefined;
       this._urlPath = undefined;
       this._lovelacePath = null;
@@ -243,7 +243,7 @@ export class HcMain extends HassElement {
     this._showDemo = false;
     // We should not get this command before we are connected.
     // Means a client got out of sync. Let's send status to them.
-    if (!this.hass?.connected) {
+    if (!this.menuai?.connected) {
       this._sendStatus(msg.senderId!);
       this._error = "Cannot show Lovelace because we're not connected.";
       this._sendError(
@@ -255,12 +255,12 @@ export class HcMain extends HassElement {
     }
 
     if (
-      (msg.hassUUID && msg.hassUUID !== this._hassUUID) ||
-      (msg.hassUrl && msg.hassUrl !== this.hass.auth.data.hassUrl)
+      (msg.menuaiUUID && msg.menuaiUUID !== this._menuaiUUID) ||
+      (msg.menuaiUrl && msg.menuaiUrl !== this.menuai.auth.data.menuaiUrl)
     ) {
       this._sendStatus(msg.senderId!);
       this._error =
-        "Cannot show Lovelace because we're not connected to the same Home Assistant instance.";
+        "Cannot show Lovelace because we're not connected to the same MenuAI instance.";
       this._sendError(
         ReceiverErrorCode.WRONG_INSTANCE,
         this._error,
@@ -296,9 +296,9 @@ export class HcMain extends HassElement {
         this._unsubLovelace();
         this._unsubLovelace = undefined;
       }
-      const llColl = atLeastVersion(this.hass.connection.haVersion, 0, 107)
-        ? getLovelaceCollection(this.hass.connection, msg.urlPath)
-        : getLegacyLovelaceCollection(this.hass.connection);
+      const llColl = atLeastVersion(this.menuai.connection.haVersion, 0, 107)
+        ? getLovelaceCollection(this.menuai.connection, msg.urlPath)
+        : getLegacyLovelaceCollection(this.menuai.connection);
       // We first do a single refresh because we need to check if there is LL
       // configuration.
       try {
@@ -310,7 +310,7 @@ export class HcMain extends HassElement {
             );
             const config = await generateLovelaceDashboardStrategy(
               rawConfig,
-              this.hass!
+              this.menuai!
             );
             this._handleNewLovelaceConfig(config);
           } else {
@@ -319,7 +319,7 @@ export class HcMain extends HassElement {
         });
       } catch (err: any) {
         if (
-          atLeastVersion(this.hass.connection.haVersion, 0, 107) &&
+          atLeastVersion(this.menuai.connection.haVersion, 0, 107) &&
           err.code !== "config_not_found"
         ) {
           // eslint-disable-next-line
@@ -335,11 +335,11 @@ export class HcMain extends HassElement {
     }
     if (!resourcesLoaded) {
       resourcesLoaded = true;
-      const resources = atLeastVersion(this.hass.connection.haVersion, 0, 107)
-        ? await fetchResources(this.hass!.connection)
+      const resources = atLeastVersion(this.menuai.connection.haVersion, 0, 107)
+        ? await fetchResources(this.menuai!.connection)
         : (this._lovelaceConfig as LegacyLovelaceConfig).resources;
       if (resources) {
-        loadLovelaceResources(resources, this.hass!);
+        loadLovelaceResources(resources, this.menuai!);
       }
     }
 
@@ -351,13 +351,13 @@ export class HcMain extends HassElement {
       "../../../../src/panels/lovelace/strategies/get-strategy"
     );
     this._handleNewLovelaceConfig(
-      await generateLovelaceDashboardStrategy(DEFAULT_CONFIG, this.hass!)
+      await generateLovelaceDashboardStrategy(DEFAULT_CONFIG, this.menuai!)
     );
   }
 
   private _handleNewLovelaceConfig(lovelaceConfig: LovelaceConfig) {
     const title = getPanelTitleFromUrlPath(
-      this.hass!,
+      this.menuai!,
       this._urlPath || "lovelace"
     );
     castContext.setApplicationState(title || "");
@@ -377,15 +377,15 @@ export class HcMain extends HassElement {
   private _getErrorMessage(error: number): string {
     switch (error) {
       case 1:
-        return "Unable to connect to the Home Assistant websocket API.";
+        return "Unable to connect to the MenuAI websocket API.";
       case 2:
         return "The supplied authentication is invalid.";
       case 3:
-        return "The connection to Home Assistant was lost.";
+        return "The connection to MenuAI was lost.";
       case 4:
-        return "Missing hassUrl. This is required.";
+        return "Missing menuaiUrl. This is required.";
       case 5:
-        return "Home Assistant needs to be served over https:// to use with Home Assistant Cast.";
+        return "MenuAI needs to be served over https:// to use with MenuAI Cast.";
       default:
         return "Unknown Error";
     }

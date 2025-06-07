@@ -14,7 +14,7 @@ import "../../../components/ha-list-item";
 import { UNAVAILABLE } from "../../../data/entity";
 import type { FanEntity } from "../../../data/fan";
 import { FanEntityFeature } from "../../../data/fan";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import { filterModes } from "./common/filter-modes";
@@ -24,11 +24,11 @@ import type {
 } from "./types";
 
 export const supportsFanPresetModesCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -42,7 +42,7 @@ class HuiFanPresetModesCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -54,10 +54,10 @@ class HuiFanPresetModesCardFeature
   private _haSelect?: HaControlSelectMenu;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as FanEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as FanEntity | undefined;
   }
 
   static getStubConfig(): FanPresetModesCardFeatureConfig {
@@ -83,11 +83,11 @@ class HuiFanPresetModesCardFeature
 
   protected willUpdate(changedProp: PropertyValues): void {
     if (
-      (changedProp.has("hass") || changedProp.has("context")) &&
+      (changedProp.has("menuai") || changedProp.has("context")) &&
       this._stateObj
     ) {
-      const oldHass = changedProp.get("hass") as HomeAssistant | undefined;
-      const oldStateObj = oldHass?.states[this.context!.entity_id!];
+      const oldmenuai = changedProp.get("menuai") as menuai | undefined;
+      const oldStateObj = oldmenuai?.states[this.context!.entity_id!];
       if (oldStateObj !== this._stateObj) {
         this._currentPresetMode = this._stateObj.attributes.preset_mode;
       }
@@ -96,12 +96,12 @@ class HuiFanPresetModesCardFeature
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    if (this._haSelect && changedProps.has("hass")) {
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    if (this._haSelect && changedProps.has("menuai")) {
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
       if (
-        this.hass &&
-        this.hass.formatEntityAttributeValue !==
-          oldHass?.formatEntityAttributeValue
+        this.menuai &&
+        this.menuai.formatEntityAttributeValue !==
+          oldmenuai?.formatEntityAttributeValue
       ) {
         this._haSelect.layoutOptions();
       }
@@ -126,7 +126,7 @@ class HuiFanPresetModesCardFeature
   }
 
   private async _setMode(mode: string) {
-    await this.hass!.callService("fan", "set_preset_mode", {
+    await this.menuai!.callService("fan", "set_preset_mode", {
       entity_id: this._stateObj!.entity_id,
       preset_mode: mode,
     });
@@ -135,10 +135,10 @@ class HuiFanPresetModesCardFeature
   protected render(): TemplateResult | null {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsFanPresetModesCardFeature(this.hass, this.context)
+      !supportsFanPresetModesCardFeature(this.menuai, this.context)
     ) {
       return null;
     }
@@ -150,14 +150,14 @@ class HuiFanPresetModesCardFeature
       this._config!.preset_modes
     ).map<ControlSelectOption>((mode) => ({
       value: mode,
-      label: this.hass!.formatEntityAttributeValue(
+      label: this.menuai!.formatEntityAttributeValue(
         this._stateObj!,
         "preset_mode",
         mode
       ),
       icon: html`<ha-attribute-icon
         slot="graphic"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${stateObj}
         attribute="preset_mode"
         .attributeValue=${mode}
@@ -171,7 +171,7 @@ class HuiFanPresetModesCardFeature
           .value=${this._currentPresetMode}
           @value-changed=${this._valueChanged}
           hide-label
-          .ariaLabel=${this.hass!.formatEntityAttributeName(
+          .ariaLabel=${this.menuai!.formatEntityAttributeName(
             stateObj,
             "preset_mode"
           )}
@@ -185,7 +185,7 @@ class HuiFanPresetModesCardFeature
       <ha-control-select-menu
         show-arrow
         hide-label
-        .label=${this.hass!.formatEntityAttributeName(stateObj, "preset_mode")}
+        .label=${this.menuai!.formatEntityAttributeName(stateObj, "preset_mode")}
         .value=${this._currentPresetMode}
         .disabled=${this._stateObj.state === UNAVAILABLE}
         fixedMenuPosition
@@ -196,7 +196,7 @@ class HuiFanPresetModesCardFeature
         ${this._currentPresetMode
           ? html`<ha-attribute-icon
               slot="icon"
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${stateObj}
               attribute="preset_mode"
               .attributeValue=${this._currentPresetMode}

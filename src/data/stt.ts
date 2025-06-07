@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface SpeechMetadata {
   language: string;
@@ -26,11 +26,11 @@ export interface STTEngine {
 }
 
 export const listSTTEngines = (
-  hass: HomeAssistant,
+  menuai: menuai,
   language?: string,
   country?: string
 ): Promise<{ providers: STTEngine[] }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "stt/engine/list",
     language,
     country,

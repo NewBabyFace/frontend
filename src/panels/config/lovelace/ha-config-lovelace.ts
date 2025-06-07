@@ -1,8 +1,8 @@
 import { mdiViewDashboard } from "@mdi/js";
 import { customElement, property } from "lit/decorators";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 
 export const lovelaceTabs = [
   {
@@ -21,8 +21,8 @@ export const lovelaceResourcesTabs = [
 ];
 
 @customElement("ha-config-lovelace")
-class HaConfigLovelace extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigLovelace extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -44,7 +44,7 @@ class HaConfigLovelace extends HassRouterPage {
   };
 
   protected updatePageEl(pageEl) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.narrow = this.narrow;
     pageEl.isWide = this.isWide;
     pageEl.route = this.routeTail;

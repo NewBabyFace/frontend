@@ -2,12 +2,12 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { repeat } from "lit/directives/repeat";
 import { fireEvent } from "../../common/dom/fire_event";
-import type { ValueChangedEvent, HomeAssistant } from "../../types";
+import type { ValueChangedEvent, menuai } from "../../types";
 import "./ha-statistic-picker";
 
 @customElement("ha-statistics-picker")
 class HaStatisticsPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Array }) public value?: string[];
 
@@ -60,7 +60,7 @@ class HaStatisticsPicker extends LitElement {
   public ignoreRestrictionsOnFirstStatistic = false;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -90,7 +90,7 @@ class HaStatisticsPicker extends LitElement {
           <div>
             <ha-statistic-picker
               .curValue=${statisticId}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .includeStatisticsUnitOfMeasurement=${includeStatisticsUnitCurrent}
               .includeUnitClass=${includeUnitClassCurrent}
               .includeDeviceClass=${includeDeviceClassCurrent}
@@ -106,7 +106,7 @@ class HaStatisticsPicker extends LitElement {
       )}
       <div>
         <ha-statistic-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .includeStatisticsUnitOfMeasurement=${this
             .includeStatisticsUnitOfMeasurement}
           .includeUnitClass=${this.includeUnitClass}

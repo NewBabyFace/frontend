@@ -10,7 +10,7 @@ let worker: Remote<Api> | undefined;
 export const renderMarkdown = async (
   content: RenderMarkdownParamTypes[0],
   markedOptions: RenderMarkdownParamTypes[1],
-  hassOptions?: RenderMarkdownParamTypes[2]
+  menuaiOptions?: RenderMarkdownParamTypes[2]
 ): Promise<ReturnType<RenderMarkdownType>> => {
   if (!worker) {
     worker = wrap(
@@ -20,5 +20,5 @@ export const renderMarkdown = async (
       )
     );
   }
-  return worker.renderMarkdown(content, markedOptions, hassOptions);
+  return worker.renderMarkdown(content, markedOptions, menuaiOptions);
 };

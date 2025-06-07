@@ -36,7 +36,7 @@ export function saveTokens(tokens: AuthData | null) {
 
   if (tokenCache.writeEnabled) {
     try {
-      window.localStorage.setItem("hassTokens", JSON.stringify(tokens));
+      window.localStorage.setItem("menuaiTokens", JSON.stringify(tokens));
     } catch (err: any) {
       // write failed, ignore it. Happens if storage is full or private mode.
       // eslint-disable-next-line no-console
@@ -59,7 +59,7 @@ export function enableWrite() {
 export function loadTokens() {
   if (tokenCache.tokens === undefined) {
     try {
-      const tokens = window.localStorage.getItem("hassTokens");
+      const tokens = window.localStorage.getItem("menuaiTokens");
       if (tokens) {
         tokenCache.tokens = JSON.parse(tokens);
         tokenCache.writeEnabled = true;

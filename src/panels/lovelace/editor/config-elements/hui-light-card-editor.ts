@@ -6,7 +6,7 @@ import { mdiGestureTap } from "@mdi/js";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LightCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { actionConfigStruct } from "../structs/action-struct";
@@ -95,7 +95,7 @@ export class HuiLightCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: LightCardConfig;
 
@@ -105,13 +105,13 @@ export class HuiLightCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -129,13 +129,13 @@ export class HuiLightCardEditor
       case "theme":
       case "hold_action":
       case "double_tap_action":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

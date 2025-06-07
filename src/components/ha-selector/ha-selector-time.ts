@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { TimeSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-time-input";
 
 @customElement("ha-selector-time")
 export class HaTimeSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: TimeSelector;
 
@@ -24,7 +24,7 @@ export class HaTimeSelector extends LitElement {
     return html`
       <ha-time-input
         .value=${typeof this.value === "string" ? this.value : undefined}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
         .disabled=${this.disabled}
         .required=${this.required}
         clearable

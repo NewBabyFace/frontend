@@ -38,11 +38,11 @@ import {
   setZwaveNodeConfigParameter,
 } from "../../../../../data/zwave_js";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
-import "../../../../../layouts/hass-error-screen";
-import "../../../../../layouts/hass-loading-screen";
-import "../../../../../layouts/hass-tabs-subpage";
+import "../../../../../layouts/menuai-error-screen";
+import "../../../../../layouts/menuai-loading-screen";
+import "../../../../../layouts/menuai-tabs-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import "../../../ha-config-section";
 import { configTabs } from "./zwave_js-config-router";
 import "./zwave_js-custom-param";
@@ -55,7 +55,7 @@ const icons = {
 
 @customElement("zwave_js-node-config")
 class ZWaveJSNodeConfig extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -92,27 +92,27 @@ class ZWaveJSNodeConfig extends LitElement {
 
   protected render(): TemplateResult {
     if (this._error) {
-      return html`<hass-error-screen
-        .hass=${this.hass}
-        .error=${this.hass.localize(
+      return html`<menuai-error-screen
+        .menuai=${this.menuai}
+        .error=${this.menuai.localize(
           `ui.panel.config.zwave_js.node_config.error_${this._error}`
         )}
-      ></hass-error-screen>`;
+      ></menuai-error-screen>`;
     }
 
     if (!this._config || !this._nodeMetadata) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
 
-    const device = this.hass.devices[this.deviceId];
+    const device = this.menuai.devices[this.deviceId];
 
     const deviceName = device
-      ? computeDeviceNameDisplay(device, this.hass)
+      ? computeDeviceNameDisplay(device, this.menuai)
       : "";
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .tabs=${configTabs}
@@ -123,7 +123,7 @@ class ZWaveJSNodeConfig extends LitElement {
           vertical
         >
           <div slot="header">
-            ${this.hass.localize("ui.panel.config.zwave_js.node_config.header")}
+            ${this.menuai.localize("ui.panel.config.zwave_js.node_config.header")}
           </div>
 
           <div slot="introduction">
@@ -135,12 +135,12 @@ class ZWaveJSNodeConfig extends LitElement {
                   </div>
                 `
               : ``}
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.introduction"
             )}
             <p>
               <em>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_config.attribution",
                   {
                     device_database: html`<a
@@ -148,7 +148,7 @@ class ZWaveJSNodeConfig extends LitElement {
                       href=${this._nodeMetadata?.device_database_url ||
                       "https://devices.zwave-js.io"}
                       target="_blank"
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.zwave_js.node_config.zwave_js_device_database"
                       )}</a
                     >`,
@@ -165,7 +165,7 @@ class ZWaveJSNodeConfig extends LitElement {
             ([endpoint, configParamEntries]) =>
               html`<div class="content">
                 <h3>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.node_config.endpoint",
                     { endpoint }
                   )}
@@ -197,31 +197,31 @@ class ZWaveJSNodeConfig extends LitElement {
                   .progress=${this._resetDialogProgress}
                   @click=${this._openResetDialog}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.node_config.reset_to_default.button_label"
                   )}
                 </ha-progress-button>
               </div>`
             : nothing}
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.custom_config"
             )}
           </h3>
           <span class="secondary">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.custom_config_description"
             )}
           </span>
           <ha-card class="custom-config">
             <zwave_js-custom-param
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .deviceId=${this.deviceId}
               @new-value=${this._handleNewValue}
             ></zwave_js-custom-param>
           </ha-card>
         </ha-config-section>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -237,12 +237,12 @@ class ZWaveJSNodeConfig extends LitElement {
 
     const labelAndDescription = html`
       <span slot="prefix" class="prefix">
-        ${this.hass.localize("ui.panel.config.zwave_js.node_config.parameter")}
+        ${this.menuai.localize("ui.panel.config.zwave_js.node_config.parameter")}
         <br />
         <span>${item.property}</span>
         ${item.property_key !== null
           ? html`<br />
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_config.bitmask"
               )}
               <br />
@@ -259,7 +259,7 @@ class ZWaveJSNodeConfig extends LitElement {
           : nothing}
         ${!item.metadata.writeable
           ? html`<em>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.node_config.parameter_is_read_only"
               )}
             </em>`
@@ -275,7 +275,7 @@ class ZWaveJSNodeConfig extends LitElement {
                 class="result-icon"
                 slot="item-icon"
               ></ha-svg-icon>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.zwave_js.node_config.set_param_${result.status}`
               )}
               ${result.status === "error" && result.error
@@ -288,10 +288,10 @@ class ZWaveJSNodeConfig extends LitElement {
 
     const defaultLabel =
       item.metadata.writeable && item.metadata.default !== undefined
-        ? `${this.hass.localize("ui.panel.config.zwave_js.node_config.default")}:
+        ? `${this.menuai.localize("ui.panel.config.zwave_js.node_config.default")}:
           ${
             isTypeBoolean
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   item.metadata.default === 1 ? "ui.common.yes" : "ui.common.no"
                 )
               : item.configuration_value_type === "enumerated"
@@ -334,7 +334,7 @@ class ZWaveJSNodeConfig extends LitElement {
           .disabled=${!item.metadata.writeable}
           @change=${this._numericInputChanged}
           .suffix=${item.metadata.unit}
-          .helper=${`${this.hass.localize("ui.panel.config.zwave_js.node_config.between_min_max", { min: item.metadata.min, max: item.metadata.max })}${defaultLabel ? `, ${defaultLabel}` : ""}`}
+          .helper=${`${this.menuai.localize("ui.panel.config.zwave_js.node_config.between_min_max", { min: item.metadata.min, max: item.metadata.max })}${defaultLabel ? `, ${defaultLabel}` : ""}`}
           helperPersistent
         >
         </ha-textfield>`;
@@ -430,7 +430,7 @@ class ZWaveJSNodeConfig extends LitElement {
     ) {
       this._setError(
         ev.target.key,
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.zwave_js.node_config.error_not_in_range",
           { min: ev.target.min, max: ev.target.max }
         )
@@ -444,7 +444,7 @@ class ZWaveJSNodeConfig extends LitElement {
   private async _updateConfigParameter(target, value) {
     try {
       const result = await setZwaveNodeConfigParameter(
-        this.hass,
+        this.menuai,
         this.deviceId,
         target.property,
         target.endpoint,
@@ -478,7 +478,7 @@ class ZWaveJSNodeConfig extends LitElement {
       return;
     }
 
-    const device = this.hass.devices[this.deviceId];
+    const device = this.menuai.devices[this.deviceId];
     if (!device) {
       this._error = "device_not_found";
       return;
@@ -486,9 +486,9 @@ class ZWaveJSNodeConfig extends LitElement {
 
     let capabilities: ZWaveJSNodeCapabilities | undefined;
     [this._nodeMetadata, this._config, capabilities] = await Promise.all([
-      fetchZwaveNodeMetadata(this.hass, device.id),
-      fetchZwaveNodeConfigParameters(this.hass, device.id),
-      fetchZwaveNodeCapabilities(this.hass, device.id),
+      fetchZwaveNodeMetadata(this.menuai, device.id),
+      fetchZwaveNodeConfigParameters(this.menuai, device.id),
+      fetchZwaveNodeCapabilities(this.menuai, device.id),
     ]);
     this._canResetAll =
       capabilities &&
@@ -504,13 +504,13 @@ class ZWaveJSNodeConfig extends LitElement {
 
     await showConfirmationDialog(this, {
       destructive: true,
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.reset_to_default.dialog.title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.reset_to_default.dialog.text"
       ),
-      confirmText: this.hass.localize(
+      confirmText: this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.reset_to_default.dialog.reset"
       ),
       confirm: () => this._resetAllConfigParameters(progressButton),
@@ -519,19 +519,19 @@ class ZWaveJSNodeConfig extends LitElement {
 
   private async _resetAllConfigParameters(progressButton: HaProgressButton) {
     this._resetDialogProgress = true;
-    fireEvent(this, "hass-notification", {
-      message: this.hass.localize(
+    fireEvent(this, "menuai-notification", {
+      message: this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.reset_to_default.dialog.text_loading"
       ),
     });
 
     try {
-      const device = this.hass.devices[this.deviceId];
+      const device = this.menuai.devices[this.deviceId];
       if (!device) {
         throw new Error("device_not_found");
       }
       await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         device.id,
         0x70, // 0x70 is the command class for Configuration
         undefined,
@@ -540,8 +540,8 @@ class ZWaveJSNodeConfig extends LitElement {
         true
       );
 
-      fireEvent(this, "hass-notification", {
-        message: this.hass.localize(
+      fireEvent(this, "menuai-notification", {
+        message: this.menuai.localize(
           "ui.panel.config.zwave_js.node_config.reset_to_default.dialog.text_success"
         ),
       });
@@ -549,8 +549,8 @@ class ZWaveJSNodeConfig extends LitElement {
       await this._fetchData();
       progressButton.actionSuccess();
     } catch (_err: any) {
-      fireEvent(this, "hass-notification", {
-        message: this.hass.localize(
+      fireEvent(this, "menuai-notification", {
+        message: this.menuai.localize(
           "ui.panel.config.zwave_js.node_config.reset_to_default.dialog.text_error"
         ),
       });

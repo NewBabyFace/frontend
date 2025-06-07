@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { ConversationResult } from "./conversation";
 import type { SpeechMetadata } from "./stt";
 
@@ -302,14 +302,14 @@ export const processEvent = (
 };
 
 export const runDebugAssistPipeline = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callback: (run: PipelineRun) => void,
   options: PipelineRunOptions
 ) => {
   let run: PipelineRun | undefined;
 
   const unsubProm = runAssistPipeline(
-    hass,
+    menuai,
     (updateEvent) => {
       run = processEvent(run, updateEvent, options);
 
@@ -328,20 +328,20 @@ export const runDebugAssistPipeline = (
 };
 
 export const runAssistPipeline = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callback: (event: PipelineRunEvent) => void,
   options: PipelineRunOptions
 ) =>
-  hass.connection.subscribeMessage<PipelineRunEvent>(callback, {
+  menuai.connection.subscribeMessage<PipelineRunEvent>(callback, {
     ...options,
     type: "assist_pipeline/run",
   });
 
 export const listAssistPipelineRuns = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pipeline_id: string
 ) =>
-  hass.callWS<{
+  menuai.callWS<{
     pipeline_runs: AssistRunListing[];
   }>({
     type: "assist_pipeline/pipeline_debug/list",
@@ -349,11 +349,11 @@ export const listAssistPipelineRuns = (
   });
 
 export const getAssistPipelineRun = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pipeline_id: string,
   pipeline_run_id: string
 ) =>
-  hass.callWS<{
+  menuai.callWS<{
     events: PipelineRunEvent[];
   }>({
     type: "assist_pipeline/pipeline_debug/get",
@@ -361,61 +361,61 @@ export const getAssistPipelineRun = (
     pipeline_run_id,
   });
 
-export const listAssistPipelines = (hass: HomeAssistant) =>
-  hass.callWS<{
+export const listAssistPipelines = (menuai: menuai) =>
+  menuai.callWS<{
     pipelines: AssistPipeline[];
     preferred_pipeline: string | null;
   }>({
     type: "assist_pipeline/pipeline/list",
   });
 
-export const getAssistPipeline = (hass: HomeAssistant, pipeline_id?: string) =>
-  hass.callWS<AssistPipeline>({
+export const getAssistPipeline = (menuai: menuai, pipeline_id?: string) =>
+  menuai.callWS<AssistPipeline>({
     type: "assist_pipeline/pipeline/get",
     pipeline_id,
   });
 
 export const createAssistPipeline = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pipeline: AssistPipelineMutableParams
 ) =>
-  hass.callWS<AssistPipeline>({
+  menuai.callWS<AssistPipeline>({
     type: "assist_pipeline/pipeline/create",
     ...pipeline,
   });
 
 export const updateAssistPipeline = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pipeline_id: string,
   pipeline: AssistPipelineMutableParams
 ) =>
-  hass.callWS<AssistPipeline>({
+  menuai.callWS<AssistPipeline>({
     type: "assist_pipeline/pipeline/update",
     pipeline_id,
     ...pipeline,
   });
 
 export const setAssistPipelinePreferred = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pipeline_id: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "assist_pipeline/pipeline/set_preferred",
     pipeline_id,
   });
 
-export const deleteAssistPipeline = (hass: HomeAssistant, pipelineId: string) =>
-  hass.callWS<undefined>({
+export const deleteAssistPipeline = (menuai: menuai, pipelineId: string) =>
+  menuai.callWS<undefined>({
     type: "assist_pipeline/pipeline/delete",
     pipeline_id: pipelineId,
   });
 
-export const fetchAssistPipelineLanguages = (hass: HomeAssistant) =>
-  hass.callWS<{ languages: string[] }>({
+export const fetcmenuaiistPipelineLanguages = (menuai: menuai) =>
+  menuai.callWS<{ languages: string[] }>({
     type: "assist_pipeline/language/list",
   });
 
-export const listAssistDevices = (hass: HomeAssistant) =>
-  hass.callWS<AssistDevice[]>({
+export const listAssistDevices = (menuai: menuai) =>
+  menuai.callWS<AssistDevice[]>({
     type: "assist_pipeline/device/list",
   });

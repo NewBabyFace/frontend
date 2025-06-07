@@ -1,4 +1,4 @@
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import {
   BINARY_STATE_OFF,
   BINARY_STATE_ON,
@@ -9,7 +9,7 @@ import { computeStateDomain } from "../common/entity/compute_state_domain";
 import { autoCaseNoun } from "../common/translations/auto_case_noun";
 import type { LocalizeFunc } from "../common/translations/localize";
 import type { HaEntityPickerEntityFilterFunc } from "../components/entity/ha-entity-picker";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { UNAVAILABLE, UNKNOWN } from "./entity";
 
 const LOGBOOK_LOCALIZE_PATH = "ui.components.logbook.messages";
@@ -48,7 +48,7 @@ export interface LogbookEntry {
 
 //
 // Localization mapping for all the triggers in core
-// in homeassistant.components.homeassistant.triggers
+// in menuai.components.menuai.triggers
 //
 type TriggerPhraseKeys =
   | "triggered_by_numeric_state_of"
@@ -56,8 +56,8 @@ type TriggerPhraseKeys =
   | "triggered_by_event"
   | "triggered_by_time"
   | "triggered_by_time_pattern"
-  | "triggered_by_homeassistant_stopping"
-  | "triggered_by_homeassistant_starting";
+  | "triggered_by_menuai_stopping"
+  | "triggered_by_menuai_starting";
 
 const triggerPhrases: Record<TriggerPhraseKeys, string> = {
   triggered_by_numeric_state_of: "numeric state of", // number state trigger
@@ -65,19 +65,19 @@ const triggerPhrases: Record<TriggerPhraseKeys, string> = {
   triggered_by_event: "event", // event trigger
   triggered_by_time_pattern: "time pattern", // time trigger
   triggered_by_time: "time", // time trigger
-  triggered_by_homeassistant_stopping: "Home Assistant stopping", // stop event
-  triggered_by_homeassistant_starting: "Home Assistant starting", // start event
+  triggered_by_menuai_stopping: "MenuAI stopping", // stop event
+  triggered_by_menuai_starting: "MenuAI starting", // start event
 };
 
 export const getLogbookDataForContext = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   startDate: string,
   contextId?: string
 ): Promise<LogbookEntry[]> =>
-  getLogbookDataFromServer(hass, startDate, undefined, undefined, contextId);
+  getLogbookDataFromServer(menuai, startDate, undefined, undefined, contextId);
 
 const getLogbookDataFromServer = (
-  hass: HomeAssistant,
+  menuai: menuai,
   startDate: string,
   endDate?: string,
   entityIds?: string[],
@@ -109,11 +109,11 @@ const getLogbookDataFromServer = (
   if (contextId) {
     params.context_id = contextId;
   }
-  return hass.callWS<LogbookEntry[]>(params);
+  return menuai.callWS<LogbookEntry[]>(params);
 };
 
 export const subscribeLogbook = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callbackFunction: (message: LogbookStreamMessage) => void,
   startDate: string,
   endDate: string,
@@ -139,16 +139,16 @@ export const subscribeLogbook = (
   if (deviceIds?.length) {
     params.device_ids = deviceIds;
   }
-  return hass.connection.subscribeMessage<LogbookStreamMessage>(
+  return menuai.connection.subscribeMessage<LogbookStreamMessage>(
     (message) => callbackFunction(message),
     params
   );
 };
 
 export const createHistoricState = (
-  currentStateObj: HassEntity,
+  currentStateObj: menuaiEntity,
   state?: string
-): HassEntity =>
+): menuaiEntity =>
   ({
     entity_id: currentStateObj.entity_id,
     state: state,
@@ -171,7 +171,7 @@ export const createHistoricState = (
         ? undefined
         : currentStateObj?.attributes.entity_picture,
     },
-  }) as unknown as HassEntity;
+  }) as unknown as menuaiEntity;
 
 export const localizeTriggerSource = (
   localize: LocalizeFunc,
@@ -192,10 +192,10 @@ export const localizeTriggerSource = (
 };
 
 export const localizeStateMessage = (
-  hass: HomeAssistant,
+  menuai: menuai,
   localize: LocalizeFunc,
   state: string,
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   domain: string
 ): string => {
   switch (domain) {
@@ -228,7 +228,7 @@ export const localizeStateMessage = (
                 localize(
                   `component.binary_sensor.entity_component.${device_class}.name`
                 ) || device_class,
-                hass.language
+                menuai.language
               ),
             }
           ) ||
@@ -240,7 +240,7 @@ export const localizeStateMessage = (
                 localize(
                   `component.binary_sensor.entity_component.${device_class}.name`
                 ) || device_class,
-                hass.language
+                menuai.language
               ),
             }
           )
@@ -268,7 +268,7 @@ export const localizeStateMessage = (
 
       // TODO: This is not working yet, as we don't get historic attribute values
 
-      const event_type = hass
+      const event_type = menuai
         .formatEntityAttributeValue(stateObj, "event_type")
         ?.toString();
 
@@ -277,7 +277,7 @@ export const localizeStateMessage = (
       }
 
       return localize(`${LOGBOOK_LOCALIZE_PATH}.detected_event`, {
-        event_type: autoCaseNoun(event_type, hass.language),
+        event_type: autoCaseNoun(event_type, menuai.language),
       });
     }
 
@@ -317,8 +317,8 @@ export const localizeStateMessage = (
     return localize(`${LOGBOOK_LOCALIZE_PATH}.became_unavailable`);
   }
 
-  return hass.localize(`${LOGBOOK_LOCALIZE_PATH}.changed_to_state`, {
-    state: stateObj ? hass.formatEntityState(stateObj, state) : state,
+  return menuai.localize(`${LOGBOOK_LOCALIZE_PATH}.changed_to_state`, {
+    state: stateObj ? menuai.formatEntityState(stateObj, state) : state,
   });
 };
 

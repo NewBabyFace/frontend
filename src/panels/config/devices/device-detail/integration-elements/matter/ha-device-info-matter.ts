@@ -7,11 +7,11 @@ import type { MatterNodeDiagnostics } from "../../../../../../data/matter";
 import { getMatterNodeDiagnostics } from "../../../../../../data/matter";
 import { SubscribeMixin } from "../../../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 
 @customElement("ha-device-info-matter")
 export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -36,7 +36,7 @@ export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
 
     try {
       this._nodeDiagnostics = await getMatterNodeDiagnostics(
-        this.hass,
+        this.menuai,
         this.device.id
       );
     } catch (_err: any) {
@@ -50,13 +50,13 @@ export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
     }
     return html`
       <ha-expansion-panel
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.matter.device_info.device_info"
         )}
       >
         <div class="row">
           <span class="name"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.matter.device_info.node_id"
             )}:</span
           >
@@ -64,24 +64,24 @@ export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
         </div>
         <div class="row">
           <span class="name"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.matter.device_info.network_type"
             )}:</span
           >
           <span class="value"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               `ui.panel.config.matter.network_type.${this._nodeDiagnostics.network_type}`
             )}</span
           >
         </div>
         <div class="row">
           <span class="name"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.matter.device_info.node_type"
             )}:</span
           >
           <span class="value"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               `ui.panel.config.matter.node_type.${this._nodeDiagnostics.node_type}`
             )}</span
           >
@@ -90,7 +90,7 @@ export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
           ? html`
               <div class="row">
                 <span class="name"
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.matter.device_info.network_name"
                   )}:</span
                 >
@@ -102,7 +102,7 @@ export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
           ? html`
               <div class="row">
                 <span class="name"
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.matter.device_info.mac_address"
                   )}:</span
                 >
@@ -113,7 +113,7 @@ export class HaDeviceInfoMatter extends SubscribeMixin(LitElement) {
 
         <div class="row">
           <span class="name"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.matter.device_info.ip_adresses"
             )}:</span
           >

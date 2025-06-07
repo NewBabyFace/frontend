@@ -3,7 +3,7 @@ import type { TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 import "./ha-outlined-text-field";
 import type { HaOutlinedTextField } from "./ha-outlined-text-field";
@@ -11,7 +11,7 @@ import "./ha-svg-icon";
 
 @customElement("search-input-outlined")
 class SearchInputOutlined extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public filter?: string;
 
@@ -35,12 +35,12 @@ class SearchInputOutlined extends LitElement {
 
   protected render(): TemplateResult {
     const placeholder =
-      this.placeholder || this.hass.localize("ui.common.search");
+      this.placeholder || this.menuai.localize("ui.common.search");
 
     return html`
       <ha-outlined-text-field
         .autofocus=${this.autofocus}
-        .aria-label=${this.label || this.hass.localize("ui.common.search")}
+        .aria-label=${this.label || this.menuai.localize("ui.common.search")}
         .placeholder=${placeholder}
         .value=${this.filter || ""}
         icon

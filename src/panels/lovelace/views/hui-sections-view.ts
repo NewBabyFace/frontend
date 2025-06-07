@@ -23,7 +23,7 @@ import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
 import type { LovelaceSectionConfig } from "../../../data/lovelace/config/section";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiBadge } from "../badges/hui-badge";
 import "./hui-view-header";
 import type { HuiCard } from "../cards/hui-card";
@@ -51,7 +51,7 @@ const parsePx = (value: string) => parseInt(value.replace("px", ""));
 
 @customElement("hui-sections-view")
 export class SectionsView extends LitElement implements LovelaceViewElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -160,7 +160,7 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
         })}"
       >
         <hui-view-header
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .badges=${this.badges}
           .lovelace=${this.lovelace}
           .viewIndex=${this.index}
@@ -217,7 +217,7 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
                                         .path=${mdiDrag}
                                       ></ha-svg-icon>
                                       <ha-icon-button
-                                        .label=${this.hass.localize(
+                                        .label=${this.menuai.localize(
                                           "ui.common.edit"
                                         )}
                                         @click=${this._editSection}
@@ -225,7 +225,7 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
                                         .path=${mdiPencil}
                                       ></ha-icon-button>
                                       <ha-icon-button
-                                        .label=${this.hass.localize(
+                                        .label=${this.menuai.localize(
                                           "ui.common.delete"
                                         )}
                                         @click=${this._deleteSection}
@@ -256,7 +256,7 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
                     <div class="create-section-container">
                       <div class="drop-helper" aria-hidden="true">
                         <p>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.lovelace.editor.section.drop_card_create_section"
                           )}
                         </p>
@@ -264,10 +264,10 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
                       <button
                         class="create-section"
                         @click=${this._createSection}
-                        aria-label=${this.hass.localize(
+                        aria-label=${this.menuai.localize(
                           "ui.panel.lovelace.editor.section.create_section"
                         )}
-                        .title=${this.hass.localize(
+                        .title=${this.menuai.localize(
                           "ui.panel.lovelace.editor.section.create_section"
                         )}
                       >
@@ -284,19 +284,19 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
                     <div class="imported-card-header">
                       <p class="title">
                         <ha-svg-icon .path=${mdiEyeOff}></ha-svg-icon>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.lovelace.editor.section.imported_cards_title"
                         )}
                       </p>
                       <p class="subtitle">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.lovelace.editor.section.imported_cards_description"
                         )}
                       </p>
                     </div>
                     <hui-section
                       .lovelace=${this.lovelace}
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .config=${this._importedCardSectionConfig(
                         this._config.cards
                       )}
@@ -320,7 +320,7 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
         ? [
             {
               type: "heading",
-              heading: this.hass!.localize(
+              heading: this.menuai!.localize(
                 "ui.panel.lovelace.editor.section.default_section_title"
               ),
             },
@@ -399,13 +399,13 @@ export class SectionsView extends LitElement implements LovelaceViewElement {
 
     if (cardCount) {
       const confirm = await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.lovelace.editor.delete_section.title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           `ui.panel.lovelace.editor.delete_section.text`
         ),
-        confirmText: this.hass.localize("ui.common.delete"),
+        confirmText: this.menuai.localize("ui.common.delete"),
         destructive: true,
       });
 

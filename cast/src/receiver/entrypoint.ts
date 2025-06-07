@@ -1,6 +1,6 @@
 import { framework } from "./cast_framework";
 import { CAST_NS } from "../../../src/cast/const";
-import type { HassMessage } from "../../../src/cast/receiver_messages";
+import type { menuaiMessage } from "../../../src/cast/receiver_messages";
 import "../../../src/resources/custom-card-support";
 import { castContext } from "./cast_context";
 import { HcMain } from "./layout/hc-main";
@@ -95,7 +95,7 @@ options.customNamespaces = {
 castContext.addCustomMessageListener(
   CAST_NS,
   // @ts-ignore
-  (ev: ReceivedMessage<HassMessage>) => {
+  (ev: ReceivedMessage<menuaiMessage>) => {
     // We received a show Lovelace command, stop media from playing, hide media player and show Lovelace controller
     if (
       playerManager.getPlayerState() !== framework.messages.PlayerState.IDLE

@@ -20,7 +20,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { Condition } from "../../common/validate-condition";
 import type { EntityHeadingBadgeConfig } from "../../heading-badges/types";
 import type { LovelaceGenericElementEditor } from "../../types";
@@ -58,7 +58,7 @@ export class HuiHeadingEntityEditor
   extends LitElement
   implements LovelaceGenericElementEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public preview = false;
 
@@ -186,11 +186,11 @@ export class HuiHeadingEntityEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
 
     const data: FormData = {
       ...this._config,
@@ -200,7 +200,7 @@ export class HuiHeadingEntityEditor
     const conditions = this._config.visibility ?? [];
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -210,18 +210,18 @@ export class HuiHeadingEntityEditor
       <ha-expansion-panel outlined>
         <ha-svg-icon slot="leading-icon" .path=${mdiEye}></ha-svg-icon>
         <h3 slot="header">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.heading.entity_config.visibility"
           )}
         </h3>
         <div class="content">
           <p class="intro">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.lovelace.editor.card.heading.entity_config.visibility_explanation"
             )}
           </p>
           <ha-card-conditions-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .conditions=${conditions}
             @value-changed=${this._conditionChanged}
           >
@@ -233,7 +233,7 @@ export class HuiHeadingEntityEditor
 
   private _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -250,7 +250,7 @@ export class HuiHeadingEntityEditor
 
   private _conditionChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -274,11 +274,11 @@ export class HuiHeadingEntityEditor
       case "state_content":
       case "displayed_elements":
       case "color":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.heading.entity_config.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }
@@ -289,11 +289,11 @@ export class HuiHeadingEntityEditor
   ) => {
     switch (schema.name) {
       case "color":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.heading.entity_config.${schema.name}_helper`
         );
       case "name":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.heading.entity_config.name_helper`
         );
       default:

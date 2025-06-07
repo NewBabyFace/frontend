@@ -8,38 +8,38 @@ import {
   extractSearchParamsObject,
 } from "../../src/common/url/search-params";
 import type { Supervisor } from "../../src/data/supervisor/supervisor";
-import "../../src/layouts/hass-error-screen";
+import "../../src/layouts/menuai-error-screen";
 import type {
   ParamType,
   Redirect,
   Redirects,
 } from "../../src/panels/my/ha-panel-my";
-import type { HomeAssistant, Route } from "../../src/types";
+import type { menuai, Route } from "../../src/types";
 
 export const REDIRECTS: Redirects = {
   supervisor: {
-    redirect: "/hassio/dashboard",
+    redirect: "/menuaiio/dashboard",
   },
   supervisor_logs: {
-    redirect: "/hassio/system",
+    redirect: "/menuaiio/system",
   },
   supervisor_info: {
-    redirect: "/hassio/system",
+    redirect: "/menuaiio/system",
   },
   supervisor_snapshots: {
-    redirect: "/hassio/backups",
+    redirect: "/menuaiio/backups",
   },
   supervisor_backups: {
-    redirect: "/hassio/backups",
+    redirect: "/menuaiio/backups",
   },
   supervisor_store: {
-    redirect: "/hassio/store",
+    redirect: "/menuaiio/store",
   },
   supervisor_addons: {
-    redirect: "/hassio/dashboard",
+    redirect: "/menuaiio/dashboard",
   },
   supervisor_addon: {
-    redirect: "/hassio/addon",
+    redirect: "/menuaiio/addon",
     params: {
       addon: "string",
     },
@@ -48,22 +48,22 @@ export const REDIRECTS: Redirects = {
     },
   },
   supervisor_ingress: {
-    redirect: "/hassio/ingress",
+    redirect: "/menuaiio/ingress",
     params: {
       addon: "string",
     },
   },
   supervisor_add_addon_repository: {
-    redirect: "/hassio/store",
+    redirect: "/menuaiio/store",
     params: {
       repository_url: "url",
     },
   },
 };
 
-@customElement("hassio-my-redirect")
-class HassioMyRedirect extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-my-redirect")
+class menuaiioMyRedirect extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -102,9 +102,9 @@ class HassioMyRedirect extends LitElement {
 
   protected render() {
     if (this._error) {
-      return html`<hass-error-screen
+      return html`<menuai-error-screen
         .error=${this._error}
-      ></hass-error-screen>`;
+      ></menuai-error-screen>`;
     }
     return nothing;
   }
@@ -150,6 +150,6 @@ class HassioMyRedirect extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-my-redirect": HassioMyRedirect;
+    "menuaiio-my-redirect": menuaiioMyRedirect;
   }
 }

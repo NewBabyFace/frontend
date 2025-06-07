@@ -8,12 +8,12 @@ import "../../../../../components/ha-spinner";
 import { createCloseHeading } from "../../../../../components/ha-dialog";
 import { interviewMatterNode } from "../../../../../data/matter";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { MatterReinterviewNodeDialogParams } from "./show-dialog-matter-reinterview-node";
 
 @customElement("dialog-matter-reinterview-node")
 class DialogMatterReinterviewNode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device_id?: string;
 
@@ -35,26 +35,26 @@ class DialogMatterReinterviewNode extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.matter.reinterview_node.title")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.matter.reinterview_node.title")
         )}
       >
         ${!this._status
           ? html`
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.matter.reinterview_node.introduction"
                 )}
               </p>
               <p>
                 <em>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.matter.reinterview_node.battery_device_warning"
                   )}
                 </em>
               </p>
               <mwc-button slot="primaryAction" @click=${this._startReinterview}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.matter.reinterview_node.start_reinterview"
                 )}
               </mwc-button>
@@ -66,20 +66,20 @@ class DialogMatterReinterviewNode extends LitElement {
                   <div class="status">
                     <p>
                       <b>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.matter.reinterview_node.in_progress"
                         )}
                       </b>
                     </p>
                     <p>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.matter.reinterview_node.run_in_background"
                       )}
                     </p>
                   </div>
                 </div>
                 <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                  ${this.hass.localize("ui.common.close")}
+                  ${this.menuai.localize("ui.common.close")}
                 </mwc-button>
               `
             : this._status === "failed"
@@ -91,14 +91,14 @@ class DialogMatterReinterviewNode extends LitElement {
                     ></ha-svg-icon>
                     <div class="status">
                       <p>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.matter.reinterview_node.interview_failed"
                         )}
                       </p>
                     </div>
                   </div>
                   <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                    ${this.hass.localize("ui.common.close")}
+                    ${this.menuai.localize("ui.common.close")}
                   </mwc-button>
                 `
               : this._status === "finished"
@@ -110,14 +110,14 @@ class DialogMatterReinterviewNode extends LitElement {
                       ></ha-svg-icon>
                       <div class="status">
                         <p>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.matter.reinterview_node.interview_complete"
                           )}
                         </p>
                       </div>
                     </div>
                     <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                      ${this.hass.localize("ui.common.close")}
+                      ${this.menuai.localize("ui.common.close")}
                     </mwc-button>
                   `
                 : nothing}
@@ -126,12 +126,12 @@ class DialogMatterReinterviewNode extends LitElement {
   }
 
   private async _startReinterview(): Promise<void> {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._status = "started";
     try {
-      await interviewMatterNode(this.hass, this.device_id!);
+      await interviewMatterNode(this.menuai, this.device_id!);
       this._status = "finished";
     } catch (_err) {
       this._status = "failed";

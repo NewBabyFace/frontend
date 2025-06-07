@@ -4,11 +4,11 @@ import { ReactiveElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { relativeTime } from "../common/datetime/relative_time";
 import { capitalizeFirstLetter } from "../common/string/capitalize-first-letter";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-relative-time")
 class HaRelativeTime extends ReactiveElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public datetime?: string | Date;
 
@@ -58,14 +58,14 @@ class HaRelativeTime extends ReactiveElement {
 
   private _updateRelative(): void {
     if (!this.datetime) {
-      this.innerHTML = this.hass.localize("ui.components.relative_time.never");
+      this.innerHTML = this.menuai.localize("ui.components.relative_time.never");
     } else {
       const date =
         typeof this.datetime === "string"
           ? parseISO(this.datetime)
           : this.datetime;
 
-      const relTime = relativeTime(date, this.hass.locale);
+      const relTime = relativeTime(date, this.menuai.locale);
       this.innerHTML = this.capitalize
         ? capitalizeFirstLetter(relTime)
         : relTime;

@@ -7,11 +7,11 @@ import "../../components/ha-settings-row";
 import "../../components/ha-switch";
 import type { CoreFrontendUserData } from "../../data/frontend";
 import { saveFrontendUserData } from "../../data/frontend";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-advanced-mode-row")
 class AdvancedModeRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -26,15 +26,15 @@ class AdvancedModeRow extends LitElement {
         : nothing}
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.advanced_mode.title")}
+          ${this.menuai.localize("ui.panel.profile.advanced_mode.title")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.advanced_mode.description")}
+          ${this.menuai.localize("ui.panel.profile.advanced_mode.description")}
           <a
             href="https://www.home-assistant.io/blog/2019/07/17/release-96/#advanced-mode"
             target="_blank"
             rel="noreferrer"
-            >${this.hass.localize("ui.panel.profile.advanced_mode.link_promo")}
+            >${this.menuai.localize("ui.panel.profile.advanced_mode.link_promo")}
           </a>
         </span>
         <ha-switch
@@ -48,7 +48,7 @@ class AdvancedModeRow extends LitElement {
 
   private async _advancedToggled(ev) {
     try {
-      saveFrontendUserData(this.hass.connection, "core", {
+      saveFrontendUserData(this.menuai.connection, "core", {
         ...this.coreUserData,
         showAdvanced: ev.currentTarget.checked,
       });

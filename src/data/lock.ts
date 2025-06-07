@@ -1,22 +1,22 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { getExtendedEntityRegistryEntry } from "./entity_registry";
 import { showEnterCodeDialog } from "../dialogs/enter-code/show-enter-code-dialog";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { UNAVAILABLE } from "./entity";
 
 export const enum LockEntityFeature {
   OPEN = 1,
 }
 
-interface LockEntityAttributes extends HassEntityAttributeBase {
+interface LockEntityAttributes extends menuaiEntityAttributeBase {
   code_format?: string;
   changed_by?: string | null;
 }
 
-export interface LockEntity extends HassEntityBase {
+export interface LockEntity extends menuaiEntityBase {
   attributes: LockEntityAttributes;
 }
 
@@ -80,13 +80,13 @@ export function canUnlock(stateObj: LockEntity) {
 
 export const callProtectedLockService = async (
   element: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   stateObj: LockEntity,
   service: ProtectedLockService
 ) => {
   let code: string | undefined;
   const lockRegistryEntry = await getExtendedEntityRegistryEntry(
-    hass,
+    menuai,
     stateObj.entity_id
   ).catch(() => undefined);
   const defaultCode = lockRegistryEntry?.options?.lock?.default_code;
@@ -95,8 +95,8 @@ export const callProtectedLockService = async (
     const response = await showEnterCodeDialog(element, {
       codeFormat: "text",
       codePattern: stateObj!.attributes.code_format,
-      title: hass.localize(`ui.card.lock.${service}`),
-      submitText: hass.localize(`ui.card.lock.${service}`),
+      title: menuai.localize(`ui.card.lock.${service}`),
+      submitText: menuai.localize(`ui.card.lock.${service}`),
     });
     if (response == null) {
       throw new Error("Code dialog closed");
@@ -104,7 +104,7 @@ export const callProtectedLockService = async (
     code = response;
   }
 
-  await hass.callService("lock", service, {
+  await menuai.callService("lock", service, {
     entity_id: stateObj!.entity_id,
     code,
   });

@@ -31,7 +31,7 @@ import {
 } from "../../../../data/energy";
 import { calculateStatisticsSumGrowth } from "../../../../data/recorder";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyDistributionCardConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -43,7 +43,7 @@ class HuiEnergyDistrubutionCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyDistributionCardConfig;
 
@@ -51,15 +51,15 @@ class HuiEnergyDistrubutionCard
 
   @state() private _animate = true;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
   public setConfig(config: EnergyDistributionCardConfig): void {
     this._config = config;
   }
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -75,10 +75,10 @@ class HuiEnergyDistrubutionCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass") ||
+      !changedProps.has("menuai") ||
       (!!this._data?.co2SignalEntity &&
-        this.hass.states[this._data.co2SignalEntity] !==
-          changedProps.get("hass").states[this._data.co2SignalEntity])
+        this.menuai.states[this._data.co2SignalEntity] !==
+          changedProps.get("menuai").states[this._data.co2SignalEntity])
     );
   }
 
@@ -94,7 +94,7 @@ class HuiEnergyDistrubutionCard
     }
 
     if (!this._data) {
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.panel.lovelace.cards.energy.loading"
       )}`;
     }
@@ -105,7 +105,7 @@ class HuiEnergyDistrubutionCard
     // The strategy only includes this card if we have a grid.
     const hasConsumption = true;
 
-    const hasSolarProduction = types.solar !== undefined;
+    const menuaiolarProduction = types.solar !== undefined;
     const hasBattery = types.battery !== undefined;
     const hasGas = types.gas !== undefined;
     const hasWater = types.water !== undefined;
@@ -139,7 +139,7 @@ class HuiEnergyDistrubutionCard
 
     let totalSolarProduction: number | null = null;
 
-    if (hasSolarProduction) {
+    if (menuaiolarProduction) {
       totalSolarProduction = summedData.total.solar ?? 0;
     }
 
@@ -158,7 +158,7 @@ class HuiEnergyDistrubutionCard
     }
 
     let solarConsumption: number | null = null;
-    if (hasSolarProduction) {
+    if (menuaiolarProduction) {
       solarConsumption = consumption.total.used_solar;
     }
     let batteryFromGrid: null | number = null;
@@ -170,10 +170,10 @@ class HuiEnergyDistrubutionCard
 
     let solarToBattery: null | number = null;
     let solarToGrid: null | number = null;
-    if (hasSolarProduction) {
+    if (menuaiolarProduction) {
       solarToGrid = consumption.total.solar_to_grid;
     }
-    if (hasSolarProduction && hasBattery) {
+    if (menuaiolarProduction && hasBattery) {
       solarToBattery = consumption.total.solar_to_battery;
     }
 
@@ -187,7 +187,7 @@ class HuiEnergyDistrubutionCard
     const totalHomeConsumption = Math.max(0, consumption.total.used_total);
 
     let homeSolarCircumference: number | undefined;
-    if (hasSolarProduction) {
+    if (menuaiolarProduction) {
       homeSolarCircumference =
         CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
     }
@@ -212,7 +212,7 @@ class HuiEnergyDistrubutionCard
         this._data.fossilEnergyConsumption
       ).reduce((sum, a) => sum + a, 0);
 
-      const co2State = this.hass.states[this._data.co2SignalEntity];
+      const co2State = this.menuai.states[this._data.co2SignalEntity];
 
       if (co2State?.attributes.country_code) {
         electricityMapUrl += `/zone/${co2State.attributes.country_code}`;
@@ -254,7 +254,7 @@ class HuiEnergyDistrubutionCard
       <ha-card .header=${this._config.title}>
         <div class="card-content">
           ${lowCarbonEnergy !== undefined ||
-          hasSolarProduction ||
+          menuaiolarProduction ||
           hasGas ||
           hasWater
             ? html`<div class="row">
@@ -262,7 +262,7 @@ class HuiEnergyDistrubutionCard
                   ? html`<div class="spacer"></div>`
                   : html`<div class="circle-container low-carbon">
                       <span class="label"
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.panel.lovelace.cards.energy.energy_distribution.low_carbon"
                         )}</span
                       >
@@ -274,7 +274,7 @@ class HuiEnergyDistrubutionCard
                       >
                         <ha-svg-icon .path=${mdiLeaf}></ha-svg-icon>
                         ${formatConsumptionShort(
-                          this.hass,
+                          this.menuai,
                           lowCarbonEnergy,
                           "kWh"
                         )}
@@ -283,17 +283,17 @@ class HuiEnergyDistrubutionCard
                         <line x1="40" y1="0" x2="40" y2="30"></line>
                       </svg>
                     </div>`}
-                ${hasSolarProduction
+                ${menuaiolarProduction
                   ? html`<div class="circle-container solar">
                       <span class="label"
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.panel.lovelace.cards.energy.energy_distribution.solar"
                         )}</span
                       >
                       <div class="circle">
                         <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
                         ${formatConsumptionShort(
-                          this.hass,
+                          this.menuai,
                           totalSolarProduction,
                           "kWh"
                         )}
@@ -305,17 +305,17 @@ class HuiEnergyDistrubutionCard
                 ${hasGas
                   ? html`<div class="circle-container gas">
                       <span class="label"
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.panel.lovelace.cards.energy.energy_distribution.gas"
                         )}</span
                       >
                       <div class="circle">
                         <ha-svg-icon .path=${mdiFire}></ha-svg-icon>
                         ${formatConsumptionShort(
-                          this.hass,
+                          this.menuai,
                           gasUsage,
                           getEnergyGasUnit(
-                            this.hass,
+                            this.menuai,
                             prefs,
                             this._data.statsMetadata
                           )
@@ -343,16 +343,16 @@ class HuiEnergyDistrubutionCard
                   : hasWater
                     ? html`<div class="circle-container water">
                         <span class="label"
-                          >${this.hass.localize(
+                          >${this.menuai.localize(
                             "ui.panel.lovelace.cards.energy.energy_distribution.water"
                           )}</span
                         >
                         <div class="circle">
                           <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
                           ${formatConsumptionShort(
-                            this.hass,
+                            this.menuai,
                             waterUsage,
-                            getEnergyWaterUnit(this.hass)
+                            getEnergyWaterUnit(this.menuai)
                           )}
                         </div>
                         <svg width="80" height="30">
@@ -388,7 +388,7 @@ class HuiEnergyDistrubutionCard
                         .path=${mdiArrowLeft}
                       ></ha-svg-icon
                       >${formatConsumptionShort(
-                        this.hass,
+                        this.menuai,
                         returnedToGrid,
                         "kWh"
                       )}
@@ -401,14 +401,14 @@ class HuiEnergyDistrubutionCard
                         .path=${mdiArrowRight}
                       ></ha-svg-icon>`
                     : ""}${formatConsumptionShort(
-                    this.hass,
+                    this.menuai,
                     totalFromGrid,
                     "kWh"
                   )}
                 </span>
               </div>
               <span class="label"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.lovelace.cards.energy.energy_distribution.grid"
                 )}</span
               >
@@ -423,7 +423,7 @@ class HuiEnergyDistrubutionCard
               >
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
                 ${formatConsumptionShort(
-                  this.hass,
+                  this.menuai,
                   totalHomeConsumption,
                   "kWh"
                 )}
@@ -502,7 +502,7 @@ class HuiEnergyDistrubutionCard
               ${hasGas && hasWater
                 ? ""
                 : html`<span class="label"
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.lovelace.cards.energy.energy_distribution.home"
                     )}</span
                   >`}
@@ -521,7 +521,7 @@ class HuiEnergyDistrubutionCard
                             .path=${mdiArrowDown}
                           ></ha-svg-icon
                           >${formatConsumptionShort(
-                            this.hass,
+                            this.menuai,
                             totalBatteryIn,
                             "kWh"
                           )}
@@ -532,14 +532,14 @@ class HuiEnergyDistrubutionCard
                             .path=${mdiArrowUp}
                           ></ha-svg-icon
                           >${formatConsumptionShort(
-                            this.hass,
+                            this.menuai,
                             totalBatteryOut,
                             "kWh"
                           )}
                         </span>
                       </div>
                       <span class="label"
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.panel.lovelace.cards.energy.energy_distribution.battery"
                         )}</span
                       >
@@ -568,13 +568,13 @@ class HuiEnergyDistrubutionCard
                       <div class="circle">
                         <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
                         ${formatConsumptionShort(
-                          this.hass,
+                          this.menuai,
                           waterUsage,
-                          getEnergyWaterUnit(this.hass)
+                          getEnergyWaterUnit(this.menuai)
                         )}
                       </div>
                       <span class="label"
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.panel.lovelace.cards.energy.energy_distribution.water"
                         )}</span
                       >
@@ -592,7 +592,7 @@ class HuiEnergyDistrubutionCard
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid slice"
             >
-              ${hasReturnToGrid && hasSolarProduction
+              ${hasReturnToGrid && menuaiolarProduction
                 ? svg`<path
                     id="return"
                     class="return"
@@ -602,7 +602,7 @@ class HuiEnergyDistrubutionCard
                     vector-effect="non-scaling-stroke"
                   ></path> `
                 : ""}
-              ${hasSolarProduction
+              ${menuaiolarProduction
                 ? svg`<path
                     id="solar"
                     class="solar"
@@ -630,7 +630,7 @@ class HuiEnergyDistrubutionCard
                   ></path>
                   `
                 : ""}
-              ${hasBattery && hasSolarProduction
+              ${hasBattery && menuaiolarProduction
                 ? svg`<path
                     id="battery-solar"
                     class="battery-solar"
@@ -641,7 +641,7 @@ class HuiEnergyDistrubutionCard
               <path
                 class="grid"
                 id="grid"
-                d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
+                d="M0,${hasBattery ? 50 : menuaiolarProduction ? 56 : 53} H100"
                 vector-effect="non-scaling-stroke"
               ></path>
               ${solarToGrid && this._animate
@@ -758,7 +758,7 @@ class HuiEnergyDistrubutionCard
               <div class="card-actions">
                 <a href="/energy"
                   ><mwc-button>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard"
                     )}
                   </mwc-button></a

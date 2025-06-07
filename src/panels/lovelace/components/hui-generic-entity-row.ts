@@ -10,7 +10,7 @@ import { computeStateName } from "../../../common/entity/compute_state_name";
 import "../../../components/entity/state-badge";
 import "../../../components/ha-relative-time";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntitiesCardEntityConfig } from "../cards/types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
@@ -20,7 +20,7 @@ import { stopPropagation } from "../../../common/dom/stop_propagation";
 
 @customElement("hui-generic-entity-row")
 export class HuiGenericEntityRow extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public config?: EntitiesCardEntityConfig;
 
@@ -37,17 +37,17 @@ export class HuiGenericEntityRow extends LitElement {
   public catchInteraction?;
 
   protected render() {
-    if (!this.hass || !this.config) {
+    if (!this.menuai || !this.config) {
       return nothing;
     }
     const stateObj = this.config.entity
-      ? this.hass.states[this.config.entity]
+      ? this.menuai.states[this.config.entity]
       : undefined;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this.config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this.config.entity)}
         </hui-warning>
       `;
     }
@@ -58,7 +58,7 @@ export class HuiGenericEntityRow extends LitElement {
     // if the tap action is explicitly set to "none".
     const pointer = hasAnyAction(this.config);
 
-    const hasSecondary = this.secondaryText || this.config.secondary_info;
+    const menuaiecondary = this.secondaryText || this.config.secondary_info;
     const name = this.config.name ?? computeStateName(stateObj);
 
     return html`
@@ -76,7 +76,7 @@ export class HuiGenericEntityRow extends LitElement {
         )}
       >
         <state-badge
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${stateObj}
           .overrideIcon=${this.config.icon}
           .overrideImage=${this.config.image}
@@ -84,11 +84,11 @@ export class HuiGenericEntityRow extends LitElement {
         ></state-badge>
         ${!this.hideName
           ? html`<div
-              class="info ${classMap({ "text-content": !hasSecondary })}"
+              class="info ${classMap({ "text-content": !menuaiecondary })}"
               .title=${name}
             >
               ${this.config.name || computeStateName(stateObj)}
-              ${hasSecondary
+              ${menuaiecondary
                 ? html`
                     <div class="secondary">
                       ${this.secondaryText ||
@@ -97,7 +97,7 @@ export class HuiGenericEntityRow extends LitElement {
                         : this.config.secondary_info === "last-changed"
                           ? html`
                               <ha-relative-time
-                                .hass=${this.hass}
+                                .menuai=${this.menuai}
                                 .datetime=${stateObj.last_changed}
                                 capitalize
                               ></ha-relative-time>
@@ -105,7 +105,7 @@ export class HuiGenericEntityRow extends LitElement {
                           : this.config.secondary_info === "last-updated"
                             ? html`
                                 <ha-relative-time
-                                  .hass=${this.hass}
+                                  .menuai=${this.menuai}
                                   .datetime=${stateObj.last_updated}
                                   capitalize
                                 ></ha-relative-time>
@@ -114,26 +114,26 @@ export class HuiGenericEntityRow extends LitElement {
                               ? stateObj.attributes.last_triggered
                                 ? html`
                                     <ha-relative-time
-                                      .hass=${this.hass}
+                                      .menuai=${this.menuai}
                                       .datetime=${stateObj.attributes
                                         .last_triggered}
                                       capitalize
                                     ></ha-relative-time>
                                   `
-                                : this.hass.localize(
+                                : this.menuai.localize(
                                     "ui.panel.lovelace.cards.entities.never_triggered"
                                   )
                               : this.config.secondary_info === "position" &&
                                   stateObj.attributes.current_position !==
                                     undefined
-                                ? `${this.hass.localize(
+                                ? `${this.menuai.localize(
                                     "ui.card.cover.position"
                                   )}: ${stateObj.attributes.current_position}`
                                 : this.config.secondary_info ===
                                       "tilt-position" &&
                                     stateObj.attributes
                                       .current_tilt_position !== undefined
-                                  ? `${this.hass.localize(
+                                  ? `${this.menuai.localize(
                                       "ui.card.cover.tilt_position"
                                     )}: ${
                                       stateObj.attributes.current_tilt_position
@@ -179,7 +179,7 @@ export class HuiGenericEntityRow extends LitElement {
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this.config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this.config!, ev.detail.action!);
   }
 
   static styles = css`

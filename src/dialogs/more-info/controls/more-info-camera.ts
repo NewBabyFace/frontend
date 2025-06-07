@@ -2,7 +2,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { property, state } from "lit/decorators";
 import "../../../components/ha-camera-stream";
 import type { CameraEntity } from "../../../data/camera";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../../components/buttons/ha-progress-button";
 import { UNAVAILABLE } from "../../../data/entity";
 import { fileDownload } from "../../../util/file_download";
@@ -10,7 +10,7 @@ import { showToast } from "../../../util/toast";
 import { slugify } from "../../../common/string/slugify";
 
 class MoreInfoCamera extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: CameraEntity;
 
@@ -35,7 +35,7 @@ class MoreInfoCamera extends LitElement {
 
     return html`
       <ha-camera-stream
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         allow-exoplayer
         controls
@@ -47,7 +47,7 @@ class MoreInfoCamera extends LitElement {
           .progress=${this._waiting}
           .disabled=${this.stateObj.state === UNAVAILABLE}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.dialogs.more_info_control.camera.download_snapshot"
           )}
         </ha-progress-button>
@@ -60,7 +60,7 @@ class MoreInfoCamera extends LitElement {
     this._waiting = true;
 
     try {
-      const result: Response | undefined = await this.hass.callApiRaw(
+      const result: Response | undefined = await this.menuai.callApiRaw(
         "GET",
         `camera_proxy/${this.stateObj!.entity_id}`
       );
@@ -81,7 +81,7 @@ class MoreInfoCamera extends LitElement {
       this._waiting = false;
       button.actionError();
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.dialogs.more_info_control.camera.failed_to_download"
         ),
       });

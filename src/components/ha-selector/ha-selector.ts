@@ -8,7 +8,7 @@ import {
   handleLegacyDeviceSelector,
   handleLegacyEntitySelector,
 } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 const LOAD_ELEMENTS = {
   action: () => import("./ha-selector-action"),
@@ -67,7 +67,7 @@ const LEGACY_UI_SELECTORS = new Set(["ui-action", "ui-color"]);
 
 @customElement("ha-selector")
 export class HaSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -128,7 +128,7 @@ export class HaSelector extends LitElement {
   protected render() {
     return html`
       ${dynamicElement(`ha-selector-${this._type}`, {
-        hass: this.hass,
+        menuai: this.menuai,
         narrow: this.narrow,
         name: this.name,
         selector: this._handleLegacySelector(this.selector),

@@ -9,12 +9,12 @@ import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import type { NumericStateTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { ensureArray } from "../../../../../common/array/ensure-array";
 
 @customElement("ha-automation-trigger-numeric_state")
 export class HaNumericStateTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: NumericStateTrigger;
 
@@ -246,7 +246,7 @@ export class HaNumericStateTrigger extends LitElement {
       fireEvent(
         this,
         "ui-mode-not-available",
-        Error(this.hass.localize("ui.errors.config.no_template_editor_support"))
+        Error(this.menuai.localize("ui.errors.config.no_template_editor_support"))
       );
     }
   }
@@ -274,7 +274,7 @@ export class HaNumericStateTrigger extends LitElement {
 
   public render() {
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this.trigger.entity_id,
       this._inputAboveIsEntity,
       this._inputBelowIsEntity
@@ -288,7 +288,7 @@ export class HaNumericStateTrigger extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .disabled=${this.disabled}
@@ -320,17 +320,17 @@ export class HaNumericStateTrigger extends LitElement {
   ): string => {
     switch (schema.name) {
       case "entity_id":
-        return this.hass.localize("ui.components.entity.entity-picker.entity");
+        return this.menuai.localize("ui.components.entity.entity-picker.entity");
       case "attribute":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.components.entity.entity-attribute-picker.attribute"
         );
       case "for":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.automation.editor.triggers.type.state.for`
         );
       default:
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.automation.editor.triggers.type.numeric_state.${schema.name}`
         );
     }

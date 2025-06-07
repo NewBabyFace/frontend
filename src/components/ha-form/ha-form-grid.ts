@@ -8,11 +8,11 @@ import type {
   HaFormElement,
   HaFormSchema,
 } from "./types";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-form-grid")
 export class HaFormGrid extends LitElement implements HaFormElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data!: HaFormDataContainer;
 
@@ -57,7 +57,7 @@ export class HaFormGrid extends LitElement implements HaFormElement {
       ${this.schema.schema.map(
         (item) => html`
           <ha-form
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this.data}
             .schema=${[item]}
             .disabled=${this.disabled}

@@ -11,7 +11,7 @@ import { CoverEntityFeature } from "../../../data/cover";
 import { UNAVAILABLE } from "../../../data/entity";
 import { DOMAIN_ATTRIBUTES_UNITS } from "../../../data/entity_attributes";
 import { generateTiltSliderTrackBackgroundGradient } from "../../../state-control/cover/ha-state-control-cover-tilt-position";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -22,11 +22,11 @@ import type {
 const GRADIENT = generateTiltSliderTrackBackgroundGradient();
 
 export const supportsCoverTiltPositionCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -41,7 +41,7 @@ class HuiCoverTiltPositionCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -50,10 +50,10 @@ class HuiCoverTiltPositionCardFeature
   @state() private _config?: CoverTiltPositionCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as CoverEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as CoverEntity | undefined;
   }
 
   static getStubConfig(): CoverTiltPositionCardFeatureConfig {
@@ -72,10 +72,10 @@ class HuiCoverTiltPositionCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsCoverTiltPositionCardFeature(this.hass, this.context)
+      !supportsCoverTiltPositionCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -106,14 +106,14 @@ class HuiCoverTiltPositionCardFeature
         inverted
         @value-changed=${this._valueChanged}
         .ariaLabel=${computeAttributeNameDisplay(
-          this.hass.localize,
+          this.menuai.localize,
           this._stateObj,
-          this.hass.entities,
+          this.menuai.entities,
           "current_tilt_position"
         )}
         .disabled=${this._stateObj!.state === UNAVAILABLE}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.cover.current_tilt_position}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       >
         <div slot="background" class="gradient"></div
       ></ha-control-slider>
@@ -124,7 +124,7 @@ class HuiCoverTiltPositionCardFeature
     const value = (ev.detail as any).value;
     if (isNaN(value)) return;
 
-    this.hass!.callService("cover", "set_cover_tilt_position", {
+    this.menuai!.callService("cover", "set_cover_tilt_position", {
       entity_id: this._stateObj!.entity_id,
       tilt_position: value,
     });

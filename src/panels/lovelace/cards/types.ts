@@ -1,4 +1,4 @@
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 import type { HaDurationData } from "../../../components/ha-duration-input";
 import type { ActionConfig } from "../../../data/lovelace/config/action";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
@@ -313,7 +313,7 @@ export interface LogbookCardConfig extends LovelaceCardConfig {
    * @deprecated Use target instead
    */
   entities?: string[];
-  target: HassServiceTarget;
+  target: menuaiServiceTarget;
   title?: string;
   hours_to_show?: number;
   theme?: string;

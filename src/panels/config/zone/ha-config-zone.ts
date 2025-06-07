@@ -1,5 +1,5 @@
 import { mdiPencil, mdiPencilOff, mdiPlus } from "@mdi/js";
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues, TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
@@ -37,10 +37,10 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-tabs-subpage";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-tabs-subpage";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import "../ha-config-section";
 import { configSections } from "../ha-panel-config";
 import { showHomeZoneDetailDialog } from "./show-dialog-home-zone-detail";
@@ -48,7 +48,7 @@ import { showZoneDetailDialog } from "./show-dialog-zone-detail";
 
 @customElement("ha-config-zone")
 export class HaConfigZone extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -60,7 +60,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
 
   @state() private _storageItems?: Zone[];
 
-  @state() private _stateItems?: HassEntity[];
+  @state() private _stateItems?: menuaiEntity[];
 
   @state() private _activeEntry = "";
 
@@ -71,7 +71,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   private _regEntities: string[] = [];
 
   private _getZones = memoizeOne(
-    (storageItems: Zone[], stateItems: HassEntity[]): MarkerLocation[] => {
+    (storageItems: Zone[], stateItems: menuaiEntity[]): MarkerLocation[] => {
       const computedStyles = getComputedStyle(this);
       const zoneRadiusColor = computedStyles.getPropertyValue("--accent-color");
       const passiveRadiusColor = computedStyles.getPropertyValue(
@@ -110,9 +110,9 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
     }
   );
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeEntityRegistry(this.hass.connection!, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection!, (entities) => {
         this._regEntities = entities.map(
           (registryEntry) => registryEntry.entity_id
         );
@@ -123,21 +123,21 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
 
   protected render(): TemplateResult {
     if (
-      !this.hass ||
+      !this.menuai ||
       this._storageItems === undefined ||
       this._stateItems === undefined
     ) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
-    const hass = this.hass;
+    const menuai = this.menuai;
     const listBox =
       this._storageItems.length === 0 && this._stateItems.length === 0
         ? html`
             <div class="empty">
-              ${hass.localize("ui.panel.config.zone.no_zones_created_yet")}
+              ${menuai.localize("ui.panel.config.zone.no_zones_created_yet")}
               <br />
               <mwc-button @click=${this._createZone}>
-                ${hass.localize("ui.panel.config.zone.create_zone")}</mwc-button
+                ${menuai.localize("ui.panel.config.zone.create_zone")}</mwc-button
               >
             </div>
           `
@@ -164,7 +164,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
                               .entry=${entry}
                               @click=${this._openEditEntry}
                               .path=${mdiPencil}
-                              .label=${hass.localize(
+                              .label=${menuai.localize(
                                 "ui.panel.config.zone.edit_zone"
                               )}
                             ></ha-icon-button>
@@ -202,7 +202,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
                       : html`<ha-tooltip
                           slot="meta"
                           placement="left"
-                          .content=${hass.localize(
+                          .content=${menuai.localize(
                             "ui.panel.config.zone.configured_in_yaml"
                           )}
                           .disabled=${stateObject.entity_id === "zone.home"}
@@ -218,8 +218,8 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
                               ? mdiPencil
                               : mdiPencilOff}
                             .label=${stateObject.entity_id === "zone.home"
-                              ? hass.localize("ui.panel.config.zone.edit_home")
-                              : hass.localize("ui.panel.config.zone.edit_zone")}
+                              ? menuai.localize("ui.panel.config.zone.edit_home")
+                              : menuai.localize("ui.panel.config.zone.edit_zone")}
                             @click=${this._editHomeZone}
                           ></ha-icon-button>
                         </ha-tooltip>`}
@@ -230,8 +230,8 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
           `;
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .backPath=${this._searchParms.has("historyBack")
@@ -244,7 +244,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
           ? html`
               <ha-config-section .isWide=${this.isWide}>
                 <span slot="introduction">
-                  ${hass.localize("ui.panel.config.zone.introduction")}
+                  ${menuai.localize("ui.panel.config.zone.introduction")}
                 </span>
                 <ha-card outlined>${listBox}</ha-card>
               </ha-config-section>
@@ -254,7 +254,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
           ? html`
               <div class="flex">
                 <ha-locations-editor
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .locations=${this._getZones(
                     this._storageItems,
                     this._stateItems
@@ -269,21 +269,21 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
           : ""}
         <ha-fab
           slot="fab"
-          .label=${hass.localize("ui.panel.config.zone.create_zone")}
+          .label=${menuai.localize("ui.panel.config.zone.create_zone")}
           extended
           @click=${this._createZone}
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
     this._canEditCore =
-      Boolean(this.hass.user?.is_admin) &&
-      ["storage", "default"].includes(this.hass.config.config_source);
+      Boolean(this.menuai.user?.is_admin) &&
+      ["storage", "default"].includes(this.menuai.config.config_source);
     this._fetchData();
     if (this.route.path === "/new") {
       navigate("/config/zone", { replace: true });
@@ -310,26 +310,26 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
 
   public willUpdate(changedProps: PropertyValues) {
     super.updated(changedProps);
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    if (oldHass && this._stateItems) {
-      this._getStates(oldHass);
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    if (oldmenuai && this._stateItems) {
+      this._getStates(oldmenuai);
     }
   }
 
   private async _fetchData() {
-    this._storageItems = (await fetchZones(this.hass!)).sort((ent1, ent2) =>
-      stringCompare(ent1.name, ent2.name, this.hass!.locale.language)
+    this._storageItems = (await fetchZones(this.menuai!)).sort((ent1, ent2) =>
+      stringCompare(ent1.name, ent2.name, this.menuai!.locale.language)
     );
     this._getStates();
   }
 
-  private _getStates(oldHass?: HomeAssistant) {
+  private _getStates(oldmenuai?: menuai) {
     let changed = false;
-    const tempStates = Object.values(this.hass!.states).filter((entity) => {
+    const tempStates = Object.values(this.menuai!.states).filter((entity) => {
       if (computeStateDomain(entity) !== "zone") {
         return false;
       }
-      if (oldHass?.states[entity.entity_id] !== entity) {
+      if (oldmenuai?.states[entity.entity_id] !== entity) {
         changed = true;
       }
       if (this._regEntities.includes(entity.entity_id)) {
@@ -358,7 +358,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   private async _locationUpdated(ev: CustomEvent) {
     this._activeEntry = ev.detail.id;
     if (ev.detail.id === "zone.home" && this._canEditCore) {
-      await saveCoreConfig(this.hass, {
+      await saveCoreConfig(this.menuai, {
         latitude: ev.detail.location[0],
         longitude: ev.detail.location[1],
       });
@@ -377,7 +377,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   private async _radiusUpdated(ev: CustomEvent) {
     this._activeEntry = ev.detail.id;
     if (ev.detail.id === "zone.home" && this._canEditCore) {
-      await saveCoreConfig(this.hass, {
+      await saveCoreConfig(this.menuai, {
         radius: Math.round(ev.detail.radius),
       });
       return;
@@ -447,8 +447,8 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   private async _editHomeZone(ev) {
     if (ev.currentTarget.noEdit) {
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.zone.can_not_edit"),
-        text: this.hass.localize("ui.panel.config.zone.configured_in_yaml"),
+        title: this.menuai.localize("ui.panel.config.zone.can_not_edit"),
+        text: this.menuai.localize("ui.panel.config.zone.configured_in_yaml"),
       });
       return;
     }
@@ -458,10 +458,10 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   }
 
   private async _createEntry(values: ZoneMutableParams) {
-    const created = await createZone(this.hass!, values);
+    const created = await createZone(this.menuai!, values);
     this._storageItems = this._storageItems!.concat(created).sort(
       (ent1, ent2) =>
-        stringCompare(ent1.name, ent2.name, this.hass!.locale.language)
+        stringCompare(ent1.name, ent2.name, this.menuai!.locale.language)
     );
     if (this.narrow) {
       return;
@@ -473,7 +473,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   }
 
   private async _updateHomeZoneEntry(values: HomeZoneMutableParams) {
-    await saveCoreConfig(this.hass, {
+    await saveCoreConfig(this.menuai, {
       latitude: values.latitude,
       longitude: values.longitude,
       radius: values.radius,
@@ -486,7 +486,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
     values: Partial<ZoneMutableParams>,
     fitMap = false
   ) {
-    const updated = await updateZone(this.hass!, entry!.id, values);
+    const updated = await updateZone(this.menuai!, entry!.id, values);
     this._storageItems = this._storageItems!.map((ent) =>
       ent === entry ? updated : ent
     );
@@ -502,9 +502,9 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   private async _removeEntry(entry: Zone) {
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass!.localize("ui.panel.config.zone.confirm_delete"),
-        dismissText: this.hass!.localize("ui.common.cancel"),
-        confirmText: this.hass!.localize("ui.common.delete"),
+        title: this.menuai!.localize("ui.panel.config.zone.confirm_delete"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
+        confirmText: this.menuai!.localize("ui.common.delete"),
         destructive: true,
       }))
     ) {
@@ -512,7 +512,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
     }
 
     try {
-      await deleteZone(this.hass!, entry!.id);
+      await deleteZone(this.menuai!, entry!.id);
       this._storageItems = this._storageItems!.filter((ent) => ent !== entry);
       if (!this.narrow) {
         this._map?.fitMap();
@@ -535,7 +535,7 @@ export class HaConfigZone extends SubscribeMixin(LitElement) {
   }
 
   static styles = css`
-    hass-loading-screen {
+    menuai-loading-screen {
       --app-header-background-color: var(--sidebar-background-color);
       --app-header-text-color: var(--sidebar-text-color);
     }

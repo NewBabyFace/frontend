@@ -2,7 +2,7 @@ import type { Connection } from "home-assistant-js-websocket";
 import { createCollection } from "home-assistant-js-websocket";
 import type { Store } from "home-assistant-js-websocket/dist/store";
 import { stringCompare } from "../common/string/compare";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { debounce } from "../common/util/debounce";
 
 export interface CategoryRegistryEntry {
@@ -52,23 +52,23 @@ export const subscribeCategoryRegistry = (
   );
 
 export const createCategoryRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   scope: string,
   values: CategoryRegistryEntryMutableParams
 ) =>
-  hass.callWS<CategoryRegistryEntry>({
+  menuai.callWS<CategoryRegistryEntry>({
     type: "config/category_registry/create",
     scope,
     ...values,
   });
 
 export const updateCategoryRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   scope: string,
   category_id: string,
   updates: Partial<CategoryRegistryEntryMutableParams>
 ) =>
-  hass.callWS<CategoryRegistryEntry>({
+  menuai.callWS<CategoryRegistryEntry>({
     type: "config/category_registry/update",
     scope,
     category_id,
@@ -76,11 +76,11 @@ export const updateCategoryRegistryEntry = (
   });
 
 export const deleteCategoryRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   scope: string,
   category_id: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/category_registry/delete",
     scope,
     category_id,

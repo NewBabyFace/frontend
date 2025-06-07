@@ -1,7 +1,7 @@
 import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state, query } from "lit/decorators";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import { stopPropagation } from "../../../../../common/dom/stop_propagation";
 import "../../../../../components/buttons/ha-progress-button";
 import type { SelectionChangedEvent } from "../../../../../components/data-table/ha-data-table";
@@ -15,14 +15,14 @@ import {
   unbindDeviceFromGroup,
 } from "../../../../../data/zha";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ItemSelectedEvent } from "./types";
 import "./zha-clusters-data-table";
 import type { ZHAClustersDataTable } from "./zha-clusters-data-table";
 
 @customElement("zha-group-binding-control")
 export class ZHAGroupBindingControl extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public device?: ZHADevice;
 
@@ -58,7 +58,7 @@ export class ZHAGroupBindingControl extends LitElement {
         <ha-card class="content">
           <div class="command-picker">
             <ha-select
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.config.zha.group_binding.group_picker_label"
               )}
               class="menu"
@@ -78,7 +78,7 @@ export class ZHAGroupBindingControl extends LitElement {
           </div>
           <div class="command-picker">
             <zha-clusters-data-table
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .clusters=${this._clusters}
               @selection-changed=${this._handleClusterSelectionChanged}
               class="menu"
@@ -89,7 +89,7 @@ export class ZHAGroupBindingControl extends LitElement {
             @click=${this._onBindGroupClick}
             .disabled=${!this._canBind || this._bindingOperationInProgress}
           >
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.zha.group_binding.bind_button_label"
             )}
           </ha-progress-button>
@@ -98,7 +98,7 @@ export class ZHAGroupBindingControl extends LitElement {
             @click=${this._onUnbindGroupClick}
             .disabled=${!this._canBind || this._bindingOperationInProgress}
           >
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.zha.group_binding.unbind_button_label"
             )}
           </ha-progress-button>
@@ -118,12 +118,12 @@ export class ZHAGroupBindingControl extends LitElement {
 
   private async _onBindGroupClick(ev: CustomEvent): Promise<void> {
     const button = ev.currentTarget as any;
-    if (this.hass && this._canBind) {
+    if (this.menuai && this._canBind) {
       this._bindingOperationInProgress = true;
       button.progress = true;
       try {
         await bindDeviceToGroup(
-          this.hass,
+          this.menuai,
           this.device!.ieee,
           this._groupToBind!.group_id,
           this._clustersToBind!
@@ -141,12 +141,12 @@ export class ZHAGroupBindingControl extends LitElement {
 
   private async _onUnbindGroupClick(ev: CustomEvent): Promise<void> {
     const button = ev.currentTarget as any;
-    if (this.hass && this._canBind) {
+    if (this.menuai && this._canBind) {
       this._bindingOperationInProgress = true;
       button.progress = true;
       try {
         await unbindDeviceFromGroup(
-          this.hass,
+          this.menuai,
           this.device!.ieee,
           this._groupToBind!.group_id,
           this._clustersToBind!
@@ -163,7 +163,7 @@ export class ZHAGroupBindingControl extends LitElement {
   }
 
   private _handleClusterSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selectedClusters = ev.detail.value;
 
@@ -177,9 +177,9 @@ export class ZHAGroupBindingControl extends LitElement {
   }
 
   private async _fetchClustersForZhaNode(): Promise<void> {
-    if (this.hass) {
+    if (this.menuai) {
       this._clusters = await fetchClustersForZhaDevice(
-        this.hass,
+        this.menuai,
         this.device!.ieee
       );
       this._clusters = this._clusters

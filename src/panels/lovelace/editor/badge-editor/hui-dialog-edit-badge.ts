@@ -3,7 +3,7 @@ import deepFreeze from "deep-freeze";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { computeRTLDirection } from "../../../../common/util/compute_rtl";
 import "../../../../components/ha-spinner";
@@ -19,9 +19,9 @@ import {
   stripCustomPrefix,
 } from "../../../../data/lovelace_custom_cards";
 import { showConfirmationDialog } from "../../../../dialogs/generic/show-dialog-box";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showSaveSuccessToast } from "../../../../util/toast-saved-success";
 import "../../badges/hui-badge";
 import "../../sections/hui-section";
@@ -36,21 +36,21 @@ import type { EditBadgeDialogParams } from "./show-edit-badge-dialog";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "reload-lovelace": undefined;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "reload-lovelace": HASSDomEvent<undefined>;
+    "reload-lovelace": menuaiDomEvent<undefined>;
   }
 }
 
 @customElement("hui-dialog-edit-badge")
 export class HuiDialogEditBadge
   extends LitElement
-  implements HassDialog<EditBadgeDialogParams>
+  implements menuaiDialog<EditBadgeDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public large = false;
 
@@ -110,7 +110,7 @@ export class HuiDialogEditBadge
   public closeDialog(): boolean {
     this._isEscapeEnabled = true;
     window.removeEventListener("dialog-closed", this._enableEscapeKeyClose);
-    window.removeEventListener("hass-more-info", this._disableEscapeKeyClose);
+    window.removeEventListener("menuai-more-info", this._disableEscapeKeyClose);
     if (this._dirty) {
       this._confirmCancel();
       return false;
@@ -137,7 +137,7 @@ export class HuiDialogEditBadge
 
     if (oldConfig?.type !== this._badgeConfig!.type) {
       this._documentationURL = this._badgeConfig!.type
-        ? getBadgeDocumentationURL(this.hass, this._badgeConfig!.type)
+        ? getBadgeDocumentationURL(this.menuai, this._badgeConfig!.type)
         : undefined;
     }
   }
@@ -170,23 +170,23 @@ export class HuiDialogEditBadge
           badgeName = badgeName.substring(0, badgeName.length - 6);
         }
       } else {
-        badgeName = this.hass!.localize(
+        badgeName = this.menuai!.localize(
           `ui.panel.lovelace.editor.badge.${this._badgeConfig.type}.name`
         );
       }
-      heading = this.hass!.localize(
+      heading = this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_badge.typed_header",
         { type: badgeName }
       );
     } else if (!this._badgeConfig) {
       heading = this._containerConfig.title
-        ? this.hass!.localize(
+        ? this.menuai!.localize(
             "ui.panel.lovelace.editor.edit_badge.pick_badge_view_title",
             { name: this._containerConfig.title }
           )
-        : this.hass!.localize("ui.panel.lovelace.editor.edit_badge.pick_badge");
+        : this.menuai!.localize("ui.panel.lovelace.editor.edit_badge.pick_badge");
     } else {
-      heading = this.hass!.localize(
+      heading = this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_badge.header"
       );
     }
@@ -205,7 +205,7 @@ export class HuiDialogEditBadge
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" @click=${this._enlarge}>${heading}</span>
@@ -214,10 +214,10 @@ export class HuiDialogEditBadge
                 <a
                   slot="actionItems"
                   href=${this._documentationURL}
-                  title=${this.hass!.localize("ui.panel.lovelace.menu.help")}
+                  title=${this.menuai!.localize("ui.panel.lovelace.menu.help")}
                   target="_blank"
                   rel="noreferrer"
-                  dir=${computeRTLDirection(this.hass)}
+                  dir=${computeRTLDirection(this.menuai)}
                 >
                   <ha-icon-button .path=${mdiHelpCircle}></ha-icon-button>
                 </a>
@@ -227,7 +227,7 @@ export class HuiDialogEditBadge
         <div class="content">
           <div class="element-editor">
             <hui-badge-element-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .lovelace=${this._params.lovelaceConfig}
               .value=${this._badgeConfig}
               @config-changed=${this._handleConfigChanged}
@@ -238,7 +238,7 @@ export class HuiDialogEditBadge
           </div>
           <div class="element-preview">
             <hui-badge
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .config=${this._badgeConfig}
               preview
               class=${this._error ? "blur" : ""}
@@ -261,7 +261,7 @@ export class HuiDialogEditBadge
                 .disabled=${!this._guiModeAvailable}
                 class="gui-mode-button"
               >
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   !this._badgeEditorEl || this._GUImode
                     ? "ui.panel.lovelace.editor.edit_badge.show_code_editor"
                     : "ui.panel.lovelace.editor.edit_badge.show_visual_editor"
@@ -271,7 +271,7 @@ export class HuiDialogEditBadge
           : ""}
         <div slot="primaryAction" @click=${this._save}>
           <mwc-button @click=${this._cancel} dialogInitialFocus>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </mwc-button>
           ${this._badgeConfig !== undefined && this._dirty
             ? html`
@@ -286,7 +286,7 @@ export class HuiDialogEditBadge
                           size="small"
                         ></ha-spinner>
                       `
-                    : this.hass!.localize("ui.common.save")}
+                    : this.menuai!.localize("ui.common.save")}
                 </mwc-button>
               `
             : ``}
@@ -303,14 +303,14 @@ export class HuiDialogEditBadge
     ev.stopPropagation();
   }
 
-  private _handleConfigChanged(ev: HASSDomEvent<ConfigChangedEvent>) {
+  private _handleConfigChanged(ev: menuaiDomEvent<ConfigChangedEvent>) {
     this._badgeConfig = deepFreeze(ev.detail.config);
     this._error = ev.detail.error;
     this._guiModeAvailable = ev.detail.guiModeAvailable;
     this._dirty = true;
   }
 
-  private _handleGUIModeChanged(ev: HASSDomEvent<GUIModeChangedEvent>): void {
+  private _handleGUIModeChanged(ev: menuaiDomEvent<GUIModeChangedEvent>): void {
     ev.stopPropagation();
     this._GUImode = ev.detail.guiMode;
     this._guiModeAvailable = ev.detail.guiModeAvailable;
@@ -322,7 +322,7 @@ export class HuiDialogEditBadge
 
   private _opened() {
     window.addEventListener("dialog-closed", this._enableEscapeKeyClose);
-    window.addEventListener("hass-more-info", this._disableEscapeKeyClose);
+    window.addEventListener("menuai-more-info", this._disableEscapeKeyClose);
     this._badgeEditorEl?.focusYamlEditor();
   }
 
@@ -345,14 +345,14 @@ export class HuiDialogEditBadge
       setTimeout(resolve, 0);
     });
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_badge.unsaved_changes"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_badge.confirm_cancel"
       ),
-      dismissText: this.hass!.localize("ui.common.stay"),
-      confirmText: this.hass!.localize("ui.common.leave"),
+      dismissText: this.menuai!.localize("ui.common.stay"),
+      confirmText: this.menuai!.localize("ui.common.leave"),
     });
     if (confirm) {
       this._cancel();
@@ -388,7 +388,7 @@ export class HuiDialogEditBadge
     );
     this._saving = false;
     this._dirty = false;
-    showSaveSuccessToast(this, this.hass);
+    showSaveSuccessToast(this, this.menuai);
     this.closeDialog();
   }
 

@@ -3,7 +3,7 @@ import { css, html, LitElement } from "lit";
 import { classMap } from "lit/directives/class-map";
 import { customElement, property, state } from "lit/decorators";
 import { computeDomain } from "../../../common/entity/compute_domain";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { processConfigEntities } from "../common/process-config-entities";
 import "../components/hui-buttons-base";
 import type { EntityConfig } from "../entity-rows/types";
@@ -19,7 +19,7 @@ export class HuiButtonsHeaderFooter
     return { entities: [] };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public type!: "header" | "footer";
 
@@ -55,7 +55,7 @@ export class HuiButtonsHeaderFooter
         ? html`<li class="divider footer" role="separator"></li>`
         : ""}
       <hui-buttons-base
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .configEntities=${this._configEntities}
         class=${classMap({
           footer: this.type === "footer",

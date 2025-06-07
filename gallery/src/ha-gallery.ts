@@ -15,7 +15,7 @@ import "./components/page-description";
 const GITHUB_DEMO_URL =
   "https://github.com/home-assistant/frontend/blob/dev/gallery/src/pages/";
 
-const FAKE_HASS = {
+const FAKE_menuai = {
   // Just enough for computeRTL for notification-manager
   language: "en",
   translationMetadata: {
@@ -73,7 +73,7 @@ class HaGallery extends LitElement {
         .open=${!this._narrow}
         .type=${this._narrow ? "modal" : "dismissible"}
       >
-        <span slot="title">Home Assistant Design</span>
+        <span slot="title">MenuAI Design</span>
         <!-- <span slot="subtitle">subtitle</span> -->
         <div class="sidebar">${sidebar}</div>
         <div slot="appContent">
@@ -129,7 +129,7 @@ class HaGallery extends LitElement {
         </div>
       </mwc-drawer>
       <notification-manager
-        .hass=${FAKE_HASS}
+        .menuai=${FAKE_menuai}
         id="notifications"
       ></notification-manager>
     `;
@@ -144,7 +144,7 @@ class HaGallery extends LitElement {
     this.addEventListener("alert-dismissed-clicked", () =>
       this._notifications.showDialog({ message: "Alert dismissed clicked" })
     );
-    this.addEventListener("hass-more-info", (ev) => {
+    this.addEventListener("menuai-more-info", (ev) => {
       if (ev.detail.entityId) {
         this._notifications.showDialog({
           message: `Showing more info for ${ev.detail.entityId}`,

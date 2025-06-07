@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 interface CacheResult<T> {
   result: T;
@@ -11,40 +11,40 @@ interface CacheResult<T> {
  * @param cacheKey the key to store the cache
  * @param cacheTime the time to cache the result
  * @param func the function to fetch the data
- * @param generateCacheKey optional function to generate a cache key based on current hass + cached result. Cache is invalid if generates a different cache key.
- * @param hass Home Assistant object
+ * @param generateCacheKey optional function to generate a cache key based on current menuai + cached result. Cache is invalid if generates a different cache key.
+ * @param menuai MenuAI object
  * @param args extra arguments to pass to the function to fetch the data
  * @returns
  */
 export const timeCachePromiseFunc = async <T>(
   cacheKey: string,
   cacheTime: number,
-  func: (hass: HomeAssistant, ...args: any[]) => Promise<T>,
+  func: (menuai: menuai, ...args: any[]) => Promise<T>,
   generateCacheKey:
-    | ((hass: HomeAssistant, lastResult: T) => unknown)
+    | ((menuai: menuai, lastResult: T) => unknown)
     | undefined,
-  hass: HomeAssistant,
+  menuai: menuai,
   ...args: any[]
 ): Promise<T> => {
-  const anyHass = hass as any;
+  const anymenuai = menuai as any;
   const lastResult: Promise<CacheResult<T>> | CacheResult<T> | undefined =
-    anyHass[cacheKey];
+    anymenuai[cacheKey];
 
   const checkCachedResult = (result: CacheResult<T>): T | Promise<T> => {
     if (
       !generateCacheKey ||
-      generateCacheKey(hass, result.result) === result.cacheKey
+      generateCacheKey(menuai, result.result) === result.cacheKey
     ) {
       return result.result;
     }
 
-    anyHass[cacheKey] = undefined;
+    anymenuai[cacheKey] = undefined;
     return timeCachePromiseFunc(
       cacheKey,
       cacheTime,
       func,
       generateCacheKey,
-      hass,
+      menuai,
       ...args
     );
   };
@@ -56,23 +56,23 @@ export const timeCachePromiseFunc = async <T>(
       : checkCachedResult(lastResult);
   }
 
-  const resultPromise = func(hass, ...args);
-  anyHass[cacheKey] = resultPromise;
+  const resultPromise = func(menuai, ...args);
+  anymenuai[cacheKey] = resultPromise;
 
   resultPromise.then(
     // When successful, set timer to clear cache
     (result) => {
-      anyHass[cacheKey] = {
+      anymenuai[cacheKey] = {
         result,
-        cacheKey: generateCacheKey?.(hass, result),
+        cacheKey: generateCacheKey?.(menuai, result),
       };
       setTimeout(() => {
-        anyHass[cacheKey] = undefined;
+        anymenuai[cacheKey] = undefined;
       }, cacheTime);
     },
     // On failure, clear cache right away
     () => {
-      anyHass[cacheKey] = undefined;
+      anymenuai[cacheKey] = undefined;
     }
   );
 

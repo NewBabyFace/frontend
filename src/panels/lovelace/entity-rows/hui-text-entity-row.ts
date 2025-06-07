@@ -6,7 +6,7 @@ import "../../../components/ha-textfield";
 import { isUnavailableState, UNAVAILABLE } from "../../../data/entity";
 import type { TextEntity } from "../../../data/text";
 import { setValue } from "../../../data/text";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -14,7 +14,7 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-text-entity-row")
 class HuiTextEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -30,25 +30,25 @@ class HuiTextEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity] as
+    const stateObj = this.menuai.states[this._config.entity] as
       | TextEntity
       | undefined;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
       <hui-generic-entity-row
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this._config}
         hide-name
       >
@@ -62,14 +62,14 @@ class HuiTextEntityRow extends LitElement implements LovelaceRow {
           .pattern=${stateObj.attributes.pattern}
           .type=${stateObj.attributes.mode}
           @change=${this._valueChanged}
-          placeholder=${this.hass!.localize("ui.card.text.emtpy_value")}
+          placeholder=${this.menuai!.localize("ui.card.text.emtpy_value")}
         ></ha-textfield>
       </hui-generic-entity-row>
     `;
   }
 
   private _valueChanged(ev): void {
-    const stateObj = this.hass!.states[this._config!.entity] as TextEntity;
+    const stateObj = this.menuai!.states[this._config!.entity] as TextEntity;
     const newValue = ev.target.value;
 
     // Filter out invalid text states
@@ -79,7 +79,7 @@ class HuiTextEntityRow extends LitElement implements LovelaceRow {
     }
 
     if (newValue !== stateObj.state) {
-      setValue(this.hass!, stateObj.entity_id, newValue);
+      setValue(this.menuai!, stateObj.entity_id, newValue);
     }
 
     ev.target.blur();

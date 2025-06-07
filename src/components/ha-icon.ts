@@ -119,7 +119,7 @@ export class HaIcon extends LitElement {
 
     if (iconName === "home-assistant") {
       const icon = (await import("../resources/home-assistant-logo-svg"))
-        .mdiHomeAssistant;
+        .mdimenuai;
 
       if (this.icon === requestedIcon) {
         this._path = icon;

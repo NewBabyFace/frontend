@@ -1,30 +1,30 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant, TranslationDict } from "../../types";
-import type { HassioResponse } from "./common";
-import { hassioApiResultExtractor } from "./common";
+import type { menuai, TranslationDict } from "../../types";
+import type { menuaiioResponse } from "./common";
+import { menuaiioApiResultExtractor } from "./common";
 
-export interface HassioResolution {
+export interface menuaiioResolution {
   unsupported: (keyof TranslationDict["supervisor"]["system"]["supervisor"]["unsupported_reason"])[];
   unhealthy: (keyof TranslationDict["supervisor"]["system"]["supervisor"]["unhealthy_reason"])[];
   issues: string[];
   suggestions: string[];
 }
 
-export const fetchHassioResolution = async (
-  hass: HomeAssistant
-): Promise<HassioResolution> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiioResolution = async (
+  menuai: menuai
+): Promise<menuaiioResolution> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/resolution/info",
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioResolution>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioResolution>>(
       "GET",
-      "hassio/resolution/info"
+      "menuaiio/resolution/info"
     )
   );
 };

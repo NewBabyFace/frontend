@@ -33,7 +33,7 @@ class FlowPreviewGenericCamera extends FlowPreviewGeneric {
           <ha-hls-player
             autoplay
             playsinline
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .url=${streamUrl}
             @load=${this._videoLoaded}
           ></ha-hls-player>`

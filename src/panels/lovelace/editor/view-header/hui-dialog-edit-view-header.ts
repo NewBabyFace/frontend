@@ -17,13 +17,13 @@ import type { HaYamlEditor } from "../../../../components/ha-yaml-editor";
 import type { LovelaceViewHeaderConfig } from "../../../../data/lovelace/config/view";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./hui-view-header-settings-editor";
 import type { EditViewHeaderDialogParams } from "./show-edit-view-header-dialog";
 
 @customElement("hui-dialog-edit-view-header")
 export class HuiDialogEditViewHeader extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _params?: EditViewHeaderDialogParams;
 
@@ -63,7 +63,7 @@ export class HuiDialogEditViewHeader extends LitElement {
   }
 
   protected render() {
-    if (!this._params || !this.hass) {
+    if (!this._params || !this.menuai) {
       return nothing;
     }
 
@@ -72,7 +72,7 @@ export class HuiDialogEditViewHeader extends LitElement {
     if (this._yamlMode) {
       content = html`
         <ha-yaml-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           dialogInitialFocus
           @value-changed=${this._viewYamlChanged}
         ></ha-yaml-editor>
@@ -80,14 +80,14 @@ export class HuiDialogEditViewHeader extends LitElement {
     } else {
       content = html`
         <hui-view-header-settings-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .config=${this._config}
           @config-changed=${this._configChanged}
         ></hui-view-header-settings-editor>
       `;
     }
 
-    const title = this.hass.localize(
+    const title = this.menuai.localize(
       "ui.panel.lovelace.editor.edit_view_header.header"
     );
 
@@ -106,7 +106,7 @@ export class HuiDialogEditViewHeader extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass!.localize("ui.common.close")}
+            .label=${this.menuai!.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <h2 slot="title">${title}</h2>
@@ -120,11 +120,11 @@ export class HuiDialogEditViewHeader extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass!.localize("ui.common.menu")}
+              .label=${this.menuai!.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item graphic="icon">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.edit_view_header.edit_${!this._yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon
@@ -143,7 +143,7 @@ export class HuiDialogEditViewHeader extends LitElement {
           ${this._saving
             ? html`<ha-spinner size="small" aria-label="Saving"></ha-spinner>`
             : nothing}
-          ${this.hass!.localize("ui.common.save")}</ha-button
+          ${this.menuai!.localize("ui.common.save")}</ha-button
         >
       </ha-dialog>
     `;
@@ -191,7 +191,7 @@ export class HuiDialogEditViewHeader extends LitElement {
       this.closeDialog();
     } catch (err: any) {
       showAlertDialog(this, {
-        text: `${this.hass!.localize(
+        text: `${this.menuai!.localize(
           "ui.panel.lovelace.editor.edit_view_header.saving_failed"
         )}: ${err.message}`,
       });

@@ -20,13 +20,13 @@ import {
   readAttributeValue,
 } from "../../../../../data/zha";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { formatAsPaddedHex } from "./functions";
 import type { ItemSelectedEvent, SetAttributeServiceData } from "./types";
 
 @customElement("zha-cluster-attributes")
 export class ZHAClusterAttributes extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public device?: ZHADevice;
 
@@ -64,7 +64,7 @@ export class ZHAClusterAttributes extends LitElement {
       <ha-card class="content">
         <div class="attribute-picker">
           <ha-select
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.panel.config.zha.cluster_attributes.attributes_of_cluster"
             )}
             class="menu"
@@ -94,24 +94,24 @@ export class ZHAClusterAttributes extends LitElement {
     return html`
       <div class="input-text">
         <ha-textfield
-          .label=${this.hass!.localize("ui.panel.config.zha.common.value")}
+          .label=${this.menuai!.localize("ui.panel.config.zha.common.value")}
           type="string"
           .value=${this._attributeValue}
           @change=${this._onAttributeValueChanged}
-          .placeholder=${this.hass!.localize(
+          .placeholder=${this.menuai!.localize(
             "ui.panel.config.zha.common.value"
           )}
         ></ha-textfield>
       </div>
       <div class="input-text">
         <ha-textfield
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.panel.config.zha.common.manufacturer_code_override"
           )}
           type="number"
           .value=${this._manufacturerCodeOverride}
           @change=${this._onManufacturerCodeOverrideChanged}
-          .placeholder=${this.hass!.localize(
+          .placeholder=${this.menuai!.localize(
             "ui.panel.config.zha.common.value"
           )}
         ></ha-textfield>
@@ -122,17 +122,17 @@ export class ZHAClusterAttributes extends LitElement {
           .progress=${this._readingAttribute}
           .disabled=${this._readingAttribute}
         >
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.config.zha.cluster_attributes.read_zigbee_attribute"
           )}
         </ha-progress-button>
         <ha-call-service-button
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           domain="zha"
           service="set_zigbee_cluster_attribute"
           .data=${this._setAttributeServiceData}
         >
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.config.zha.cluster_attributes.write_zigbee_attribute"
           )}
         </ha-call-service-button>
@@ -141,9 +141,9 @@ export class ZHAClusterAttributes extends LitElement {
   }
 
   private async _fetchAttributesForCluster(): Promise<void> {
-    if (this.device && this.selectedCluster && this.hass) {
+    if (this.device && this.selectedCluster && this.menuai) {
       this._attributes = await fetchAttributesForCluster(
-        this.hass,
+        this.menuai,
         this.device!.ieee,
         this.selectedCluster!.endpoint_id,
         this.selectedCluster!.id,
@@ -206,10 +206,10 @@ export class ZHAClusterAttributes extends LitElement {
   private async _onGetZigbeeAttributeClick(ev: CustomEvent): Promise<void> {
     const button = ev.currentTarget as any;
     const data = this._computeReadAttributeServiceData();
-    if (data && this.hass) {
+    if (data && this.menuai) {
       this._readingAttribute = true;
       try {
-        this._attributeValue = await readAttributeValue(this.hass, data);
+        this._attributeValue = await readAttributeValue(this.menuai, data);
         forwardHaptic("success");
         button.actionSuccess();
       } catch (_err: any) {

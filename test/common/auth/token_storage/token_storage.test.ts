@@ -38,7 +38,7 @@ describe("token_storage", () => {
       access_token: "test",
       expires: 1800,
       expires_in: 1800,
-      hassUrl: "http://localhost",
+      menuaiUrl: "http://localhost",
       refresh_token: "refresh",
       clientId: "client",
     };
@@ -56,7 +56,7 @@ describe("token_storage", () => {
     expect(window.__tokenCache.tokens).toEqual(tokens);
     expect(window.__tokenCache.writeEnabled).toBe(true);
     expect(getItemSpy).toHaveBeenCalledOnce();
-    expect(getItemSpy).toHaveBeenCalledWith("hassTokens");
+    expect(getItemSpy).toHaveBeenCalledWith("menuaiTokens");
   });
 
   test("should load null tokens", async () => {
@@ -73,7 +73,7 @@ describe("token_storage", () => {
     expect(window.__tokenCache.tokens).toEqual(null);
     expect(window.__tokenCache.writeEnabled).toBe(undefined);
     expect(getItemSpy).toHaveBeenCalledOnce();
-    expect(getItemSpy).toHaveBeenCalledWith("hassTokens");
+    expect(getItemSpy).toHaveBeenCalledWith("menuaiTokens");
   });
 
   it("should enable write", async () => {
@@ -103,7 +103,7 @@ describe("token_storage", () => {
     expect(window.__tokenCache.writeEnabled).toBe(true);
     expect(setItemSpy).toHaveBeenCalledOnce();
     expect(setItemSpy).toHaveBeenCalledWith(
-      "hassTokens",
+      "menuaiTokens",
       JSON.stringify("testToken")
     );
   });

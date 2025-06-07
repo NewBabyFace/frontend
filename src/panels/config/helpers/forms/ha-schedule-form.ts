@@ -19,7 +19,7 @@ import { weekdays } from "../../../../data/schedule";
 import { TimeZone } from "../../../../data/translation";
 import { showScheduleBlockInfoDialog } from "./show-dialog-schedule-block-info";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 const defaultFullCalendarConfig: CalendarOptions = {
   plugins: [timeGridPlugin, interactionPlugin],
@@ -39,7 +39,7 @@ const defaultFullCalendarConfig: CalendarOptions = {
 
 @customElement("ha-schedule-form")
 class HaScheduleForm extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public new = false;
 
@@ -113,7 +113,7 @@ class HaScheduleForm extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -123,22 +123,22 @@ class HaScheduleForm extends LitElement {
           .value=${this._name}
           .configValue=${"name"}
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.name"
           )}
           autoValidate
           required
-          .validationMessage=${this.hass!.localize(
+          .validationMessage=${this.menuai!.localize(
             "ui.dialogs.helper_settings.required_error_msg"
           )}
           dialogInitialFocus
         ></ha-textfield>
         <ha-icon-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._icon}
           .configValue=${"icon"}
           @value-changed=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.icon"
           )}
         ></ha-icon-picker>
@@ -167,10 +167,10 @@ class HaScheduleForm extends LitElement {
       this.calendar.addEventSource(this._events);
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant;
+    const oldmenuai = changedProps.get("menuai") as menuai;
 
-    if (oldHass && oldHass.language !== this.hass.language) {
-      this.calendar.setOption("locale", this.hass.language);
+    if (oldmenuai && oldmenuai.language !== this.menuai.language) {
+      this.calendar.setOption("locale", this.menuai.language);
     }
   }
 
@@ -181,19 +181,19 @@ class HaScheduleForm extends LitElement {
   private _setupCalendar(): void {
     const config: CalendarOptions = {
       ...defaultFullCalendarConfig,
-      locale: this.hass.language,
-      firstDay: firstWeekdayIndex(this.hass.locale),
+      locale: this.menuai.language,
+      firstDay: firstWeekdayIndex(this.menuai.locale),
       slotLabelFormat: {
         hour: "numeric",
         minute: undefined,
-        hour12: useAmPm(this.hass.locale),
-        meridiem: useAmPm(this.hass.locale) ? "narrow" : false,
+        hour12: useAmPm(this.menuai.locale),
+        meridiem: useAmPm(this.menuai.locale) ? "narrow" : false,
       },
       eventTimeFormat: {
-        hour: useAmPm(this.hass.locale) ? "numeric" : "2-digit",
-        minute: useAmPm(this.hass.locale) ? "numeric" : "2-digit",
-        hour12: useAmPm(this.hass.locale),
-        meridiem: useAmPm(this.hass.locale) ? "narrow" : false,
+        hour: useAmPm(this.menuai.locale) ? "numeric" : "2-digit",
+        minute: useAmPm(this.menuai.locale) ? "numeric" : "2-digit",
+        hour12: useAmPm(this.menuai.locale),
+        meridiem: useAmPm(this.menuai.locale) ? "narrow" : false,
       },
     };
 
@@ -222,7 +222,7 @@ class HaScheduleForm extends LitElement {
         let date = nextDay(new Date(), i as Day);
         if (
           !isSameWeek(date, new Date(), {
-            weekStartsOn: firstWeekdayIndex(this.hass.locale),
+            weekStartsOn: firstWeekdayIndex(this.menuai.locale),
           })
         ) {
           date = addDays(date, -7);
@@ -261,14 +261,14 @@ class HaScheduleForm extends LitElement {
     // Schedule is timezone unaware, we need to format it in local time
     const endFormatted = formatTime24h(
       end,
-      { ...this.hass.locale, time_zone: TimeZone.local },
-      this.hass.config
+      { ...this.menuai.locale, time_zone: TimeZone.local },
+      this.menuai.config
     );
     value.push({
       from: formatTime24h(
         start,
-        { ...this.hass.locale, time_zone: TimeZone.local },
-        this.hass.config
+        { ...this.menuai.locale, time_zone: TimeZone.local },
+        this.menuai.config
       ),
       to:
         !isSameDay(start, end) || endFormatted === "0:00"
@@ -294,7 +294,7 @@ class HaScheduleForm extends LitElement {
     const value = this[`_${day}`][parseInt(index)];
     const newValue = { ...this._item };
 
-    const endFormatted = formatTime24h(end, this.hass.locale, this.hass.config);
+    const endFormatted = formatTime24h(end, this.menuai.locale, this.menuai.config);
     newValue[day][index] = {
       ...newValue[day][index],
       from: value.from,
@@ -321,10 +321,10 @@ class HaScheduleForm extends LitElement {
     const newDay = weekdays[start.getDay()];
     const newValue = { ...this._item };
 
-    const endFormatted = formatTime24h(end, this.hass.locale, this.hass.config);
+    const endFormatted = formatTime24h(end, this.menuai.locale, this.menuai.config);
     const event = {
       ...newValue[day][index],
-      from: formatTime24h(start, this.hass.locale, this.hass.config),
+      from: formatTime24h(start, this.menuai.locale, this.menuai.config),
       to:
         !isSameDay(start, end) || endFormatted === "0:00"
           ? "24:00"

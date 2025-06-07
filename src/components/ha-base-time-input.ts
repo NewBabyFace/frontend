@@ -158,7 +158,7 @@ export class HaBaseTimeInput extends LitElement {
                   min="0"
                   .disabled=${this.disabled}
                   suffix=":"
-                  class="hasSuffix"
+                  class="menuaiuffix"
                 >
                 </ha-textfield>
               `
@@ -181,7 +181,7 @@ export class HaBaseTimeInput extends LitElement {
             min="0"
             .disabled=${this.disabled}
             suffix=":"
-            class="hasSuffix"
+            class="menuaiuffix"
           >
           </ha-textfield>
           <ha-textfield
@@ -352,7 +352,7 @@ export class HaBaseTimeInput extends LitElement {
       --text-field-suffix-padding-right: 0;
       --text-field-text-align: center;
     }
-    ha-textfield.hasSuffix {
+    ha-textfield.menuaiuffix {
       --text-field-padding: 0 0 0 4px;
     }
     ha-textfield:first-child {

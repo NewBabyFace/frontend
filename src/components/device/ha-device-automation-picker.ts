@@ -9,7 +9,7 @@ import {
   sortDeviceAutomations,
 } from "../../data/device_automation";
 import type { EntityRegistryEntry } from "../../data/entity_registry";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-list-item";
 import "../ha-select";
 import { stopPropagation } from "../../common/dom/stop_propagation";
@@ -20,7 +20,7 @@ const UNKNOWN_AUTOMATION_KEY = "UNKNOWN_AUTOMATION";
 export abstract class HaDeviceAutomationPicker<
   T extends DeviceAutomation,
 > extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -39,25 +39,25 @@ export abstract class HaDeviceAutomationPicker<
   _entityReg!: EntityRegistryEntry[];
 
   protected get NO_AUTOMATION_TEXT() {
-    return this.hass.localize(
+    return this.menuai.localize(
       "ui.panel.config.devices.automation.actions.no_actions"
     );
   }
 
   protected get UNKNOWN_AUTOMATION_TEXT() {
-    return this.hass.localize(
+    return this.menuai.localize(
       "ui.panel.config.devices.automation.actions.unknown_action"
     );
   }
 
   private _localizeDeviceAutomation: (
-    hass: HomeAssistant,
+    menuai: menuai,
     entityRegistry: EntityRegistryEntry[],
     automation: T
   ) => string;
 
   private _fetchDeviceAutomations: (
-    hass: HomeAssistant,
+    menuai: menuai,
     deviceId: string
   ) => Promise<T[]>;
 
@@ -121,7 +121,7 @@ export abstract class HaDeviceAutomationPicker<
           (automation, idx) => html`
             <ha-list-item .value=${`${automation.device_id}_${idx}`}>
               ${this._localizeDeviceAutomation(
-                this.hass,
+                this.menuai,
                 this._entityReg,
                 automation
               )}
@@ -142,7 +142,7 @@ export abstract class HaDeviceAutomationPicker<
 
   private async _updateDeviceInfo() {
     this._automations = this.deviceId
-      ? (await this._fetchDeviceAutomations(this.hass, this.deviceId)).sort(
+      ? (await this._fetchDeviceAutomations(this.menuai, this.deviceId)).sort(
           sortDeviceAutomations
         )
       : // No device, clear the list of automations

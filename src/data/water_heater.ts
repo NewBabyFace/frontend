@@ -8,8 +8,8 @@ import {
   mdiRocketLaunch,
 } from "@mdi/js";
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 
 export const enum WaterHeaterEntityFeature {
@@ -30,8 +30,8 @@ export const OPERATION_MODES = [
 
 export type OperationMode = (typeof OPERATION_MODES)[number];
 
-export type WaterHeaterEntity = HassEntityBase & {
-  attributes: HassEntityAttributeBase & {
+export type WaterHeaterEntity = menuaiEntityBase & {
+  attributes: menuaiEntityAttributeBase & {
     target_temp_step?: number;
     min_temp: number;
     max_temp: number;

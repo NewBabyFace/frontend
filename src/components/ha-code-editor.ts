@@ -6,18 +6,18 @@ import type {
 } from "@codemirror/autocomplete";
 import type { Extension, TransactionSpec } from "@codemirror/state";
 import type { EditorView, KeyBinding, ViewUpdate } from "@codemirror/view";
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, ReactiveElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../common/dom/fire_event";
 import { stopPropagation } from "../common/dom/stop_propagation";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "editor-save": undefined;
   }
 }
@@ -42,7 +42,7 @@ export class HaCodeEditor extends ReactiveElement {
 
   @property() public mode = "yaml";
 
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
@@ -215,7 +215,7 @@ export class HaCodeEditor extends ReactiveElement {
 
     if (!this.readOnly) {
       const completionSources: CompletionSource[] = [];
-      if (this.autocompleteEntities && this.hass) {
+      if (this.autocompleteEntities && this.menuai) {
         completionSources.push(this._entityCompletions.bind(this));
       }
       if (this.autocompleteIcons) {
@@ -240,7 +240,7 @@ export class HaCodeEditor extends ReactiveElement {
     });
   }
 
-  private _getStates = memoizeOne((states: HassEntities): Completion[] => {
+  private _getStates = memoizeOne((states: menuaiEntities): Completion[] => {
     if (!states) {
       return [];
     }
@@ -266,7 +266,7 @@ export class HaCodeEditor extends ReactiveElement {
       return null;
     }
 
-    const states = this._getStates(this.hass!.states);
+    const states = this._getStates(this.menuai!.states);
 
     if (!states || !states.length) {
       return null;

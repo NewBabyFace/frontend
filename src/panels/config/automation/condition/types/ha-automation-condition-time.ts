@@ -8,14 +8,14 @@ import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import type { TimeCondition } from "../../../../../data/automation";
 import type { FrontendLocaleData } from "../../../../../data/translation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ConditionElement } from "../ha-automation-condition-row";
 
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
 @customElement("ha-automation-condition-time")
 export class HaTimeCondition extends LitElement implements ConditionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: TimeCondition;
 
@@ -137,8 +137,8 @@ export class HaTimeCondition extends LitElement implements ConditionElement {
         this.condition.after?.startsWith("sensor."));
 
     const schema = this._schema(
-      this.hass.localize,
-      this.hass.locale,
+      this.menuai.localize,
+      this.menuai.locale,
       inputModeAfter,
       inputModeBefore
     );
@@ -151,7 +151,7 @@ export class HaTimeCondition extends LitElement implements ConditionElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .disabled=${this.disabled}
@@ -185,7 +185,7 @@ export class HaTimeCondition extends LitElement implements ConditionElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.conditions.type.time.${schema.name}`
     );
 }

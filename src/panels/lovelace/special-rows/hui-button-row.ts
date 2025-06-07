@@ -5,7 +5,7 @@ import { DOMAINS_TOGGLE } from "../../../common/const";
 import { computeDomain } from "../../../common/entity/compute_domain";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import "../../../components/ha-state-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
 import { hasAction } from "../common/has-action";
@@ -14,7 +14,7 @@ import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
 
 @customElement("hui-button-row")
 export class HuiButtonRow extends LitElement implements LovelaceRow {
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @state() private _config?: ButtonRowConfig;
 
@@ -45,8 +45,8 @@ export class HuiButtonRow extends LitElement implements LovelaceRow {
     }
 
     const stateObj =
-      this._config.entity && this.hass
-        ? this.hass.states[this._config.entity]
+      this._config.entity && this.menuai
+        ? this.menuai.states[this._config.entity]
         : undefined;
 
     const name =
@@ -56,7 +56,7 @@ export class HuiButtonRow extends LitElement implements LovelaceRow {
       <ha-state-icon
         .icon=${this._config.icon}
         .stateObj=${stateObj}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
       >
       </ha-state-icon>
       <div class="flex">
@@ -69,7 +69,7 @@ export class HuiButtonRow extends LitElement implements LovelaceRow {
           })}
           >${this._config.action_name
             ? this._config.action_name
-            : this.hass!.localize("ui.card.service.run")}</mwc-button
+            : this.menuai!.localize("ui.card.service.run")}</mwc-button
         >
       </div>
     `;
@@ -107,7 +107,7 @@ export class HuiButtonRow extends LitElement implements LovelaceRow {
   `;
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 }
 

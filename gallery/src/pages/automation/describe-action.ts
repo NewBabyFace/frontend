@@ -6,8 +6,8 @@ import "../../../../src/components/ha-yaml-editor";
 import type { Action } from "../../../../src/data/script";
 import { describeAction } from "../../../../src/data/script_i18n";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { menuai } from "../../../../src/types";
 
 const ENTITIES = [
   getEntity("scene", "kitchen_morning", "scening", {
@@ -129,12 +129,12 @@ const initialAction: Action = {
 
 @customElement("demo-automation-describe-action")
 export class DemoAutomationDescribeAction extends LitElement {
-  @property({ attribute: false }) hass!: HomeAssistant;
+  @property({ attribute: false }) menuai!: menuai;
 
   @state() _action = initialAction;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
     return html`
@@ -142,7 +142,7 @@ export class DemoAutomationDescribeAction extends LitElement {
         <div class="action">
           <span>
             ${this._action
-              ? describeAction(this.hass, [], [], {}, this._action)
+              ? describeAction(this.menuai, [], [], {}, this._action)
               : "<invalid YAML>"}
           </span>
           <ha-yaml-editor
@@ -155,7 +155,7 @@ export class DemoAutomationDescribeAction extends LitElement {
         ${ACTIONS.map(
           (conf) => html`
             <div class="action">
-              <span>${describeAction(this.hass, [], [], {}, conf as any)}</span>
+              <span>${describeAction(this.menuai, [], [], {}, conf as any)}</span>
               <pre>${dump(conf)}</pre>
             </div>
           `
@@ -166,10 +166,10 @@ export class DemoAutomationDescribeAction extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    hass.addEntities(ENTITIES);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    menuai.addEntities(ENTITIES);
   }
 
   private _dataChanged(ev: CustomEvent): void {

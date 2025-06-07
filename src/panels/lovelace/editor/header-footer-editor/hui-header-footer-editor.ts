@@ -5,13 +5,13 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-icon-button";
 import type { LovelaceConfig } from "../../../../data/lovelace/config/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceHeaderFooterConfig } from "../../header-footer/types";
 import { showCreateHeaderFooterDialog } from "./show-create-headerfooter-dialog";
 
 @customElement("hui-header-footer-editor")
 export class HuiHeaderFooterEditor extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   public lovelaceConfig!: LovelaceConfig;
 
@@ -23,12 +23,12 @@ export class HuiHeaderFooterEditor extends LitElement {
     return html`
       <div>
         <span>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.lovelace.editor.header-footer.${this.configValue}`
           )}:
           ${!this.config?.type
-            ? this.hass!.localize("ui.panel.lovelace.editor.common.none")
-            : this.hass!.localize(
+            ? this.menuai!.localize("ui.panel.lovelace.editor.common.none")
+            : this.menuai!.localize(
                 `ui.panel.lovelace.editor.header-footer.types.${this.config?.type}.name`
               )}
         </span>
@@ -37,7 +37,7 @@ export class HuiHeaderFooterEditor extends LitElement {
         ${!this.config?.type
           ? html`
               <ha-icon-button
-                .label=${this.hass!.localize(
+                .label=${this.menuai!.localize(
                   "ui.panel.lovelace.editor.common.add"
                 )}
                 .path=${mdiPlus}
@@ -47,7 +47,7 @@ export class HuiHeaderFooterEditor extends LitElement {
             `
           : html`
               <ha-icon-button
-                .label=${this.hass!.localize(
+                .label=${this.menuai!.localize(
                   "ui.panel.lovelace.editor.common.clear"
                 )}
                 .path=${mdiClose}
@@ -55,7 +55,7 @@ export class HuiHeaderFooterEditor extends LitElement {
                 @click=${this._delete}
               ></ha-icon-button>
               <ha-icon-button
-                .label=${this.hass!.localize(
+                .label=${this.menuai!.localize(
                   "ui.panel.lovelace.editor.common.edit"
                 )}
                 .path=${mdiPencil}

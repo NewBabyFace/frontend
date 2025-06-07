@@ -8,7 +8,7 @@ import {
   mdiVolumeHigh,
   mdiVolumeOff,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
@@ -20,7 +20,7 @@ import "../../../components/ha-control-button-group";
 import "../../../components/ha-control-switch";
 import { UNAVAILABLE, UNKNOWN } from "../../../data/entity";
 import { forwardHaptic } from "../../../data/haptics";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -29,11 +29,11 @@ import type {
 } from "./types";
 
 export const supportsToggleCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -64,17 +64,17 @@ const DOMAIN_ICONS: Record<string, { on: string; off: string }> = {
 
 @customElement("hui-toggle-card-feature")
 class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: ToggleCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as HassEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as menuaiEntity | undefined;
   }
 
   static getStubConfig(): ToggleCardFeatureConfig {
@@ -109,7 +109,7 @@ class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
   }
 
   private async _callService(turnOn): Promise<void> {
-    if (!this.hass || !this._stateObj) {
+    if (!this.menuai || !this._stateObj) {
       return;
     }
     forwardHaptic("light");
@@ -117,7 +117,7 @@ class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
     const serviceDomain = stateDomain;
     const service = turnOn ? "turn_on" : "turn_off";
 
-    await this.hass.callService(serviceDomain, service, {
+    await this.menuai.callService(serviceDomain, service, {
       entity_id: this._stateObj.entity_id,
     });
   }
@@ -125,10 +125,10 @@ class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsToggleCardFeature(this.hass, this.context)
+      !supportsToggleCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -150,7 +150,7 @@ class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
       return html`
         <ha-control-button-group>
           <ha-control-button
-            .label=${this.hass.localize("ui.card.common.turn_off")}
+            .label=${this.menuai.localize("ui.card.common.turn_off")}
             @click=${this._turnOff}
             .disabled=${this._stateObj.state === UNAVAILABLE}
             class=${classMap({
@@ -163,7 +163,7 @@ class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
             <ha-svg-icon .path=${offIcon}></ha-svg-icon>
           </ha-control-button>
           <ha-control-button
-            .label=${this.hass.localize("ui.card.common.turn_on")}
+            .label=${this.menuai.localize("ui.card.common.turn_on")}
             @click=${this._turnOn}
             .disabled=${this._stateObj.state === UNAVAILABLE}
             class=${classMap({
@@ -185,7 +185,7 @@ class HuiToggleCardFeature extends LitElement implements LovelaceCardFeature {
         .pathOff=${offIcon}
         .checked=${isOn}
         @change=${this._valueChanged}
-        .ariaLabel=${this.hass.localize("ui.card.common.toggle")}
+        .ariaLabel=${this.menuai.localize("ui.card.common.toggle")}
         .disabled=${this._stateObj.state === UNAVAILABLE}
       >
       </ha-control-switch>

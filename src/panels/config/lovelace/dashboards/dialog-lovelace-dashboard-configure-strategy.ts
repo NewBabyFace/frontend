@@ -7,13 +7,13 @@ import { createCloseHeading } from "../../../../components/ha-dialog";
 import "../../../../components/ha-form/ha-form";
 import type { LovelaceStrategyConfig } from "../../../../data/lovelace/config/strategy";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../../lovelace/editor/dashboard-strategy-editor/hui-dashboard-strategy-element-editor";
 import type { LovelaceDashboardConfigureStrategyDialogParams } from "./show-dialog-lovelace-dashboard-configure-strategy";
 
 @customElement("dialog-lovelace-dashboard-configure-strategy")
 export class DialogLovelaceDashboardDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: LovelaceDashboardConfigureStrategyDialogParams;
 
@@ -46,15 +46,15 @@ export class DialogLovelaceDashboardDetail extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             "ui.panel.config.lovelace.dashboards.detail.new_dashboard"
           )
         )}
       >
         <div>
           <hui-dashboard-strategy-element-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .lovelace=${this._params.config}
             .value=${this._data}
             @config-changed=${this._handleConfigChanged}
@@ -67,7 +67,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
           @click=${this._save}
           .disabled=${this._submitting}
         >
-          ${this.hass.localize("ui.common.next")}
+          ${this.menuai.localize("ui.common.next")}
         </ha-button>
       </ha-dialog>
     `;

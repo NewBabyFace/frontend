@@ -185,7 +185,7 @@ export function fuzzyScore(
   let patternPos: number;
   let wordPos: number;
 
-  const hasStrongFirstMatch = [false];
+  const menuaitrongFirstMatch = [false];
 
   // There will be a match, fill in tables
   for (
@@ -219,7 +219,7 @@ export function fuzzyScore(
           wordLen,
           wordStart,
           _diag[row - 1][column - 1] === 0,
-          hasStrongFirstMatch
+          menuaitrongFirstMatch
         );
       }
 
@@ -268,7 +268,7 @@ export function fuzzyScore(
     printTables(pattern, patternStart, word, wordStart);
   }
 
-  if (!hasStrongFirstMatch[0] && !firstMatchCanBeWeak) {
+  if (!menuaitrongFirstMatch[0] && !firstMatchCanBeWeak) {
     return undefined;
   }
 

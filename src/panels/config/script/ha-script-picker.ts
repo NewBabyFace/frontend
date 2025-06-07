@@ -28,7 +28,7 @@ import { isComponentLoaded } from "../../../common/config/is_component_loaded";
 import { formatShortDateTimeWithConditionalYear } from "../../../common/datetime/format_date_time";
 import { relativeTime } from "../../../common/datetime/relative_time";
 import { storage } from "../../../common/decorators/storage";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { fireEvent } from "../../../common/dom/fire_event";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import { navigate } from "../../../common/navigate";
@@ -86,7 +86,7 @@ import {
   deleteScript,
   fetchScriptFileConfig,
   getScriptStateConfig,
-  hasScriptFields,
+  menuaicriptFields,
   showScriptEditor,
   triggerScript,
 } from "../../../data/script";
@@ -96,10 +96,10 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { showToast } from "../../../util/toast";
 import { showAreaRegistryDetailDialog } from "../areas/show-dialog-area-registry-detail";
@@ -118,7 +118,7 @@ type ScriptItem = ScriptEntity & {
 
 @customElement("ha-script-picker")
 class HaScriptPicker extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public scripts!: ScriptEntity[];
 
@@ -205,7 +205,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     (
       scripts: ScriptEntity[],
       entityReg: EntityRegistryEntry[],
-      areas: HomeAssistant["areas"],
+      areas: menuai["areas"],
       categoryReg?: CategoryRegistryEntry[],
       labelReg?: LabelRegistryEntry[],
       filteredScripts?: string[] | null
@@ -255,7 +255,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           type: "icon",
           template: (script) =>
             html`<ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${script}
               style=${styleMap({
                 color:
@@ -310,57 +310,57 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 ? dayDifference > 3
                   ? formatShortDateTimeWithConditionalYear(
                       date,
-                      this.hass.locale,
-                      this.hass.config
+                      this.menuai.locale,
+                      this.menuai.config
                     )
-                  : relativeTime(date, this.hass.locale)
-                : this.hass.localize("ui.components.relative_time.never")}
+                  : relativeTime(date, this.menuai.locale)
+                : this.menuai.localize("ui.components.relative_time.never")}
             `;
           },
         },
         actions: {
           title: "",
-          label: this.hass.localize("ui.panel.config.generic.headers.actions"),
+          label: this.menuai.localize("ui.panel.config.generic.headers.actions"),
           type: "overflow-menu",
           showNarrow: true,
           moveable: false,
           hideable: false,
           template: (script) => html`
             <ha-icon-overflow-menu
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               narrow
               .items=${[
                 {
                   path: mdiInformationOutline,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.script.picker.show_info"
                   ),
                   action: () => this._showInfo(script),
                 },
                 {
                   path: mdiCog,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.automation.picker.show_settings"
                   ),
                   action: () => this._openSettings(script),
                 },
                 {
                   path: mdiTag,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     `ui.panel.config.script.picker.${script.category ? "edit_category" : "assign_category"}`
                   ),
                   action: () => this._editCategory(script),
                 },
                 {
                   path: mdiPlay,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.script.picker.run"
                   ),
                   action: () => this._runScript(script),
                 },
                 {
                   path: mdiTransitConnection,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.script.picker.show_trace"
                   ),
                   action: () => this._showTrace(script),
@@ -370,13 +370,13 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 },
                 {
                   path: mdiContentDuplicate,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.script.picker.duplicate"
                   ),
                   action: () => this._duplicate(script),
                 },
                 {
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.script.picker.delete"
                   ),
                   path: mdiDelete,
@@ -394,16 +394,16 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     }
   );
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
       subscribeCategoryRegistry(
-        this.hass.connection,
+        this.menuai.connection,
         "script",
         (categories) => {
           this._categories = categories;
         }
       ),
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
     ];
@@ -424,26 +424,26 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
       )}
       <ha-md-menu-item .value=${null} .clickAction=${this._handleBulkCategory}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.picker.bulk_actions.no_category"
           )}
         </div> </ha-md-menu-item
       ><ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateCategory}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.category.editor.add")}
+          ${this.menuai.localize("ui.panel.config.category.editor.add")}
         </div>
       </ha-md-menu-item>`;
 
     const labelItems = html`${this._labels?.map((label) => {
         const color = label.color ? computeCssColor(label.color) : undefined;
         const selected = this._selected.every((entityId) =>
-          this.hass.entities[entityId]?.labels.includes(label.label_id)
+          this.menuai.entities[entityId]?.labels.includes(label.label_id)
         );
         const partial =
           !selected &&
           this._selected.some((entityId) =>
-            this.hass.entities[entityId]?.labels.includes(label.label_id)
+            this.menuai.entities[entityId]?.labels.includes(label.label_id)
           );
         return html`<ha-md-menu-item
           .value=${label.label_id}
@@ -468,11 +468,11 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateLabel}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.labels.add_label")}
+          ${this.menuai.localize("ui.panel.config.labels.add_label")}
         </div></ha-md-menu-item
       >`;
 
-    const areaItems = html`${Object.values(this.hass.areas).map(
+    const areaItems = html`${Object.values(this.menuai.areas).map(
         (area) =>
           html`<ha-md-menu-item
             .value=${area.area_id}
@@ -489,7 +489,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
       )}
       <ha-md-menu-item .value=${null} .clickAction=${this._handleBulkArea}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.devices.picker.bulk_actions.no_area"
           )}
         </div>
@@ -497,7 +497,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateArea}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.devices.picker.bulk_actions.add_area"
           )}
         </div>
@@ -505,7 +505,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
 
     const areasInOverflow =
       (this._sizeController.value && this._sizeController.value < 900) ||
-      (!this._sizeController.value && this.hass.dockedSidebar === "docked");
+      (!this._sizeController.value && this.menuai.dockedSidebar === "docked");
 
     const labelsInOverflow =
       areasInOverflow &&
@@ -514,19 +514,19 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     const scripts = this._scripts(
       this.scripts,
       this._entityReg,
-      this.hass.areas,
+      this.menuai.areas,
       this._categories,
       this._labels,
       this._filteredScripts
     );
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${configSections.automations}
-        .searchLabel=${this.hass.localize(
+        .searchLabel=${this.menuai.localize(
           "ui.panel.config.script.picker.search",
           { number: scripts.length }
         )}
@@ -551,12 +551,12 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 Array.isArray(val) ? val.length : val
               )
         ).length}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${scripts}
         .empty=${!this.scripts.length}
         .activeFilters=${this._activeFilters}
         id="entity_id"
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.script.picker.no_scripts"
         )}
         @clear-filter=${this._clearFilter}
@@ -569,12 +569,12 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
       >
         <ha-icon-button
           slot="toolbar-icon"
-          .label=${this.hass.localize("ui.common.help")}
+          .label=${this.menuai.localize("ui.common.help")}
           .path=${mdiHelpCircle}
           @click=${this._showHelp}
         ></ha-icon-button>
         <ha-filter-floor-areas
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"script"}
           .value=${this._filters["ha-filter-floor-areas"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -584,7 +584,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-floor-areas>
         <ha-filter-devices
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"script"}
           .value=${this._filters["ha-filter-devices"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -594,7 +594,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-devices>
         <ha-filter-entities
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"script"}
           .value=${this._filters["ha-filter-entities"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -604,7 +604,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-entities>
         <ha-filter-labels
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._filters["ha-filter-labels"]?.value}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
@@ -613,7 +613,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-labels>
         <ha-filter-categories
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           scope="script"
           .value=${this._filters["ha-filter-categories"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -623,7 +623,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-categories>
         <ha-filter-blueprints
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"script"}
           .value=${this._filters["ha-filter-blueprints"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -637,7 +637,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           ? html`<ha-md-button-menu slot="selection-bar">
                 <ha-assist-chip
                   slot="trigger"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.automation.picker.bulk_actions.move_category"
                   )}
                 >
@@ -653,7 +653,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 : html`<ha-md-button-menu slot="selection-bar">
                     <ha-assist-chip
                       slot="trigger"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.automation.picker.bulk_actions.add_label"
                       )}
                     >
@@ -669,7 +669,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 : html`<ha-md-button-menu slot="selection-bar">
                     <ha-assist-chip
                       slot="trigger"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.devices.picker.bulk_actions.move_area"
                       )}
                     >
@@ -687,7 +687,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
             ${
               this.narrow
                 ? html`<ha-assist-chip
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.picker.bulk_action"
                     )}
                     slot="trigger"
@@ -699,7 +699,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                   </ha-assist-chip>`
                 : html`<ha-icon-button
                     .path=${mdiDotsVertical}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.picker.bulk_action"
                     )}
                     slot="trigger"
@@ -715,7 +715,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.picker.bulk_actions.move_category"
                         )}
                       </div>
@@ -733,7 +733,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.picker.bulk_actions.add_label"
                         )}
                       </div>
@@ -751,7 +751,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.devices.picker.bulk_actions.move_area"
                         )}
                       </div>
@@ -770,22 +770,22 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           ? html` <div class="empty" slot="empty">
               <ha-svg-icon .path=${mdiScriptText}></ha-svg-icon>
               <h1>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.script.picker.empty_header"
                 )}
               </h1>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.script.picker.empty_text"
                 )}
               </p>
               <a
-                href=${documentationUrl(this.hass, "/docs/script/editor/")}
+                href=${documentationUrl(this.menuai, "/docs/script/editor/")}
                 target="_blank"
                 rel="noreferrer"
               >
                 <ha-button>
-                  ${this.hass.localize("ui.panel.config.common.learn_more")}
+                  ${this.menuai.localize("ui.panel.config.common.learn_more")}
                 </ha-button>
               </a>
             </div>`
@@ -794,7 +794,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
           slot="fab"
           ?is-wide=${this.isWide}
           ?narrow=${this.narrow}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.script.picker.add_script"
           )}
           extended
@@ -802,7 +802,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -943,7 +943,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     if (!blueprint) {
       return;
     }
-    const related = await findRelated(this.hass, "script_blueprint", blueprint);
+    const related = await findRelated(this.menuai, "script_blueprint", blueprint);
     this._filters = {
       ...this._filters,
       "ha-filter-blueprints": {
@@ -960,10 +960,10 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     );
     if (!entityReg) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.script.picker.no_category_support"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.script.picker.no_category_entity_reg"
         ),
       });
@@ -976,7 +976,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
@@ -990,7 +990,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           categories: { script: category },
         })
       );
@@ -999,7 +999,7 @@ class HaScriptPicker extends SubscribeMixin(LitElement) {
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1021,11 +1021,11 @@ ${rejected
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           labels:
             action === "add"
-              ? this.hass.entities[entityId].labels.concat(label)
-              : this.hass.entities[entityId].labels.filter(
+              ? this.menuai.entities[entityId].labels.concat(label)
+              : this.menuai.entities[entityId].labels.filter(
                   (lbl) => lbl !== label
                 ),
         })
@@ -1035,7 +1035,7 @@ ${rejected
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1047,7 +1047,7 @@ ${rejected
     }
   }
 
-  private _handleRowClicked(ev: HASSDomEvent<RowClickedEvent>) {
+  private _handleRowClicked(ev: menuaiDomEvent<RowClickedEvent>) {
     const entry = this.entityRegistry.find((e) => e.entity_id === ev.detail.id);
     if (entry) {
       navigate(`/config/script/edit/${entry.unique_id}`);
@@ -1057,7 +1057,7 @@ ${rejected
   }
 
   private _createNew() {
-    if (isComponentLoaded(this.hass, "blueprint")) {
+    if (isComponentLoaded(this.menuai, "blueprint")) {
       showNewAutomationDialog(this, { mode: "script" });
     } else {
       navigate("/config/script/edit/new");
@@ -1072,12 +1072,12 @@ ${rejected
       return;
     }
 
-    if (hasScriptFields(this.hass, entry.unique_id)) {
+    if (menuaicriptFields(this.menuai, entry.unique_id)) {
       this._showInfo(script);
     } else {
-      await triggerScript(this.hass, entry.unique_id);
+      await triggerScript(this.menuai, entry.unique_id);
       showToast(this, {
-        message: this.hass.localize("ui.notification_toast.triggered", {
+        message: this.menuai.localize("ui.notification_toast.triggered", {
           name: computeStateName(script),
         }),
       });
@@ -1085,7 +1085,7 @@ ${rejected
   };
 
   private _showInfo(script: any) {
-    fireEvent(this, "hass-more-info", { entityId: script.entity_id });
+    fireEvent(this, "menuai-more-info", { entityId: script.entity_id });
   }
 
   private _openSettings(script: any) {
@@ -1106,16 +1106,16 @@ ${rejected
 
   private _showHelp() {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.panel.config.script.caption"),
+      title: this.menuai.localize("ui.panel.config.script.caption"),
       text: html`
-        ${this.hass.localize("ui.panel.config.script.picker.introduction")}
+        ${this.menuai.localize("ui.panel.config.script.picker.introduction")}
         <p>
           <a
-            href=${documentationUrl(this.hass, "/docs/scripts/")}
+            href=${documentationUrl(this.menuai, "/docs/scripts/")}
             target="_blank"
             rel="noreferrer"
           >
-            ${this.hass.localize("ui.panel.config.script.picker.learn_more")}
+            ${this.menuai.localize("ui.panel.config.script.picker.learn_more")}
           </a>
         </p>
       `,
@@ -1130,24 +1130,24 @@ ${rejected
       if (!entry) {
         return;
       }
-      const config = await fetchScriptFileConfig(this.hass, entry.unique_id);
+      const config = await fetchScriptFileConfig(this.menuai, entry.unique_id);
       showScriptEditor({
         ...config,
-        alias: `${config?.alias} (${this.hass.localize(
+        alias: `${config?.alias} (${this.menuai.localize(
           "ui.panel.config.script.picker.duplicate"
         )})`,
       });
     } catch (err: any) {
       if (err.status_code === 404) {
         const response = await getScriptStateConfig(
-          this.hass,
+          this.menuai,
           script.entity_id
         );
         showScriptEditor(response.config);
         return;
       }
       await showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.script.editor.load_error_unknown",
           { err_no: err.status_code }
         ),
@@ -1157,15 +1157,15 @@ ${rejected
 
   private async _deleteConfirm(script: any) {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.script.editor.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.script.editor.delete_confirm_text",
         { name: script.name }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       confirm: () => this._delete(script),
       destructive: true,
     });
@@ -1177,16 +1177,16 @@ ${rejected
         (e) => e.entity_id === script.entity_id
       );
       if (entry) {
-        await deleteScript(this.hass, entry.unique_id);
+        await deleteScript(this.menuai, entry.unique_id);
       }
     } catch (err: any) {
       await showAlertDialog(this, {
         text:
           err.status_code === 400
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.script.editor.load_error_not_deletable"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.script.editor.load_error_unknown",
                 { err_no: err.status_code }
               ),
@@ -1199,7 +1199,7 @@ ${rejected
       scope: "script",
       createEntry: async (values) => {
         const category = await createCategoryRegistryEntry(
-          this.hass,
+          this.menuai,
           "script",
           values
         );
@@ -1212,7 +1212,7 @@ ${rejected
   private _bulkCreateLabel = () => {
     showLabelDetailDialog(this, {
       createEntry: async (values) => {
-        const label = await createLabelRegistryEntry(this.hass, values);
+        const label = await createLabelRegistryEntry(this.menuai, values);
         this._bulkLabel(label.label_id, "add");
       },
     });
@@ -1227,7 +1227,7 @@ ${rejected
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           area_id: area,
         })
       );
@@ -1236,7 +1236,7 @@ ${rejected
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1251,7 +1251,7 @@ ${rejected
   private _bulkCreateArea = () => {
     showAreaRegistryDetailDialog(this, {
       createEntry: async (values) => {
-        const area = await createAreaRegistryEntry(this.hass, values);
+        const area = await createAreaRegistryEntry(this.menuai, values);
         this._bulkAddArea(area.area_id);
         return area;
       },
@@ -1283,10 +1283,10 @@ ${rejected
           display: block;
           height: 100%;
         }
-        hass-tabs-subpage-data-table {
+        menuai-tabs-subpage-data-table {
           --data-table-row-height: 60px;
         }
-        hass-tabs-subpage-data-table.narrow {
+        menuai-tabs-subpage-data-table.narrow {
           --data-table-row-height: 72px;
         }
         a {

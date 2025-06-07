@@ -4,12 +4,12 @@ import { customElement, property } from "lit/decorators";
 import "../../../components/ha-settings-row";
 import "../../../components/ha-switch";
 import type { HaSwitch } from "../../../components/ha-switch";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { storeState } from "../../../util/ha-pref-storage";
 
 @customElement("ha-debug-connection-row")
 class HaDebugConnectionRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -17,17 +17,17 @@ class HaDebugConnectionRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.debug.debug_connection.title"
           )}
         </span>
         <span slot="description">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.debug.debug_connection.description"
           )}
         </span>
         <ha-switch
-          .checked=${this.hass.debugConnection}
+          .checked=${this.menuai.debugConnection}
           @change=${this._checkedChanged}
         ></ha-switch>
       </ha-settings-row>
@@ -36,11 +36,11 @@ class HaDebugConnectionRow extends LitElement {
 
   private async _checkedChanged(ev: Event) {
     const debugConnection = (ev.target as HaSwitch).checked;
-    if (debugConnection === this.hass.debugConnection) {
+    if (debugConnection === this.menuai.debugConnection) {
       return;
     }
-    this.hass.debugConnection = debugConnection;
-    storeState(this.hass);
+    this.menuai.debugConnection = debugConnection;
+    storeState(this.menuai);
   }
 }
 

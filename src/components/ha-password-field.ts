@@ -8,14 +8,14 @@ import {
   query,
   state,
 } from "lit/decorators";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 import "./ha-textfield";
 import type { HaTextField } from "./ha-textfield";
 
 @customElement("ha-password-field")
 export class HaPasswordField extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public invalid?: boolean;
 
@@ -132,7 +132,7 @@ export class HaPasswordField extends LitElement {
         @change=${this._handleChangeEvent}
       ></ha-textfield>
       <ha-icon-button
-        .label=${this.hass?.localize(
+        .label=${this.menuai?.localize(
           this._unmaskedPassword
             ? "ui.components.selectors.text.hide_password"
             : "ui.components.selectors.text.show_password"

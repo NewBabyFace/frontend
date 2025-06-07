@@ -42,10 +42,10 @@ import {
   showConfirmationDialog,
   showPromptDialog,
 } from "../../../../../dialogs/generic/show-dialog-box";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/menuai-subpage";
 import { SubscribeMixin } from "../../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { brandsUrl } from "../../../../../util/brands-url";
 import { fileDownload } from "../../../../../util/file_download";
 import { documentationUrl } from "../../../../../util/documentation-url";
@@ -59,7 +59,7 @@ export interface ThreadNetwork {
 
 @customElement("thread-config-panel")
 export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -75,7 +75,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     const networks = this._groupRoutersByNetwork(this._routers, this._datasets);
 
     return html`
-      <hass-subpage .narrow=${this.narrow} .hass=${this.hass} header="Thread">
+      <menuai-subpage .narrow=${this.narrow} .menuai=${this.menuai} header="Thread">
         <ha-button-menu slot="toolbar-icon">
           <ha-icon-button
             .path=${mdiDotsVertical}
@@ -89,40 +89,40 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
             @click=${this._signUrl}
           >
             <ha-list-item>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.integrations.config_entry.download_diagnostics"
               )}
             </ha-list-item>
           </a>
           <ha-list-item @click=${this._addTLV}
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.thread.add_dataset_from_tlv"
             )}</ha-list-item
           >
           <ha-list-item @click=${this._addOTBR}
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.thread.add_open_thread_border_router"
             )}</ha-list-item
           >
         </ha-button-menu>
         <div class="content">
-          <h1>${this.hass.localize("ui.panel.config.thread.my_network")}</h1>
+          <h1>${this.menuai.localize("ui.panel.config.thread.my_network")}</h1>
           ${networks.preferred
             ? this._renderNetwork(networks.preferred)
             : html`<ha-card>
                 <div class="card-content no-routers">
                   <h3>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.thread.no_preferred_network"
                     )}
                   </h3>
                   <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
                   <a
-                    href=${documentationUrl(this.hass, `/integrations/thread`)}
+                    href=${documentationUrl(this.menuai, `/integrations/thread`)}
                     target="_blank"
                   >
                     <mwc-button
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.thread.more_info"
                       )}</mwc-button
                     >
@@ -131,23 +131,23 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
               </ha-card>`}
           ${networks.networks.length
             ? html`<h3>
-                  ${this.hass.localize("ui.panel.config.thread.other_networks")}
+                  ${this.menuai.localize("ui.panel.config.thread.other_networks")}
                 </h3>
                 ${networks.networks.map((network) =>
                   this._renderNetwork(network)
                 )}`
             : ""}
         </div>
-        ${this.hass.auth.external?.config.canImportThreadCredentials
+        ${this.menuai.auth.external?.config.canImportThreadCredentials
           ? html`<ha-fab
               slot="fab"
               @click=${this._importExternalThreadCredentials}
               extended
-              label="Send credentials to Home Assistant"
+              label="Send credentials to MenuAI"
               ><ha-svg-icon slot="icon" .path=${mdiCellphoneKey}></ha-svg-icon
             ></ha-fab>`
           : nothing}
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -161,14 +161,14 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
           (otbr) => otbr.extended_pan_id === network.dataset!.extended_pan_id
         ));
     const canImportKeychain =
-      this.hass.auth.external?.config.canTransferThreadCredentialsToKeychain;
+      this.menuai.auth.external?.config.canTransferThreadCredentialsToKeychain;
 
     return html`<ha-card>
       <div class="card-header">
         ${network.name}${network.dataset
           ? html`<div>
               <ha-icon-button
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.thread.thread_network_info"
                 )}
                 .otbr=${otbrForNetwork}
@@ -178,7 +178,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
               ></ha-icon-button
               >${!network.dataset.preferred && !network.routers?.length
                 ? html`<ha-icon-button
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.thread.thread_network_delete_credentials"
                     )}
                     .networkDataset=${network.dataset}
@@ -192,7 +192,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
       ${network.routers?.length
         ? html`<div class="card-content routers">
               <h4>
-                ${this.hass.localize("ui.panel.config.thread.border_routers", {
+                ${this.menuai.localize("ui.panel.config.thread.border_routers", {
                   count: network.routers.length,
                 })}
               </h4>
@@ -218,7 +218,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
                     domain: router.brand,
                     brand: true,
                     type: "icon",
-                    darkOptimized: this.hass.themes?.darkMode,
+                    darkOptimized: this.menuai.themes?.darkMode,
                   })}
                   alt=${router.brand}
                   crossorigin="anonymous"
@@ -235,7 +235,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
                   ? html`${isDefaultRouter
                         ? html`<ha-svg-icon
                             .path=${mdiCellphoneKey}
-                            .title=${this.hass.localize(
+                            .title=${this.menuai.localize(
                               "ui.panel.config.thread.default_router"
                             )}
                           ></ha-svg-icon>`
@@ -248,7 +248,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
                         @action=${this._handleRouterAction}
                       >
                         <ha-icon-button
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.common.overflow_menu"
                           )}
                           .path=${mdiDotsVertical}
@@ -257,29 +257,29 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
                         ${showDefaultRouter
                           ? html`<ha-list-item .disabled=${isDefaultRouter}>
                               ${isDefaultRouter
-                                ? this.hass.localize(
+                                ? this.menuai.localize(
                                     "ui.panel.config.thread.default_router"
                                   )
-                                : this.hass.localize(
+                                : this.menuai.localize(
                                     "ui.panel.config.thread.set_default_router"
                                   )}
                             </ha-list-item>`
                           : ""}
                         ${otbr
                           ? html`<ha-list-item>
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.panel.config.thread.reset_border_router"
                                 )}</ha-list-item
                               >
                               <ha-list-item>
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.panel.config.thread.change_channel"
                                 )}</ha-list-item
                               >
                               ${network.dataset?.preferred
                                 ? ""
                                 : html`<ha-list-item>
-                                    ${this.hass.localize(
+                                    ${this.menuai.localize(
                                       "ui.panel.config.thread.add_to_my_network"
                                     )}
                                   </ha-list-item>`}`
@@ -291,17 +291,17 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
         : html`<div class="card-content no-routers">
             <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
             ${otbrForNetwork
-              ? html`${this.hass.localize(
+              ? html`${this.menuai.localize(
                     "ui.panel.config.thread.no_routers_otbr_network"
                   )}
                   <mwc-button
                     .otbr=${otbrForNetwork}
                     @click=${this._resetBorderRouterEvent}
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.config.thread.reset_border_router"
                     )}</mwc-button
                   >`
-              : this.hass.localize("ui.panel.config.thread.no_border_routers")}
+              : this.menuai.localize("ui.panel.config.thread.no_border_routers")}
           </div> `}
       ${network.dataset && !network.dataset.preferred
         ? html`<div class="card-actions">
@@ -337,17 +337,17 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     ) {
       showAlertDialog(this, {
         title: "Error",
-        text: this.hass.localize("ui.panel.config.thread.no_preferred_router"),
+        text: this.menuai.localize("ui.panel.config.thread.no_preferred_router"),
       });
       return;
     }
-    this.hass.auth.external!.fireMessage({
+    this.menuai.auth.external!.fireMessage({
       type: "thread/store_in_platform_keychain",
       payload: {
         mac_extended_address: dataset.preferred_extended_address,
         border_agent_id: dataset.preferred_border_agent_id,
         active_operational_dataset: (
-          await getThreadDataSetTLV(this.hass, dataset.dataset_id)
+          await getThreadDataSetTLV(this.menuai, dataset.dataset_id)
         ).tlv,
         extended_pan_id: dataset.extended_pan_id,
       },
@@ -361,7 +361,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
   }
 
   private _importExternalThreadCredentials() {
-    this.hass.auth.external!.fireMessage({
+    this.menuai.auth.external!.fireMessage({
       type: "thread/import_credentials",
     });
   }
@@ -374,9 +374,9 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     ev.target.style.display = "";
   }
 
-  hassSubscribe() {
+  menuaiSubscribe() {
     return [
-      subscribeDiscoverThreadRouters(this.hass, (routers: ThreadRouter[]) => {
+      subscribeDiscoverThreadRouters(this.menuai, (routers: ThreadRouter[]) => {
         this._routers = routers;
       }),
     ];
@@ -431,21 +431,21 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
       return {
         preferred,
         networks: Object.values(networks).sort((a, b) =>
-          stringCompare(a.name, b.name, this.hass.locale.language)
+          stringCompare(a.name, b.name, this.menuai.locale.language)
         ),
       };
     }
   );
 
   private async _refresh() {
-    listThreadDataSets(this.hass).then((datasets) => {
+    listThreadDataSets(this.menuai).then((datasets) => {
       this._datasets = datasets.datasets;
     });
-    if (!isComponentLoaded(this.hass, "otbr")) {
+    if (!isComponentLoaded(this.menuai, "otbr")) {
       return;
     }
     try {
-      this._otbrInfo = await getOTBRInfo(this.hass);
+      this._otbrInfo = await getOTBRInfo(this.menuai);
     } catch (_err) {
       this._otbrInfo = undefined;
     }
@@ -455,7 +455,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     const anchor = ev.target.closest("a");
     ev.preventDefault();
     const signedUrl = await getSignedPath(
-      this.hass,
+      this.menuai,
       anchor.getAttribute("href")
     );
     fileDownload(signedUrl.path);
@@ -467,7 +467,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
         this._refresh();
       },
       startFlowHandler: "otbr",
-      showAdvanced: this.hass.userData?.showAdvanced,
+      showAdvanced: this.menuai.userData?.showAdvanced,
     });
   }
 
@@ -501,10 +501,10 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
 
   private async _resetBorderRouter(otbr: OTBRInfo) {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.thread.confirm_reset_border_router"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.thread.confirm_reset_border_router_text"
       ),
     });
@@ -512,10 +512,10 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
       return;
     }
     try {
-      await OTBRCreateNetwork(this.hass, otbr.extended_address);
+      await OTBRCreateNetwork(this.menuai, otbr.extended_address);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.thread.otbr_config_failed"),
+        title: this.menuai.localize("ui.panel.config.thread.otbr_config_failed"),
         text: err.message,
       });
     }
@@ -529,10 +529,10 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
       return;
     }
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.thread.confirm_set_dataset_border_router"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.thread.confirm_set_dataset_border_router_text"
       ),
     });
@@ -540,10 +540,10 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
       return;
     }
     try {
-      await OTBRSetNetwork(this.hass, otbr.extended_address, preferedDatasetId);
+      await OTBRSetNetwork(this.menuai, otbr.extended_address, preferedDatasetId);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.thread.otbr_config_failed"),
+        title: this.menuai.localize("ui.panel.config.thread.otbr_config_failed"),
         text: err.message,
       });
     }
@@ -552,7 +552,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
 
   private async _setPreferred(ev) {
     const datasetId = ev.target.datasetId;
-    await setPreferredThreadDataSet(this.hass, datasetId);
+    await setPreferredThreadDataSet(this.menuai, datasetId);
     this._refresh();
   }
 
@@ -561,7 +561,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     router: ThreadRouter
   ) {
     await setPreferredBorderAgent(
-      this.hass,
+      this.menuai,
       dataset.dataset_id,
       router.border_agent_id,
       router.extended_address
@@ -571,11 +571,11 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
 
   private async _addTLV() {
     const tlv = await showPromptDialog(this, {
-      title: this.hass.localize("ui.panel.config.thread.add_dataset"),
-      inputLabel: this.hass.localize(
+      title: this.menuai.localize("ui.panel.config.thread.add_dataset"),
+      inputLabel: this.menuai.localize(
         "ui.panel.config.thread.add_dataset_label"
       ),
-      confirmText: this.hass.localize(
+      confirmText: this.menuai.localize(
         "ui.panel.config.thread.add_dataset_button"
       ),
     });
@@ -583,7 +583,7 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
       return;
     }
     try {
-      await addThreadDataSet(this.hass, "manual", tlv);
+      await addThreadDataSet(this.menuai, "manual", tlv);
     } catch (err: any) {
       showAlertDialog(this, {
         title: "Error",
@@ -596,21 +596,21 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
   private async _removeDataset(ev: Event) {
     const dataset = (ev.currentTarget as any).networkDataset as ThreadDataSet;
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.thread.confirm_delete_dataset",
         { name: dataset.network_name }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.thread.confirm_delete_dataset_text"
       ),
       destructive: true,
-      confirmText: this.hass.localize("ui.common.delete"),
+      confirmText: this.menuai.localize("ui.common.delete"),
     });
     if (!confirm) {
       return;
     }
     try {
-      await removeThreadDataSet(this.hass, dataset.dataset_id);
+      await removeThreadDataSet(this.menuai, dataset.dataset_id);
     } catch (err: any) {
       showAlertDialog(this, {
         title: "Error",
@@ -623,12 +623,12 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
   private async _changeChannel(otbr: OTBRInfo) {
     const currentChannel = otbr.channel;
     const channelStr = await showPromptDialog(this, {
-      title: this.hass.localize("ui.panel.config.thread.change_channel"),
-      text: this.hass.localize("ui.panel.config.thread.change_channel_text"),
-      inputLabel: this.hass.localize(
+      title: this.menuai.localize("ui.panel.config.thread.change_channel"),
+      text: this.menuai.localize("ui.panel.config.thread.change_channel_text"),
+      inputLabel: this.menuai.localize(
         "ui.panel.config.thread.change_channel_label"
       ),
-      confirmText: this.hass.localize("ui.panel.config.thread.change_channel"),
+      confirmText: this.menuai.localize("ui.panel.config.thread.change_channel"),
       inputType: "number",
       inputMin: "11",
       inputMax: "26",
@@ -640,24 +640,24 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     const channel = parseInt(channelStr);
     if (channel < 11 || channel > 26) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.thread.change_channel_invalid"
         ),
-        text: this.hass.localize("ui.panel.config.thread.change_channel_range"),
+        text: this.menuai.localize("ui.panel.config.thread.change_channel_range"),
       });
       return;
     }
     try {
       const result = await OTBRSetChannel(
-        this.hass,
+        this.menuai,
         otbr.extended_address,
         channel
       );
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.thread.change_channel_initiated_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.thread.change_channel_initiated_text",
           { delay: Math.floor(result.delay / 60) }
         ),
@@ -665,10 +665,10 @@ export class ThreadConfigPanel extends SubscribeMixin(LitElement) {
     } catch (err: any) {
       if (err.code === "multiprotocol_enabled") {
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.thread.change_channel_multiprotocol_enabled_title"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.thread.change_channel_multiprotocol_enabled_text"
           ),
         });

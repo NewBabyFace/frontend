@@ -1,7 +1,7 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
 export const supportsFeature = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   feature: number
 ): boolean => supportsFeatureFromAttributes(stateObj.attributes, feature);
 

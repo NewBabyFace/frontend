@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { until } from "lit/directives/until";
@@ -8,15 +8,15 @@ import {
   entityIcon,
   FALLBACK_DOMAIN_ICONS,
 } from "../data/icons";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon";
 import "./ha-svg-icon";
 
 @customElement("ha-state-icon")
 export class HaStateIcon extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property({ attribute: false }) public stateValue?: string;
 
@@ -25,7 +25,7 @@ export class HaStateIcon extends LitElement {
   protected render() {
     const overrideIcon =
       this.icon ||
-      (this.stateObj && this.hass?.entities[this.stateObj.entity_id]?.icon) ||
+      (this.stateObj && this.menuai?.entities[this.stateObj.entity_id]?.icon) ||
       this.stateObj?.attributes.icon;
     if (overrideIcon) {
       return html`<ha-icon .icon=${overrideIcon}></ha-icon>`;
@@ -33,10 +33,10 @@ export class HaStateIcon extends LitElement {
     if (!this.stateObj) {
       return nothing;
     }
-    if (!this.hass) {
+    if (!this.menuai) {
       return this._renderFallback();
     }
-    const icon = entityIcon(this.hass, this.stateObj, this.stateValue).then(
+    const icon = entityIcon(this.menuai, this.stateObj, this.stateValue).then(
       (icn) => {
         if (icn) {
           return html`<ha-icon .icon=${icn}></ha-icon>`;

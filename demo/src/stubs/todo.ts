@@ -1,6 +1,6 @@
 import type { TodoItem } from "../../../src/data/todo";
 import { TodoItemStatus } from "../../../src/data/todo";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 const items = {
   items: [
@@ -26,10 +26,10 @@ const items = {
   ] as TodoItem[],
 };
 
-export const mockTodo = (hass: MockHomeAssistant) => {
-  hass.mockWS("todo/item/list", () => items);
-  hass.mockWS("todo/item/move", () => undefined);
-  hass.mockWS("todo/item/subscribe", (_msg, _hass, onChange) => {
+export const mockTodo = (menuai: Mockmenuai) => {
+  menuai.mockWS("todo/item/list", () => items);
+  menuai.mockWS("todo/item/move", () => undefined);
+  menuai.mockWS("todo/item/subscribe", (_msg, _menuai, onChange) => {
     onChange!(items);
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     return () => {};

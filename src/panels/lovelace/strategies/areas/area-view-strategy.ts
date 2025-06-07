@@ -5,7 +5,7 @@ import type { LovelaceBadgeConfig } from "../../../../data/lovelace/config/badge
 import type { LovelaceCardConfig } from "../../../../data/lovelace/config/card";
 import type { LovelaceSectionRawConfig } from "../../../../data/lovelace/config/section";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   AREA_STRATEGY_GROUP_ICONS,
   computeAreaTileCardConfig,
@@ -36,13 +36,13 @@ const computeHeadingCard = (
 export class AreaViewStrategy extends ReactiveElement {
   static async generate(
     config: AreaViewStrategyConfig,
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<LovelaceViewConfig> {
     if (!config.area) {
       throw new Error("Area not provided");
     }
 
-    const area = hass.areas[config.area];
+    const area = menuai.areas[config.area];
 
     if (!area) {
       throw new Error("Unknown area");
@@ -70,11 +70,11 @@ export class AreaViewStrategy extends ReactiveElement {
 
     const groupedEntities = getAreaGroupedEntities(
       config.area,
-      hass,
+      menuai,
       config.groups_options
     );
 
-    const computeTileCard = computeAreaTileCardConfig(hass, area.name, true);
+    const computeTileCard = computeAreaTileCardConfig(menuai, area.name, true);
 
     const {
       lights,
@@ -91,7 +91,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize("ui.panel.lovelace.strategy.areas.groups.lights"),
+            menuai.localize("ui.panel.lovelace.strategy.areas.groups.lights"),
             AREA_STRATEGY_GROUP_ICONS.lights
           ),
           ...lights.map(computeTileCard),
@@ -104,7 +104,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize("ui.panel.lovelace.strategy.areas.groups.covers"),
+            menuai.localize("ui.panel.lovelace.strategy.areas.groups.covers"),
             AREA_STRATEGY_GROUP_ICONS.covers
           ),
           ...covers.map(computeTileCard),
@@ -117,7 +117,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize("ui.panel.lovelace.strategy.areas.groups.climate"),
+            menuai.localize("ui.panel.lovelace.strategy.areas.groups.climate"),
             AREA_STRATEGY_GROUP_ICONS.climate
           ),
           ...climate.map(computeTileCard),
@@ -130,7 +130,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize(
+            menuai.localize(
               "ui.panel.lovelace.strategy.areas.groups.media_players"
             ),
             AREA_STRATEGY_GROUP_ICONS.media_players
@@ -145,7 +145,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize("ui.panel.lovelace.strategy.areas.groups.security"),
+            menuai.localize("ui.panel.lovelace.strategy.areas.groups.security"),
             AREA_STRATEGY_GROUP_ICONS.security
           ),
           ...security.map(computeTileCard),
@@ -158,7 +158,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize("ui.panel.lovelace.strategy.areas.groups.actions"),
+            menuai.localize("ui.panel.lovelace.strategy.areas.groups.actions"),
             AREA_STRATEGY_GROUP_ICONS.actions
           ),
           ...actions.map(computeTileCard),
@@ -171,7 +171,7 @@ export class AreaViewStrategy extends ReactiveElement {
         type: "grid",
         cards: [
           computeHeadingCard(
-            hass.localize("ui.panel.lovelace.strategy.areas.groups.others"),
+            menuai.localize("ui.panel.lovelace.strategy.areas.groups.others"),
             AREA_STRATEGY_GROUP_ICONS.others
           ),
           ...others.map(computeTileCard),

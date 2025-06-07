@@ -17,7 +17,7 @@ import type { HaRadio } from "../../../components/ha-radio";
 import "../../../components/ha-spinner";
 import "../../../components/ha-textfield";
 import type { HaTextField } from "../../../components/ha-textfield";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
 import {
   type AccessPoint,
   accesspointScan,
@@ -27,12 +27,12 @@ import {
   parseAddress,
   updateNetworkInterface,
   type WifiConfiguration,
-} from "../../../data/hassio/network";
+} from "../../../data/menuaiio/network";
 import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../../components/sl-tab-group";
 
 const IP_VERSIONS = ["ipv4", "ipv6"];
@@ -55,8 +55,8 @@ const PREDEFINED_DNS = {
 };
 
 @customElement("supervisor-network")
-export class HassioNetwork extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+export class menuaiioNetwork extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _accessPoints: AccessPoint[] = [];
 
@@ -81,7 +81,7 @@ export class HassioNetwork extends LitElement {
   }
 
   private async _fetchNetworkInfo() {
-    const network = await fetchNetworkInfo(this.hass);
+    const network = await fetchNetworkInfo(this.menuai);
     this._interfaces = network.interfaces.sort((a, b) =>
       a.primary > b.primary ? -1 : 1
     );
@@ -96,7 +96,7 @@ export class HassioNetwork extends LitElement {
     return html`
       <ha-card outlined>
         <div class="card-header">
-          ${this.hass.localize("ui.panel.config.network.supervisor.title")}
+          ${this.menuai.localize("ui.panel.config.network.supervisor.title")}
           ${this._interfaces.length > 1
             ? html`
                 <sl-tab-group @sl-tab-show=${this._handleTabActivated}
@@ -125,7 +125,7 @@ export class HassioNetwork extends LitElement {
         ${this._interface?.type === "wireless"
           ? html`
               <ha-expansion-panel
-                .header=${this.hass.localize(
+                .header=${this.menuai.localize(
                   "ui.panel.config.network.supervisor.wifi"
                 )}
                 outlined
@@ -134,7 +134,7 @@ export class HassioNetwork extends LitElement {
                 ${this._interface?.wifi?.ssid
                   ? html`<p>
                       <ha-svg-icon slot="icon" .path=${mdiWifi}></ha-svg-icon>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.network.supervisor.connected_to",
                         { ssid: this._interface?.wifi?.ssid }
                       )}
@@ -147,7 +147,7 @@ export class HassioNetwork extends LitElement {
                 >
                   ${this._scanning
                     ? html`<ha-spinner size="small"> </ha-spinner>`
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         "ui.panel.config.network.supervisor.scan_ap"
                       )}
                   <ha-svg-icon slot="icon" .path=${mdiWifi}></ha-svg-icon>
@@ -167,7 +167,7 @@ export class HassioNetwork extends LitElement {
                               <span>${ap.ssid}</span>
                               <span slot="secondary">
                                 ${ap.mac} -
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.panel.config.network.supervisor.signal_strength"
                                 )}:
                                 ${ap.signal}
@@ -182,7 +182,7 @@ export class HassioNetwork extends LitElement {
                   ? html`
                       <div class="radio-row">
                         <ha-formfield
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.panel.config.network.supervisor.open"
                           )}
                         >
@@ -198,7 +198,7 @@ export class HassioNetwork extends LitElement {
                           </ha-radio>
                         </ha-formfield>
                         <ha-formfield
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.panel.config.network.supervisor.wep"
                           )}
                         >
@@ -212,7 +212,7 @@ export class HassioNetwork extends LitElement {
                           </ha-radio>
                         </ha-formfield>
                         <ha-formfield
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.panel.config.network.supervisor.wpa"
                           )}
                         >
@@ -232,7 +232,7 @@ export class HassioNetwork extends LitElement {
                         ? html`
                             <ha-password-field
                               id="psk"
-                              .label=${this.hass.localize(
+                              .label=${this.menuai.localize(
                                 "ui.panel.config.network.supervisor.wifi_password"
                               )}
                               .version=${"wifi"}
@@ -253,7 +253,7 @@ export class HassioNetwork extends LitElement {
         )}
         ${this._dirty
           ? html`<ha-alert alert-type="warning">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.network.supervisor.warning"
               )}
             </ha-alert>`
@@ -263,10 +263,10 @@ export class HassioNetwork extends LitElement {
         <ha-button @click=${this._updateNetwork} .disabled=${!this._dirty}>
           ${this._processing
             ? html`<ha-spinner size="small"></ha-spinner>`
-            : this.hass.localize("ui.common.save")}
+            : this.menuai.localize("ui.common.save")}
         </ha-button>
         <ha-button @click=${this._clear}>
-          ${this.hass.localize("ui.panel.config.network.supervisor.reset")}
+          ${this.menuai.localize("ui.panel.config.network.supervisor.reset")}
         </ha-button>
       </div>`;
   }
@@ -287,7 +287,7 @@ export class HassioNetwork extends LitElement {
     }
     this._scanning = true;
     try {
-      const aps = await accesspointScan(this.hass, this._interface.interface);
+      const aps = await accesspointScan(this.menuai, this._interface.interface);
       this._accessPoints = [];
       aps.accesspoints?.forEach((ap) => {
         if (ap.ssid) {
@@ -333,7 +333,7 @@ export class HassioNetwork extends LitElement {
       >
         <div class="radio-row">
           <ha-formfield
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.network.supervisor.auto"
             )}
           >
@@ -347,7 +347,7 @@ export class HassioNetwork extends LitElement {
             </ha-radio>
           </ha-formfield>
           <ha-formfield
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.network.supervisor.static"
             )}
           >
@@ -361,7 +361,7 @@ export class HassioNetwork extends LitElement {
             </ha-radio>
           </ha-formfield>
           <ha-formfield
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.network.supervisor.disabled"
             )}
             class="warning"
@@ -385,7 +385,7 @@ export class HassioNetwork extends LitElement {
                     <div class="address-row">
                       <ha-textfield
                         id="address"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.network.supervisor.ip"
                         )}
                         .version=${version}
@@ -399,7 +399,7 @@ export class HassioNetwork extends LitElement {
                         ? html`
                             <ha-textfield
                               id="prefix"
-                              .label=${this.hass.localize(
+                              .label=${this.menuai.localize(
                                 "ui.panel.config.network.supervisor.prefix"
                               )}
                               .version=${version}
@@ -413,7 +413,7 @@ export class HassioNetwork extends LitElement {
                         : html`
                             <ha-textfield
                               id="netmask"
-                              .label=${this.hass.localize(
+                              .label=${this.menuai.localize(
                                 "ui.panel.config.network.supervisor.netmask"
                               )}
                               .version=${version}
@@ -428,7 +428,7 @@ export class HassioNetwork extends LitElement {
                       !disableInputs
                         ? html`
                             <ha-icon-button
-                              .label=${this.hass.localize("ui.common.delete")}
+                              .label=${this.menuai.localize("ui.common.delete")}
                               .path=${mdiDeleteOutline}
                               .version=${version}
                               .index=${index}
@@ -447,7 +447,7 @@ export class HassioNetwork extends LitElement {
                       .version=${version}
                       class="add-address"
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.network.supervisor.add_address"
                       )}
                       <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
@@ -456,7 +456,7 @@ export class HassioNetwork extends LitElement {
                 : nothing}
               <ha-textfield
                 id="gateway"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.network.supervisor.gateway"
                 )}
                 .version=${version}
@@ -471,7 +471,7 @@ export class HassioNetwork extends LitElement {
                     <div class="address-row">
                       <ha-textfield
                         id="nameserver"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.network.supervisor.dns_server"
                         )}
                         .version=${version}
@@ -483,7 +483,7 @@ export class HassioNetwork extends LitElement {
                       ${this._interface![version].nameservers?.length > 1
                         ? html`
                             <ha-icon-button
-                              .label=${this.hass.localize("ui.common.delete")}
+                              .label=${this.menuai.localize("ui.common.delete")}
                               .path=${mdiDeleteOutline}
                               .version=${version}
                               .index=${index}
@@ -502,7 +502,7 @@ export class HassioNetwork extends LitElement {
                 class="add-nameserver"
               >
                 <ha-button slot="trigger">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.network.supervisor.add_dns_server"
                   )}
                   <ha-svg-icon
@@ -522,7 +522,7 @@ export class HassioNetwork extends LitElement {
                   `
                 )}
                 <ha-list-item @click=${this._addCustomDNS} .version=${version}>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.network.supervisor.custom_dns"
                   )}
                 </ha-list-item>
@@ -583,7 +583,7 @@ export class HassioNetwork extends LitElement {
 
     try {
       await updateNetworkInterface(
-        this.hass,
+        this.menuai,
         this._interface!.interface,
         interfaceOptions
       );
@@ -591,7 +591,7 @@ export class HassioNetwork extends LitElement {
       await this._fetchNetworkInfo();
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.network.supervisor.failed_to_change"
         ),
         text: extractApiErrorMessage(err),
@@ -618,9 +618,9 @@ export class HassioNetwork extends LitElement {
   private async _handleTabActivated(ev: CustomEvent): Promise<void> {
     if (this._dirty) {
       const confirm = await showConfirmationDialog(this, {
-        text: this.hass.localize("ui.panel.config.network.supervisor.unsaved"),
-        confirmText: this.hass.localize("ui.common.yes"),
-        dismissText: this.hass.localize("ui.common.no"),
+        text: this.menuai.localize("ui.panel.config.network.supervisor.unsaved"),
+        confirmText: this.menuai.localize("ui.common.yes"),
+        dismissText: this.menuai.localize("ui.common.no"),
       });
       if (!confirm) {
         this.requestUpdate("_interface");
@@ -848,6 +848,6 @@ export class HassioNetwork extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "supervisor-network": HassioNetwork;
+    "supervisor-network": menuaiioNetwork;
   }
 }

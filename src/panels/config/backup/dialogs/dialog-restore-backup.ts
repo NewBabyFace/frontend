@@ -26,9 +26,9 @@ import type {
   RestoreBackupState,
 } from "../../../../data/backup_manager";
 import { subscribeBackupEvents } from "../../../../data/backup_manager";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { RestoreBackupDialogParams } from "./show-dialog-restore-backup";
 import { waitForIntegrationSetup } from "../../../../data/integration";
 
@@ -45,8 +45,8 @@ const INITIAL_DATA: FormData = {
 const STEPS = ["confirm", "encryption", "progress"] as const;
 
 @customElement("ha-dialog-restore-backup")
-class DialogRestoreBackup extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogRestoreBackup extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _step?: "confirm" | "encryption" | "progress";
 
@@ -117,7 +117,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
 
   private async _fetchEncryptionKey() {
     try {
-      const { config } = await fetchBackupConfig(this.hass);
+      const { config } = await fetchBackupConfig(this.menuai);
       return config.create_backup.password || undefined;
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -131,7 +131,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
       return nothing;
     }
 
-    const dialogTitle = this.hass.localize(
+    const dialogTitle = this.menuai.localize(
       "ui.panel.config.backup.dialogs.restore.title"
     );
 
@@ -140,7 +140,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
@@ -159,7 +159,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
           ${this._error
             ? html`
                 <ha-button @click=${this.closeDialog}>
-                  ${this.hass.localize("ui.common.close")}
+                  ${this.menuai.localize("ui.common.close")}
                 </ha-button>
               `
             : this._step === "confirm" || this._step === "encryption"
@@ -173,7 +173,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
   private _renderConfirm() {
     return html`
       <p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.backup.dialogs.restore.confirm.description"
         )}
       </p>
@@ -183,20 +183,20 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
   private _renderEncryptionIntro() {
     if (this._usedUserInput) {
       return html`
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.backup.dialogs.restore.encryption.incorrect_key"
         )}
       `;
     }
     if (this._backupEncryptionKey) {
       return html`
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.backup.dialogs.restore.encryption.different_key"
         )}
-        ${this._params!.selectedData.homeassistant_included
+        ${this._params!.selectedData.menuai_included
           ? html`
               <ha-alert alert-type="warning">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.restore.encryption.warning"
                 )}
               </ha-alert>
@@ -205,7 +205,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
       `;
     }
     return html`
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.backup.dialogs.restore.encryption.description"
       )}
     `;
@@ -217,7 +217,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
 
       <ha-password-field
         @input=${this._passwordChanged}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.backup.dialogs.restore.encryption.input_label"
         )}
         .value=${this._userPassword || ""}
@@ -228,10 +228,10 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
   private _renderConfirmActions() {
     return html`
       <ha-button @click=${this.closeDialog}>
-        ${this.hass.localize("ui.common.cancel")}
+        ${this.menuai.localize("ui.common.cancel")}
       </ha-button>
       <ha-button @click=${this._restoreBackup} destructive>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.backup.dialogs.restore.actions.restore"
         )}
       </ha-button>
@@ -242,9 +242,9 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
     return html`<div class="centered">
       <ha-spinner></ha-spinner>
       <p>
-        ${this.hass.connected
+        ${this.menuai.connected
           ? this._restoreState()
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.panel.config.backup.dialogs.restore.progress.restarting"
             )}
       </p>
@@ -282,7 +282,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
 
   private _subscribeBackupEvents() {
     this._unsub = subscribeBackupEvents(
-      this.hass!,
+      this.menuai!,
       (event) => {
         if (event.manager_state === "idle" && this._state === "in_progress") {
           this.closeDialog();
@@ -295,7 +295,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
           this.closeDialog();
         }
         if (event.state === "failed") {
-          this._error = this.hass.localize(
+          this._error = this.menuai.localize(
             "ui.panel.config.backup.dialogs.restore.restore_failed"
           );
         }
@@ -304,10 +304,10 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
         }
       },
       async () => {
-        if (isComponentLoaded(this.hass, "backup")) {
+        if (isComponentLoaded(this.menuai, "backup")) {
           return true;
         }
-        return (await waitForIntegrationSetup(this.hass, "backup"))
+        return (await waitForIntegrationSetup(this.menuai, "backup"))
           .integration_loaded;
       }
     );
@@ -324,11 +324,11 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
 
   private _restoreState() {
     if (!this._stage) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.dialogs.restore.progress.restoring"
       );
     }
-    return this.hass.localize(
+    return this.menuai.localize(
       `ui.panel.config.backup.overview.progress.description.restore_backup.${this._stage}`
     );
   }
@@ -341,7 +341,7 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
     const agentIds = Object.keys(this._params.backup.agents);
     const preferedAgent = getPreferredAgentForDownload(agentIds);
 
-    const { addons, database_included, homeassistant_included, folders } =
+    const { addons, database_included, menuai_included, folders } =
       this._params.selectedData;
 
     const restoreParams: RestoreBackupParams = {
@@ -349,15 +349,15 @@ class DialogRestoreBackup extends LitElement implements HassDialog {
       agent_id: preferedAgent,
       password,
       restore_database: database_included,
-      restore_homeassistant: homeassistant_included,
+      restore_menuai: menuai_included,
     };
 
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       restoreParams.restore_addons = addons.map((addon) => addon.slug);
       restoreParams.restore_folders = folders;
     }
 
-    await restoreBackup(this.hass, restoreParams);
+    await restoreBackup(this.menuai, restoreParams);
   }
 
   static get styles(): CSSResultGroup {

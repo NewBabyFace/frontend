@@ -43,15 +43,15 @@ import "../../components/ha-spinner";
 import "../../components/ha-textfield";
 import "../../components/ha-tip";
 import { getConfigEntries } from "../../data/config_entries";
-import { fetchHassioAddonsInfo } from "../../data/hassio/addon";
+import { fetchmenuaiioAddonsInfo } from "../../data/menuaiio/addon";
 import { domainToName } from "../../data/integration";
 import { getPanelNameTranslationKey } from "../../data/panel";
-import type { PageNavigation } from "../../layouts/hass-tabs-subpage";
+import type { PageNavigation } from "../../layouts/menuai-tabs-subpage";
 import { configSections } from "../../panels/config/ha-panel-config";
 import { HaFuse } from "../../resources/fuse";
 import { haStyleDialog, haStyleScrollbar } from "../../resources/styles";
 import { loadVirtualizer } from "../../resources/virtualizer";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { brandsUrl } from "../../util/brands-url";
 import { showConfirmationDialog } from "../generic/show-dialog-box";
 import { showShortcutsDialog } from "../shortcuts/show-shortcuts-dialog";
@@ -102,7 +102,7 @@ type BaseNavigationCommand = Pick<
 
 @customElement("ha-quick-bar")
 export class QuickBar extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _commandItems?: CommandItem[];
 
@@ -197,7 +197,7 @@ export class QuickBar extends LitElement {
       this._mode === QuickBarMode.Device
         ? "filter_placeholder_devices"
         : "filter_placeholder";
-    const placeholder = this.hass.localize(
+    const placeholder = this.menuai.localize(
       `ui.dialogs.quick-bar.${translationKey}`
     );
 
@@ -212,7 +212,7 @@ export class QuickBar extends LitElement {
 
     return html`
       <ha-dialog
-        .heading=${this.hass.localize("ui.dialogs.quick-bar.title")}
+        .heading=${this.menuai.localize("ui.dialogs.quick-bar.title")}
         open
         @opened=${this._handleOpened}
         @closed=${this.closeDialog}
@@ -241,13 +241,13 @@ export class QuickBar extends LitElement {
                     ${this._search &&
                     html`<ha-icon-button
                       @click=${this._clearSearch}
-                      .label=${this.hass!.localize("ui.common.clear")}
+                      .label=${this.menuai!.localize("ui.common.clear")}
                       .path=${mdiClose}
                     ></ha-icon-button>`}
                     ${this._narrow
                       ? html`
                           <mwc-button
-                            .label=${this.hass!.localize("ui.common.close")}
+                            .label=${this.menuai!.localize("ui.common.close")}
                             @click=${this.closeDialog}
                           ></mwc-button>
                         `
@@ -262,7 +262,7 @@ export class QuickBar extends LitElement {
           : items.length === 0
             ? html`
                 <div class="nothing-found">
-                  ${this.hass.localize("ui.dialogs.quick-bar.nothing_found")}
+                  ${this.menuai.localize("ui.dialogs.quick-bar.nothing_found")}
                 </div>
               `
             : html`
@@ -291,7 +291,7 @@ export class QuickBar extends LitElement {
                 </ha-list>
               `}
         ${this._hint
-          ? html`<ha-tip .hass=${this.hass}>${this._hint}</ha-tip>`
+          ? html`<ha-tip .menuai=${this.menuai}>${this._hint}</ha-tip>`
           : ""}
       </ha-dialog>
     `;
@@ -359,7 +359,7 @@ export class QuickBar extends LitElement {
               src=${brandsUrl({
                 domain: item.domain,
                 type: "icon",
-                darkOptimized: this.hass.themes?.darkMode,
+                darkOptimized: this.menuai.themes?.darkMode,
               })}
             />`
           : nothing}
@@ -377,7 +377,7 @@ export class QuickBar extends LitElement {
   }
 
   private _renderEntityItem(item: EntityItem, index?: number) {
-    const showEntityId = this.hass.userData?.showEntityIdPicker;
+    const showEntityId = this.menuai.userData?.showEntityIdPicker;
 
     return html`
       <ha-md-list-item
@@ -574,17 +574,17 @@ export class QuickBar extends LitElement {
   }
 
   private async _generateDeviceItems(): Promise<DeviceItem[]> {
-    const configEntries = await getConfigEntries(this.hass);
+    const configEntries = await getConfigEntries(this.menuai);
     const configEntryLookup = Object.fromEntries(
       configEntries.map((entry) => [entry.entry_id, entry])
     );
 
-    return Object.values(this.hass.devices)
+    return Object.values(this.menuai.devices)
       .filter((device) => !device.disabled_by)
       .map((device) => {
-        const deviceName = computeDeviceNameDisplay(device, this.hass);
+        const deviceName = computeDeviceNameDisplay(device, this.menuai);
 
-        const { area } = getDeviceContext(device, this.hass);
+        const { area } = getDeviceContext(device, this.menuai);
 
         const areaName = area ? computeAreaName(area) : undefined;
 
@@ -601,7 +601,7 @@ export class QuickBar extends LitElement {
 
         const domain = configEntry?.domain;
         const translatedDomain = domain
-          ? domainToName(this.hass.localize, domain)
+          ? domainToName(this.menuai.localize, domain)
           : undefined;
 
         return {
@@ -617,24 +617,24 @@ export class QuickBar extends LitElement {
         caseInsensitiveStringCompare(
           a.primaryText,
           b.primaryText,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
   }
 
   private async _generateEntityItems(): Promise<EntityItem[]> {
-    const isRTL = computeRTL(this.hass);
+    const isRTL = computeRTL(this.menuai);
 
-    await this.hass.loadBackendTranslation("title");
+    await this.menuai.loadBackendTranslation("title");
 
-    return Object.keys(this.hass.states)
+    return Object.keys(this.menuai.states)
       .map((entityId) => {
-        const stateObj = this.hass.states[entityId];
+        const stateObj = this.menuai.states[entityId];
 
-        const { area, device } = getEntityContext(stateObj, this.hass);
+        const { area, device } = getEntityContext(stateObj, this.menuai);
 
         const friendlyName = computeStateName(stateObj); // Keep this for search
-        const entityName = computeEntityName(stateObj, this.hass);
+        const entityName = computeEntityName(stateObj, this.menuai);
         const deviceName = device ? computeDeviceName(device) : undefined;
         const areaName = area ? computeAreaName(area) : undefined;
 
@@ -644,7 +644,7 @@ export class QuickBar extends LitElement {
           .join(isRTL ? " ◂ " : " ▸ ");
 
         const translatedDomain = domainToName(
-          this.hass.localize,
+          this.menuai.localize,
           computeDomain(entityId)
         );
 
@@ -653,14 +653,14 @@ export class QuickBar extends LitElement {
           altText: secondary,
           icon: html`
             <ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${stateObj}
             ></ha-state-icon>
           `,
           translatedDomain: translatedDomain,
           entityId: entityId,
           friendlyName: friendlyName,
-          action: () => fireEvent(this, "hass-more-info", { entityId }),
+          action: () => fireEvent(this, "menuai-more-info", { entityId }),
         };
 
         return {
@@ -672,7 +672,7 @@ export class QuickBar extends LitElement {
         caseInsensitiveStringCompare(
           a.primaryText,
           b.primaryText,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
   }
@@ -686,66 +686,66 @@ export class QuickBar extends LitElement {
       caseInsensitiveStringCompare(
         a.strings.join(" "),
         b.strings.join(" "),
-        this.hass.locale.language
+        this.menuai.locale.language
       )
     );
   }
 
   private async _generateReloadCommands(): Promise<CommandItem[]> {
     // Get all domains that have a direct "reload" service
-    const reloadableDomains = componentsWithService(this.hass, "reload");
+    const reloadableDomains = componentsWithService(this.menuai, "reload");
 
-    const localize = await this.hass.loadBackendTranslation(
+    const localize = await this.menuai.loadBackendTranslation(
       "title",
       reloadableDomains
     );
 
     const commands = reloadableDomains.map((domain) => ({
       primaryText:
-        this.hass.localize(`ui.dialogs.quick-bar.commands.reload.${domain}`) ||
-        this.hass.localize("ui.dialogs.quick-bar.commands.reload.reload", {
+        this.menuai.localize(`ui.dialogs.quick-bar.commands.reload.${domain}`) ||
+        this.menuai.localize("ui.dialogs.quick-bar.commands.reload.reload", {
           domain: domainToName(localize, domain),
         }),
-      action: () => this.hass.callService(domain, "reload"),
+      action: () => this.menuai.callService(domain, "reload"),
       iconPath: mdiReload,
-      categoryText: this.hass.localize(
+      categoryText: this.menuai.localize(
         `ui.dialogs.quick-bar.commands.types.reload`
       ),
     }));
 
     // Add "frontend.reload_themes"
     commands.push({
-      primaryText: this.hass.localize(
+      primaryText: this.menuai.localize(
         "ui.dialogs.quick-bar.commands.reload.themes"
       ),
-      action: () => this.hass.callService("frontend", "reload_themes"),
+      action: () => this.menuai.callService("frontend", "reload_themes"),
       iconPath: mdiReload,
-      categoryText: this.hass.localize(
+      categoryText: this.menuai.localize(
         "ui.dialogs.quick-bar.commands.types.reload"
       ),
     });
 
-    // Add "homeassistant.reload_core_config"
+    // Add "menuai.reload_core_config"
     commands.push({
-      primaryText: this.hass.localize(
+      primaryText: this.menuai.localize(
         "ui.dialogs.quick-bar.commands.reload.core"
       ),
       action: () =>
-        this.hass.callService("homeassistant", "reload_core_config"),
+        this.menuai.callService("menuai", "reload_core_config"),
       iconPath: mdiReload,
-      categoryText: this.hass.localize(
+      categoryText: this.menuai.localize(
         "ui.dialogs.quick-bar.commands.types.reload"
       ),
     });
 
-    // Add "homeassistant.reload_all"
+    // Add "menuai.reload_all"
     commands.push({
-      primaryText: this.hass.localize(
+      primaryText: this.menuai.localize(
         "ui.dialogs.quick-bar.commands.reload.all"
       ),
-      action: () => this.hass.callService("homeassistant", "reload_all"),
+      action: () => this.menuai.callService("menuai", "reload_all"),
       iconPath: mdiReload,
-      categoryText: this.hass.localize(
+      categoryText: this.menuai.localize(
         "ui.dialogs.quick-bar.commands.types.reload"
       ),
     });
@@ -764,28 +764,28 @@ export class QuickBar extends LitElement {
       const categoryKey: CommandItem["categoryKey"] = "server_control";
 
       const item = {
-        primaryText: this.hass.localize(
+        primaryText: this.menuai.localize(
           "ui.dialogs.quick-bar.commands.server_control.perform_action",
           {
-            action: this.hass.localize(
+            action: this.menuai.localize(
               `ui.dialogs.quick-bar.commands.server_control.${action}`
             ),
           }
         ),
         iconPath: mdiServerNetwork,
-        categoryText: this.hass.localize(
+        categoryText: this.menuai.localize(
           `ui.dialogs.quick-bar.commands.types.${categoryKey}`
         ),
         categoryKey,
         action: async () => {
           const confirmed = await showConfirmationDialog(this, {
-            title: this.hass.localize(
+            title: this.menuai.localize(
               `ui.dialogs.restart.${action}.confirm_title`
             ),
-            text: this.hass.localize(
+            text: this.menuai.localize(
               `ui.dialogs.restart.${action}.confirm_description`
             ),
-            confirmText: this.hass.localize(
+            confirmText: this.menuai.localize(
               `ui.dialogs.restart.${action}.confirm_action`
             ),
             destructive: true,
@@ -793,7 +793,7 @@ export class QuickBar extends LitElement {
           if (!confirmed) {
             return;
           }
-          this.hass.callService("homeassistant", action);
+          this.menuai.callService("menuai", action);
         },
       };
 
@@ -808,24 +808,24 @@ export class QuickBar extends LitElement {
     const panelItems = this._generateNavigationPanelCommands();
     const sectionItems = this._generateNavigationConfigSectionCommands();
     const supervisorItems: BaseNavigationCommand[] = [];
-    if (isComponentLoaded(this.hass, "hassio")) {
-      const addonsInfo = await fetchHassioAddonsInfo(this.hass);
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
+      const addonsInfo = await fetchmenuaiioAddonsInfo(this.menuai);
       supervisorItems.push({
-        path: "/hassio/store",
-        primaryText: this.hass.localize(
+        path: "/menuaiio/store",
+        primaryText: this.menuai.localize(
           "ui.dialogs.quick-bar.commands.navigation.addon_store"
         ),
       });
       supervisorItems.push({
-        path: "/hassio/dashboard",
-        primaryText: this.hass.localize(
+        path: "/menuaiio/dashboard",
+        primaryText: this.menuai.localize(
           "ui.dialogs.quick-bar.commands.navigation.addon_dashboard"
         ),
       });
       for (const addon of addonsInfo.addons.filter((a) => a.version)) {
         supervisorItems.push({
-          path: `/hassio/addon/${addon.slug}`,
-          primaryText: this.hass.localize(
+          path: `/menuaiio/addon/${addon.slug}`,
+          primaryText: this.menuai.localize(
             "ui.dialogs.quick-bar.commands.navigation.addon_info",
             { addon: addon.name }
           ),
@@ -836,7 +836,7 @@ export class QuickBar extends LitElement {
     const additionalItems = [
       {
         path: "",
-        primaryText: this.hass.localize("ui.panel.config.info.shortcuts"),
+        primaryText: this.menuai.localize("ui.panel.config.info.shortcuts"),
         action: () => showShortcutsDialog(this),
         iconPath: mdiKeyboard,
       },
@@ -851,14 +851,14 @@ export class QuickBar extends LitElement {
   }
 
   private _generateNavigationPanelCommands(): BaseNavigationCommand[] {
-    return Object.keys(this.hass.panels)
+    return Object.keys(this.menuai.panels)
       .filter((panelKey) => panelKey !== "_my_redirect")
       .map((panelKey) => {
-        const panel = this.hass.panels[panelKey];
+        const panel = this.menuai.panels[panelKey];
         const translationKey = getPanelNameTranslationKey(panel);
 
         const primaryText =
-          this.hass.localize(translationKey) || panel.title || panel.url_path;
+          this.menuai.localize(translationKey) || panel.title || panel.url_path;
 
         return {
           primaryText,
@@ -872,7 +872,7 @@ export class QuickBar extends LitElement {
 
     for (const sectionKey of Object.keys(configSections)) {
       for (const page of configSections[sectionKey]) {
-        if (!canShowPage(this.hass, page)) {
+        if (!canShowPage(this.menuai, page)) {
           continue;
         }
 
@@ -903,11 +903,11 @@ export class QuickBar extends LitElement {
 
     const caption =
       (name &&
-        this.hass.localize(
+        this.menuai.localize(
           `ui.dialogs.quick-bar.commands.navigation.${name}`
         )) ||
       // @ts-expect-error
-      (page.translationKey && this.hass.localize(page.translationKey));
+      (page.translationKey && this.menuai.localize(page.translationKey));
 
     if (caption) {
       return { ...page, primaryText: caption };
@@ -924,7 +924,7 @@ export class QuickBar extends LitElement {
 
       const navItem = {
         iconPath: mdiEarth,
-        categoryText: this.hass.localize(
+        categoryText: this.menuai.localize(
           `ui.dialogs.quick-bar.commands.types.${categoryKey}`
         ),
         action: () => navigate(item.path),

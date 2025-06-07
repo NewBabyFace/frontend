@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { IntegrationType } from "./integration";
 
 export type IotStandards = "zwave" | "zigbee" | "homekit" | "matter";
@@ -40,9 +40,9 @@ export interface IntegrationDescriptions {
 }
 
 export const getIntegrationDescriptions = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<IntegrationDescriptions> =>
-  hass.callWS<IntegrationDescriptions>({
+  menuai.callWS<IntegrationDescriptions>({
     type: "integration/descriptions",
   });
 

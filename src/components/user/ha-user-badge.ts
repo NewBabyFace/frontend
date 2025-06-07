@@ -6,11 +6,11 @@ import { styleMap } from "lit/directives/style-map";
 import { computeStateDomain } from "../../common/entity/compute_state_domain";
 import type { User } from "../../data/user";
 import { computeUserInitials } from "../../data/user";
-import type { CurrentUser, HomeAssistant } from "../../types";
+import type { CurrentUser, menuai } from "../../types";
 
 @customElement("ha-user-badge")
 class UserBadge extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public user?: User | CurrentUser;
 
@@ -24,26 +24,26 @@ class UserBadge extends LitElement {
       this._getPersonPicture();
       return;
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     if (
       this._personEntityId &&
-      oldHass &&
-      this.hass.states[this._personEntityId] !==
-        oldHass.states[this._personEntityId]
+      oldmenuai &&
+      this.menuai.states[this._personEntityId] !==
+        oldmenuai.states[this._personEntityId]
     ) {
-      const entityState = this.hass.states[this._personEntityId];
+      const entityState = this.menuai.states[this._personEntityId];
       if (entityState) {
         this._personPicture = entityState.attributes.entity_picture;
       } else {
         this._getPersonPicture();
       }
-    } else if (!this._personEntityId && oldHass) {
+    } else if (!this._personEntityId && oldmenuai) {
       this._getPersonPicture();
     }
   }
 
   protected render() {
-    if (!this.hass || !this.user) {
+    if (!this.menuai || !this.user) {
       return nothing;
     }
     const picture = this._personPicture;
@@ -51,7 +51,7 @@ class UserBadge extends LitElement {
     if (picture) {
       return html`<div
         style=${styleMap({
-          backgroundImage: `url(${this.hass.hassUrl(picture)})`,
+          backgroundImage: `url(${this.menuai.menuaiUrl(picture)})`,
         })}
         class="picture"
       ></div>`;
@@ -67,10 +67,10 @@ class UserBadge extends LitElement {
   private _getPersonPicture() {
     this._personEntityId = undefined;
     this._personPicture = undefined;
-    if (!this.hass || !this.user) {
+    if (!this.menuai || !this.user) {
       return;
     }
-    for (const entity of Object.values(this.hass.states)) {
+    for (const entity of Object.values(this.menuai.states)) {
       if (
         entity.attributes.user_id === this.user.id &&
         computeStateDomain(entity) === "person"

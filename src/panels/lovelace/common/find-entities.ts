@@ -1,6 +1,6 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { computeDomain } from "../../../common/entity/compute_domain";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 const arrayFilter = (
   array: any[],
@@ -32,12 +32,12 @@ const arrayFilter = (
 };
 
 export const findEntities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   maxEntities: number,
   entities: string[],
   entitiesFallback: string[],
   includeDomains?: string[],
-  entityFilter?: (stateObj: HassEntity) => boolean
+  entityFilter?: (stateObj: menuaiEntity) => boolean
 ) => {
   const conditions: ((value: string) => boolean)[] = [];
 
@@ -47,7 +47,7 @@ export const findEntities = (
 
   if (entityFilter) {
     conditions.push(
-      (eid) => hass.states[eid] && entityFilter(hass.states[eid])
+      (eid) => menuai.states[eid] && entityFilter(menuai.states[eid])
     );
   }
 
@@ -55,7 +55,7 @@ export const findEntities = (
 
   if (entityIds.length < maxEntities && entitiesFallback.length) {
     const fallbackEntityIds = findEntities(
-      hass,
+      menuai,
       maxEntities - entityIds.length,
       entitiesFallback,
       [],

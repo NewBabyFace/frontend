@@ -1,15 +1,15 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { until } from "lit/directives/until";
 import { formatNumber } from "../common/number/format_number";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-attribute-value")
 class HaAttributeValue extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property() public attribute!: string;
 
@@ -22,7 +22,7 @@ class HaAttributeValue extends LitElement {
     const attributeValue = this.stateObj.attributes[this.attribute];
 
     if (typeof attributeValue === "number" && this.hideUnit) {
-      return formatNumber(attributeValue, this.hass.locale);
+      return formatNumber(attributeValue, this.menuai.locale);
     }
 
     if (typeof attributeValue === "string") {
@@ -56,7 +56,7 @@ class HaAttributeValue extends LitElement {
       return html`<pre>${until(yaml, "")}</pre>`;
     }
 
-    return this.hass.formatEntityAttributeValue(this.stateObj!, this.attribute);
+    return this.menuai.formatEntityAttributeValue(this.stateObj!, this.attribute);
   }
 
   static styles = css`

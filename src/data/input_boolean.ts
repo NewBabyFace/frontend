@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface InputBoolean {
   id: string;
@@ -13,31 +13,31 @@ export interface InputBooleanMutableParams {
   initial: boolean;
 }
 
-export const fetchInputBoolean = (hass: HomeAssistant) =>
-  hass.callWS<InputBoolean[]>({ type: "input_boolean/list" });
+export const fetchInputBoolean = (menuai: menuai) =>
+  menuai.callWS<InputBoolean[]>({ type: "input_boolean/list" });
 
 export const createInputBoolean = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: InputBooleanMutableParams
 ) =>
-  hass.callWS<InputBoolean>({
+  menuai.callWS<InputBoolean>({
     type: "input_boolean/create",
     ...values,
   });
 
 export const updateInputBoolean = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<InputBooleanMutableParams>
 ) =>
-  hass.callWS<InputBoolean>({
+  menuai.callWS<InputBoolean>({
     type: "input_boolean/update",
     input_boolean_id: id,
     ...updates,
   });
 
-export const deleteInputBoolean = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteInputBoolean = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "input_boolean/delete",
     input_boolean_id: id,
   });

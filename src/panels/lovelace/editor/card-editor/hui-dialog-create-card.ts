@@ -12,9 +12,9 @@ import "../../../../components/sl-tab-group";
 import type { LovelaceSectionConfig } from "../../../../data/lovelace/config/section";
 import { isStrategySection } from "../../../../data/lovelace/config/section";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   computeCards,
   computeSection,
@@ -31,7 +31,7 @@ import { showEditCardDialog } from "./show-edit-card-dialog";
 import { showSuggestCardDialog } from "./show-suggest-card-dialog";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "selected-changed": SelectedChangedEvent;
   }
 }
@@ -43,9 +43,9 @@ interface SelectedChangedEvent {
 @customElement("hui-dialog-create-card")
 export class HuiCreateDialogCard
   extends LitElement
-  implements HassDialog<CreateCardDialogParams>
+  implements menuaiDialog<CreateCardDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: CreateCardDialogParams;
 
@@ -92,11 +92,11 @@ export class HuiCreateDialogCard
     }
 
     const title = this._containerConfig.title
-      ? this.hass!.localize(
+      ? this.menuai!.localize(
           "ui.panel.lovelace.editor.edit_card.pick_card_title",
           { name: `"${this._containerConfig.title}"` }
         )
-      : this.hass!.localize("ui.panel.lovelace.editor.edit_card.pick_card");
+      : this.menuai!.localize("ui.panel.lovelace.editor.edit_card.pick_card");
 
     return html`
       <ha-dialog
@@ -111,7 +111,7 @@ export class HuiCreateDialogCard
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">${title}</span>
@@ -123,7 +123,7 @@ export class HuiCreateDialogCard
               panel="card"
               dialogInitialFocus=${ifDefined(this._narrow ? "" : undefined)}
             >
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.lovelace.editor.cardpicker.by_card"
               )}
             </sl-tab>
@@ -131,7 +131,7 @@ export class HuiCreateDialogCard
               slot="nav"
               .active=${this._currTab === "entity"}
               panel="entity"
-              >${this.hass!.localize(
+              >${this.menuai!.localize(
                 "ui.panel.lovelace.editor.cardpicker.by_entity"
               )}</sl-tab
             >
@@ -144,14 +144,14 @@ export class HuiCreateDialogCard
                   dialogInitialFocus=${ifDefined(this._narrow ? undefined : "")}
                   .suggestedCards=${this._params.suggestedCards}
                   .lovelace=${this._params.lovelaceConfig}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   @config-changed=${this._handleCardPicked}
                 ></hui-card-picker>
               `
             : html`
                 <hui-entity-picker-table
                   no-label-float
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   narrow
                   @selected-changed=${this._handleSelectedChanged}
                 ></hui-entity-picker-table>
@@ -160,12 +160,12 @@ export class HuiCreateDialogCard
 
         <div slot="primaryAction">
           <mwc-button @click=${this._cancel}>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </mwc-button>
           ${this._selectedEntities.length
             ? html`
                 <mwc-button @click=${this._suggestCards}>
-                  ${this.hass!.localize("ui.common.continue")}
+                  ${this.menuai!.localize("ui.common.continue")}
                 </mwc-button>
               `
             : ""}
@@ -295,7 +295,7 @@ export class HuiCreateDialogCard
 
   private _suggestCards(): void {
     const cardConfig = computeCards(
-      this.hass.states,
+      this.menuai.states,
       this._selectedEntities,
       {}
     );

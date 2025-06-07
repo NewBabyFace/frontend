@@ -4,10 +4,10 @@ import { customElement, state } from "lit/decorators";
 import { mockAreaRegistry } from "../../../../demo/src/stubs/area_registry";
 import { mockDeviceRegistry } from "../../../../demo/src/stubs/device_registry";
 import { mockEntityRegistry } from "../../../../demo/src/stubs/entity_registry";
-import { mockHassioSupervisor } from "../../../../demo/src/stubs/hassio_supervisor";
+import { mockmenuaiioSupervisor } from "../../../../demo/src/stubs/menuaiio_supervisor";
 import "../../../../src/components/ha-formfield";
 import type { ConditionWithShorthand } from "../../../../src/data/automation";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../../../src/panels/config/automation/condition/ha-automation-condition";
 import { HaAndCondition } from "../../../../src/panels/config/automation/condition/types/ha-automation-condition-and";
 import { HaDeviceCondition } from "../../../../src/panels/config/automation/condition/types/ha-automation-condition-device";
@@ -20,7 +20,7 @@ import { HaTemplateCondition } from "../../../../src/panels/config/automation/co
 import { HaTimeCondition } from "../../../../src/panels/config/automation/condition/types/ha-automation-condition-time";
 import { HaTriggerCondition } from "../../../../src/panels/config/automation/condition/types/ha-automation-condition-trigger";
 import { HaZoneCondition } from "../../../../src/panels/config/automation/condition/types/ha-automation-condition-zone";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import "../../components/demo-black-white-row";
 
 const SCHEMAS: { name: string; conditions: ConditionWithShorthand[] }[] = [
@@ -86,7 +86,7 @@ const SCHEMAS: { name: string; conditions: ConditionWithShorthand[] }[] = [
 
 @customElement("demo-automation-editor-condition")
 export class DemoAutomationEditorCondition extends LitElement {
-  @state() private hass!: HomeAssistant;
+  @state() private menuai!: menuai;
 
   @state() private _disabled = false;
 
@@ -94,13 +94,13 @@ export class DemoAutomationEditorCondition extends LitElement {
 
   constructor() {
     super();
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    mockEntityRegistry(hass);
-    mockDeviceRegistry(hass);
-    mockAreaRegistry(hass);
-    mockHassioSupervisor(hass);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    mockEntityRegistry(menuai);
+    mockDeviceRegistry(menuai);
+    mockAreaRegistry(menuai);
+    mockmenuaiioSupervisor(menuai);
   }
 
   protected render(): TemplateResult {
@@ -124,7 +124,7 @@ export class DemoAutomationEditorCondition extends LitElement {
               (slot) => html`
                 <ha-automation-condition
                   slot=${slot}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .conditions=${this.data[sampleIdx]}
                   .sampleIdx=${sampleIdx}
                   .disabled=${this._disabled}

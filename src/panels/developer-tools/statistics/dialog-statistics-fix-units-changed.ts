@@ -12,12 +12,12 @@ import {
   updateStatisticsMetadata,
 } from "../../../data/recorder";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { DialogStatisticsUnitsChangedParams } from "./show-dialog-statistics-fix-units-changed";
 
 @customElement("dialog-statistics-fix-units-changed")
 export class DialogStatisticsFixUnitsChanged extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DialogStatisticsUnitsChangedParams;
 
@@ -49,16 +49,16 @@ export class DialogStatisticsFixUnitsChanged extends LitElement {
         scrimClickAction
         escapeKeyAction
         @closed=${this._closeDialog}
-        .heading=${this.hass.localize(
+        .heading=${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.title"
         )}
       >
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.info_text_1",
             {
               name: getStatisticLabel(
-                this.hass,
+                this.menuai,
                 this._params.issue.data.statistic_id,
                 undefined
               ),
@@ -67,21 +67,21 @@ export class DialogStatisticsFixUnitsChanged extends LitElement {
               previous_unit: this._params.issue.data.metadata_unit,
             }
           )}<br />
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.info_text_2"
           )}<br />
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.info_text_3"
           )}
         </p>
 
         <h3>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.how_to_fix"
           )}
         </h3>
         <ha-formfield
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.update",
             this._params.issue.data
           )}
@@ -95,7 +95,7 @@ export class DialogStatisticsFixUnitsChanged extends LitElement {
           ></ha-radio>
         </ha-formfield>
         <ha-formfield
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             `ui.panel.developer-tools.tabs.statistics.fix_issue.units_changed.clear`
           )}
         >
@@ -108,12 +108,12 @@ export class DialogStatisticsFixUnitsChanged extends LitElement {
         </ha-formfield>
 
         <mwc-button slot="primaryAction" @click=${this._fixIssue}>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.fix"
           )}
         </mwc-button>
         <mwc-button slot="secondaryAction" @click=${this._cancel}>
-          ${this.hass.localize("ui.common.close")}
+          ${this.menuai.localize("ui.common.close")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -130,10 +130,10 @@ export class DialogStatisticsFixUnitsChanged extends LitElement {
 
   private async _fixIssue(): Promise<void> {
     if (this._action === "clear") {
-      await clearStatistics(this.hass, [this._params!.issue.data.statistic_id]);
+      await clearStatistics(this.menuai, [this._params!.issue.data.statistic_id]);
     } else if (this._action === "update") {
       await updateStatisticsMetadata(
-        this.hass,
+        this.menuai,
         this._params!.issue.data.statistic_id,
         this._params!.issue.data.state_unit
       );

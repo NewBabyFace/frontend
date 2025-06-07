@@ -4,8 +4,8 @@ import { customElement, property, query } from "lit/decorators";
 import "../../../../src/components/ha-card";
 import "../../../../src/dialogs/more-info/more-info-content";
 import { getEntity } from "../../../../src/fake_data/entity";
-import type { MockHomeAssistant } from "../../../../src/fake_data/provide_hass";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../../src/fake_data/provide_menuai";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../components/demo-more-infos";
 import { LONG_TEXT } from "../../data/text";
 import { UpdateEntityFeature } from "../../../../src/data/update";
@@ -145,14 +145,14 @@ const ENTITIES = [
 
 @customElement("demo-more-info-update")
 class DemoMoreInfoUpdate extends LitElement {
-  @property({ attribute: false }) public hass!: MockHomeAssistant;
+  @property({ attribute: false }) public menuai!: Mockmenuai;
 
   @query("demo-more-infos") private _demoRoot!: HTMLElement;
 
   protected render(): TemplateResult {
     return html`
       <demo-more-infos
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entities=${ENTITIES.map((ent) => ent.entityId)}
       ></demo-more-infos>
     `;
@@ -160,10 +160,10 @@ class DemoMoreInfoUpdate extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    const hass = provideHass(this._demoRoot);
-    hass.updateTranslations(null, "en");
-    hass.addEntities(ENTITIES);
-    hass.mockWS(
+    const menuai = providemenuai(this._demoRoot);
+    menuai.updateTranslations(null, "en");
+    menuai.addEntities(ENTITIES);
+    menuai.mockWS(
       "update/release_notes",
       (msg: { type: string; entity_id: string }) => {
         if (msg.entity_id === "update.update16") {

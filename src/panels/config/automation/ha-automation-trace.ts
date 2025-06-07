@@ -39,15 +39,15 @@ import type {
 } from "../../../data/trace";
 import { loadTrace, loadTraces } from "../../../data/trace";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 
 const TABS = ["details", "timeline", "logbook", "automation_config"] as const;
 
 @customElement("ha-automation-trace")
 export class HaAutomationTrace extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public automationId!: string;
 
@@ -77,7 +77,7 @@ export class HaAutomationTrace extends LitElement {
 
   protected render(): TemplateResult {
     const stateObj = this._entityId
-      ? this.hass.states[this._entityId]
+      ? this.menuai.states[this._entityId]
       : undefined;
 
     const graph = this._graph;
@@ -96,7 +96,7 @@ export class HaAutomationTrace extends LitElement {
 
     return html`
       ${devButtons}
-      <hass-subpage .hass=${this.hass} .narrow=${this.narrow} .header=${title}>
+      <menuai-subpage .menuai=${this.menuai} .narrow=${this.narrow} .header=${title}>
         ${!this.narrow && stateObj?.attributes.id
           ? html`
               <a
@@ -107,7 +107,7 @@ export class HaAutomationTrace extends LitElement {
                 slot="toolbar-icon"
               >
                 <mwc-button>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.automation.trace.edit_automation"
                   )}
                 </mwc-button>
@@ -117,7 +117,7 @@ export class HaAutomationTrace extends LitElement {
         <ha-button-menu slot="toolbar-icon">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
@@ -126,7 +126,7 @@ export class HaAutomationTrace extends LitElement {
             .disabled=${!stateObj}
             @click=${this._showInfo}
           >
-            ${this.hass.localize("ui.panel.config.automation.editor.show_info")}
+            ${this.menuai.localize("ui.panel.config.automation.editor.show_info")}
             <ha-svg-icon
               slot="graphic"
               .path=${mdiInformationOutline}
@@ -142,7 +142,7 @@ export class HaAutomationTrace extends LitElement {
                   )}"
                 >
                   <ha-list-item graphic="icon">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.automation.trace.edit_automation"
                     )}
                     <ha-svg-icon
@@ -157,7 +157,7 @@ export class HaAutomationTrace extends LitElement {
           <li divider role="separator"></li>
 
           <ha-list-item graphic="icon" @click=${this._refreshTraces}>
-            ${this.hass.localize("ui.panel.config.automation.trace.refresh")}
+            ${this.menuai.localize("ui.panel.config.automation.trace.refresh")}
             <ha-svg-icon slot="graphic" .path=${mdiRefresh}></ha-svg-icon>
           </ha-list-item>
 
@@ -166,7 +166,7 @@ export class HaAutomationTrace extends LitElement {
             .disabled=${!this._trace}
             @click=${this._downloadTrace}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.trace.download_trace"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiDownload}></ha-svg-icon>
@@ -177,10 +177,10 @@ export class HaAutomationTrace extends LitElement {
           ${this._traces && this._traces.length > 0
             ? html`
                 <ha-icon-button
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.config.automation.trace.older_trace"
                   )}
-                  .path=${computeRTL(this.hass!)
+                  .path=${computeRTL(this.menuai!)
                     ? mdiRayStartArrow
                     : mdiRayEndArrow}
                   .disabled=${this._traces[this._traces.length - 1].run_id ===
@@ -195,17 +195,17 @@ export class HaAutomationTrace extends LitElement {
                       html`<option value=${trace.run_id}>
                         ${formatDateTimeWithSeconds(
                           new Date(trace.timestamp.start),
-                          this.hass.locale,
-                          this.hass.config
+                          this.menuai.locale,
+                          this.menuai.config
                         )}
                       </option>`
                   )}
                 </select>
                 <ha-icon-button
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.config.automation.trace.newer_trace"
                   )}
-                  .path=${computeRTL(this.hass!)
+                  .path=${computeRTL(this.menuai!)
                     ? mdiRayEndArrow
                     : mdiRayStartArrow}
                   .disabled=${this._traces[0].run_id === this._runId}
@@ -217,11 +217,11 @@ export class HaAutomationTrace extends LitElement {
 
         ${this._traces === undefined
           ? html`<div class="container">
-              ${this.hass!.localize("ui.common.loading")}
+              ${this.menuai!.localize("ui.common.loading")}
             </div>`
           : this._traces.length === 0
             ? html`<div class="container">
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.config.automation.trace.no_traces_found"
                 )}
               </div>`
@@ -231,7 +231,7 @@ export class HaAutomationTrace extends LitElement {
                   <div class="main">
                     <div class="graph">
                       <hat-script-graph
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .trace=${this._trace}
                         .selected=${this._selected?.path}
                         @graph-node-selected=${this._pickNode}
@@ -250,7 +250,7 @@ export class HaAutomationTrace extends LitElement {
                               })}
                               @click=${this._showTab}
                             >
-                              ${this.hass!.localize(
+                              ${this.menuai!.localize(
                                 `ui.panel.config.automation.trace.tabs.${view}`
                               )}
                             </button>
@@ -266,7 +266,7 @@ export class HaAutomationTrace extends LitElement {
                                 })}
                                 @click=${this._showTab}
                               >
-                                ${this.hass!.localize(
+                                ${this.menuai!.localize(
                                   `ui.panel.config.automation.trace.tabs.blueprint_config`
                                 )}
                               </button>
@@ -280,7 +280,7 @@ export class HaAutomationTrace extends LitElement {
                         : this._view === "details"
                           ? html`
                               <ha-trace-path-details
-                                .hass=${this.hass}
+                                .menuai=${this.menuai}
                                 .narrow=${this.narrow}
                                 .trace=${this._trace}
                                 .selected=${this._selected}
@@ -292,14 +292,14 @@ export class HaAutomationTrace extends LitElement {
                           : this._view === "automation_config"
                             ? html`
                                 <ha-trace-config
-                                  .hass=${this.hass}
+                                  .menuai=${this.menuai}
                                   .trace=${this._trace}
                                 ></ha-trace-config>
                               `
                             : this._view === "logbook"
                               ? html`
                                   <ha-trace-logbook
-                                    .hass=${this.hass}
+                                    .menuai=${this.menuai}
                                     .narrow=${this.narrow}
                                     .trace=${this._trace}
                                     .logbookEntries=${this._logbookEntries}
@@ -308,13 +308,13 @@ export class HaAutomationTrace extends LitElement {
                               : this._view === "blueprint"
                                 ? html`
                                     <ha-trace-blueprint-config
-                                      .hass=${this.hass}
+                                      .menuai=${this.menuai}
                                       .trace=${this._trace}
                                     ></ha-trace-blueprint-config>
                                   `
                                 : html`
                                     <ha-trace-timeline
-                                      .hass=${this.hass}
+                                      .menuai=${this.menuai}
                                       .trace=${this._trace}
                                       .logbookEntries=${this._logbookEntries}
                                       .selected=${this._selected}
@@ -324,7 +324,7 @@ export class HaAutomationTrace extends LitElement {
                     </div>
                   </div>
                 `}
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -398,7 +398,7 @@ export class HaAutomationTrace extends LitElement {
   }
 
   private async _loadTraces(runId?: string) {
-    this._traces = await loadTraces(this.hass, "automation", this.automationId);
+    this._traces = await loadTraces(this.menuai, "automation", this.automationId);
     // Newest will be on top.
     this._traces.reverse();
 
@@ -426,7 +426,7 @@ export class HaAutomationTrace extends LitElement {
       }
 
       await showAlertDialog(this, {
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.automation.trace.trace_no_longer_available"
         ),
       });
@@ -440,14 +440,14 @@ export class HaAutomationTrace extends LitElement {
 
   private async _loadTrace() {
     const trace = await loadTrace(
-      this.hass,
+      this.menuai,
       "automation",
       this.automationId,
       this._runId!
     );
-    this._logbookEntries = isComponentLoaded(this.hass, "logbook")
+    this._logbookEntries = isComponentLoaded(this.menuai, "logbook")
       ? await getLogbookDataForContext(
-          this.hass,
+          this.menuai,
           trace.timestamp.start,
           trace.context.id
         )
@@ -476,7 +476,7 @@ export class HaAutomationTrace extends LitElement {
 
   private _importTrace() {
     const traceText = prompt(
-      this.hass.localize(
+      this.menuai.localize(
         "ui.panel.config.automation.trace.enter_downloaded_trace"
       )
     );
@@ -513,10 +513,10 @@ export class HaAutomationTrace extends LitElement {
   }
 
   private _showInfo() {
-    if (!this.hass || !this._entityId) {
+    if (!this.menuai || !this._entityId) {
       return;
     }
-    fireEvent(this, "hass-more-info", { entityId: this._entityId });
+    fireEvent(this, "menuai-more-info", { entityId: this._entityId });
   }
 
   static get styles(): CSSResultGroup {

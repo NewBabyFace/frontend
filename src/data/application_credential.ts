@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface ApplicationCredentialsDomainConfig {
   description_placeholders: Record<string, string>;
@@ -20,33 +20,33 @@ export interface ApplicationCredential {
   name: string;
 }
 
-export const fetchApplicationCredentialsConfig = async (hass: HomeAssistant) =>
-  hass.callWS<ApplicationCredentialsConfig>({
+export const fetchApplicationCredentialsConfig = async (menuai: menuai) =>
+  menuai.callWS<ApplicationCredentialsConfig>({
     type: "application_credentials/config",
   });
 
 export const fetchApplicationCredentialsConfigEntry = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   configEntryId: string
 ) =>
-  hass.callWS<ApplicationCredentialsConfigEntry>({
+  menuai.callWS<ApplicationCredentialsConfigEntry>({
     type: "application_credentials/config_entry",
     config_entry_id: configEntryId,
   });
 
-export const fetchApplicationCredentials = async (hass: HomeAssistant) =>
-  hass.callWS<ApplicationCredential[]>({
+export const fetchApplicationCredentials = async (menuai: menuai) =>
+  menuai.callWS<ApplicationCredential[]>({
     type: "application_credentials/list",
   });
 
 export const createApplicationCredential = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: string,
   clientId: string,
   clientSecret: string,
   name?: string
 ) =>
-  hass.callWS<ApplicationCredential>({
+  menuai.callWS<ApplicationCredential>({
     type: "application_credentials/create",
     domain,
     client_id: clientId,
@@ -55,10 +55,10 @@ export const createApplicationCredential = async (
   });
 
 export const deleteApplicationCredential = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   applicationCredentialsId: string
 ) =>
-  hass.callWS<undefined>({
+  menuai.callWS<undefined>({
     type: "application_credentials/delete",
     application_credentials_id: applicationCredentialsId,
   });

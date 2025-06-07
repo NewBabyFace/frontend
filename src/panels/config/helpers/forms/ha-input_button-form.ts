@@ -6,11 +6,11 @@ import "../../../../components/ha-icon-picker";
 import "../../../../components/ha-textfield";
 import type { InputButton } from "../../../../data/input_button";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-input_button-form")
 class HaInputButtonForm extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public new = false;
 
@@ -40,7 +40,7 @@ class HaInputButtonForm extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -50,22 +50,22 @@ class HaInputButtonForm extends LitElement {
           .value=${this._name}
           .configValue=${"name"}
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.name"
           )}
           autoValidate
           required
-          .validationMessage=${this.hass!.localize(
+          .validationMessage=${this.menuai!.localize(
             "ui.dialogs.helper_settings.required_error_msg"
           )}
           dialogInitialFocus
         ></ha-textfield>
         <ha-icon-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._icon}
           .configValue=${"icon"}
           @value-changed=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.icon"
           )}
         ></ha-icon-picker>

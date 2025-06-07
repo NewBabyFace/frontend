@@ -2,7 +2,7 @@ import type { PropertyValues, TemplateResult } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators";
 import { mockTemplate } from "../../../../demo/src/stubs/template";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../components/demo-cards";
 
 const CONFIGS = [
@@ -270,7 +270,7 @@ const CONFIGS = [
 
     ### ha-alert
 
-    You can use our [\`ha-alert\`](https://design.home-assistant.io/#components/ha-alert) component in markdown content rendered in the Home Assistant Frontend.
+    You can use our [\`ha-alert\`](https://design.home-assistant.io/#components/ha-alert) component in markdown content rendered in the MenuAI Frontend.
 
     <ha-alert alert-type="error">This is an error alert — check it out!</ha-alert>
     <ha-alert alert-type="warning">This is a warning alert — check it out!</ha-alert>
@@ -292,10 +292,10 @@ class DemoMarkdown extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    const hass = provideHass(this._demoRoot);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("lovelace", "en");
-    mockTemplate(hass);
+    const menuai = providemenuai(this._demoRoot);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("lovelace", "en");
+    mockTemplate(menuai);
   }
 }
 

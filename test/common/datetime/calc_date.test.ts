@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import { describe, it, expect } from "vitest";
 import { addDays } from "date-fns";
 import {
@@ -20,7 +20,7 @@ const localeServer: FrontendLocaleData = {
   language: "en-US",
   time_zone: TimeZone.server,
 } as any;
-const config: HassConfig = { time_zone: "UTC" } as any;
+const config: menuaiConfig = { time_zone: "UTC" } as any;
 
 describe("calcDate", () => {
   it("should calculate date correctly", () => {

@@ -4,7 +4,7 @@ import { connectionMixin } from "./connection-mixin";
 import { dialogManagerMixin } from "./dialog-manager-mixin";
 import DisconnectToastMixin from "./disconnect-toast-mixin";
 import { hapticMixin } from "./haptic-mixin";
-import { HassBaseEl } from "./hass-base-mixin";
+import { menuaiBaseEl } from "./menuai-base-mixin";
 import { loggingMixin } from "./logging-mixin";
 import { contextMixin } from "./context-mixin";
 import MoreInfoMixin from "./more-info-mixin";
@@ -20,7 +20,7 @@ import { urlSyncMixin } from "./url-sync-mixin";
 const ext = <T extends Constructor>(baseClass: T, mixins): T =>
   mixins.reduceRight((base, mixin) => mixin(base), baseClass);
 
-export class HassElement extends ext(HassBaseEl, [
+export class menuaiElement extends ext(menuaiBaseEl, [
   AuthMixin,
   ThemesMixin,
   TranslationsMixin,

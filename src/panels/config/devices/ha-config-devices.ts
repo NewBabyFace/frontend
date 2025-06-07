@@ -3,15 +3,15 @@ import type { ConfigEntry } from "../../../data/config_entries";
 import { getConfigEntries } from "../../../data/config_entries";
 import type { IntegrationManifest } from "../../../data/integration";
 import { fetchIntegrationManifests } from "../../../data/integration";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 import "./ha-config-device-page";
 import "./ha-config-devices-dashboard";
 
 @customElement("ha-config-devices")
-class HaConfigDevices extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigDevices extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -42,7 +42,7 @@ class HaConfigDevices extends HassRouterPage {
   }
 
   protected updatePageEl(pageEl) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
 
     if (this._currentPage === "device") {
       pageEl.deviceId = this.routeTail.path.substr(1);
@@ -57,8 +57,8 @@ class HaConfigDevices extends HassRouterPage {
   }
 
   private async _loadData() {
-    this._configEntries = await getConfigEntries(this.hass);
-    this._manifests = await fetchIntegrationManifests(this.hass);
+    this._configEntries = await getConfigEntries(this.menuai);
+    this._manifests = await fetchIntegrationManifests(this.menuai);
   }
 }
 

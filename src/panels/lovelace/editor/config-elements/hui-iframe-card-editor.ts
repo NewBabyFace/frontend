@@ -4,7 +4,7 @@ import { assert, assign, boolean, object, optional, string } from "superstruct";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { IframeCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -36,7 +36,7 @@ export class HuiIframeCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: IframeCardConfig;
 
@@ -46,13 +46,13 @@ export class HuiIframeCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -66,7 +66,7 @@ export class HuiIframeCardEditor
   }
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}`);
+    this.menuai!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}`);
 }
 
 declare global {

@@ -1,6 +1,6 @@
 import type {
-  HassEntity,
-  HassServiceTarget,
+  menuaiEntity,
+  menuaiServiceTarget,
 } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
@@ -17,16 +17,16 @@ import {
   filterSelectorEntities,
   computeCreateDomains,
 } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-target-picker";
 
 @customElement("ha-selector-target")
 export class HaTargetSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: TargetSelector;
 
-  @property({ type: Object }) public value?: HassServiceTarget;
+  @property({ type: Object }) public value?: menuaiServiceTarget;
 
   @property() public label?: string;
 
@@ -60,7 +60,7 @@ export class HaTargetSelector extends LitElement {
       this._hasIntegration(this.selector) &&
       !this._entitySources
     ) {
-      fetchEntitySourcesWithCache(this.hass).then((sources) => {
+      fetchEntitySourcesWithCache(this.menuai).then((sources) => {
         this._entitySources = sources;
       });
     }
@@ -76,7 +76,7 @@ export class HaTargetSelector extends LitElement {
 
     return html` ${this.label ? html`<label>${this.label}</label>` : nothing}
       <ha-target-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .helper=${this.helper}
         .deviceFilter=${this._filterDevices}
@@ -86,7 +86,7 @@ export class HaTargetSelector extends LitElement {
       ></ha-target-picker>`;
   }
 
-  private _filterEntities = (entity: HassEntity): boolean => {
+  private _filterEntities = (entity: menuaiEntity): boolean => {
     if (!this.selector.target?.entity) {
       return true;
     }
@@ -104,7 +104,7 @@ export class HaTargetSelector extends LitElement {
     const deviceIntegrations = this._entitySources
       ? this._deviceIntegrationLookup(
           this._entitySources,
-          Object.values(this.hass.entities)
+          Object.values(this.menuai.entities)
         )
       : undefined;
 

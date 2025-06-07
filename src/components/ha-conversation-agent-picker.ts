@@ -11,7 +11,7 @@ import type { Agent } from "../data/conversation";
 import { listAgents } from "../data/conversation";
 import { fetchIntegrationManifest } from "../data/integration";
 import { showOptionsFlowDialog } from "../dialogs/config-flow/show-dialog-options-flow";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-select";
 import type { HaSelect } from "./ha-select";
@@ -27,7 +27,7 @@ export class HaConversationAgentPicker extends LitElement {
 
   @property() public label?: string;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public disabled = false;
 
@@ -43,7 +43,7 @@ export class HaConversationAgentPicker extends LitElement {
     }
     let value = this.value;
     if (!value && this.required) {
-      // Select Home Assistant conversation agent if it supports the language
+      // Select MenuAI conversation agent if it supports the language
       for (const agent of this._agents) {
         if (
           agent.id === "conversation.home_assistant" &&
@@ -73,7 +73,7 @@ export class HaConversationAgentPicker extends LitElement {
     return html`
       <ha-select
         .label=${this.label ||
-        this.hass!.localize(
+        this.menuai!.localize(
           "ui.components.coversation-agent-picker.conversation_agent"
         )}
         .value=${value}
@@ -86,7 +86,7 @@ export class HaConversationAgentPicker extends LitElement {
       >
         ${!this.required
           ? html`<ha-list-item .value=${NONE}>
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.components.coversation-agent-picker.none"
               )}
             </ha-list-item>`
@@ -124,13 +124,13 @@ export class HaConversationAgentPicker extends LitElement {
   }
 
   private async _maybeFetchConfigEntry() {
-    if (!this.value || !(this.value in this.hass.entities)) {
+    if (!this.value || !(this.value in this.menuai.entities)) {
       this._configEntry = undefined;
       return;
     }
     try {
       const regEntry = await getExtendedEntityRegistryEntry(
-        this.hass,
+        this.menuai,
         this.value
       );
 
@@ -140,7 +140,7 @@ export class HaConversationAgentPicker extends LitElement {
       }
 
       this._configEntry = (
-        await getConfigEntry(this.hass, regEntry.config_entry_id)
+        await getConfigEntry(this.menuai, regEntry.config_entry_id)
       ).config_entry;
     } catch (_err) {
       this._configEntry = undefined;
@@ -151,9 +151,9 @@ export class HaConversationAgentPicker extends LitElement {
 
   private async _updateAgents() {
     const { agents } = await listAgents(
-      this.hass,
+      this.menuai,
       this.language,
-      this.hass.config.country || undefined
+      this.menuai.config.country || undefined
     );
 
     this._agents = agents;
@@ -184,7 +184,7 @@ export class HaConversationAgentPicker extends LitElement {
     }
     showOptionsFlowDialog(this, this._configEntry, {
       manifest: await fetchIntegrationManifest(
-        this.hass,
+        this.menuai,
         this._configEntry.domain
       ),
     });
@@ -206,7 +206,7 @@ export class HaConversationAgentPicker extends LitElement {
   private _changed(ev): void {
     const target = ev.target as HaSelect;
     if (
-      !this.hass ||
+      !this.menuai ||
       target.value === "" ||
       target.value === this.value ||
       (this.value === undefined && target.value === NONE)
@@ -226,7 +226,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-conversation-agent-picker": HaConversationAgentPicker;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "supported-languages-changed": { value: "*" | string[] | undefined };
   }
 }

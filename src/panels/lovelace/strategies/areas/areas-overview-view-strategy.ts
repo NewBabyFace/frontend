@@ -2,7 +2,7 @@ import { ReactiveElement } from "lit";
 import { customElement } from "lit/decorators";
 import type { LovelaceSectionConfig } from "../../../../data/lovelace/config/section";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { EntitiesDisplay } from "./area-view-strategy";
 import {
   computeAreaPath,
@@ -28,10 +28,10 @@ export interface AreasViewStrategyConfig {
 export class AreasOverviewViewStrategy extends ReactiveElement {
   static async generate(
     config: AreasViewStrategyConfig,
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<LovelaceViewConfig> {
     const areas = getAreas(
-      hass.areas,
+      menuai.areas,
       config.areas_display?.hidden,
       config.areas_display?.order
     );
@@ -44,7 +44,7 @@ export class AreasOverviewViewStrategy extends ReactiveElement {
 
         const groups = getAreaGroupedEntities(
           area.area_id,
-          hass,
+          menuai,
           areaConfig?.groups_options
         );
 
@@ -58,7 +58,7 @@ export class AreasOverviewViewStrategy extends ReactiveElement {
           ...groups.others,
         ];
 
-        const computeTileCard = computeAreaTileCardConfig(hass, area.name);
+        const computeTileCard = computeAreaTileCardConfig(menuai, area.name);
 
         return {
           type: "grid",
@@ -85,7 +85,7 @@ export class AreasOverviewViewStrategy extends ReactiveElement {
               : [
                   {
                     type: "markdown",
-                    content: hass.localize(
+                    content: menuai.localize(
                       "ui.panel.lovelace.strategy.areas.no_entities"
                     ),
                   },

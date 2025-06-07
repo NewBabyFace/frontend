@@ -1,5 +1,5 @@
 import { mdiLabel, mdiPlus } from "@mdi/js";
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, html } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
@@ -20,7 +20,7 @@ import {
 import { showAlertDialog } from "../dialogs/generic/show-dialog-box";
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
 import { showLabelDetailDialog } from "../panels/config/labels/show-dialog-label-detail";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import type { HaDevicePickerDeviceFilterFunc } from "./device/ha-device-picker";
 import "./ha-generic-picker";
 import type { HaGenericPicker } from "./ha-generic-picker";
@@ -33,7 +33,7 @@ const NO_LABELS = "___NO_LABELS___";
 
 @customElement("ha-label-picker")
 export class HaLabelPicker extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -82,7 +82,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
   public deviceFilter?: HaDevicePickerDeviceFilterFunc;
 
   @property({ attribute: false })
-  public entityFilter?: (entity: HassEntity) => boolean;
+  public entityFilter?: (entity: menuaiEntity) => boolean;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -97,9 +97,9 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
     await this._picker?.open();
   }
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
     ];
@@ -140,9 +140,9 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
   private _getLabels = memoizeOne(
     (
       labels: LabelRegistryEntry[] | undefined,
-      haAreas: HomeAssistant["areas"],
-      haDevices: HomeAssistant["devices"],
-      haEntities: HomeAssistant["entities"],
+      haAreas: menuai["areas"],
+      haDevices: menuai["devices"],
+      haEntities: menuai["entities"],
       includeDomains: this["includeDomains"],
       excludeDomains: this["excludeDomains"],
       includeDeviceClasses: this["includeDeviceClasses"],
@@ -154,7 +154,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
         return [
           {
             id: NO_LABELS,
-            primary: this.hass.localize("ui.components.label-picker.no_labels"),
+            primary: this.menuai.localize("ui.components.label-picker.no_labels"),
             icon_path: mdiLabel,
           },
         ];
@@ -217,7 +217,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
               return false;
             }
             return deviceEntityLookup[device.id].some((entity) => {
-              const stateObj = this.hass.states[entity.entity_id];
+              const stateObj = this.menuai.states[entity.entity_id];
               if (!stateObj) {
                 return false;
               }
@@ -228,7 +228,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
             });
           });
           inputEntities = inputEntities!.filter((entity) => {
-            const stateObj = this.hass.states[entity.entity_id];
+            const stateObj = this.menuai.states[entity.entity_id];
             return (
               stateObj.attributes.device_class &&
               includeDeviceClasses.includes(stateObj.attributes.device_class)
@@ -249,7 +249,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
               return false;
             }
             return deviceEntityLookup[device.id].some((entity) => {
-              const stateObj = this.hass.states[entity.entity_id];
+              const stateObj = this.menuai.states[entity.entity_id];
               if (!stateObj) {
                 return false;
               }
@@ -257,7 +257,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
             });
           });
           inputEntities = inputEntities!.filter((entity) => {
-            const stateObj = this.hass.states[entity.entity_id];
+            const stateObj = this.menuai.states[entity.entity_id];
             if (!stateObj) {
               return false;
             }
@@ -329,9 +329,9 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
   private _getItems = () =>
     this._getLabels(
       this._labels,
-      this.hass.areas,
-      this.hass.devices,
-      this.hass.entities,
+      this.menuai.areas,
+      this.menuai.devices,
+      this.menuai.entities,
       this.includeDomains,
       this.excludeDomains,
       this.includeDeviceClasses,
@@ -366,7 +366,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
       return [
         {
           id: ADD_NEW_ID + searchString,
-          primary: this.hass.localize(
+          primary: this.menuai.localize(
             "ui.components.label-picker.add_new_sugestion",
             {
               name: searchString,
@@ -380,7 +380,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
     return [
       {
         id: ADD_NEW_ID,
-        primary: this.hass.localize("ui.components.label-picker.add_new"),
+        primary: this.menuai.localize("ui.components.label-picker.add_new"),
         icon_path: mdiPlus,
       },
     ];
@@ -389,16 +389,16 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
   protected render(): TemplateResult {
     const placeholder =
       this.placeholder ??
-      this.hass.localize("ui.components.label-picker.label");
+      this.menuai.localize("ui.components.label-picker.label");
 
     const valueRenderer = this._computeValueRenderer(this._labels);
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         .label=${this.label}
-        .notFoundLabel=${this.hass.localize(
+        .notFoundLabel=${this.menuai.localize(
           "ui.components.label-picker.no_match"
         )}
         .placeholder=${placeholder}
@@ -427,7 +427,7 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
     }
 
     if (value.startsWith(ADD_NEW_ID)) {
-      this.hass.loadFragmentTranslation("config");
+      this.menuai.loadFragmentTranslation("config");
 
       const suggestedName = value.substring(ADD_NEW_ID.length);
 
@@ -435,11 +435,11 @@ export class HaLabelPicker extends SubscribeMixin(LitElement) {
         suggestedName: suggestedName,
         createEntry: async (values) => {
           try {
-            const label = await createLabelRegistryEntry(this.hass, values);
+            const label = await createLabelRegistryEntry(this.menuai, values);
             this._setValue(label.label_id);
           } catch (err: any) {
             showAlertDialog(this, {
-              title: this.hass.localize(
+              title: this.menuai.localize(
                 "ui.components.label-picker.failed_create_label"
               ),
               text: err.message,

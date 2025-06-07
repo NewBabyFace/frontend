@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { IntegrationManifest } from "../../data/integration";
 import { computeDomain } from "./compute_domain";
 import { HELPERS_CRUD } from "../../data/helpers_crud";
@@ -11,14 +11,14 @@ import type { ConfigEntry } from "../../data/config_entries";
 import { deleteConfigEntry } from "../../data/config_entries";
 
 export const isDeletableEntity = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   manifests: IntegrationManifest[],
   entityRegistry: EntityRegistryEntry[],
   configEntries: ConfigEntry[],
   fetchedHelpers: Helper[]
 ): boolean => {
-  const restored = !!hass.states[entity_id]?.attributes.restored;
+  const restored = !!menuai.states[entity_id]?.attributes.restored;
   if (restored) {
     return true;
   }
@@ -27,7 +27,7 @@ export const isDeletableEntity = (
   const entityRegEntry = entityRegistry.find((e) => e.entity_id === entity_id);
   if (isHelperDomain(domain)) {
     return !!(
-      isComponentLoaded(hass, domain) &&
+      isComponentLoaded(menuai, domain) &&
       entityRegEntry &&
       fetchedHelpers.some((e) => e.id === entityRegEntry.unique_id)
     );
@@ -45,7 +45,7 @@ export const isDeletableEntity = (
 };
 
 export const deleteEntity = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   manifests: IntegrationManifest[],
   entityRegistry: EntityRegistryEntry[],
@@ -56,20 +56,20 @@ export const deleteEntity = (
   const domain = computeDomain(entity_id);
   const entityRegEntry = entityRegistry.find((e) => e.entity_id === entity_id);
   if (isHelperDomain(domain)) {
-    if (isComponentLoaded(hass, domain)) {
+    if (isComponentLoaded(menuai, domain)) {
       if (
         entityRegEntry &&
         fetchedHelpers.some((e) => e.id === entityRegEntry.unique_id)
       ) {
-        HELPERS_CRUD[domain].delete(hass, entityRegEntry.unique_id);
+        HELPERS_CRUD[domain].delete(menuai, entityRegEntry.unique_id);
         return;
       }
     }
-    const stateObj = hass.states[entity_id];
+    const stateObj = menuai.states[entity_id];
     if (!stateObj?.attributes.restored) {
       return;
     }
-    removeEntityRegistryEntry(hass, entity_id);
+    removeEntityRegistryEntry(menuai, entity_id);
     return;
   }
 
@@ -83,9 +83,9 @@ export const deleteEntity = (
     : false;
 
   if (isHelperEntryType) {
-    deleteConfigEntry(hass, configEntryId!);
+    deleteConfigEntry(menuai, configEntryId!);
     return;
   }
 
-  removeEntityRegistryEntry(hass, entity_id);
+  removeEntityRegistryEntry(menuai, entity_id);
 };

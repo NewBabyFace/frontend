@@ -4,7 +4,7 @@ import type {
   EntityRegistryDisplayEntry,
   EntityRegistryEntry,
 } from "../../data/entity_registry";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { computeStateName } from "./compute_state_name";
 import { getDuplicates } from "../string/get_duplicates";
 
@@ -14,24 +14,24 @@ export const computeDeviceName = (
 
 export const computeDeviceNameDisplay = (
   device: DeviceRegistryEntry,
-  hass: HomeAssistant,
+  menuai: menuai,
   entities?: EntityRegistryEntry[] | EntityRegistryDisplayEntry[] | string[]
 ) =>
   computeDeviceName(device) ||
-  (entities && fallbackDeviceName(hass, entities)) ||
-  hass.localize("ui.panel.config.devices.unnamed_device", {
-    type: hass.localize(
+  (entities && fallbackDeviceName(menuai, entities)) ||
+  menuai.localize("ui.panel.config.devices.unnamed_device", {
+    type: menuai.localize(
       `ui.panel.config.devices.type.${device.entry_type || "device"}`
     ),
   });
 
 export const fallbackDeviceName = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entities: EntityRegistryEntry[] | EntityRegistryDisplayEntry[] | string[]
 ) => {
   for (const entity of entities || []) {
     const entityId = typeof entity === "string" ? entity : entity.entity_id;
-    const stateObj = hass.states[entityId];
+    const stateObj = menuai.states[entityId];
     if (stateObj) {
       return computeStateName(stateObj);
     }
@@ -40,7 +40,7 @@ export const fallbackDeviceName = (
 };
 
 export const getDuplicatedDeviceNames = memoizeOne(
-  (devices: HomeAssistant["devices"]): Set<string> => {
+  (devices: menuai["devices"]): Set<string> => {
     const names = Object.values(devices)
       .map((device) => computeDeviceName(device))
       .filter((name): name is string => name !== undefined);

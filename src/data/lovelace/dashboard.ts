@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export type LovelaceDashboard =
   | LovelaceYamlDashboard
@@ -36,34 +36,34 @@ export interface LovelaceDashboardCreateParams
 }
 
 export const fetchDashboards = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<LovelaceDashboard[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "lovelace/dashboards/list",
   });
 
 export const createDashboard = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: LovelaceDashboardCreateParams
 ) =>
-  hass.callWS<LovelaceDashboard>({
+  menuai.callWS<LovelaceDashboard>({
     type: "lovelace/dashboards/create",
     ...values,
   });
 
 export const updateDashboard = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<LovelaceDashboardMutableParams>
 ) =>
-  hass.callWS<LovelaceDashboard>({
+  menuai.callWS<LovelaceDashboard>({
     type: "lovelace/dashboards/update",
     dashboard_id: id,
     ...updates,
   });
 
-export const deleteDashboard = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteDashboard = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "lovelace/dashboards/delete",
     dashboard_id: id,
   });

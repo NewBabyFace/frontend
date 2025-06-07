@@ -1,28 +1,28 @@
 import type { PropertyValues } from "lit";
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import type { ActionConfigParams } from "../panels/lovelace/common/handle-action";
 import { handleAction } from "../panels/lovelace/common/handle-action";
 import type { Constructor } from "../types";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
-    "hass-action": { config: ActionConfigParams; action: string };
+  interface menuaiDomEvents {
+    "menuai-action": { config: ActionConfigParams; action: string };
   }
 }
 
-export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
+export default <T extends Constructor<menuaiBaseEl>>(superClass: T) =>
   class extends superClass {
     protected firstUpdated(changedProps: PropertyValues) {
       super.firstUpdated(changedProps);
-      this.addEventListener("hass-action", (ev) => this._handleAction(ev));
+      this.addEventListener("menuai-action", (ev) => this._handleAction(ev));
     }
 
     private async _handleAction(
-      ev: HASSDomEvent<{ config: ActionConfigParams; action: string }>
+      ev: menuaiDomEvent<{ config: ActionConfigParams; action: string }>
     ) {
-      if (!this.hass) return;
-      handleAction(this, this.hass, ev.detail.config, ev.detail.action);
+      if (!this.menuai) return;
+      handleAction(this, this.menuai, ev.detail.config, ev.detail.action);
     }
   };

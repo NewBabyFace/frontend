@@ -9,13 +9,13 @@ import "../../../components/ha-dialog-header";
 import "../../../components/ha-dialog";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./entity-voice-settings";
 import type { VoiceSettingsDialogParams } from "./show-dialog-voice-settings";
 
 @customElement("dialog-voice-settings")
 class DialogVoiceSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: VoiceSettingsDialogParams;
 
@@ -41,8 +41,8 @@ class DialogVoiceSettings extends LitElement {
     }
 
     const title =
-      computeStateName(this.hass.states[this._params.entityId]) ||
-      this.hass.localize("ui.panel.config.entities.picker.unnamed_entity");
+      computeStateName(this.menuai.states[this._params.entityId]) ||
+      this.menuai.localize("ui.panel.config.entities.picker.unnamed_entity");
 
     return html`
       <ha-dialog open @closed=${this.closeDialog} hideActions .heading=${title}>
@@ -50,13 +50,13 @@ class DialogVoiceSettings extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" .title=${title}>${title}</span>
           <ha-icon-button
             slot="actionItems"
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.dialogs.voice-settings.view_entity"
             )}
             .path=${mdiTuneVertical}
@@ -65,7 +65,7 @@ class DialogVoiceSettings extends LitElement {
         </ha-dialog-header>
         <div>
           <entity-voice-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .entityId=${this._params.entityId}
             .entry=${this._params.extEntityReg}
             .exposed=${this._params.exposed}

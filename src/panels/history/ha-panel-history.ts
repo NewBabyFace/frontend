@@ -7,7 +7,7 @@ import {
 import type { ActionDetail } from "@material/mwc-list";
 import { differenceInHours } from "date-fns";
 import type {
-  HassServiceTarget,
+  menuaiServiceTarget,
   UnsubscribeFunc,
 } from "home-assistant-js-websocket/dist/types";
 import type { PropertyValues } from "lit";
@@ -48,12 +48,12 @@ import { resolveEntityIDs } from "../../data/selector";
 import { getSensorNumericDeviceClasses } from "../../data/sensor";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { fileDownload } from "../../util/file_download";
 import { addEntitiesToLovelaceView } from "../lovelace/editor/add-entities-to-view";
 
 class HaPanelHistory extends LitElement {
-  @property({ attribute: false }) hass!: HomeAssistant;
+  @property({ attribute: false }) menuai!: menuai;
 
   @property({ reflect: true, type: Boolean }) public narrow = false;
 
@@ -69,7 +69,7 @@ class HaPanelHistory extends LitElement {
     state: true,
     subscribe: false,
   })
-  private _targetPickerValue: HassServiceTarget = {};
+  private _targetPickerValue: menuaiServiceTarget = {};
 
   @state() private _isLoading = false;
 
@@ -131,11 +131,11 @@ class HaPanelHistory extends LitElement {
           : html`
               <ha-menu-button
                 slot="navigationIcon"
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .narrow=${this.narrow}
               ></ha-menu-button>
             `}
-        <div slot="title">${this.hass.localize("panel.history")}</div>
+        <div slot="title">${this.menuai.localize("panel.history")}</div>
         ${entitiesSelected
           ? html`
               <ha-icon-button
@@ -143,24 +143,24 @@ class HaPanelHistory extends LitElement {
                 @click=${this._removeAll}
                 .disabled=${this._isLoading}
                 .path=${mdiFilterRemove}
-                .label=${this.hass.localize("ui.panel.history.remove_all")}
+                .label=${this.menuai.localize("ui.panel.history.remove_all")}
               ></ha-icon-button>
             `
           : ""}
         <ha-button-menu slot="actionItems" @action=${this._handleMenuAction}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
           <ha-list-item graphic="icon" .disabled=${this._isLoading}>
-            ${this.hass.localize("ui.panel.history.download_data")}
+            ${this.menuai.localize("ui.panel.history.download_data")}
             <ha-svg-icon slot="graphic" .path=${mdiDownload}></ha-svg-icon>
           </ha-list-item>
 
           <ha-list-item graphic="icon" .disabled=${this._isLoading}>
-            ${this.hass.localize("ui.panel.history.add_card")}
+            ${this.menuai.localize("ui.panel.history.add_card")}
             <ha-svg-icon slot="graphic" .path=${mdiImagePlus}></ha-svg-icon>
           </ha-list-item>
         </ha-button-menu>
@@ -168,7 +168,7 @@ class HaPanelHistory extends LitElement {
         <div class="flex content">
           <div class="filters">
             <ha-date-range-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               ?disabled=${this._isLoading}
               .startDate=${this._startDate}
               .endDate=${this._endDate}
@@ -177,7 +177,7 @@ class HaPanelHistory extends LitElement {
               @value-changed=${this._dateRangeChanged}
             ></ha-date-range-picker>
             <ha-target-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${this._targetPickerValue}
               .disabled=${this._isLoading}
               add-on-top
@@ -190,11 +190,11 @@ class HaPanelHistory extends LitElement {
               </div>`
             : !entitiesSelected
               ? html`<div class="start-search">
-                  ${this.hass.localize("ui.panel.history.start_search")}
+                  ${this.menuai.localize("ui.panel.history.start_search")}
                 </div>`
               : html`
                   <state-history-charts
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .historyData=${this._mungedStateHistory}
                     .startTime=${this._startDate}
                     .endTime=${this._endDate}
@@ -312,7 +312,7 @@ class HaPanelHistory extends LitElement {
     }
 
     const statistics = await fetchStatistics(
-      this.hass!,
+      this.menuai!,
       this._startDate,
       this._endDate,
       statisticIds,
@@ -322,10 +322,10 @@ class HaPanelHistory extends LitElement {
     );
 
     const { numeric_device_classes: sensorNumericDeviceClasses } =
-      await getSensorNumericDeviceClasses(this.hass);
+      await getSensorNumericDeviceClasses(this.menuai);
 
     this._statisticsHistory = convertStatisticsToHistory(
-      this.hass!,
+      this.menuai!,
       statistics,
       statisticIds,
       sensorNumericDeviceClasses,
@@ -350,17 +350,17 @@ class HaPanelHistory extends LitElement {
     const now = new Date();
 
     const { numeric_device_classes: sensorNumericDeviceClasses } =
-      await getSensorNumericDeviceClasses(this.hass);
+      await getSensorNumericDeviceClasses(this.menuai);
 
     this._subscribed = subscribeHistory(
-      this.hass,
+      this.menuai,
       (history) => {
         this._isLoading = false;
         this._stateHistory = computeHistory(
-          this.hass,
+          this.menuai,
           history,
           entityIds,
-          this.hass.localize,
+          this.menuai.localize,
           sensorNumericDeviceClasses,
           true
         );
@@ -408,20 +408,20 @@ class HaPanelHistory extends LitElement {
   private _getEntityIds(): string[] {
     return this.__getEntityIds(
       this._targetPickerValue,
-      this.hass.entities,
-      this.hass.devices,
-      this.hass.areas
+      this.menuai.entities,
+      this.menuai.devices,
+      this.menuai.areas
     );
   }
 
   private __getEntityIds = memoizeOne(
     (
-      targetPickerValue: HassServiceTarget,
-      entities: HomeAssistant["entities"],
-      devices: HomeAssistant["devices"],
-      areas: HomeAssistant["areas"]
+      targetPickerValue: menuaiServiceTarget,
+      entities: menuai["entities"],
+      devices: menuai["devices"],
+      areas: menuai["areas"]
     ): string[] =>
-      resolveEntityIDs(this.hass, targetPickerValue, entities, devices, areas)
+      resolveEntityIDs(this.menuai, targetPickerValue, entities, devices, areas)
   );
 
   private _dateRangeChanged(ev) {
@@ -491,8 +491,8 @@ class HaPanelHistory extends LitElement {
     const entities = [...this._getEntityIds()].sort();
     if (entities.length === 0 || !this._mungedStateHistory) {
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.history.download_data_error"),
-        text: this.hass.localize("ui.panel.history.error_no_data"),
+        title: this.menuai.localize("ui.panel.history.download_data_error"),
+        text: this.menuai.localize("ui.panel.history.error_no_data"),
         warning: true,
       });
       return;
@@ -583,8 +583,8 @@ class HaPanelHistory extends LitElement {
     const entities = this._getEntityIds();
     if (entities.length === 0 || !this._mungedStateHistory) {
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.history.add_card_error"),
-        text: this.hass.localize("ui.panel.history.error_no_data"),
+        title: this.menuai.localize("ui.panel.history.add_card_error"),
+        text: this.menuai.localize("ui.panel.history.error_no_data"),
         warning: true,
       });
       return;
@@ -594,7 +594,7 @@ class HaPanelHistory extends LitElement {
     const endDateTime = Math.min(this._endDate.getTime(), Date.now());
     const cards = [
       {
-        title: this.hass.localize("panel.history"),
+        title: this.menuai.localize("panel.history"),
         type: "history-graph",
         hours_to_show: Math.round(
           (endDateTime - this._startDate.getTime()) / 1000 / 60 / 60
@@ -604,10 +604,10 @@ class HaPanelHistory extends LitElement {
     ];
     addEntitiesToLovelaceView(
       this,
-      this.hass,
+      this.menuai,
       cards,
       {
-        title: this.hass.localize("panel.history"),
+        title: this.menuai.localize("panel.history"),
         cards,
       },
       entities

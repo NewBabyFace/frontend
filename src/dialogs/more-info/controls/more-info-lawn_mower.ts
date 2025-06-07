@@ -15,7 +15,7 @@ import {
 } from "../../../data/entity_registry";
 import type { LawnMowerEntity } from "../../../data/lawn_mower";
 import { LawnMowerEntityFeature } from "../../../data/lawn_mower";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 interface LawnMowerCommand {
   translationKey: string;
@@ -50,12 +50,12 @@ const LAWN_MOWER_COMMANDS: LawnMowerCommand[] = [
 
 @customElement("more-info-lawn_mower")
 class MoreInfoLawnMower extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: LawnMowerEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -66,12 +66,12 @@ class MoreInfoLawnMower extends LitElement {
         ? html` <div class="flex-horizontal">
             <div>
               <span class="status-subtitle"
-                >${this.hass!.localize(
+                >${this.menuai!.localize(
                   "ui.dialogs.more_info_control.lawn_mower.activity"
                 )}:
               </span>
               <span>
-                <strong>${this.hass.formatEntityState(stateObj)}</strong>
+                <strong>${this.menuai.formatEntityState(stateObj)}</strong>
               </span>
             </div>
             ${this._renderBattery()}
@@ -82,7 +82,7 @@ class MoreInfoLawnMower extends LitElement {
             <div>
               <p></p>
               <div class="status-subtitle">
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.dialogs.more_info_control.lawn_mower.commands"
                 )}
               </div>
@@ -96,7 +96,7 @@ class MoreInfoLawnMower extends LitElement {
                         .path=${item.icon}
                         .entry=${item}
                         @click=${this._callService}
-                        .label=${this.hass!.localize(
+                        .label=${this.menuai!.localize(
                           `ui.dialogs.more_info_control.lawn_mower.${item.translationKey}`
                         )}
                         .disabled=${stateObj.state === UNAVAILABLE}
@@ -114,7 +114,7 @@ class MoreInfoLawnMower extends LitElement {
   private _deviceEntities = memoizeOne(
     (
       deviceId: string,
-      entities: HomeAssistant["entities"]
+      entities: menuai["entities"]
     ): EntityRegistryDisplayEntry[] => {
       const entries = Object.values(entities);
       return entries.filter((entity) => entity.device_id === deviceId);
@@ -124,15 +124,15 @@ class MoreInfoLawnMower extends LitElement {
   private _renderBattery() {
     const stateObj = this.stateObj!;
 
-    const deviceId = this.hass.entities[stateObj.entity_id]?.device_id;
+    const deviceId = this.menuai.entities[stateObj.entity_id]?.device_id;
 
     const entities = deviceId
-      ? this._deviceEntities(deviceId, this.hass.entities)
+      ? this._deviceEntities(deviceId, this.menuai.entities)
       : [];
 
-    const batteryEntity = findBatteryEntity(this.hass, entities);
+    const batteryEntity = findBatteryEntity(this.menuai, entities);
     const battery = batteryEntity
-      ? this.hass.states[batteryEntity.entity_id]
+      ? this.menuai.states[batteryEntity.entity_id]
       : undefined;
 
     const batteryIsBinary =
@@ -141,11 +141,11 @@ class MoreInfoLawnMower extends LitElement {
     // Use device battery entity
     if (battery && (batteryIsBinary || !isNaN(battery.state as any))) {
       const batteryChargingEntity = findBatteryChargingEntity(
-        this.hass,
+        this.menuai,
         entities
       );
       const batteryCharging = batteryChargingEntity
-        ? this.hass.states[batteryChargingEntity?.entity_id]
+        ? this.menuai.states[batteryChargingEntity?.entity_id]
         : undefined;
 
       return html`
@@ -154,10 +154,10 @@ class MoreInfoLawnMower extends LitElement {
             ${batteryIsBinary
               ? ""
               : `${Number(battery.state).toFixed()}${blankBeforePercent(
-                  this.hass.locale
+                  this.menuai.locale
                 )}%`}
             <ha-battery-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .batteryStateObj=${battery}
               .batteryChargingStateObj=${batteryCharging}
             ></ha-battery-icon>
@@ -171,7 +171,7 @@ class MoreInfoLawnMower extends LitElement {
 
   private _callService(ev: CustomEvent) {
     const entry = (ev.target! as any).entry as LawnMowerCommand;
-    this.hass.callService("lawn_mower", entry.serviceName, {
+    this.menuai.callService("lawn_mower", entry.serviceName, {
       entity_id: this.stateObj!.entity_id,
     });
   }

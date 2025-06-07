@@ -66,11 +66,11 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { KeyboardShortcutMixin } from "../../../mixins/keyboard-shortcut-mixin";
 import { PreventUnsavedMixin } from "../../../mixins/prevent-unsaved-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { Entries, HomeAssistant, Route } from "../../../types";
+import type { Entries, menuai, Route } from "../../../types";
 import { showToast } from "../../../util/toast";
 import { showAssignCategoryDialog } from "../category/show-dialog-assign-category";
 import "../ha-config-section";
@@ -88,7 +88,7 @@ declare global {
     "ha-automation-editor": HaAutomationEditor;
   }
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "subscribe-automation-config": {
       callback: (config: AutomationConfig) => void;
       unsub?: UnsubscribeFunc;
@@ -103,7 +103,7 @@ declare global {
 export class HaAutomationEditor extends PreventUnsavedMixin(
   KeyboardShortcutMixin(LitElement)
 ) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public automationId: string | null = null;
 
@@ -199,23 +199,23 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
     }
 
     const stateObj = this._entityId
-      ? this.hass.states[this._entityId]
+      ? this.menuai.states[this._entityId]
       : undefined;
 
     const useBlueprint = "use_blueprint" in this._config;
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .backCallback=${this._backTapped}
         .header=${this._config.alias ||
-        this.hass.localize("ui.panel.config.automation.editor.default_name")}
+        this.menuai.localize("ui.panel.config.automation.editor.default_name")}
       >
         ${this._config?.id && !this.narrow
           ? html`
               <mwc-button @click=${this._showTrace} slot="toolbar-icon">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.show_trace"
                 )}
               </mwc-button>
@@ -224,7 +224,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
         <ha-button-menu slot="toolbar-icon">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
@@ -233,7 +233,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             .disabled=${!stateObj}
             @click=${this._showInfo}
           >
-            ${this.hass.localize("ui.panel.config.automation.editor.show_info")}
+            ${this.menuai.localize("ui.panel.config.automation.editor.show_info")}
             <ha-svg-icon
               slot="graphic"
               .path=${mdiInformationOutline}
@@ -245,7 +245,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             .disabled=${!stateObj}
             @click=${this._showSettings}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.picker.show_settings"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiCog}></ha-svg-icon>
@@ -256,7 +256,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             .disabled=${!stateObj}
             @click=${this._editCategory}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.scene.picker.${this._registryEntry?.categories?.automation ? "edit_category" : "assign_category"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiTag}></ha-svg-icon>
@@ -267,7 +267,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             .disabled=${!stateObj}
             @click=${this._runActions}
           >
-            ${this.hass.localize("ui.panel.config.automation.editor.run")}
+            ${this.menuai.localize("ui.panel.config.automation.editor.run")}
             <ha-svg-icon slot="graphic" .path=${mdiPlay}></ha-svg-icon>
           </ha-list-item>
 
@@ -278,7 +278,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
                 )}"
               >
                 <ha-list-item graphic="icon">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.automation.editor.show_trace"
                   )}
                   <ha-svg-icon
@@ -296,7 +296,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             !this.automationId ||
             this._mode === "yaml"}
           >
-            ${this.hass.localize("ui.panel.config.automation.editor.rename")}
+            ${this.menuai.localize("ui.panel.config.automation.editor.rename")}
             <ha-svg-icon slot="graphic" .path=${mdiRenameBox}></ha-svg-icon>
           </ha-list-item>
           ${!useBlueprint
@@ -306,7 +306,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
                   @click=${this._promptAutomationMode}
                   .disabled=${this._readOnly || this._mode === "yaml"}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.automation.editor.change_mode"
                   )}
                   <ha-svg-icon
@@ -323,7 +323,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             graphic="icon"
             @click=${this._duplicate}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               this._readOnly
                 ? "ui.panel.config.automation.editor.migrate"
                 : "ui.panel.config.automation.editor.duplicate"
@@ -341,7 +341,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
                   @click=${this._takeControl}
                   .disabled=${this._readOnly}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.automation.editor.take_control"
                   )}
                   <ha-svg-icon
@@ -358,7 +358,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
               ? this._switchYamlMode
               : this._switchUiMode}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.automation.editor.edit_${this._mode === "gui" ? "yaml" : "ui"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -372,8 +372,8 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             @click=${this._toggle}
           >
             ${stateObj?.state === "off"
-              ? this.hass.localize("ui.panel.config.automation.editor.enable")
-              : this.hass.localize("ui.panel.config.automation.editor.disable")}
+              ? this.menuai.localize("ui.panel.config.automation.editor.enable")
+              : this.menuai.localize("ui.panel.config.automation.editor.disable")}
             <ha-svg-icon
               slot="graphic"
               .path=${stateObj?.state === "off"
@@ -388,7 +388,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             graphic="icon"
             @click=${this._deleteConfirm}
           >
-            ${this.hass.localize("ui.panel.config.automation.picker.delete")}
+            ${this.menuai.localize("ui.panel.config.automation.picker.delete")}
             <ha-svg-icon
               class=${classMap({ warning: Boolean(this.automationId) })}
               slot="graphic"
@@ -407,7 +407,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             ? html`<ha-alert
                 alert-type="error"
                 .title=${stateObj?.state === UNAVAILABLE
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.automation.editor.unavailable"
                     )
                   : undefined}
@@ -423,25 +423,25 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             : ""}
           ${this._blueprintConfig
             ? html`<ha-alert alert-type="info">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.confirm_take_control"
                 )}
                 <div slot="action" style="display: flex;">
                   <mwc-button @click=${this._takeControlSave}
-                    >${this.hass.localize("ui.common.yes")}</mwc-button
+                    >${this.menuai.localize("ui.common.yes")}</mwc-button
                   >
                   <mwc-button @click=${this._revertBlueprint}
-                    >${this.hass.localize("ui.common.no")}</mwc-button
+                    >${this.menuai.localize("ui.common.no")}</mwc-button
                   >
                 </div>
               </ha-alert>`
             : this._readOnly
               ? html`<ha-alert alert-type="warning" dismissable
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.automation.editor.read_only"
                   )}
                   <mwc-button slot="action" @click=${this._duplicate}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.automation.editor.migrate"
                     )}
                   </mwc-button>
@@ -451,13 +451,13 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
             ? html`
                 <div
                   class=${classMap({
-                    rtl: computeRTL(this.hass),
+                    rtl: computeRTL(this.menuai),
                   })}
                 >
                   ${useBlueprint
                     ? html`
                         <blueprint-automation-editor
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .narrow=${this.narrow}
                           .isWide=${this.isWide}
                           .stateObj=${stateObj}
@@ -468,7 +468,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
                       `
                     : html`
                         <manual-automation-editor
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .narrow=${this.narrow}
                           .isWide=${this.isWide}
                           .stateObj=${stateObj}
@@ -484,11 +484,11 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
               ? html`${stateObj?.state === "off"
                     ? html`
                         <ha-alert alert-type="info">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.automation.editor.disabled"
                           )}
                           <mwc-button slot="action" @click=${this._toggle}>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.automation.editor.enable"
                             )}
                           </mwc-button>
@@ -497,7 +497,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
                     : ""}
                   <ha-yaml-editor
                     copy-clipboard
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${this._preprocessYaml()}
                     .readOnly=${this._readOnly}
                     @value-changed=${this._yamlChanged}
@@ -509,14 +509,14 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
           class=${classMap({
             dirty: !this._readOnly && this._dirty,
           })}
-          .label=${this.hass.localize("ui.panel.config.automation.editor.save")}
+          .label=${this.menuai.localize("ui.panel.config.automation.editor.save")}
           .disabled=${this._saving}
           extended
           @click=${this._handleSaveAutomation}
         >
           <ha-svg-icon slot="icon" .path=${mdiContentSave}></ha-svg-icon>
         </ha-fab>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -527,7 +527,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
     if (
       changedProps.has("automationId") &&
       this.automationId &&
-      this.hass &&
+      this.menuai &&
       // Only refresh config if we picked a new automation. If same ID, don't fetch it.
       oldAutomationId !== this.automationId
     ) {
@@ -539,7 +539,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
       changedProps.has("automationId") &&
       !this.automationId &&
       !this.entityId &&
-      this.hass
+      this.menuai
     ) {
       const initData = getAutomationEditorInitData();
       let baseConfig: Partial<AutomationConfig> = { description: "" };
@@ -561,7 +561,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
     }
 
     if (changedProps.has("entityId") && this.entityId) {
-      getAutomationStateConfig(this.hass, this.entityId).then((c) => {
+      getAutomationStateConfig(this.menuai, this.entityId).then((c) => {
         this._config = normalizeAutomationConfig(c.config);
         this._checkValidation();
       });
@@ -597,11 +597,11 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
     if (!this._entityId || !this._config) {
       return;
     }
-    const stateObj = this.hass.states[this._entityId];
+    const stateObj = this.menuai.states[this._entityId];
     if (stateObj?.state !== UNAVAILABLE) {
       return;
     }
-    const validation = await validateConfig(this.hass, {
+    const validation = await validateConfig(this.menuai, {
       triggers: this._config.triggers,
       conditions: this._config.conditions,
       actions: this._config.actions,
@@ -611,7 +611,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
     ).map(([key, value]) =>
       value.valid
         ? ""
-        : html`${this.hass.localize(
+        : html`${this.menuai.localize(
               `ui.panel.config.automation.editor.${key}.name`
             )}:
             ${value.error}<br />`
@@ -621,7 +621,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
   private async _loadConfig() {
     try {
       const config = await fetchAutomationFileConfig(
-        this.hass,
+        this.menuai,
         this.automationId as string
       );
       this._dirty = false;
@@ -642,10 +642,10 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
       await showAlertDialog(this, {
         text:
           err.status_code === 404
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.automation.editor.load_error_not_editable"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.automation.editor.load_error_unknown",
                 { err_no: err.status_code }
               ),
@@ -666,10 +666,10 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
   }
 
   private _showInfo() {
-    if (!this.hass || !this._entityId) {
+    if (!this.menuai || !this._entityId) {
       return;
     }
-    fireEvent(this, "hass-more-info", { entityId: this._entityId });
+    fireEvent(this, "menuai-more-info", { entityId: this._entityId });
   }
 
   private _showSettings() {
@@ -682,10 +682,10 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
   private _editCategory() {
     if (!this._registryEntry) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_support"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_entity_reg"
         ),
       });
@@ -709,22 +709,22 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
   }
 
   private _runActions() {
-    if (!this.hass || !this._entityId) {
+    if (!this.menuai || !this._entityId) {
       return;
     }
     triggerAutomationActions(
-      this.hass,
-      this.hass.states[this._entityId].entity_id
+      this.menuai,
+      this.menuai.states[this._entityId].entity_id
     );
   }
 
   private async _toggle(): Promise<void> {
-    if (!this.hass || !this._entityId) {
+    if (!this.menuai || !this._entityId) {
       return;
     }
-    const stateObj = this.hass.states[this._entityId];
+    const stateObj = this.menuai.states[this._entityId];
     const service = stateObj.state === "off" ? "turn_on" : "turn_off";
-    await this.hass.callService("automation", service, {
+    await this.menuai.callService("automation", service, {
       entity_id: stateObj.entity_id,
     });
   }
@@ -783,12 +783,12 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
         onDiscard: () => resolve(true),
         entityRegistryUpdate: this._entityRegistryUpdate,
         entityRegistryEntry: this._registryEntry,
-        title: this.hass.localize(
+        title: this.menuai.localize(
           this.automationId
             ? "ui.panel.config.automation.editor.leave.unsaved_confirm_title"
             : "ui.panel.config.automation.editor.leave.unsaved_new_title"
         ),
-        description: this.hass.localize(
+        description: this.menuai.localize(
           this.automationId
             ? "ui.panel.config.automation.editor.leave.unsaved_confirm_text"
             : "ui.panel.config.automation.editor.leave.unsaved_new_text"
@@ -810,7 +810,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
 
     try {
       const result = await substituteBlueprint(
-        this.hass,
+        this.menuai,
         "automation",
         config.use_blueprint.path,
         config.use_blueprint.input || {}
@@ -853,10 +853,10 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
   private async _duplicate() {
     const result = this._readOnly
       ? await showConfirmationDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.automation.picker.migrate_automation"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.automation.picker.migrate_automation_description"
           ),
         })
@@ -872,23 +872,23 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
 
   private async _deleteConfirm() {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.picker.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.automation.picker.delete_confirm_text",
         { name: this._config?.alias }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
       destructive: true,
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       confirm: () => this._delete(),
     });
   }
 
   private async _delete() {
     if (this.automationId) {
-      await deleteAutomation(this.hass, this.automationId);
+      await deleteAutomation(this.menuai, this.automationId);
       history.back();
     }
   }
@@ -896,12 +896,12 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
   private async _switchUiMode() {
     if (this._yamlErrors) {
       const result = await showConfirmationDialog(this, {
-        text: html`${this.hass.localize(
+        text: html`${this.menuai.localize(
             "ui.panel.config.automation.editor.switch_ui_yaml_error"
           )}<br /><br />${this._yamlErrors}`,
-        confirmText: this.hass!.localize("ui.common.continue"),
+        confirmText: this.menuai!.localize("ui.common.continue"),
         destructive: true,
-        dismissText: this.hass!.localize("ui.common.cancel"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
       });
       if (!result) {
         return;
@@ -986,7 +986,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
     }
 
     try {
-      await saveAutomationConfig(this.hass, id, this._config!);
+      await saveAutomationConfig(this.menuai, id, this._config!);
 
       if (this._entityRegistryUpdate !== undefined) {
         let entityId = this._entityId;
@@ -999,21 +999,21 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
           } catch (e) {
             if (e instanceof Error && e.name === "TimeoutError") {
               showAlertDialog(this, {
-                title: this.hass.localize(
+                title: this.menuai.localize(
                   "ui.panel.config.automation.editor.new_automation_setup_failed_title",
                   {
-                    type: this.hass.localize(
+                    type: this.menuai.localize(
                       "ui.panel.config.automation.editor.type_automation"
                     ),
                   }
                 ),
-                text: this.hass.localize(
+                text: this.menuai.localize(
                   "ui.panel.config.automation.editor.new_automation_setup_failed_text",
                   {
-                    type: this.hass.localize(
+                    type: this.menuai.localize(
                       "ui.panel.config.automation.editor.type_automation"
                     ),
-                    types: this.hass.localize(
+                    types: this.menuai.localize(
                       "ui.panel.config.automation.editor.type_automation_plural"
                     ),
                   }
@@ -1027,7 +1027,7 @@ export class HaAutomationEditor extends PreventUnsavedMixin(
         }
 
         if (entityId) {
-          await updateEntityRegistryEntry(this.hass, entityId, {
+          await updateEntityRegistryEntry(this.menuai, entityId, {
             categories: {
               automation: this._entityRegistryUpdate.category || null,
             },

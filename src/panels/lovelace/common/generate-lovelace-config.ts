@@ -1,4 +1,4 @@
-import type { HassEntities, HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntities, menuaiEntity } from "home-assistant-js-websocket";
 import { SENSOR_ENTITIES, ASSIST_ENTITIES } from "../../../common/const";
 import { computeDomain } from "../../../common/entity/compute_domain";
 import { computeStateDomain } from "../../../common/entity/compute_state_domain";
@@ -18,7 +18,7 @@ import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
 import type { LovelaceSectionConfig } from "../../../data/lovelace/config/section";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
 import { computeUserInitials } from "../../../data/user";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { HELPER_DOMAINS } from "../../config/helpers/const";
 import type {
   AlarmPanelCardConfig,
@@ -53,16 +53,16 @@ const HIDE_DOMAIN = new Set([
 const HIDE_PLATFORM = new Set(["backup", "mobile_app"]);
 
 interface SplittedByAreaDevice {
-  areasWithEntities: Record<string, HassEntity[]>;
-  devicesWithEntities: Record<string, HassEntity[]>;
-  otherEntities: HassEntities;
+  areasWithEntities: Record<string, menuaiEntity[]>;
+  devicesWithEntities: Record<string, menuaiEntity[]>;
+  otherEntities: menuaiEntities;
 }
 
 const splitByAreaDevice = (
-  areaEntries: HomeAssistant["areas"],
-  deviceEntries: HomeAssistant["devices"],
-  entityEntries: HomeAssistant["entities"],
-  entities: HassEntities
+  areaEntries: menuai["areas"],
+  deviceEntries: menuai["devices"],
+  entityEntries: menuai["entities"],
+  entities: menuaiEntities
 ): SplittedByAreaDevice => {
   const allEntities = { ...entities };
   const areasWithEntities: SplittedByAreaDevice["areasWithEntities"] = {};
@@ -124,7 +124,7 @@ export const computeSection = (
 });
 
 export const computeCards = (
-  states: HassEntities,
+  states: menuaiEntities,
   entityIds: string[],
   entityCardOptions: Partial<EntitiesCardConfig>,
   renderFooterEntities = true
@@ -314,7 +314,7 @@ export const computeCards = (
 };
 
 export const computeBadges = (
-  _states: HassEntities,
+  _states: menuaiEntities,
   entityIds: string[]
 ): LovelaceBadgeConfig[] => {
   const badges: LovelaceBadgeConfig[] = [];
@@ -331,9 +331,9 @@ export const computeBadges = (
 };
 
 const computeDefaultViewStates = (
-  entities: HassEntities,
-  entityEntries: HomeAssistant["entities"]
-): HassEntities => {
+  entities: menuaiEntities,
+  entityEntries: menuai["entities"]
+): menuaiEntities => {
   const states = {};
   const hiddenEntities = new Set(
     Object.values(entityEntries)
@@ -363,7 +363,7 @@ export const generateViewConfig = (
   path: string,
   title: string | undefined,
   icon: string | undefined,
-  entities: HassEntities
+  entities: menuaiEntities
 ): LovelaceViewConfig => {
   const ungroupedEntitites: Record<string, string[]> = {};
 
@@ -497,10 +497,10 @@ export const generateViewConfig = (
 };
 
 export const generateDefaultViewConfig = (
-  areaEntries: HomeAssistant["areas"],
-  deviceEntries: HomeAssistant["devices"],
-  entityEntries: HomeAssistant["entities"],
-  entities: HassEntities,
+  areaEntries: menuai["areas"],
+  deviceEntries: menuai["devices"],
+  entityEntries: menuai["entities"],
+  entities: menuaiEntities,
   localize: LocalizeFunc,
   energyPrefs?: EnergyPreferences,
   areasPrefs?: AreasDisplayValue,

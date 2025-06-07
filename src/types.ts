@@ -2,11 +2,11 @@ import type { DurationFormatConstructor } from "@formatjs/intl-durationformat/sr
 import type {
   Auth,
   Connection,
-  HassConfig,
-  HassEntities,
-  HassEntity,
-  HassServices,
-  HassServiceTarget,
+  menuaiConfig,
+  menuaiEntities,
+  menuaiEntity,
+  menuaiServices,
+  menuaiServiceTarget,
   MessageBase,
 } from "home-assistant-js-websocket";
 import type { LocalizeFunc } from "./common/translations/localize";
@@ -17,7 +17,7 @@ import type { FloorRegistryEntry } from "./data/floor_registry";
 import type { CoreFrontendUserData } from "./data/frontend";
 import type {
   FrontendLocaleData,
-  getHassTranslations,
+  getmenuaiTranslations,
 } from "./data/translation";
 import type { Themes } from "./data/ws-themes";
 import type { ExternalMessaging } from "./external_app/external_messaging";
@@ -31,7 +31,7 @@ declare global {
   var __STATIC_PATH__: string;
   var __BACKWARDS_COMPAT__: boolean;
   var __SUPERVISOR__: boolean;
-  var __HASS_URL__: string;
+  var __menuai_URL__: string;
   /* eslint-enable no-var, @typescript-eslint/naming-convention */
 
   interface Window {
@@ -49,14 +49,14 @@ declare global {
   }
 
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "value-changed": {
       value: unknown;
     };
     change: undefined;
-    "hass-logout": undefined;
+    "menuai-logout": undefined;
     "config-refresh": undefined;
-    "hass-api-called": {
+    "menuai-api-called": {
       success: boolean;
       response: unknown;
     };
@@ -116,12 +116,12 @@ export interface CurrentUser {
 // Currently selected theme and its settings. These are the values stored in local storage.
 // Note: These values are not meant to be used at runtime to check whether dark mode is active
 // or which theme name to use, as this interface represents the config data for the theme picker.
-// The actually active dark mode and theme name can be read from hass.themes.
+// The actually active dark mode and theme name can be read from menuai.themes.
 export interface ThemeSettings {
   theme: string;
   // Radio box selection for theme picker. Do not use in Lovelace rendering as
   // it can be undefined == auto.
-  // Property hass.themes.darkMode carries effective current mode.
+  // Property menuai.themes.darkMode carries effective current mode.
   dark?: boolean;
   primaryColor?: string;
   accentColor?: string;
@@ -207,20 +207,20 @@ export interface ServiceCallRequest {
   domain: string;
   service: string;
   serviceData?: Record<string, any>;
-  target?: HassServiceTarget;
+  target?: menuaiServiceTarget;
 }
 
-export interface HomeAssistant {
+export interface menuai {
   auth: Auth & { external?: ExternalMessaging };
   connection: Connection;
   connected: boolean;
-  states: HassEntities;
+  states: menuaiEntities;
   entities: Record<string, EntityRegistryDisplayEntry>;
   devices: Record<string, DeviceRegistryEntry>;
   areas: Record<string, AreaRegistryEntry>;
   floors: Record<string, FloorRegistryEntry>;
-  services: HassServices;
-  config: HassConfig;
+  services: menuaiServices;
+  config: menuaiConfig;
   themes: Themes;
   selectedTheme: ThemeSettings | null;
   panels: Panels;
@@ -247,7 +247,7 @@ export interface HomeAssistant {
   moreInfoEntityId: string | null;
   user?: CurrentUser;
   userData?: CoreFrontendUserData | null;
-  hassUrl(path?): string;
+  menuaiUrl(path?): string;
   callService(
     domain: ServiceCallRequest["domain"],
     service: ServiceCallRequest["service"],
@@ -273,18 +273,18 @@ export interface HomeAssistant {
   sendWS(msg: MessageBase): void;
   callWS<T>(msg: MessageBase): Promise<T>;
   loadBackendTranslation(
-    category: Parameters<typeof getHassTranslations>[2],
-    integrations?: Parameters<typeof getHassTranslations>[3],
-    configFlow?: Parameters<typeof getHassTranslations>[4]
+    category: Parameters<typeof getmenuaiTranslations>[2],
+    integrations?: Parameters<typeof getmenuaiTranslations>[3],
+    configFlow?: Parameters<typeof getmenuaiTranslations>[4]
   ): Promise<LocalizeFunc>;
   loadFragmentTranslation(fragment: string): Promise<LocalizeFunc | undefined>;
-  formatEntityState(stateObj: HassEntity, state?: string): string;
+  formatEntityState(stateObj: menuaiEntity, state?: string): string;
   formatEntityAttributeValue(
-    stateObj: HassEntity,
+    stateObj: menuaiEntity,
     attribute: string,
     value?: any
   ): string;
-  formatEntityAttributeName(stateObj: HassEntity, attribute: string): string;
+  formatEntityAttributeName(stateObj: menuaiEntity, attribute: string): string;
 }
 
 export interface Route {
@@ -293,14 +293,14 @@ export interface Route {
 }
 
 export interface PanelElement extends HTMLElement {
-  hass?: HomeAssistant;
+  menuai?: menuai;
   narrow?: boolean;
   route?: Route | null;
   panel?: PanelInfo;
 }
 
 export interface LocalizeMixin {
-  hass?: HomeAssistant;
+  menuai?: menuai;
   localize: LocalizeFunc;
 }
 

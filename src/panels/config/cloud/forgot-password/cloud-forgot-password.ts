@@ -2,13 +2,13 @@ import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "./cloud-forgot-password-card";
-import "../../../../layouts/hass-subpage";
+import "../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("cloud-forgot-password")
 export class CloudForgotPassword extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -18,21 +18,21 @@ export class CloudForgotPassword extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.cloud.forgot_password.title"
         )}
       >
         <div class="content">
           <cloud-forgot-password-card
-            .hass=${this.hass}
-            .localize=${this.hass.localize}
+            .menuai=${this.menuai}
+            .localize=${this.menuai.localize}
             .email=${this.email}
           ></cloud-forgot-password-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

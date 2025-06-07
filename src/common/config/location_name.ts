@@ -1,6 +1,6 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
-/** Get the location name from a hass object. */
-export default function computeLocationName(hass: HomeAssistant): string {
-  return hass && hass.config.location_name;
+/** Get the location name from a menuai object. */
+export default function computeLocationName(menuai: menuai): string {
+  return menuai && menuai.config.location_name;
 }

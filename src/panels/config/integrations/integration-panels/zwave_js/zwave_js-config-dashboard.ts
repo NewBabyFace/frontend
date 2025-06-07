@@ -45,10 +45,10 @@ import {
 } from "../../../../../data/zwave_js";
 import { showConfigFlowDialog } from "../../../../../dialogs/config-flow/show-dialog-config-flow";
 import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
-import "../../../../../layouts/hass-tabs-subpage";
+import "../../../../../layouts/menuai-tabs-subpage";
 import { SubscribeMixin } from "../../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import { fileDownload } from "../../../../../util/file_download";
 import { showZWaveJSAddNodeDialog } from "./add-node/show-dialog-zwave_js-add-node";
 import { showZWaveJSRebuildNetworkRoutesDialog } from "./show-dialog-zwave_js-rebuild-network-routes";
@@ -57,7 +57,7 @@ import { configTabs } from "./zwave_js-config-router";
 
 @customElement("zwave_js-config-dashboard")
 class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -95,7 +95,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
   private _restoreProgress?: number;
 
   protected async firstUpdated() {
-    if (this.hass) {
+    if (this.menuai) {
       await this._fetchData();
       if (this._status === "connected") {
         const inclusion_state = this._network?.controller.inclusion_state;
@@ -109,10 +109,10 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
     }
   }
 
-  public hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  public menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
       subscribeZwaveControllerStatistics(
-        this.hass,
+        this.menuai,
         this.configEntryId,
         (message) => {
           if (!this.hasUpdated) {
@@ -140,8 +140,8 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
         0) + provisioningDevices;
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .tabs=${configTabs}
@@ -151,7 +151,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
           slot="toolbar-icon"
           @click=${this._fetchData}
           .path=${mdiRefresh}
-          .label=${this.hass!.localize("ui.common.refresh")}
+          .label=${this.menuai!.localize("ui.common.refresh")}
         ></ha-icon-button>
         ${this._network
           ? html`
@@ -175,14 +175,14 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       ? html`
                           <div class="details">
                             Z-Wave
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.zwave_js.common.network"
                             )}
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               `ui.panel.config.zwave_js.network_status.${this._status}`
                             )}<br />
                             <small>
-                              ${this.hass.localize(
+                              ${this.menuai.localize(
                                 `ui.panel.config.zwave_js.dashboard.devices`,
                                 {
                                   count:
@@ -191,7 +191,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                                 }
                               )}
                               ${notReadyDevices > 0
-                                ? html`(${this.hass.localize(
+                                ? html`(${this.menuai.localize(
                                     `ui.panel.config.zwave_js.dashboard.not_ready`,
                                     { count: notReadyDevices }
                                   )})`
@@ -207,21 +207,21 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                     href=${`/config/devices/dashboard?historyBack=1&config_entry=${this.configEntryId}`}
                   >
                     <ha-button>
-                      ${this.hass.localize("ui.panel.config.devices.caption")}
+                      ${this.menuai.localize("ui.panel.config.devices.caption")}
                     </ha-button>
                   </a>
                   <a
                     href=${`/config/entities/dashboard?historyBack=1&config_entry=${this.configEntryId}`}
                   >
                     <ha-button>
-                      ${this.hass.localize("ui.panel.config.entities.caption")}
+                      ${this.menuai.localize("ui.panel.config.entities.caption")}
                     </ha-button>
                   </a>
                   ${this._provisioningEntries?.length
                     ? html`<a
                         href=${`provisioned?config_entry=${this.configEntryId}`}
                         ><ha-button>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.provisioned_devices"
                           )}
                         </ha-button></a
@@ -233,7 +233,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                 <div class="card-content">
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.dashboard.driver_version"
                       )}:
                     </span>
@@ -241,7 +241,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.dashboard.server_version"
                       )}:
                     </span>
@@ -249,7 +249,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.dashboard.home_id"
                       )}:
                     </span>
@@ -257,7 +257,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.dashboard.server_url"
                       )}:
                     </span>
@@ -265,19 +265,19 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                   </div>
                   <br />
                   <ha-expansion-panel
-                    .header=${this.hass.localize(
+                    .header=${this.menuai.localize(
                       "ui.panel.config.zwave_js.dashboard.statistics.title"
                     )}
                   >
                     <ha-list noninteractive>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_tx.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_tx.tooltip"
                           )}
                         </span>
@@ -287,12 +287,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_rx.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_rx.tooltip"
                           )}
                         </span>
@@ -302,12 +302,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_dropped_tx.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_dropped_tx.tooltip"
                           )}
                         </span>
@@ -317,12 +317,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_dropped_rx.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.messages_dropped_rx.tooltip"
                           )}
                         </span>
@@ -332,12 +332,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.nak.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.nak.tooltip"
                           )}
                         </span>
@@ -345,12 +345,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.can.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.can.tooltip"
                           )}
                         </span>
@@ -358,12 +358,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.timeout_ack.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.timeout_ack.tooltip"
                           )}
                         </span>
@@ -373,12 +373,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.timeout_response.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.timeout_response.tooltip"
                           )}
                         </span>
@@ -388,12 +388,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       </ha-list-item>
                       <ha-list-item twoline hasmeta>
                         <span>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.timeout_callback.label"
                           )}
                         </span>
                         <span slot="secondary">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.statistics.timeout_callback.tooltip"
                           )}
                         </span>
@@ -413,7 +413,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                       this._network?.controller.inclusion_state !==
                         InclusionState.SmartStart)}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.common.remove_node"
                     )}
                   </ha-button>
@@ -421,7 +421,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                     @click=${this._rebuildNetworkRoutesClicked}
                     .disabled=${this._status === "disconnected"}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.common.rebuild_network_routes"
                     )}
                   </ha-button>
@@ -456,13 +456,13 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                 </div>
               </ha-card>
               <ha-card
-                .header=${this.hass.localize(
+                .header=${this.menuai.localize(
                   "ui.panel.config.zwave_js.dashboard.nvm_backup.title"
                 )}
               >
                 <div class="card-content">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.dashboard.nvm_backup.description"
                     )}
                   </p>
@@ -473,7 +473,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                           size="small"
                           .value=${this._backupProgress}
                         ></ha-progress-ring>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.zwave_js.dashboard.nvm_backup.creating"
                         )}
                         ${this._backupProgress}%`
@@ -482,12 +482,12 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                             size="small"
                             .value=${this._restoreProgress}
                           ></ha-progress-ring>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.zwave_js.dashboard.nvm_backup.restoring"
                           )}
                           ${this._restoreProgress}%`
                       : html`<ha-button @click=${this._downloadBackup}>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.zwave_js.dashboard.nvm_backup.download_backup"
                             )}
                           </ha-button>
@@ -497,7 +497,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                               class="warning"
                             >
                               <span class="button-content">
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.panel.config.zwave_js.dashboard.nvm_backup.restore_backup"
                                 )}
                               </span>
@@ -514,7 +514,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
                             @click=${this._openConfigFlow}
                             class="warning migrate-button"
                           >
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.zwave_js.dashboard.nvm_backup.migrate"
                             )}
                           </ha-button>`}
@@ -524,7 +524,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
           : nothing}
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.common.add_node"
           )}
           extended
@@ -536,13 +536,13 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   private _renderErrorScreen() {
     const item = this._configEntry!;
-    let stateText: Parameters<typeof this.hass.localize> | undefined;
+    let stateText: Parameters<typeof this.menuai.localize> | undefined;
     let stateTextExtra: TemplateResult | string | undefined;
 
     if (item.disabled_by) {
@@ -550,14 +550,14 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
         "ui.panel.config.integrations.config_entry.disable.disabled_cause",
         {
           cause:
-            this.hass.localize(
+            this.menuai.localize(
               `ui.panel.config.integrations.config_entry.disable.disabled_by.${item.disabled_by}`
             ) || item.disabled_by,
         },
       ];
       if (item.state === "failed_unload") {
         stateTextExtra = html`.
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable_restart_confirm"
         )}.`;
       }
@@ -568,15 +568,15 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
         `ui.panel.config.integrations.config_entry.state.${item.state}`,
       ];
       if (item.reason) {
-        this.hass.loadBackendTranslation("config", item.domain);
-        stateTextExtra = html` ${this.hass.localize(
+        this.menuai.loadBackendTranslation("config", item.domain);
+        stateTextExtra = html` ${this.menuai.localize(
           `component.${item.domain}.config.error.${item.reason}`
         ) || item.reason}`;
       } else {
         stateTextExtra = html`
           <br />
           <a href="/config/logs?filter=zwave_js"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.integrations.config_entry.check_the_logs"
             )}</a
           >
@@ -589,11 +589,11 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
           <div class="error-message">
             <ha-svg-icon .path=${mdiAlertCircle}></ha-svg-icon>
             <h3>
-              ${this._configEntry!.title}: ${this.hass.localize(...stateText)}
+              ${this._configEntry!.title}: ${this.menuai.localize(...stateText)}
             </h3>
             <p>${stateTextExtra}</p>
             <ha-button @click=${this._handleBack}>
-              ${this.hass?.localize("ui.common.back")}
+              ${this.menuai?.localize("ui.common.back")}
             </ha-button>
           </div>
         `
@@ -608,7 +608,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
     if (!this.configEntryId) {
       return;
     }
-    const configEntries = await getConfigEntries(this.hass, {
+    const configEntries = await getConfigEntries(this.menuai, {
       domain: "zwave_js",
     });
     this._configEntry = configEntries.find(
@@ -621,9 +621,9 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
 
     const [network, dataCollectionStatus, provisioningEntries] =
       await Promise.all([
-        fetchZwaveNetworkStatus(this.hass!, { entry_id: this.configEntryId }),
-        fetchZwaveDataCollectionStatus(this.hass!, this.configEntryId),
-        fetchZwaveProvisioningEntries(this.hass!, this.configEntryId),
+        fetchZwaveNetworkStatus(this.menuai!, { entry_id: this.configEntryId }),
+        fetchZwaveDataCollectionStatus(this.menuai!, this.configEntryId),
+        fetchZwaveProvisioningEntries(this.menuai!, this.configEntryId),
       ]);
 
     this._provisioningEntries = provisioningEntries;
@@ -661,7 +661,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
 
   private _dataCollectionToggled(ev) {
     setZwaveDataCollectionPreference(
-      this.hass!,
+      this.menuai!,
       this.configEntryId!,
       ev.target.checked
     );
@@ -682,14 +682,14 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
     try {
       this._backupProgress = 0;
       this._unsubscribeBackup = await subscribeZwaveNVMBackup(
-        this.hass!,
+        this.menuai!,
         this.configEntryId!,
         this._handleBackupMessage
       );
     } catch (err: any) {
       this._backupProgress = undefined;
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.zwave_js.dashboard.nvm_backup.backup_failed"
         ),
         text: err.message,
@@ -730,14 +730,14 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
       });
 
       this._unsubscribeRestore = await restoreZwaveNVM(
-        this.hass!,
+        this.menuai!,
         this.configEntryId!,
         base64Data,
         this._handleRestoreMessage
       );
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.zwave_js.dashboard.nvm_backup.restore_failed"
         ),
         text: err.message,
@@ -778,7 +778,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
 
   private _subscribeS2Inclusion() {
     this._s2InclusionUnsubscribe = subscribeS2Inclusion(
-      this.hass,
+      this.menuai,
       this.configEntryId,
       (message) => {
         this._openInclusionDialog(message.dsk);
@@ -805,7 +805,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
         URL.revokeObjectURL(url);
       } catch (err: any) {
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.zwave_js.dashboard.nvm_backup.backup_failed"
           ),
           text: err.message,
@@ -826,7 +826,7 @@ class ZWaveJSConfigDashboard extends SubscribeMixin(LitElement) {
       this._unsubscribeRestore = undefined;
 
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.zwave_js.dashboard.nvm_backup.restore_complete"
         ),
       });

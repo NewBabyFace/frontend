@@ -1,19 +1,19 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
-import type { HassioHardwareInfo } from "../../../../src/data/hassio/hardware";
+import type { menuaiioHardwareInfo } from "../../../../src/data/menuaiio/hardware";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 
-export interface HassioHardwareDialogParams {
+export interface menuaiioHardwareDialogParams {
   supervisor: Supervisor;
-  hardware: HassioHardwareInfo;
+  hardware: menuaiioHardwareInfo;
 }
 
-export const showHassioHardwareDialog = (
+export const showmenuaiioHardwareDialog = (
   element: HTMLElement,
-  dialogParams: HassioHardwareDialogParams
+  dialogParams: menuaiioHardwareDialogParams
 ): void => {
   fireEvent(element, "show-dialog", {
-    dialogTag: "dialog-hassio-hardware",
-    dialogImport: () => import("./dialog-hassio-hardware"),
+    dialogTag: "dialog-menuaiio-hardware",
+    dialogImport: () => import("./dialog-menuaiio-hardware"),
     dialogParams,
   });
 };

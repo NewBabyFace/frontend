@@ -7,18 +7,18 @@ import "../../../../../components/ha-button";
 import "../../../../../components/ha-card";
 import "../../../../../components/ha-svg-icon";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "button-click": undefined;
   }
 }
 
 @customElement("ha-backup-overview-onboarding")
 class HaBackupOverviewBackups extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   private async _setup() {
     fireEvent(this, "button-click");
@@ -31,20 +31,20 @@ class HaBackupOverviewBackups extends LitElement {
           <div class="icon">
             <ha-svg-icon .path=${mdiInformationOutline}></ha-svg-icon>
           </div>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.backup.overview.onboarding.title"
           )}
         </div>
         <div class="card-content">
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.overview.onboarding.description"
             )}
           </p>
         </div>
         <div class="card-actions">
           <ha-button @click=${this._setup}
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.backup.overview.onboarding.setup"
             )}</ha-button
           >

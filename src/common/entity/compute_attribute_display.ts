@@ -1,4 +1,4 @@
-import type { HassConfig, HassEntity } from "home-assistant-js-websocket";
+import type { menuaiConfig, menuaiEntity } from "home-assistant-js-websocket";
 import {
   DOMAIN_ATTRIBUTES_FORMATERS,
   DOMAIN_ATTRIBUTES_UNITS,
@@ -8,7 +8,7 @@ import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
 import type { FrontendLocaleData } from "../../data/translation";
 import type { WeatherEntity } from "../../data/weather";
 import { getWeatherUnit } from "../../data/weather";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import checkValidDate from "../datetime/check_valid_date";
 import { formatDate } from "../datetime/format_date";
 import { formatDateTimeWithSeconds } from "../datetime/format_date_time";
@@ -23,10 +23,10 @@ import { computeStateDomain } from "./compute_state_domain";
 
 export const computeAttributeValueDisplay = (
   localize: LocalizeFunc,
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   locale: FrontendLocaleData,
-  config: HassConfig,
-  entities: HomeAssistant["entities"],
+  config: menuaiConfig,
+  entities: menuai["entities"],
   attribute: string,
   value?: any
 ): string => {
@@ -138,8 +138,8 @@ export const computeAttributeValueDisplay = (
 
 export const computeAttributeNameDisplay = (
   localize: LocalizeFunc,
-  stateObj: HassEntity,
-  entities: HomeAssistant["entities"],
+  stateObj: menuaiEntity,
+  entities: menuai["entities"],
   attribute: string
 ): string => {
   const entityId = stateObj.entity_id;

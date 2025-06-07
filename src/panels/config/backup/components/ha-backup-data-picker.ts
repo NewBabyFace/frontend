@@ -18,9 +18,9 @@ import "../../../../components/ha-checkbox";
 import type { HaCheckbox } from "../../../../components/ha-checkbox";
 import "../../../../components/ha-formfield";
 import type { BackupData } from "../../../../data/backup";
-import { fetchHassioAddonsInfo } from "../../../../data/hassio/addon";
-import { mdiHomeAssistant } from "../../../../resources/home-assistant-logo-svg";
-import type { HomeAssistant } from "../../../../types";
+import { fetchmenuaiioAddonsInfo } from "../../../../data/menuaiio/addon";
+import { mdimenuai } from "../../../../resources/home-assistant-logo-svg";
+import type { menuai } from "../../../../types";
 import "./ha-backup-addons-picker";
 import type { BackupAddonItem } from "./ha-backup-addons-picker";
 import "./ha-backup-formfield-label";
@@ -40,13 +40,13 @@ const ITEM_ICONS = {
 };
 
 interface SelectedItems {
-  homeassistant: string[];
+  menuai: string[];
   addons: string[];
 }
 
 @customElement("ha-backup-data-picker")
 export class HaBackupDataPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public data!: BackupData;
 
@@ -67,13 +67,13 @@ export class HaBackupDataPicker extends LitElement {
 
   protected firstUpdated(changedProps: PropertyValues): void {
     super.firstUpdated(changedProps);
-    if (this.hass && isComponentLoaded(this.hass, "hassio")) {
+    if (this.menuai && isComponentLoaded(this.menuai, "menuaiio")) {
       this._fetchAddonInfo();
     }
   }
 
   private async _fetchAddonInfo() {
-    const { addons } = await fetchHassioAddonsInfo(this.hass!);
+    const { addons } = await fetchmenuaiioAddonsInfo(this.menuai!);
     this._addonIcons = addons.reduce<Record<string, boolean>>(
       (acc, addon) => ({
         ...acc,
@@ -83,17 +83,17 @@ export class HaBackupDataPicker extends LitElement {
     );
   }
 
-  private _homeAssistantItems = memoizeOne(
+  private _menuaiItems = memoizeOne(
     (data: BackupData, localize: LocalizeFunc) => {
       const items: CheckBoxItem[] = [];
 
-      if (data.homeassistant_included) {
+      if (data.menuai_included) {
         items.push({
           label: localize(
             `ui.panel.${this.translationKeyPanel}.data_picker.${data.database_included ? "settings_and_history" : "settings"}`
           ),
           id: "config",
-          version: data.homeassistant_version,
+          version: data.menuai_version,
         });
       }
       items.push(
@@ -107,7 +107,7 @@ export class HaBackupDataPicker extends LitElement {
   );
 
   private _localizeFolder(folder: string): string {
-    const localize = this.localize || this.hass!.localize;
+    const localize = this.localize || this.menuai!.localize;
 
     switch (folder) {
       case "media":
@@ -145,52 +145,52 @@ export class HaBackupDataPicker extends LitElement {
   private _parseValue = memoizeOne((value?: BackupData): SelectedItems => {
     if (!value) {
       return {
-        homeassistant: [],
+        menuai: [],
         addons: [],
       };
     }
-    const homeassistant: string[] = [];
+    const menuai: string[] = [];
     const addons: string[] = [];
 
-    if (value.homeassistant_included) {
-      homeassistant.push("config");
+    if (value.menuai_included) {
+      menuai.push("config");
     }
 
     const folders = value.folders;
-    homeassistant.push(...folders);
+    menuai.push(...folders);
     const addonsList = value.addons.map((addon) => addon.slug);
     addons.push(...addonsList);
 
     return {
-      homeassistant,
+      menuai,
       addons,
     };
   });
 
   private _formatValue = memoizeOne(
     (selectedItems: SelectedItems, data: BackupData): BackupData => ({
-      homeassistant_version: data.homeassistant_version,
-      homeassistant_included: selectedItems.homeassistant.includes("config"),
+      menuai_version: data.menuai_version,
+      menuai_included: selectedItems.menuai.includes("config"),
       database_included:
         data.database_included &&
-        selectedItems.homeassistant.includes("config"),
+        selectedItems.menuai.includes("config"),
       addons: data.addons.filter((addon) =>
         selectedItems.addons.includes(addon.slug)
       ),
       folders: data.folders.filter((folder) =>
-        selectedItems.homeassistant.includes(folder)
+        selectedItems.menuai.includes(folder)
       ),
     })
   );
 
-  private _homeassistantChanged(ev: Event) {
+  private _menuaiChanged(ev: Event) {
     const itemValues = this._parseValue(this.value);
 
     const checkbox = ev.currentTarget as HaCheckbox;
     if (checkbox.checked) {
-      itemValues.homeassistant.push(checkbox.id);
+      itemValues.menuai.push(checkbox.id);
     } else {
-      itemValues.homeassistant = itemValues.homeassistant.filter(
+      itemValues.menuai = itemValues.menuai.filter(
         (id) => id !== checkbox.id
       );
     }
@@ -227,9 +227,9 @@ export class HaBackupDataPicker extends LitElement {
   }
 
   protected render() {
-    const localize = this.localize || this.hass!.localize;
+    const localize = this.localize || this.menuai!.localize;
 
-    const homeAssistantItems = this._homeAssistantItems(this.data, localize);
+    const menuaiItems = this._menuaiItems(this.data, localize);
 
     const addonsItems = this._addonsItems(
       this.data,
@@ -240,29 +240,29 @@ export class HaBackupDataPicker extends LitElement {
     const selectedItems = this._parseValue(this.value);
 
     return html`
-      ${homeAssistantItems.length
+      ${menuaiItems.length
         ? html`
             <div class="section">
               <ha-formfield>
                 <ha-backup-formfield-label
                   slot="label"
-                  label="Home Assistant"
-                  .iconPath=${mdiHomeAssistant}
+                  label="MenuAI"
+                  .iconPath=${mdimenuai}
                 >
                 </ha-backup-formfield-label>
                 <ha-checkbox
-                  .id=${"homeassistant"}
-                  .checked=${selectedItems.homeassistant.length ===
-                  homeAssistantItems.length}
-                  .indeterminate=${selectedItems.homeassistant.length > 0 &&
-                  selectedItems.homeassistant.length <
-                    homeAssistantItems.length}
+                  .id=${"menuai"}
+                  .checked=${selectedItems.menuai.length ===
+                  menuaiItems.length}
+                  .indeterminate=${selectedItems.menuai.length > 0 &&
+                  selectedItems.menuai.length <
+                    menuaiItems.length}
                   @change=${this._sectionChanged}
                   ?disabled=${this.requiredItems.length > 0}
                 ></ha-checkbox>
               </ha-formfield>
               <div class="items">
-                ${homeAssistantItems.map(
+                ${menuaiItems.map(
                   (item) => html`
                     <ha-formfield>
                       <ha-backup-formfield-label
@@ -274,10 +274,10 @@ export class HaBackupDataPicker extends LitElement {
                       </ha-backup-formfield-label>
                       <ha-checkbox
                         .id=${item.id}
-                        .checked=${selectedItems.homeassistant.includes(
+                        .checked=${selectedItems.menuai.includes(
                           item.id
                         )}
-                        @change=${this._homeassistantChanged}
+                        @change=${this._menuaiChanged}
                         .disabled=${this.requiredItems.includes(item.id)}
                       ></ha-checkbox>
                     </ha-formfield>
@@ -309,7 +309,7 @@ export class HaBackupDataPicker extends LitElement {
                 ></ha-checkbox>
               </ha-formfield>
               <ha-backup-addons-picker
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${selectedItems.addons}
                 @value-changed=${this._addonsChanged}
                 .addons=${addonsItems}

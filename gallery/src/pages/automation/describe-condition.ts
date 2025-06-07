@@ -6,8 +6,8 @@ import "../../../../src/components/ha-yaml-editor";
 import type { Condition } from "../../../../src/data/automation";
 import { describeCondition } from "../../../../src/data/automation_i18n";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { menuai } from "../../../../src/types";
 
 const ENTITIES = [
   getEntity("light", "kitchen", "on", {
@@ -49,12 +49,12 @@ const initialCondition: Condition = {
 
 @customElement("demo-automation-describe-condition")
 export class DemoAutomationDescribeCondition extends LitElement {
-  @property({ attribute: false }) hass!: HomeAssistant;
+  @property({ attribute: false }) menuai!: menuai;
 
   @state() _condition = initialCondition;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -63,7 +63,7 @@ export class DemoAutomationDescribeCondition extends LitElement {
         <div class="condition">
           <span>
             ${this._condition
-              ? describeCondition(this._condition, this.hass, [])
+              ? describeCondition(this._condition, this.menuai, [])
               : "<invalid YAML>"}
           </span>
           <ha-yaml-editor
@@ -76,7 +76,7 @@ export class DemoAutomationDescribeCondition extends LitElement {
         ${conditions.map(
           (conf) => html`
             <div class="condition">
-              <span>${describeCondition(conf as any, this.hass, [])}</span>
+              <span>${describeCondition(conf as any, this.menuai, [])}</span>
               <pre>${dump(conf)}</pre>
             </div>
           `
@@ -87,10 +87,10 @@ export class DemoAutomationDescribeCondition extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    hass.addEntities(ENTITIES);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    menuai.addEntities(ENTITIES);
   }
 
   private _dataChanged(ev: CustomEvent): void {

@@ -2,14 +2,14 @@ import "@material/mwc-button/mwc-button";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../common/dom/fire_event";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import type { YamlIntegrationDialogParams } from "./show-add-integration-dialog";
 import "../../../components/ha-dialog";
 
 @customElement("dialog-yaml-integration")
 export class DialogYamlIntegration extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: YamlIntegrationDialogParams;
 
@@ -28,23 +28,23 @@ export class DialogYamlIntegration extends LitElement {
     }
     const manifest = this._params.manifest;
     const docLink = manifest.is_built_in
-      ? documentationUrl(this.hass, `/integrations/${manifest.domain}`)
+      ? documentationUrl(this.menuai, `/integrations/${manifest.domain}`)
       : manifest.documentation;
     return html`
       <ha-dialog
         open
         @closed=${this.closeDialog}
-        .heading=${this.hass.localize(
+        .heading=${this.menuai.localize(
           "ui.panel.config.integrations.config_flow.yaml_only_title"
         )}
       >
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.integrations.config_flow.yaml_only"
           )}
         </p>
         <mwc-button @click=${this.closeDialog} slot="secondaryAction">
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         ${docLink
           ? html`<a
@@ -54,13 +54,13 @@ export class DialogYamlIntegration extends LitElement {
               slot="primaryAction"
             >
               <mwc-button @click=${this.closeDialog} dialogInitialFocus>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.integrations.config_flow.open_documentation"
                 )}
               </mwc-button>
             </a>`
           : html`<mwc-button @click=${this.closeDialog} dialogInitialFocus>
-              ${this.hass.localize("ui.common.ok")}
+              ${this.menuai.localize("ui.common.ok")}
             </mwc-button>`}
       </ha-dialog>
     `;

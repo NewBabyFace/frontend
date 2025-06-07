@@ -8,12 +8,12 @@ import "../../../../../components/ha-list-item";
 import type { TagTrigger } from "../../../../../data/automation";
 import type { Tag } from "../../../../../data/tag";
 import { fetchTags } from "../../../../../data/tag";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 
 @customElement("ha-automation-trigger-tag")
 export class HaTagTrigger extends LitElement implements TriggerElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: TagTrigger;
 
@@ -36,7 +36,7 @@ export class HaTagTrigger extends LitElement implements TriggerElement {
     }
     return html`
       <ha-select
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.tag.label"
         )}
         .disabled=${this.disabled || this._tags.length === 0}
@@ -55,11 +55,11 @@ export class HaTagTrigger extends LitElement implements TriggerElement {
   }
 
   private async _fetchTags() {
-    this._tags = (await fetchTags(this.hass)).sort((a, b) =>
+    this._tags = (await fetchTags(this.menuai)).sort((a, b) =>
       caseInsensitiveStringCompare(
         a.name || a.id,
         b.name || b.id,
-        this.hass.locale.language
+        this.menuai.locale.language
       )
     );
   }

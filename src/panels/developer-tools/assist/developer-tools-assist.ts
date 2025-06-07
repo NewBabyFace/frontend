@@ -16,7 +16,7 @@ import type { AssitDebugResult } from "../../../data/conversation";
 import { debugAgent, listAgents } from "../../../data/conversation";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { fileDownload } from "../../../util/file_download";
 
 interface SentenceParsingResult {
@@ -27,7 +27,7 @@ interface SentenceParsingResult {
 
 @customElement("developer-tools-assist")
 class HaPanelDevAssist extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -72,7 +72,7 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
     const sentences = this._sentencesInput.value
       .split("\n")
       .filter((a) => a !== "");
-    const { results } = await debugAgent(this.hass, sentences, this._language!);
+    const { results } = await debugAgent(this.menuai, sentences, this._language!);
 
     this._sentencesInput.value = "";
 
@@ -90,7 +90,7 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
   }
 
   private async _fetchLanguages() {
-    const { agents } = await listAgents(this.hass);
+    const { agents } = await listAgents(this.menuai);
     const assistAgent = agents.find(
       (agent) => agent.id === "conversation.home_assistant"
     );
@@ -101,9 +101,9 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
 
     if (
       !this._language &&
-      this.supportedLanguages?.includes(this.hass.locale.language)
+      this.supportedLanguages?.includes(this.menuai.locale.language)
     ) {
-      this._language = this.hass.locale.language;
+      this._language = this.menuai.locale.language;
     } else if (!this._language) {
       this._language = "en";
     }
@@ -117,14 +117,14 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
     return html`
       <div class="content">
         <ha-card
-          .header=${this.hass.localize(
+          .header=${this.menuai.localize(
             "ui.panel.developer-tools.tabs.assist.title"
           )}
           class="form"
         >
           <div class="card-content">
             <p class="description">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.developer-tools.tabs.assist.description"
               )}
             </p>
@@ -132,7 +132,7 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
               ? html`
                   <ha-language-picker
                     .languages=${this.supportedLanguages}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .value=${this._language}
                     @value-changed=${this._languageChanged}
                   ></ha-language-picker>
@@ -140,7 +140,7 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
               : nothing}
             <ha-textarea
               autogrow
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.developer-tools.tabs.assist.sentences"
               )}
               id="sentences-input"
@@ -153,7 +153,7 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
               @click=${this._parse}
               .disabled=${!this._language || !this._validInput}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.developer-tools.tabs.assist.parse_sentences"
               )}
             </ha-button>
@@ -165,11 +165,11 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
               <div class="result-toolbar">
                 <ha-button outlined @click=${this._clear} destructive>
                   <ha-svg-icon slot="icon" .path=${mdiTrashCan}></ha-svg-icon>
-                  ${this.hass.localize("ui.common.clear")}
+                  ${this.menuai.localize("ui.common.clear")}
                 </ha-button>
                 <ha-button outlined @click=${this._download}>
                   <ha-svg-icon slot="icon" .path=${mdiDownload}></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.developer-tools.tabs.assist.download_results"
                   )}
                 </ha-button>
@@ -188,24 +188,24 @@ class HaPanelDevAssist extends SubscribeMixin(LitElement) {
                   <p>${matched ? "✅" : "❌"}</p>
                 </div>
                 <div class="info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.developer-tools.tabs.assist.language"
                   )}:
-                  ${formatLanguageCode(language, this.hass.locale)}
+                  ${formatLanguageCode(language, this.menuai.locale)}
                   (${language})
                 </div>
                 ${result
                   ? html`
                       <ha-code-editor
                         mode="yaml"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .value=${dump(result).trimRight()}
                         read-only
                         dir="ltr"
                       ></ha-code-editor>
                     `
                   : html`<ha-alert alert-type="error">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.developer-tools.tabs.assist.no_match"
                       )}
                     </ha-alert>`}

@@ -3,12 +3,12 @@ import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-button";
 import { createCloseHeading } from "../../components/ha-dialog";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { UpdateBackupDialogParams } from "./show-update-backup-dialog";
 
 @customElement("dialog-update-backup")
 class DialogBox extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: UpdateBackupDialogParams;
 
@@ -27,16 +27,16 @@ class DialogBox extends LitElement {
         @closed=${this._cancel}
         defaultAction="ignore"
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.dialogs.update_backup.title")
+          this.menuai,
+          this.menuai.localize("ui.dialogs.update_backup.title")
         )}
       >
-        <p>${this.hass.localize("ui.dialogs.update_backup.text")}</p>
+        <p>${this.menuai.localize("ui.dialogs.update_backup.text")}</p>
         <ha-button @click=${this._no} slot="secondaryAction">
-          ${this.hass!.localize("ui.common.no")}
+          ${this.menuai!.localize("ui.common.no")}
         </ha-button>
         <ha-button @click=${this._yes} slot="primaryAction">
-          ${this.hass.localize("ui.dialogs.update_backup.create")}
+          ${this.menuai.localize("ui.dialogs.update_backup.create")}
         </ha-button>
       </ha-dialog>
     `;

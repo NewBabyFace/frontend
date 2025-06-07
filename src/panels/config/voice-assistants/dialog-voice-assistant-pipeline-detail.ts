@@ -14,9 +14,9 @@ import type {
   AssistPipeline,
   AssistPipelineMutableParams,
 } from "../../../data/assist_pipeline";
-import { fetchAssistPipelineLanguages } from "../../../data/assist_pipeline";
+import { fetcmenuaiistPipelineLanguages } from "../../../data/assist_pipeline";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./assist-pipeline-detail/assist-pipeline-detail-config";
 import "./assist-pipeline-detail/assist-pipeline-detail-conversation";
 import "./assist-pipeline-detail/assist-pipeline-detail-stt";
@@ -27,7 +27,7 @@ import type { VoiceAssistantPipelineDetailsDialogParams } from "./show-dialog-vo
 
 @customElement("dialog-voice-assistant-pipeline-detail")
 export class DialogVoiceAssistantPipelineDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: VoiceAssistantPipelineDetailsDialogParams;
 
@@ -61,7 +61,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
     let sstDefault: string | undefined;
     let ttsDefault: string | undefined;
     if (this._cloudActive) {
-      for (const entity of Object.values(this.hass.entities)) {
+      for (const entity of Object.values(this.menuai.entities)) {
         if (entity.platform !== "cloud") {
           continue;
         }
@@ -80,7 +80,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
     }
     this._data = {
       language: (
-        this.hass.config.language || this.hass.locale.language
+        this.menuai.config.language || this.menuai.locale.language
       ).substring(0, 2),
       stt_engine: sstDefault,
       tts_engine: ttsDefault,
@@ -99,11 +99,11 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
   }
 
   private async _getSupportedLanguages() {
-    const { languages } = await fetchAssistPipelineLanguages(this.hass);
+    const { languages } = await fetcmenuaiistPipelineLanguages(this.menuai);
     this._supportedLanguages = languages;
   }
 
-  private _hasWakeWorkEntities = memoizeOne((states: HomeAssistant["states"]) =>
+  private _hasWakeWorkEntities = memoizeOne((states: menuai["states"]) =>
     Object.keys(states).some((entityId) => entityId.startsWith("wake_word."))
   );
 
@@ -114,7 +114,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
 
     const title = this._params.pipeline?.id
       ? this._params.pipeline.name
-      : this.hass.localize(
+      : this.menuai.localize(
           "ui.panel.config.voice_assistants.assistants.pipeline.detail.add_assistant_title"
         );
 
@@ -130,13 +130,13 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" .title=${title}>${title}</span>
           ${!this._hideWakeWord ||
           this._params.hideWakeWord ||
-          !this._hasWakeWorkEntities(this.hass.states)
+          !this._hasWakeWorkEntities(this.menuai.states)
             ? nothing
             : html`<ha-button-menu
                 slot="actionItems"
@@ -150,7 +150,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
                   slot="trigger"
                 ></ha-icon-button>
                 <ha-list-item>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.voice_assistants.assistants.pipeline.detail.add_streaming_wake_word"
                   )}
                 </ha-list-item></ha-button-menu
@@ -161,7 +161,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
             ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
             : nothing}
           <assist-pipeline-detail-config
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._data}
             .supportedLanguages=${this._supportedLanguages}
             keys="name,language"
@@ -169,7 +169,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
             ?dialogInitialFocus=${!this._params.pipeline?.id}
           ></assist-pipeline-detail-config>
           <assist-pipeline-detail-conversation
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._data}
             keys="conversation_engine,conversation_language,prefer_local_intents"
             @value-changed=${this._valueChanged}
@@ -179,12 +179,12 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
             this._data.stt_engine === "cloud")
             ? html`
                 <ha-alert alert-type="warning">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.voice_assistants.assistants.pipeline.detail.no_cloud_message"
                   )}
                   <a href="/config/cloud" slot="action">
                     <ha-button>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.voice_assistants.assistants.pipeline.detail.no_cloud_action"
                       )}
                     </ha-button>
@@ -193,13 +193,13 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
               `
             : nothing}
           <assist-pipeline-detail-stt
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._data}
             keys="stt_engine,stt_language"
             @value-changed=${this._valueChanged}
           ></assist-pipeline-detail-stt>
           <assist-pipeline-detail-tts
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._data}
             keys="tts_engine,tts_language,tts_voice"
             @value-changed=${this._valueChanged}
@@ -207,7 +207,7 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
           ${this._hideWakeWord
             ? nothing
             : html`<assist-pipeline-detail-wakeword
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .data=${this._data}
                 keys="wake_word_entity,wake_word_id"
                 @value-changed=${this._valueChanged}
@@ -220,10 +220,10 @@ export class DialogVoiceAssistantPipelineDetail extends LitElement {
           dialogInitialFocus
         >
           ${this._params.pipeline?.id
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.pipeline.detail.update_assistant_action"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.pipeline.detail.add_assistant_action"
               )}
         </ha-button>

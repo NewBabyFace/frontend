@@ -48,14 +48,14 @@ export const handleFetchPromise = async <T>(
   return body as unknown as T;
 };
 
-export default async function hassCallApi<T>(
+export default async function menuaiCallApi<T>(
   auth: Auth,
   method: string,
   path: string,
   parameters?: Record<string, unknown>,
   headers?: Record<string, string>
 ) {
-  const url = `${auth.data.hassUrl}/api/${path}`;
+  const url = `${auth.data.menuaiUrl}/api/${path}`;
 
   const init: RequestInit = {
     method,
@@ -71,7 +71,7 @@ export default async function hassCallApi<T>(
   return handleFetchPromise<T>(fetchWithAuth(auth, url, init));
 }
 
-export async function hassCallApiRaw(
+export async function menuaiCallApiRaw(
   auth: Auth,
   method: string,
   path: string,
@@ -79,7 +79,7 @@ export async function hassCallApiRaw(
   headers?: Record<string, string>,
   signal?: AbortSignal
 ) {
-  const url = `${auth.data.hassUrl}/api/${path}`;
+  const url = `${auth.data.menuaiUrl}/api/${path}`;
 
   const init: RequestInit = {
     method,

@@ -29,12 +29,12 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 declare global {
-  interface HASSDomEvents {}
+  interface menuaiDomEvents {}
 }
 
-export type ValidHassDomEvent = keyof HASSDomEvents;
+export type ValidmenuaiDomEvent = keyof menuaiDomEvents;
 
-export interface HASSDomEvent<T> extends Event {
+export interface menuaiDomEvent<T> extends Event {
   detail: T;
 }
 
@@ -53,10 +53,10 @@ export interface HASSDomEvent<T> extends Event {
  *  `node` on which to fire the event (HTMLElement, defaults to `this`).
  * @return {Event} The new event that was fired.
  */
-export const fireEvent = <HassEvent extends ValidHassDomEvent>(
+export const fireEvent = <menuaiEvent extends ValidmenuaiDomEvent>(
   node: HTMLElement | Window,
-  type: HassEvent,
-  detail?: HASSDomEvents[HassEvent],
+  type: menuaiEvent,
+  detail?: menuaiDomEvents[menuaiEvent],
   options?: {
     bubbles?: boolean;
     cancelable?: boolean;

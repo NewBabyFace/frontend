@@ -3,7 +3,7 @@ import type { TemplateResult } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type {
   HaFormElement,
   HaFormSelectData,
@@ -14,7 +14,7 @@ import "../ha-selector/ha-selector-select";
 
 @customElement("ha-form-select")
 export class HaFormSelect extends LitElement implements HaFormElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public schema!: HaFormSelectSchema;
 
@@ -40,7 +40,7 @@ export class HaFormSelect extends LitElement implements HaFormElement {
   protected render(): TemplateResult {
     return html`
       <ha-selector-select
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .schema=${this.schema}
         .value=${this.data}
         .label=${this.label}

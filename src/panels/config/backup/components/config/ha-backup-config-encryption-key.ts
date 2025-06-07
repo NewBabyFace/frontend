@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-md-list";
 import "../../../../../components/ha-md-list-item";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { showChangeBackupEncryptionKeyDialog } from "../../dialogs/show-dialog-change-backup-encryption-key";
 import { showSetBackupEncryptionKeyDialog } from "../../dialogs/show-dialog-set-backup-encryption-key";
 
@@ -13,7 +13,7 @@ import { showShowBackupEncryptionKeyDialog } from "../../dialogs/show-dialog-sho
 
 @customElement("ha-backup-config-encryption-key")
 class HaBackupConfigEncryptionKey extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private value?: string;
 
@@ -27,52 +27,52 @@ class HaBackupConfigEncryptionKey extends LitElement {
         <ha-md-list>
           <ha-md-list-item>
             <span slot="headline">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.download_emergency_kit"
               )}
             </span>
             <span slot="supporting-text">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.download_emergency_kit_description"
               )}
             </span>
             <ha-button slot="end" @click=${this._download}>
               <ha-svg-icon .path=${mdiDownload} slot="icon"></ha-svg-icon>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.download_emergency_kit_action"
               )}
             </ha-button>
           </ha-md-list-item>
           <ha-md-list-item>
             <span slot="headline">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.show_encryption_key"
               )}
             </span>
             <span slot="supporting-text">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.show_encryption_key_description"
               )}
             </span>
             <ha-button slot="end" @click=${this._show}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.show_encryption_key_action"
               )}
             </ha-button>
           </ha-md-list-item>
           <ha-md-list-item>
             <span slot="headline">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.change_encryption_key"
               )}
             </span>
             <span slot="supporting-text">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.change_encryption_key_description"
               )}
             </span>
             <ha-button class="danger" slot="end" @click=${this._change}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.encryption_key.change_encryption_key_action"
               )}
             </ha-button>
@@ -85,17 +85,17 @@ class HaBackupConfigEncryptionKey extends LitElement {
       <ha-md-list>
         <ha-md-list-item>
           <span slot="headline">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.encryption_key.set_encryption_key"
             )}</span
           >
           <span slot="supporting-text">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.encryption_key.set_encryption_key_description"
             )}
           </span>
           <ha-button slot="end" @click=${this._set}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.encryption_key.set_encryption_key_action"
             )}</ha-button
           >
@@ -108,7 +108,7 @@ class HaBackupConfigEncryptionKey extends LitElement {
     if (!this._value) {
       return;
     }
-    downloadEmergencyKit(this.hass, this._value);
+    downloadEmergencyKit(this.menuai, this._value);
   }
 
   private _show() {

@@ -2,9 +2,9 @@ import type { TemplateResult } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../../../common/dom/fire_event";
-import type { HassDialog } from "../../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../../dialogs/make-dialog-manager";
 import { createCloseHeading } from "../../../../../components/ha-dialog";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { SSDPDiscoveryInfoDialogParams } from "./show-dialog-ssdp-discovery-info";
 import "../../../../../components/ha-button";
 import { showToast } from "../../../../../util/toast";
@@ -12,8 +12,8 @@ import { copyToClipboard } from "../../../../../common/util/copy-clipboard";
 import { showSSDPRawDataDialog } from "./show-dialog-ssdp-raw-data";
 
 @customElement("dialog-ssdp-device-info")
-class DialogSSDPDiscoveryInfo extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogSSDPDiscoveryInfo extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: SSDPDiscoveryInfoDialogParams;
 
@@ -36,7 +36,7 @@ class DialogSSDPDiscoveryInfo extends LitElement implements HassDialog {
 
     await copyToClipboard(JSON.stringify(this._params!.entry));
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -60,20 +60,20 @@ class DialogSSDPDiscoveryInfo extends LitElement implements HassDialog {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.ssdp.discovery_information")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.ssdp.discovery_information")
         )}
       >
         <p>
-          <b>${this.hass.localize("ui.panel.config.ssdp.name")}</b>:
+          <b>${this.menuai.localize("ui.panel.config.ssdp.name")}</b>:
           ${this._params.entry.name} <br />
-          <b>${this.hass.localize("ui.panel.config.ssdp.ssdp_st")}</b>:
+          <b>${this.menuai.localize("ui.panel.config.ssdp.ssdp_st")}</b>:
           ${this._params.entry.ssdp_st} <br />
-          <b>${this.hass.localize("ui.panel.config.ssdp.ssdp_location")}</b>:
+          <b>${this.menuai.localize("ui.panel.config.ssdp.ssdp_location")}</b>:
           ${this._params.entry.ssdp_location}
         </p>
 
-        <h4>${this.hass.localize("ui.panel.config.ssdp.ssdp_headers")}</h4>
+        <h4>${this.menuai.localize("ui.panel.config.ssdp.ssdp_headers")}</h4>
         <table width="100%">
           <tbody>
             ${Object.entries(this._params.entry.ssdp_headers).map(
@@ -87,7 +87,7 @@ class DialogSSDPDiscoveryInfo extends LitElement implements HassDialog {
           </tbody>
         </table>
 
-        <h4>${this.hass.localize("ui.panel.config.ssdp.upnp")}</h4>
+        <h4>${this.menuai.localize("ui.panel.config.ssdp.upnp")}</h4>
         <table width="100%">
           <tbody>
             ${Object.entries(this._params.entry.upnp).map(
@@ -102,7 +102,7 @@ class DialogSSDPDiscoveryInfo extends LitElement implements HassDialog {
                             key,
                             value as Record<string, unknown>
                           )}
-                          >${this.hass.localize(
+                          >${this.menuai.localize(
                             "ui.panel.config.ssdp.show_raw_data"
                           )}</a
                         >`
@@ -115,7 +115,7 @@ class DialogSSDPDiscoveryInfo extends LitElement implements HassDialog {
         </table>
 
         <ha-button slot="secondaryAction" @click=${this._copyToClipboard}>
-          ${this.hass.localize("ui.panel.config.ssdp.copy_to_clipboard")}
+          ${this.menuai.localize("ui.panel.config.ssdp.copy_to_clipboard")}
         </ha-button>
       </ha-dialog>
     `;

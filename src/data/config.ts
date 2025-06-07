@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 interface ValidConfig {
   valid: true;
@@ -13,10 +13,10 @@ interface InvalidConfig {
 type ValidKeys = "triggers" | "actions" | "conditions";
 
 export const validateConfig = <T extends Partial<Record<ValidKeys, unknown>>>(
-  hass: HomeAssistant,
+  menuai: menuai,
   config: T
 ): Promise<Record<keyof T, ValidConfig | InvalidConfig>> =>
-  hass.callWS({
+  menuai.callWS({
     type: "validate_config",
     ...config,
   });

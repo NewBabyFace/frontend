@@ -2,12 +2,12 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { StateSelector } from "../../data/selector";
 import { SubscribeMixin } from "../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../entity/ha-entity-state-picker";
 
 @customElement("ha-selector-state")
 export class HaSelectorState extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: StateSelector;
 
@@ -29,7 +29,7 @@ export class HaSelectorState extends SubscribeMixin(LitElement) {
   protected render() {
     return html`
       <ha-entity-state-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityId=${this.selector.state?.entity_id ||
         this.context?.filter_entity}
         .attribute=${this.selector.state?.attribute ||

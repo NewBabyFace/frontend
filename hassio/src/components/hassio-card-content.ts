@@ -3,11 +3,11 @@ import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../src/components/ha-svg-icon";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
-@customElement("hassio-card-content")
-class HassioCardContent extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-card-content")
+class menuaiioCardContent extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property() public title!: string;
@@ -83,7 +83,7 @@ class HassioCardContent extends LitElement {
     ha-svg-icon.installed {
       color: var(--success-color);
     }
-    ha-svg-icon.hassupdate,
+    ha-svg-icon.menuaiupdate,
     ha-svg-icon.backup {
       color: var(--state-icon-color);
     }
@@ -146,6 +146,6 @@ class HassioCardContent extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-card-content": HassioCardContent;
+    "menuaiio-card-content": menuaiioCardContent;
   }
 }

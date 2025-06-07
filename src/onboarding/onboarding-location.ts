@@ -29,7 +29,7 @@ import { detectCoreConfig } from "../data/core";
 import type { OpenStreetMapPlace } from "../data/openstreetmap";
 import { reverseGeocode, searchPlaces } from "../data/openstreetmap";
 import { showConfirmationDialog } from "../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { onBoardingStyles } from "./styles";
 
 const AMSTERDAM: [number, number] = [52.3731339, 4.8903147];
@@ -38,7 +38,7 @@ const LOCATION_MARKER_ID = "location";
 
 @customElement("onboarding-location")
 class OnboardingLocation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public onboardingLocalize!: LocalizeFunc;
 
@@ -178,7 +178,7 @@ class OnboardingLocation extends LitElement {
       </div>
       <ha-locations-editor
         class="flex"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .locations=${this._markerLocations(
           this._location,
           this._places,
@@ -326,7 +326,7 @@ class OnboardingLocation extends LitElement {
       }
     );
     try {
-      this._places = await searchPlaces(address, this.hass, true, 3);
+      this._places = await searchPlaces(address, this.menuai, true, 3);
       if (this._places?.length) {
         this._highlightedMarker = this._places[0].place_id;
         this._location = [
@@ -348,7 +348,7 @@ class OnboardingLocation extends LitElement {
       return;
     }
     this._places = null;
-    const reverse = await reverseGeocode(this._location, this.hass);
+    const reverse = await reverseGeocode(this._location, this.menuai);
     this._country = reverse.address.country_code.toUpperCase();
     this._places = [reverse];
     this._highlightedMarker = reverse.place_id;
@@ -417,7 +417,7 @@ class OnboardingLocation extends LitElement {
     }
     this._working = true;
     try {
-      const values = await detectCoreConfig(this.hass);
+      const values = await detectCoreConfig(this.menuai);
 
       if (values.latitude && values.longitude) {
         this.map.addEventListener(

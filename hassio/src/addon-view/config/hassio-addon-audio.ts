@@ -8,33 +8,33 @@ import "../../../../src/components/ha-card";
 import "../../../../src/components/ha-list-item";
 import "../../../../src/components/ha-select";
 import type {
-  HassioAddonDetails,
-  HassioAddonSetOptionParams,
-} from "../../../../src/data/hassio/addon";
-import { setHassioAddonOption } from "../../../../src/data/hassio/addon";
-import type { HassioHardwareAudioDevice } from "../../../../src/data/hassio/hardware";
-import { fetchHassioHardwareAudio } from "../../../../src/data/hassio/hardware";
+  menuaiioAddonDetails,
+  menuaiioAddonSetOptionParams,
+} from "../../../../src/data/menuaiio/addon";
+import { setmenuaiioAddonOption } from "../../../../src/data/menuaiio/addon";
+import type { menuaiioHardwareAudioDevice } from "../../../../src/data/menuaiio/hardware";
+import { fetchmenuaiioHardwareAudio } from "../../../../src/data/menuaiio/hardware";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import { suggestAddonRestart } from "../../dialogs/suggestAddonRestart";
-import { hassioStyle } from "../../resources/hassio-style";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
 
-@customElement("hassio-addon-audio")
-class HassioAddonAudio extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-audio")
+class menuaiioAddonAudio extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public addon!: HassioAddonDetails;
+  @property({ attribute: false }) public addon!: menuaiioAddonDetails;
 
   @property({ type: Boolean }) public disabled = false;
 
   @state() private _error?: string;
 
-  @state() private _inputDevices?: HassioHardwareAudioDevice[];
+  @state() private _inputDevices?: menuaiioHardwareAudioDevice[];
 
-  @state() private _outputDevices?: HassioHardwareAudioDevice[];
+  @state() private _outputDevices?: menuaiioHardwareAudioDevice[];
 
   @state() private _selectedInput!: null | string;
 
@@ -106,7 +106,7 @@ class HassioAddonAudio extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         :host,
         ha-card {
@@ -151,13 +151,13 @@ class HassioAddonAudio extends LitElement {
       return;
     }
 
-    const noDevice: HassioHardwareAudioDevice = {
+    const noDevice: menuaiioHardwareAudioDevice = {
       device: "default",
       name: this.supervisor.localize("addon.configuration.audio.default"),
     };
 
     try {
-      const { audio } = await fetchHassioHardwareAudio(this.hass);
+      const { audio } = await fetchmenuaiioHardwareAudio(this.menuai);
       const input = Object.keys(audio.input).map((key) => ({
         device: key,
         name: audio.input[key],
@@ -185,16 +185,16 @@ class HassioAddonAudio extends LitElement {
     button.progress = true;
 
     this._error = undefined;
-    const data: HassioAddonSetOptionParams = {
+    const data: menuaiioAddonSetOptionParams = {
       audio_input:
         this._selectedInput === "default" ? null : this._selectedInput,
       audio_output:
         this._selectedOutput === "default" ? null : this._selectedOutput,
     };
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       if (this.addon?.state === "started") {
-        await suggestAddonRestart(this, this.hass, this.supervisor, this.addon);
+        await suggestAddonRestart(this, this.menuai, this.supervisor, this.addon);
       }
     } catch {
       this._error = "Failed to set addon audio device";
@@ -206,6 +206,6 @@ class HassioAddonAudio extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-audio": HassioAddonAudio;
+    "menuaiio-addon-audio": menuaiioAddonAudio;
   }
 }

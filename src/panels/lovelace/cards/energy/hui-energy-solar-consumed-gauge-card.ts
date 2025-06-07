@@ -14,7 +14,7 @@ import {
   getSummedData,
 } from "../../../../data/energy";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import { severityMap } from "../hui-gauge-card";
 import type { EnergySolarGaugeCardConfig } from "../types";
@@ -29,17 +29,17 @@ class HuiEnergySolarGaugeCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EnergySolarGaugeCardConfig;
 
   @state() private _data?: EnergyData;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass!, {
+      getEnergyDataCollection(this.menuai!, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -59,17 +59,17 @@ class HuiEnergySolarGaugeCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
     if (!this._data) {
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.panel.lovelace.cards.energy.loading"
       )}`;
     }
@@ -97,34 +97,34 @@ class HuiEnergySolarGaugeCard
                 .value=${value}
                 label="%"
                 .formatOptions=${FORMAT_OPTIONS}
-                .locale=${this.hass.locale}
+                .locale=${this.menuai.locale}
                 style=${styleMap({
                   "--gauge-color": this._computeSeverity(value),
                 })}
               ></ha-gauge>
               <ha-tooltip placement="left" hoist>
                 <span slot="content">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.cards.energy.solar_consumed_gauge.card_indicates_solar_energy_used"
                   )}
                   <br /><br />
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.cards.energy.solar_consumed_gauge.card_indicates_solar_energy_used_charge_home_bat"
                   )}
                 </span>
                 <ha-svg-icon .path=${mdiInformation}></ha-svg-icon>
               </ha-tooltip>
               <div class="name">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.cards.energy.solar_consumed_gauge.self_consumed_solar_energy"
                 )}
               </div>
             `
           : productionReturnedToGrid !== null
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.lovelace.cards.energy.solar_consumed_gauge.not_produced_solar_energy"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.lovelace.cards.energy.solar_consumed_gauge.self_consumed_solar_could_not_calc"
               )}
       </ha-card>

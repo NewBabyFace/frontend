@@ -4,13 +4,13 @@ import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import type { GeoLocationTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 
 @customElement("ha-automation-trigger-geo_location")
 export class HaGeolocationTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: GeoLocationTrigger;
 
@@ -55,9 +55,9 @@ export class HaGeolocationTrigger extends LitElement {
   protected render() {
     return html`
       <ha-form
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .data=${this.trigger}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -74,7 +74,7 @@ export class HaGeolocationTrigger extends LitElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.triggers.type.geo_location.${schema.name}`
     );
 }

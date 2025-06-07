@@ -3,7 +3,7 @@ import type { LoggedError } from "../../../data/system_log";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "show-dialog-system-log-detail": SystemLogDetailDialogParams;
   }
 }

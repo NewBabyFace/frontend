@@ -1,11 +1,11 @@
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import "../../layouts/hass-tabs-subpage";
+import "../../layouts/menuai-tabs-subpage";
 import { profileSections } from "./ha-panel-profile";
 import type { RefreshToken } from "../../data/refresh_token";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant, Route } from "../../types";
+import type { menuai, Route } from "../../types";
 import "./ha-change-password-card";
 import "./ha-long-lived-access-tokens-card";
 import "./ha-mfa-modules-card";
@@ -13,7 +13,7 @@ import "./ha-refresh-tokens-card";
 
 @customElement("ha-profile-section-security")
 class HaProfileSectionSecurity extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -34,52 +34,52 @@ class HaProfileSectionSecurity extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage
+      <menuai-tabs-subpage
         main-page
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .tabs=${profileSections}
         .route=${this.route}
       >
-        <div slot="title">${this.hass.localize("panel.profile")}</div>
+        <div slot="title">${this.menuai.localize("panel.profile")}</div>
         <div class="content">
-          ${this.hass.user!.credentials.some(
-            (cred) => cred.auth_provider_type === "homeassistant"
+          ${this.menuai.user!.credentials.some(
+            (cred) => cred.auth_provider_type === "menuai"
           )
             ? html`
                 <ha-change-password-card
                   .refreshTokens=${this._refreshTokens}
-                  @hass-refresh-tokens=${this._refreshRefreshTokens}
-                  .hass=${this.hass}
+                  @menuai-refresh-tokens=${this._refreshRefreshTokens}
+                  .menuai=${this.menuai}
                 ></ha-change-password-card>
               `
             : ""}
           <ha-mfa-modules-card
-            .hass=${this.hass}
-            .mfaModules=${this.hass.user!.mfa_modules}
+            .menuai=${this.menuai}
+            .mfaModules=${this.menuai.user!.mfa_modules}
           ></ha-mfa-modules-card>
 
           <ha-refresh-tokens-card
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .refreshTokens=${this._refreshTokens}
-            @hass-refresh-tokens=${this._refreshRefreshTokens}
+            @menuai-refresh-tokens=${this._refreshRefreshTokens}
           ></ha-refresh-tokens-card>
 
           <ha-long-lived-access-tokens-card
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .refreshTokens=${this._refreshTokens}
-            @hass-refresh-tokens=${this._refreshRefreshTokens}
+            @menuai-refresh-tokens=${this._refreshRefreshTokens}
           ></ha-long-lived-access-tokens-card>
         </div>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   private async _refreshRefreshTokens() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
-    this._refreshTokens = await this.hass.callWS({
+    this._refreshTokens = await this.menuai.callWS({
       type: "auth/refresh_tokens",
     });
   }

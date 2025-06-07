@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const SENSOR_DEVICE_CLASS_BATTERY = "battery";
 export const SENSOR_DEVICE_CLASS_TIMESTAMP = "timestamp";
@@ -10,10 +10,10 @@ export interface SensorDeviceClassUnits {
 }
 
 export const getSensorDeviceClassConvertibleUnits = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceClass: string
 ): Promise<SensorDeviceClassUnits> =>
-  hass.callWS({
+  menuai.callWS({
     type: "sensor/device_class_convertible_units",
     device_class: deviceClass,
   });
@@ -27,12 +27,12 @@ let sensorNumericDeviceClassesCache:
   | undefined;
 
 export const getSensorNumericDeviceClasses = async (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<SensorNumericDeviceClasses> => {
   if (sensorNumericDeviceClassesCache) {
     return sensorNumericDeviceClassesCache;
   }
-  sensorNumericDeviceClassesCache = hass.callWS({
+  sensorNumericDeviceClassesCache = menuai.callWS({
     type: "sensor/numeric_device_classes",
   });
   return sensorNumericDeviceClassesCache!;

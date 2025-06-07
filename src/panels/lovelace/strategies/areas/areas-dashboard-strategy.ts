@@ -3,7 +3,7 @@ import { ReactiveElement } from "lit";
 import { customElement } from "lit/decorators";
 import type { LovelaceConfig } from "../../../../data/lovelace/config/types";
 import type { LovelaceViewRawConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceStrategyEditor } from "../types";
 import type {
   AreaViewStrategyConfig,
@@ -29,9 +29,9 @@ export interface AreasDashboardStrategyConfig {
 export class AreasDashboardStrategy extends ReactiveElement {
   static async generate(
     config: AreasDashboardStrategyConfig,
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<LovelaceConfig> {
-    if (hass.config.state === STATE_NOT_RUNNING) {
+    if (menuai.config.state === STATE_NOT_RUNNING) {
       return {
         views: [
           {
@@ -42,7 +42,7 @@ export class AreasDashboardStrategy extends ReactiveElement {
       };
     }
 
-    if (hass.config.recovery_mode) {
+    if (menuai.config.recovery_mode) {
       return {
         views: [
           {
@@ -54,7 +54,7 @@ export class AreasDashboardStrategy extends ReactiveElement {
     }
 
     const areas = getAreas(
-      hass.areas,
+      menuai.areas,
       config.areas_display?.hidden,
       config.areas_display?.order
     );

@@ -15,7 +15,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { ifDefined } from "lit/directives/if-defined";
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-combo-box-item";
 import "./ha-combo-box-textfield";
 import "./ha-icon-button";
@@ -64,7 +64,7 @@ registerStyles(
 
 @customElement("ha-combo-box")
 export class HaComboBox extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public label?: string;
 
@@ -205,7 +205,7 @@ export class HaComboBox extends LitElement {
           ? html`<ha-svg-icon
               role="button"
               tabindex="-1"
-              aria-label=${ifDefined(this.hass?.localize("ui.common.clear"))}
+              aria-label=${ifDefined(this.menuai?.localize("ui.common.clear"))}
               class="clear-button"
               .path=${mdiClose}
               @click=${this._clearValue}
@@ -406,7 +406,7 @@ declare global {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "filter-changed": { value: string };
     "opened-changed": { value: boolean };
   }

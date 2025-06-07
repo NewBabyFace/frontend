@@ -22,9 +22,9 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-tabs-subpage";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-tabs-subpage";
+import type { menuai, Route } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import "../ha-config-section";
 import { configSections } from "../ha-panel-config";
@@ -35,7 +35,7 @@ import {
 
 @customElement("ha-config-person")
 export class HaConfigPerson extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -51,16 +51,16 @@ export class HaConfigPerson extends LitElement {
 
   protected render() {
     if (
-      !this.hass ||
+      !this.menuai ||
       this._storageItems === undefined ||
       this._configItems === undefined
     ) {
-      return html` <hass-loading-screen></hass-loading-screen> `;
+      return html` <menuai-loading-screen></menuai-loading-screen> `;
     }
-    const hass = this.hass;
+    const menuai = this.menuai;
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         back-path="/config"
@@ -69,14 +69,14 @@ export class HaConfigPerson extends LitElement {
       >
         <ha-config-section .isWide=${this.isWide}>
           <span slot="header"
-            >${hass.localize("ui.panel.config.person.caption")}</span
+            >${menuai.localize("ui.panel.config.person.caption")}</span
           >
           <span slot="introduction">
-            <p>${hass.localize("ui.panel.config.person.introduction")}</p>
+            <p>${menuai.localize("ui.panel.config.person.introduction")}</p>
             ${this._configItems.length > 0
               ? html`
                   <p>
-                    ${hass.localize(
+                    ${menuai.localize(
                       "ui.panel.config.person.note_about_persons_configured_in_yaml"
                     )}
                   </p>
@@ -84,11 +84,11 @@ export class HaConfigPerson extends LitElement {
               : ""}
 
             <a
-              href=${documentationUrl(this.hass, "/integrations/person/")}
+              href=${documentationUrl(this.menuai, "/integrations/person/")}
               target="_blank"
               rel="noreferrer"
             >
-              ${this.hass.localize("ui.panel.config.person.learn_more")}
+              ${this.menuai.localize("ui.panel.config.person.learn_more")}
             </a>
           </span>
 
@@ -102,7 +102,7 @@ export class HaConfigPerson extends LitElement {
                     .entry=${entry}
                   >
                     <ha-person-badge
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .person=${entry}
                       slot="graphic"
                     ></ha-person-badge>
@@ -114,11 +114,11 @@ export class HaConfigPerson extends LitElement {
             ${this._storageItems.length === 0
               ? html`
                   <div class="empty">
-                    ${hass.localize(
+                    ${menuai.localize(
                       "ui.panel.config.person.no_persons_created_yet"
                     )}
                     <mwc-button @click=${this._createPerson}>
-                      ${hass.localize(
+                      ${menuai.localize(
                         "ui.panel.config.person.create_person"
                       )}</mwc-button
                     >
@@ -134,7 +134,7 @@ export class HaConfigPerson extends LitElement {
                       (entry) => html`
                         <ha-list-item graphic="avatar">
                           <ha-person-badge
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .person=${entry}
                             slot="graphic"
                           ></ha-person-badge>
@@ -149,13 +149,13 @@ export class HaConfigPerson extends LitElement {
         </ha-config-section>
         <ha-fab
           slot="fab"
-          .label=${hass.localize("ui.panel.config.person.add_person")}
+          .label=${menuai.localize("ui.panel.config.person.add_person")}
           extended
           @click=${this._createPerson}
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -166,14 +166,14 @@ export class HaConfigPerson extends LitElement {
   }
 
   private async _fetchData() {
-    this._usersLoad = fetchUsers(this.hass!);
-    const personData = await fetchPersons(this.hass!);
+    this._usersLoad = fetchUsers(this.menuai!);
+    const personData = await fetchPersons(this.menuai!);
 
     this._storageItems = personData.storage.sort((ent1, ent2) =>
-      stringCompare(ent1.name, ent2.name, this.hass!.locale.language)
+      stringCompare(ent1.name, ent2.name, this.menuai!.locale.language)
     );
     this._configItems = personData.config.sort((ent1, ent2) =>
-      stringCompare(ent1.name, ent2.name, this.hass!.locale.language)
+      stringCompare(ent1.name, ent2.name, this.menuai!.locale.language)
     );
     this._openDialogIfPersonSpecifiedInRoute();
   }
@@ -194,10 +194,10 @@ export class HaConfigPerson extends LitElement {
       this._openDialog(personToEdit);
     } else {
       showAlertDialog(this, {
-        title: this.hass?.localize(
+        title: this.menuai?.localize(
           "ui.panel.config.person.person_not_found_title"
         ),
-        text: this.hass?.localize("ui.panel.config.person.person_not_found"),
+        text: this.menuai?.localize("ui.panel.config.person.person_not_found"),
       });
     }
   }
@@ -233,14 +233,14 @@ export class HaConfigPerson extends LitElement {
       entry,
       users: this._allowedUsers(users, entry),
       createEntry: async (values) => {
-        const created = await createPerson(this.hass!, values);
+        const created = await createPerson(this.menuai!, values);
         this._storageItems = this._storageItems!.concat(created).sort(
           (ent1, ent2) =>
-            stringCompare(ent1.name, ent2.name, this.hass!.locale.language)
+            stringCompare(ent1.name, ent2.name, this.menuai!.locale.language)
         );
       },
       updateEntry: async (values) => {
-        const updated = await updatePerson(this.hass!, entry!.id, values);
+        const updated = await updatePerson(this.menuai!, entry!.id, values);
         this._storageItems = this._storageItems!.map((ent) =>
           ent === entry ? updated : ent
         );
@@ -248,15 +248,15 @@ export class HaConfigPerson extends LitElement {
       removeEntry: async () => {
         if (
           !(await showConfirmationDialog(this, {
-            title: this.hass!.localize(
+            title: this.menuai!.localize(
               "ui.panel.config.person.confirm_delete_title",
               { name: entry!.name }
             ),
-            text: this.hass!.localize(
+            text: this.menuai!.localize(
               "ui.panel.config.person.confirm_delete_text"
             ),
-            dismissText: this.hass!.localize("ui.common.cancel"),
-            confirmText: this.hass!.localize("ui.common.delete"),
+            dismissText: this.menuai!.localize("ui.common.cancel"),
+            confirmText: this.menuai!.localize("ui.common.delete"),
             destructive: true,
           }))
         ) {
@@ -264,7 +264,7 @@ export class HaConfigPerson extends LitElement {
         }
 
         try {
-          await deletePerson(this.hass!, entry!.id);
+          await deletePerson(this.menuai!, entry!.id);
           this._storageItems = this._storageItems!.filter(
             (ent) => ent !== entry
           );
@@ -274,7 +274,7 @@ export class HaConfigPerson extends LitElement {
         }
       },
       refreshUsers: () => {
-        this._usersLoad = fetchUsers(this.hass!);
+        this._usersLoad = fetchUsers(this.menuai!);
       },
     });
   }

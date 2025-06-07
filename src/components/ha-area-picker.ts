@@ -1,5 +1,5 @@
 import { mdiPlus, mdiTextureBox } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators";
@@ -18,7 +18,7 @@ import { getDeviceEntityDisplayLookup } from "../data/device_registry";
 import type { EntityRegistryDisplayEntry } from "../data/entity_registry";
 import { showAlertDialog } from "../dialogs/generic/show-dialog-box";
 import { showAreaRegistryDetailDialog } from "../panels/config/areas/show-dialog-area-registry-detail";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import type { HaDevicePickerDeviceFilterFunc } from "./device/ha-device-picker";
 import "./ha-combo-box-item";
 import "./ha-generic-picker";
@@ -32,7 +32,7 @@ const ADD_NEW_ID = "___ADD_NEW___";
 
 @customElement("ha-area-picker")
 export class HaAreaPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -81,7 +81,7 @@ export class HaAreaPicker extends LitElement {
   public deviceFilter?: HaDevicePickerDeviceFilterFunc;
 
   @property({ attribute: false })
-  public entityFilter?: (entity: HassEntity) => boolean;
+  public entityFilter?: (entity: menuaiEntity) => boolean;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -96,9 +96,9 @@ export class HaAreaPicker extends LitElement {
 
   // Recompute value renderer when the areas change
   private _computeValueRenderer = memoizeOne(
-    (_haAreas: HomeAssistant["areas"]): PickerValueRenderer =>
+    (_haAreas: menuai["areas"]): PickerValueRenderer =>
       (value) => {
-        const area = this.hass.areas[value];
+        const area = this.menuai.areas[value];
 
         if (!area) {
           return html`
@@ -107,7 +107,7 @@ export class HaAreaPicker extends LitElement {
           `;
         }
 
-        const { floor } = getAreaContext(area, this.hass);
+        const { floor } = getAreaContext(area, this.menuai);
 
         const areaName = area ? computeAreaName(area) : undefined;
         const floorName = floor ? computeFloorName(floor) : undefined;
@@ -131,9 +131,9 @@ export class HaAreaPicker extends LitElement {
 
   private _getAreas = memoizeOne(
     (
-      haAreas: HomeAssistant["areas"],
-      haDevices: HomeAssistant["devices"],
-      haEntities: HomeAssistant["entities"],
+      haAreas: menuai["areas"],
+      haDevices: menuai["devices"],
+      haEntities: menuai["entities"],
       includeDomains: this["includeDomains"],
       excludeDomains: this["excludeDomains"],
       includeDeviceClasses: this["includeDeviceClasses"],
@@ -199,7 +199,7 @@ export class HaAreaPicker extends LitElement {
               return false;
             }
             return deviceEntityLookup[device.id].some((entity) => {
-              const stateObj = this.hass.states[entity.entity_id];
+              const stateObj = this.menuai.states[entity.entity_id];
               if (!stateObj) {
                 return false;
               }
@@ -210,7 +210,7 @@ export class HaAreaPicker extends LitElement {
             });
           });
           inputEntities = inputEntities!.filter((entity) => {
-            const stateObj = this.hass.states[entity.entity_id];
+            const stateObj = this.menuai.states[entity.entity_id];
             return (
               stateObj.attributes.device_class &&
               includeDeviceClasses.includes(stateObj.attributes.device_class)
@@ -231,7 +231,7 @@ export class HaAreaPicker extends LitElement {
               return false;
             }
             return deviceEntityLookup[device.id].some((entity) => {
-              const stateObj = this.hass.states[entity.entity_id];
+              const stateObj = this.menuai.states[entity.entity_id];
               if (!stateObj) {
                 return false;
               }
@@ -239,7 +239,7 @@ export class HaAreaPicker extends LitElement {
             });
           });
           inputEntities = inputEntities!.filter((entity) => {
-            const stateObj = this.hass.states[entity.entity_id];
+            const stateObj = this.menuai.states[entity.entity_id];
             if (!stateObj) {
               return false;
             }
@@ -279,7 +279,7 @@ export class HaAreaPicker extends LitElement {
       }
 
       const items = outputAreas.map<PickerComboBoxItem>((area) => {
-        const { floor } = getAreaContext(area, this.hass);
+        const { floor } = getAreaContext(area, this.menuai);
         const floorName = floor ? computeFloorName(floor) : undefined;
         const areaName = computeAreaName(area);
         return {
@@ -304,9 +304,9 @@ export class HaAreaPicker extends LitElement {
 
   private _getItems = () =>
     this._getAreas(
-      this.hass.areas,
-      this.hass.devices,
-      this.hass.entities,
+      this.menuai.areas,
+      this.menuai.devices,
+      this.menuai.entities,
       this.includeDomains,
       this.excludeDomains,
       this.includeDeviceClasses,
@@ -316,7 +316,7 @@ export class HaAreaPicker extends LitElement {
     );
 
   private _allAreaNames = memoizeOne(
-    (areas: HomeAssistant["areas"]) =>
+    (areas: menuai["areas"]) =>
       Object.values(areas)
         .map((area) => computeAreaName(area)?.toLowerCase())
         .filter(Boolean) as string[]
@@ -329,13 +329,13 @@ export class HaAreaPicker extends LitElement {
       return [];
     }
 
-    const allAreas = this._allAreaNames(this.hass.areas);
+    const allAreas = this._allAreaNames(this.menuai.areas);
 
     if (searchString && !allAreas.includes(searchString.toLowerCase())) {
       return [
         {
           id: ADD_NEW_ID + searchString,
-          primary: this.hass.localize(
+          primary: this.menuai.localize(
             "ui.components.area-picker.add_new_sugestion",
             {
               name: searchString,
@@ -349,7 +349,7 @@ export class HaAreaPicker extends LitElement {
     return [
       {
         id: ADD_NEW_ID,
-        primary: this.hass.localize("ui.components.area-picker.add_new"),
+        primary: this.menuai.localize("ui.components.area-picker.add_new"),
         icon_path: mdiPlus,
       },
     ];
@@ -357,16 +357,16 @@ export class HaAreaPicker extends LitElement {
 
   protected render(): TemplateResult {
     const placeholder =
-      this.placeholder ?? this.hass.localize("ui.components.area-picker.area");
+      this.placeholder ?? this.menuai.localize("ui.components.area-picker.area");
 
-    const valueRenderer = this._computeValueRenderer(this.hass.areas);
+    const valueRenderer = this._computeValueRenderer(this.menuai.areas);
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         .label=${this.label}
-        .notFoundLabel=${this.hass.localize(
+        .notFoundLabel=${this.menuai.localize(
           "ui.components.area-picker.no_match"
         )}
         .placeholder=${placeholder}
@@ -390,7 +390,7 @@ export class HaAreaPicker extends LitElement {
     }
 
     if (value.startsWith(ADD_NEW_ID)) {
-      this.hass.loadFragmentTranslation("config");
+      this.menuai.loadFragmentTranslation("config");
 
       const suggestedName = value.substring(ADD_NEW_ID.length);
 
@@ -398,11 +398,11 @@ export class HaAreaPicker extends LitElement {
         suggestedName: suggestedName,
         createEntry: async (values) => {
           try {
-            const area = await createAreaRegistryEntry(this.hass, values);
+            const area = await createAreaRegistryEntry(this.menuai, values);
             this._setValue(area.area_id);
           } catch (err: any) {
             showAlertDialog(this, {
-              title: this.hass.localize(
+              title: this.menuai.localize(
                 "ui.components.area-picker.failed_create_area"
               ),
               text: err.message,

@@ -50,7 +50,7 @@ import {
   fetchScriptFileConfig,
   getScriptEditorInitData,
   getScriptStateConfig,
-  hasScriptFields,
+  menuaicriptFields,
   showScriptEditor,
   triggerScript,
 } from "../../../data/script";
@@ -59,12 +59,12 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { KeyboardShortcutMixin } from "../../../mixins/keyboard-shortcut-mixin";
 import { PreventUnsavedMixin } from "../../../mixins/prevent-unsaved-mixin";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { Entries, HomeAssistant, Route } from "../../../types";
+import type { Entries, menuai, Route } from "../../../types";
 import { showToast } from "../../../util/toast";
 import { showAutomationModeDialog } from "../automation/automation-mode-dialog/show-dialog-automation-mode";
 import type { EntityRegistryUpdate } from "../automation/automation-save-dialog/show-dialog-automation-save";
@@ -77,7 +77,7 @@ import type { HaManualScriptEditor } from "./manual-script-editor";
 export class HaScriptEditor extends SubscribeMixin(
   PreventUnsavedMixin(KeyboardShortcutMixin(LitElement))
 ) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public scriptId: string | null = null;
 
@@ -157,23 +157,23 @@ export class HaScriptEditor extends SubscribeMixin(
     }
 
     const stateObj = this._entityId
-      ? this.hass.states[this._entityId]
+      ? this.menuai.states[this._entityId]
       : undefined;
 
     const useBlueprint = "use_blueprint" in this._config;
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .backCallback=${this._backTapped}
         .header=${this._config.alias ||
-        this.hass.localize("ui.panel.config.script.editor.default_name")}
+        this.menuai.localize("ui.panel.config.script.editor.default_name")}
       >
         ${this.scriptId && !this.narrow
           ? html`
               <mwc-button @click=${this._showTrace} slot="toolbar-icon">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.script.editor.show_trace"
                 )}
               </mwc-button>
@@ -182,7 +182,7 @@ export class HaScriptEditor extends SubscribeMixin(
         <ha-button-menu slot="toolbar-icon">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
@@ -191,7 +191,7 @@ export class HaScriptEditor extends SubscribeMixin(
             .disabled=${!this.scriptId}
             @click=${this._showInfo}
           >
-            ${this.hass.localize("ui.panel.config.script.editor.show_info")}
+            ${this.menuai.localize("ui.panel.config.script.editor.show_info")}
             <ha-svg-icon
               slot="graphic"
               .path=${mdiInformationOutline}
@@ -203,7 +203,7 @@ export class HaScriptEditor extends SubscribeMixin(
             .disabled=${!stateObj}
             @click=${this._showSettings}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.picker.show_settings"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiCog}></ha-svg-icon>
@@ -214,7 +214,7 @@ export class HaScriptEditor extends SubscribeMixin(
             .disabled=${!stateObj}
             @click=${this._editCategory}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.scene.picker.${this._registryEntry?.categories?.script ? "edit_category" : "assign_category"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiTag}></ha-svg-icon>
@@ -225,7 +225,7 @@ export class HaScriptEditor extends SubscribeMixin(
             .disabled=${!this.scriptId}
             @click=${this._runScript}
           >
-            ${this.hass.localize("ui.panel.config.script.picker.run_script")}
+            ${this.menuai.localize("ui.panel.config.script.picker.run_script")}
             <ha-svg-icon slot="graphic" .path=${mdiPlay}></ha-svg-icon>
           </ha-list-item>
 
@@ -233,7 +233,7 @@ export class HaScriptEditor extends SubscribeMixin(
             ? html`
                 <a href="/config/script/trace/${this.scriptId}">
                   <ha-list-item graphic="icon">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.script.editor.show_trace"
                     )}
                     <ha-svg-icon
@@ -251,7 +251,7 @@ export class HaScriptEditor extends SubscribeMixin(
                   .disabled=${this._readOnly || this._mode === "yaml"}
                   @click=${this._addFields}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.script.editor.field.add_fields"
                   )}
                   <ha-svg-icon
@@ -269,7 +269,7 @@ export class HaScriptEditor extends SubscribeMixin(
             this._readOnly ||
             this._mode === "yaml"}
           >
-            ${this.hass.localize("ui.panel.config.script.editor.rename")}
+            ${this.menuai.localize("ui.panel.config.script.editor.rename")}
             <ha-svg-icon slot="graphic" .path=${mdiRenameBox}></ha-svg-icon>
           </ha-list-item>
           ${!useBlueprint
@@ -279,7 +279,7 @@ export class HaScriptEditor extends SubscribeMixin(
                   @click=${this._promptScriptMode}
                   .disabled=${this._readOnly || this._mode === "yaml"}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.script.editor.change_mode"
                   )}
                   <ha-svg-icon
@@ -296,7 +296,7 @@ export class HaScriptEditor extends SubscribeMixin(
             graphic="icon"
             @click=${this._duplicate}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               this._readOnly
                 ? "ui.panel.config.script.editor.migrate"
                 : "ui.panel.config.script.editor.duplicate"
@@ -314,7 +314,7 @@ export class HaScriptEditor extends SubscribeMixin(
                   @click=${this._takeControl}
                   .disabled=${this._readOnly}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.script.editor.take_control"
                   )}
                   <ha-svg-icon
@@ -331,7 +331,7 @@ export class HaScriptEditor extends SubscribeMixin(
               ? this._switchYamlMode
               : this._switchUiMode}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.automation.editor.edit_${this._mode === "gui" ? "yaml" : "ui"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -345,7 +345,7 @@ export class HaScriptEditor extends SubscribeMixin(
             graphic="icon"
             @click=${this._deleteConfirm}
           >
-            ${this.hass.localize("ui.panel.config.script.picker.delete")}
+            ${this.menuai.localize("ui.panel.config.script.picker.delete")}
             <ha-svg-icon
               class=${classMap({ warning: Boolean(this.scriptId) })}
               slot="graphic"
@@ -363,7 +363,7 @@ export class HaScriptEditor extends SubscribeMixin(
             ? html`<ha-alert
                 alert-type="error"
                 .title=${stateObj?.state === UNAVAILABLE
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.script.editor.unavailable"
                     )
                   : undefined}
@@ -379,25 +379,25 @@ export class HaScriptEditor extends SubscribeMixin(
             : ""}
           ${this._blueprintConfig
             ? html`<ha-alert alert-type="info">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.script.editor.confirm_take_control"
                 )}
                 <div slot="action" style="display: flex;">
                   <mwc-button @click=${this._takeControlSave}
-                    >${this.hass.localize("ui.common.yes")}</mwc-button
+                    >${this.menuai.localize("ui.common.yes")}</mwc-button
                   >
                   <mwc-button @click=${this._revertBlueprint}
-                    >${this.hass.localize("ui.common.no")}</mwc-button
+                    >${this.menuai.localize("ui.common.no")}</mwc-button
                   >
                 </div>
               </ha-alert>`
             : this._readOnly
               ? html`<ha-alert alert-type="warning" dismissable
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.script.editor.read_only"
                   )}
                   <mwc-button slot="action" @click=${this._duplicate}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.script.editor.migrate"
                     )}
                   </mwc-button>
@@ -407,13 +407,13 @@ export class HaScriptEditor extends SubscribeMixin(
             ? html`
                 <div
                   class=${classMap({
-                    rtl: computeRTL(this.hass),
+                    rtl: computeRTL(this.menuai),
                   })}
                 >
                   ${useBlueprint
                     ? html`
                         <blueprint-script-editor
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .narrow=${this.narrow}
                           .isWide=${this.isWide}
                           .config=${this._config}
@@ -423,7 +423,7 @@ export class HaScriptEditor extends SubscribeMixin(
                       `
                     : html`
                         <manual-script-editor
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .narrow=${this.narrow}
                           .isWide=${this.isWide}
                           .config=${this._config}
@@ -437,7 +437,7 @@ export class HaScriptEditor extends SubscribeMixin(
             : this._mode === "yaml"
               ? html`<ha-yaml-editor
                   copy-clipboard
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .defaultValue=${this._preprocessYaml()}
                   .readOnly=${this._readOnly}
                   @value-changed=${this._yamlChanged}
@@ -449,7 +449,7 @@ export class HaScriptEditor extends SubscribeMixin(
           class=${classMap({
             dirty: !this._readOnly && this._dirty,
           })}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.script.editor.save_script"
           )}
           .disabled=${this._saving}
@@ -458,7 +458,7 @@ export class HaScriptEditor extends SubscribeMixin(
         >
           <ha-svg-icon slot="icon" .path=${mdiContentSave}></ha-svg-icon>
         </ha-fab>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -470,7 +470,7 @@ export class HaScriptEditor extends SubscribeMixin(
       changedProps.has("scriptId") &&
       this.scriptId &&
       !this.entityId &&
-      this.hass &&
+      this.menuai &&
       // Only refresh config if we picked a new script. If same ID, don't fetch it.
       (!oldScript || oldScript !== this.scriptId)
     ) {
@@ -489,7 +489,7 @@ export class HaScriptEditor extends SubscribeMixin(
       this._entityId = entity?.entity_id;
     }
 
-    if (changedProps.has("scriptId") && !this.scriptId && this.hass) {
+    if (changedProps.has("scriptId") && !this.scriptId && this.menuai) {
       const initData = getScriptEditorInitData();
       this._dirty = !!initData;
       const baseConfig: Partial<ScriptConfig> = {};
@@ -504,7 +504,7 @@ export class HaScriptEditor extends SubscribeMixin(
     }
 
     if (changedProps.has("entityId") && this.entityId) {
-      getScriptStateConfig(this.hass, this.entityId).then((c) => {
+      getScriptStateConfig(this.menuai, this.entityId).then((c) => {
         this._config = normalizeScriptConfig(c.config);
         this._checkValidation();
       });
@@ -525,11 +525,11 @@ export class HaScriptEditor extends SubscribeMixin(
     if (!this._entityId || !this._config) {
       return;
     }
-    const stateObj = this.hass.states[this._entityId];
+    const stateObj = this.menuai.states[this._entityId];
     if (stateObj?.state !== UNAVAILABLE) {
       return;
     }
-    const validation = await validateConfig(this.hass, {
+    const validation = await validateConfig(this.menuai, {
       actions: this._config.sequence,
     });
     this._validationErrors = (
@@ -537,7 +537,7 @@ export class HaScriptEditor extends SubscribeMixin(
     ).map(([key, value]) =>
       value.valid
         ? ""
-        : html`${this.hass.localize(
+        : html`${this.menuai.localize(
               `ui.panel.config.automation.editor.${key}.name`
             )}:
             ${value.error}<br />`
@@ -545,7 +545,7 @@ export class HaScriptEditor extends SubscribeMixin(
   }
 
   private async _loadConfig() {
-    fetchScriptFileConfig(this.hass, this.scriptId!).then(
+    fetchScriptFileConfig(this.menuai, this.scriptId!).then(
       (config) => {
         this._dirty = false;
         this._readOnly = false;
@@ -568,10 +568,10 @@ export class HaScriptEditor extends SubscribeMixin(
         }
         alert(
           resp.status_code === 404
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.script.editor.load_error_not_editable"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.script.editor.load_error_unknown",
                 { err_no: resp.status_code || resp.code }
               )
@@ -590,16 +590,16 @@ export class HaScriptEditor extends SubscribeMixin(
   private async _runScript(ev: CustomEvent) {
     ev.stopPropagation();
 
-    if (hasScriptFields(this.hass, this._entityId!)) {
+    if (menuaicriptFields(this.menuai, this._entityId!)) {
       showMoreInfoDialog(this, {
         entityId: this._entityId!,
       });
       return;
     }
 
-    await triggerScript(this.hass, this.scriptId!);
+    await triggerScript(this.menuai, this.scriptId!);
     showToast(this, {
-      message: this.hass.localize("ui.notification_toast.triggered", {
+      message: this.menuai.localize("ui.notification_toast.triggered", {
         name: this._config!.alias,
       }),
     });
@@ -615,10 +615,10 @@ export class HaScriptEditor extends SubscribeMixin(
   private _editCategory() {
     if (!this._registryEntry) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_support"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_entity_reg"
         ),
       });
@@ -643,7 +643,7 @@ export class HaScriptEditor extends SubscribeMixin(
 
   private _idIsUsed(id: string): boolean {
     return (
-      `script.${id}` in this.hass.states ||
+      `script.${id}` in this.menuai.states ||
       this.entityRegistry.some((ent) => ent.unique_id === id)
     );
   }
@@ -658,7 +658,7 @@ export class HaScriptEditor extends SubscribeMixin(
     if (!entity) {
       return;
     }
-    fireEvent(this, "hass-more-info", { entityId: entity.entity_id });
+    fireEvent(this, "menuai-more-info", { entityId: entity.entity_id });
   }
 
   private async _showTrace() {
@@ -724,12 +724,12 @@ export class HaScriptEditor extends SubscribeMixin(
         onDiscard: () => resolve(true),
         entityRegistryUpdate: this._entityRegistryUpdate,
         entityRegistryEntry: this._registryEntry,
-        title: this.hass.localize(
+        title: this.menuai.localize(
           this.scriptId
             ? "ui.panel.config.script.editor.leave.unsaved_confirm_title"
             : "ui.panel.config.script.editor.leave.unsaved_new_title"
         ),
-        description: this.hass.localize(
+        description: this.menuai.localize(
           this.scriptId
             ? "ui.panel.config.script.editor.leave.unsaved_confirm_text"
             : "ui.panel.config.script.editor.leave.unsaved_new_text"
@@ -751,7 +751,7 @@ export class HaScriptEditor extends SubscribeMixin(
 
     try {
       const result = await substituteBlueprint(
-        this.hass,
+        this.menuai,
         "script",
         config.use_blueprint.path,
         config.use_blueprint.input || {}
@@ -793,10 +793,10 @@ export class HaScriptEditor extends SubscribeMixin(
   private async _duplicate() {
     const result = this._readOnly
       ? await showConfirmationDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.script.picker.migrate_script"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.script.picker.migrate_script_description"
           ),
         })
@@ -807,7 +807,7 @@ export class HaScriptEditor extends SubscribeMixin(
         ...this._config,
         alias: this._readOnly
           ? this._config?.alias
-          : `${this._config?.alias} (${this.hass.localize(
+          : `${this._config?.alias} (${this.menuai.localize(
               "ui.panel.config.script.picker.duplicate"
             )})`,
       });
@@ -816,34 +816,34 @@ export class HaScriptEditor extends SubscribeMixin(
 
   private async _deleteConfirm() {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.script.editor.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.script.editor.delete_confirm_text",
         { name: this._config?.alias }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
       destructive: true,
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       confirm: () => this._delete(),
     });
   }
 
   private async _delete() {
-    await deleteScript(this.hass, this.scriptId!);
+    await deleteScript(this.menuai, this.scriptId!);
     history.back();
   }
 
   private async _switchUiMode() {
     if (this._yamlErrors) {
       const result = await showConfirmationDialog(this, {
-        text: html`${this.hass.localize(
+        text: html`${this.menuai.localize(
             "ui.panel.config.automation.editor.switch_ui_yaml_error"
           )}<br /><br />${this._yamlErrors}`,
-        confirmText: this.hass!.localize("ui.common.continue"),
+        confirmText: this.menuai!.localize("ui.common.continue"),
         destructive: true,
-        dismissText: this.hass!.localize("ui.common.cancel"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
       });
       if (!result) {
         return;
@@ -930,7 +930,7 @@ export class HaScriptEditor extends SubscribeMixin(
     }
 
     try {
-      await this.hass!.callApi(
+      await this.menuai!.callApi(
         "POST",
         "config/script/config/" + id,
         this._config
@@ -948,21 +948,21 @@ export class HaScriptEditor extends SubscribeMixin(
             entityId = undefined;
             if (e instanceof Error && e.name === "TimeoutError") {
               showAlertDialog(this, {
-                title: this.hass.localize(
+                title: this.menuai.localize(
                   "ui.panel.config.automation.editor.new_automation_setup_failed_title",
                   {
-                    type: this.hass.localize(
+                    type: this.menuai.localize(
                       "ui.panel.config.automation.editor.type_script"
                     ),
                   }
                 ),
-                text: this.hass.localize(
+                text: this.menuai.localize(
                   "ui.panel.config.automation.editor.new_automation_setup_failed_text",
                   {
-                    type: this.hass.localize(
+                    type: this.menuai.localize(
                       "ui.panel.config.automation.editor.type_script"
                     ),
-                    types: this.hass.localize(
+                    types: this.menuai.localize(
                       "ui.panel.config.automation.editor.type_script_plural"
                     ),
                   }
@@ -976,7 +976,7 @@ export class HaScriptEditor extends SubscribeMixin(
         }
 
         if (entityId) {
-          await updateEntityRegistryEntry(this.hass, entityId, {
+          await updateEntityRegistryEntry(this.menuai, entityId, {
             categories: {
               script: this._entityRegistryUpdate.category || null,
             },

@@ -4,7 +4,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-md-button-menu";
 import "./ha-icon-button";
 import "./ha-svg-icon";
@@ -26,7 +26,7 @@ export interface IconOverflowMenuItem {
 
 @customElement("ha-icon-overflow-menu")
 export class HaIconOverflowMenu extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Array }) public items: IconOverflowMenuItem[] = [];
 
@@ -41,7 +41,7 @@ export class HaIconOverflowMenu extends LitElement {
               positioning="popover"
             >
               <ha-icon-button
-                .label=${this.hass.localize("ui.common.overflow_menu")}
+                .label=${this.menuai.localize("ui.common.overflow_menu")}
                 .path=${mdiDotsVertical}
                 slot="trigger"
               ></ha-icon-button>

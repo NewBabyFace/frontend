@@ -1,11 +1,11 @@
 import { atLeastVersion } from "../../common/config/version";
 import type { HaFormSchema } from "../../components/ha-form/types";
-import type { HomeAssistant, TranslationDict } from "../../types";
+import type { menuai, TranslationDict } from "../../types";
 import { supervisorApiCall } from "../supervisor/common";
 import type { StoreAddonDetails } from "../supervisor/store";
 import type { Supervisor, SupervisorArch } from "../supervisor/supervisor";
-import type { HassioResponse } from "./common";
-import { extractApiErrorMessage, hassioApiResultExtractor } from "./common";
+import type { menuaiioResponse } from "./common";
+import { extractApiErrorMessage, menuaiioApiResultExtractor } from "./common";
 
 export type AddonCapability = Exclude<
   keyof TranslationDict["supervisor"]["addon"]["dashboard"]["capability"],
@@ -13,7 +13,7 @@ export type AddonCapability = Exclude<
 >;
 export type AddonStage = "stable" | "experimental" | "deprecated";
 export type AddonAppArmour = "disable" | "default" | "profile";
-export type AddonRole = "default" | "homeassistant" | "manager" | "admin";
+export type AddonRole = "default" | "menuai" | "manager" | "admin";
 export type AddonStartup =
   | "initialize"
   | "system"
@@ -34,13 +34,13 @@ interface AddonTranslations {
   configuration?: Record<string, { name?: string; description?: string }>;
 }
 
-export interface HassioAddonInfo {
+export interface menuaiioAddonInfo {
   advanced: boolean;
   available: boolean;
   build: boolean;
   description: string;
   detached: boolean;
-  homeassistant: string;
+  menuai: string;
   icon: boolean;
   installed: boolean;
   logo: boolean;
@@ -55,7 +55,7 @@ export interface HassioAddonInfo {
   version: string;
 }
 
-export interface HassioAddonDetails extends HassioAddonInfo {
+export interface menuaiioAddonDetails extends menuaiioAddonInfo {
   apparmor: AddonAppArmour;
   arch: SupervisorArch[];
   audio_input: null | string;
@@ -73,10 +73,10 @@ export interface HassioAddonDetails extends HassioAddonInfo {
   documentation: boolean;
   full_access: boolean;
   gpio: boolean;
-  hassio_api: boolean;
-  hassio_role: AddonRole;
+  menuaiio_api: boolean;
+  menuaiio_role: AddonRole;
   hostname: string;
-  homeassistant_api: boolean;
+  menuai_api: boolean;
   host_dbus: boolean;
   host_ipc: boolean;
   host_network: boolean;
@@ -108,16 +108,16 @@ export interface HassioAddonDetails extends HassioAddonInfo {
   webui: null | string;
 }
 
-export interface HassioAddonsInfo {
-  addons: HassioAddonInfo[];
-  repositories: HassioAddonRepository[];
+export interface menuaiioAddonsInfo {
+  addons: menuaiioAddonInfo[];
+  repositories: menuaiioAddonRepository[];
 }
 
-export interface HassioAddonSetSecurityParams {
+export interface menuaiioAddonSetSecurityParams {
   protected?: boolean;
 }
 
-export interface HassioAddonRepository {
+export interface menuaiioAddonRepository {
   slug: string;
   name: string;
   source: string;
@@ -125,7 +125,7 @@ export interface HassioAddonRepository {
   maintainer: string;
 }
 
-export interface HassioAddonSetOptionParams {
+export interface menuaiioAddonSetOptionParams {
   audio_input?: string | null;
   audio_output?: string | null;
   options?: Record<string, unknown> | null;
@@ -136,74 +136,74 @@ export interface HassioAddonSetOptionParams {
   watchdog?: boolean;
 }
 
-export const reloadHassioAddons = async (hass: HomeAssistant) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+export const reloadmenuaiioAddons = async (menuai: menuai) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: "/addons/reload",
       method: "post",
     });
     return;
   }
-  await hass.callApi<HassioResponse<void>>("POST", `hassio/addons/reload`);
+  await menuai.callApi<menuaiioResponse<void>>("POST", `menuaiio/addons/reload`);
 };
 
-export const fetchHassioAddonsInfo = async (
-  hass: HomeAssistant
-): Promise<HassioAddonsInfo> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiioAddonsInfo = async (
+  menuai: menuai
+): Promise<menuaiioAddonsInfo> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/addons",
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioAddonsInfo>>("GET", `hassio/addons`)
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioAddonsInfo>>("GET", `menuaiio/addons`)
   );
 };
 
-export const fetchHassioAddonInfo = async (
-  hass: HomeAssistant,
+export const fetchmenuaiioAddonInfo = async (
+  menuai: menuai,
   slug: string
-): Promise<HassioAddonDetails> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+): Promise<menuaiioAddonDetails> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/info`,
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioAddonDetails>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioAddonDetails>>(
       "GET",
-      `hassio/addons/${slug}/info`
+      `menuaiio/addons/${slug}/info`
     )
   );
 };
 
-export const fetchHassioAddonChangelog = async (
-  hass: HomeAssistant,
+export const fetchmenuaiioAddonChangelog = async (
+  menuai: menuai,
   slug: string
-) => hass.callApi<string>("GET", `hassio/addons/${slug}/changelog`);
+) => menuai.callApi<string>("GET", `menuaiio/addons/${slug}/changelog`);
 
-export const fetchHassioAddonLogs = async (hass: HomeAssistant, slug: string) =>
-  hass.callApi<string>("GET", `hassio/addons/${slug}/logs`);
+export const fetchmenuaiioAddonLogs = async (menuai: menuai, slug: string) =>
+  menuai.callApi<string>("GET", `menuaiio/addons/${slug}/logs`);
 
-export const fetchHassioAddonDocumentation = async (
-  hass: HomeAssistant,
+export const fetchmenuaiioAddonDocumentation = async (
+  menuai: menuai,
   slug: string
-) => hass.callApi<string>("GET", `hassio/addons/${slug}/documentation`);
+) => menuai.callApi<string>("GET", `menuaiio/addons/${slug}/documentation`);
 
-export const setHassioAddonOption = async (
-  hass: HomeAssistant,
+export const setmenuaiioAddonOption = async (
+  menuai: menuai,
   slug: string,
-  data: HassioAddonSetOptionParams
+  data: menuaiioAddonSetOptionParams
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    const response = await hass.callWS<HassioResponse<any>>({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    const response = await menuai.callWS<menuaiioResponse<any>>({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/options`,
       method: "post",
@@ -216,20 +216,20 @@ export const setHassioAddonOption = async (
     return response;
   }
 
-  return hass.callApi<HassioResponse<any>>(
+  return menuai.callApi<menuaiioResponse<any>>(
     "POST",
-    `hassio/addons/${slug}/options`,
+    `menuaiio/addons/${slug}/options`,
     data
   );
 };
 
-export const validateHassioAddonOption = async (
-  hass: HomeAssistant,
+export const validatemenuaiioAddonOption = async (
+  menuai: menuai,
   slug: string,
   data?: any
 ): Promise<{ message: string; valid: boolean }> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/options/validate`,
       method: "post",
@@ -238,16 +238,16 @@ export const validateHassioAddonOption = async (
   }
 
   return (
-    await hass.callApi<HassioResponse<{ message: string; valid: boolean }>>(
+    await menuai.callApi<menuaiioResponse<{ message: string; valid: boolean }>>(
       "POST",
-      `hassio/addons/${slug}/options/validate`
+      `menuaiio/addons/${slug}/options/validate`
     )
   ).data;
 };
 
-export const startHassioAddon = async (hass: HomeAssistant, slug: string) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const startmenuaiioAddon = async (menuai: menuai, slug: string) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/start`,
       method: "post",
@@ -255,12 +255,12 @@ export const startHassioAddon = async (hass: HomeAssistant, slug: string) => {
     });
   }
 
-  return hass.callApi<string>("POST", `hassio/addons/${slug}/start`);
+  return menuai.callApi<string>("POST", `menuaiio/addons/${slug}/start`);
 };
 
-export const stopHassioAddon = async (hass: HomeAssistant, slug: string) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const stopmenuaiioAddon = async (menuai: menuai, slug: string) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/stop`,
       method: "post",
@@ -268,16 +268,16 @@ export const stopHassioAddon = async (hass: HomeAssistant, slug: string) => {
     });
   }
 
-  return hass.callApi<string>("POST", `hassio/addons/${slug}/stop`);
+  return menuai.callApi<string>("POST", `menuaiio/addons/${slug}/stop`);
 };
 
-export const setHassioAddonSecurity = async (
-  hass: HomeAssistant,
+export const setmenuaiioAddonSecurity = async (
+  menuai: menuai,
   slug: string,
-  data: HassioAddonSetSecurityParams
+  data: menuaiioAddonSetSecurityParams
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/security`,
       method: "post",
@@ -286,19 +286,19 @@ export const setHassioAddonSecurity = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/addons/${slug}/security`,
+    `menuaiio/addons/${slug}/security`,
     data
   );
 };
 
-export const installHassioAddon = async (
-  hass: HomeAssistant,
+export const installmenuaiioAddon = async (
+  menuai: menuai,
   slug: string
 ): Promise<void> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/install`,
       method: "post",
@@ -307,28 +307,28 @@ export const installHassioAddon = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/addons/${slug}/install`
+    `menuaiio/addons/${slug}/install`
   );
 };
 
-export const updateHassioAddon = async (
-  hass: HomeAssistant,
+export const updatemenuaiioAddon = async (
+  menuai: menuai,
   slug: string,
   backup: boolean
 ): Promise<void> => {
-  if (atLeastVersion(hass.config.version, 2025, 2, 0)) {
-    await hass.callWS({
-      type: "hassio/update/addon",
+  if (atLeastVersion(menuai.config.version, 2025, 2, 0)) {
+    await menuai.callWS({
+      type: "menuaiio/update/addon",
       addon: slug,
       backup: backup,
     });
     return;
   }
 
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/store/addons/${slug}/update`,
       method: "post",
@@ -338,19 +338,19 @@ export const updateHassioAddon = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/addons/${slug}/update`,
+    `menuaiio/addons/${slug}/update`,
     { backup }
   );
 };
 
-export const restartHassioAddon = async (
-  hass: HomeAssistant,
+export const restartmenuaiioAddon = async (
+  menuai: menuai,
   slug: string
 ): Promise<void> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/restart`,
       method: "post",
@@ -359,19 +359,19 @@ export const restartHassioAddon = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/addons/${slug}/restart`
+    `menuaiio/addons/${slug}/restart`
   );
 };
 
-export const uninstallHassioAddon = async (
-  hass: HomeAssistant,
+export const uninstallmenuaiioAddon = async (
+  menuai: menuai,
   slug: string,
   removeData: boolean
 ): Promise<void> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/uninstall`,
       method: "post",
@@ -381,31 +381,31 @@ export const uninstallHassioAddon = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/addons/${slug}/uninstall`,
+    `menuaiio/addons/${slug}/uninstall`,
     { remove_config: removeData }
   );
 };
 
 export const fetchAddonInfo = (
-  hass: HomeAssistant,
+  menuai: menuai,
   supervisor: Supervisor,
   addonSlug: string
-): Promise<HassioAddonDetails | StoreAddonDetails> =>
+): Promise<menuaiioAddonDetails | StoreAddonDetails> =>
   supervisorApiCall(
-    hass,
+    menuai,
     !supervisor.addon?.addons.find((addon) => addon.slug === addonSlug)
       ? `/store/addons/${addonSlug}` // Use /store/addons when add-on is not installed
       : `/addons/${addonSlug}/info` // Use /addons when add-on is installed
   );
 
 export const rebuildLocalAddon = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   slug: string
 ): Promise<void> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS<undefined>({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS<undefined>({
       type: "supervisor/api",
       endpoint: `/addons/${slug}/rebuild`,
       method: "post",
@@ -413,9 +413,9 @@ export const rebuildLocalAddon = async (
     });
   }
   return (
-    await hass.callApi<HassioResponse<void>>(
+    await menuai.callApi<menuaiioResponse<void>>(
       "POST",
-      `hassio/addons/${slug}rebuild`
+      `menuaiio/addons/${slug}rebuild`
     )
   ).data;
 };

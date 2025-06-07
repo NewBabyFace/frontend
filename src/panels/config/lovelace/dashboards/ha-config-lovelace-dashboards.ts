@@ -44,9 +44,9 @@ import {
   updateDashboard,
 } from "../../../../data/lovelace/dashboard";
 import { showConfirmationDialog } from "../../../../dialogs/generic/show-dialog-box";
-import "../../../../layouts/hass-loading-screen";
-import "../../../../layouts/hass-tabs-subpage-data-table";
-import type { HomeAssistant, Route } from "../../../../types";
+import "../../../../layouts/menuai-loading-screen";
+import "../../../../layouts/menuai-tabs-subpage-data-table";
+import type { menuai, Route } from "../../../../types";
 import { getLovelaceStrategy } from "../../../lovelace/strategies/get-strategy";
 import { showNewDashboardDialog } from "../../dashboard/show-dialog-new-dashboard";
 import { lovelaceTabs } from "../ha-config-lovelace";
@@ -64,7 +64,7 @@ type DataTableItem = Pick<
 
 @customElement("ha-config-lovelace-dashboards")
 export class HaConfigLovelaceDashboards extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -106,7 +106,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
 
   public willUpdate() {
     if (!this.hasUpdated) {
-      this.hass.loadFragmentTranslation("lovelace");
+      this.menuai.loadFragmentTranslation("lovelace");
     }
   }
 
@@ -156,7 +156,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
                 ${dashboard.default
                   ? html`
                       <ha-tooltip
-                        .content=${this.hass.localize(
+                        .content=${this.menuai.localize(
                           `ui.panel.config.lovelace.dashboards.default_dashboard`
                         )}
                         placement="right"
@@ -179,7 +179,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
         sortable: true,
         filterable: true,
         template: (dashboard) => html`
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.lovelace.dashboards.conf_mode.${dashboard.mode}`
           ) || dashboard.mode}
         `,
@@ -231,7 +231,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
                   .path=${mdiOpenInNew}
                   .urlPath=${dashboard.url_path}
                   @click=${this._navigate}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.lovelace.dashboards.picker.open"
                   )}
                 ></ha-icon-button>
@@ -240,7 +240,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
                 <mwc-button
                   .urlPath=${dashboard.url_path}
                   @click=${this._navigate}
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.lovelace.dashboards.picker.open"
                   )}</mwc-button
                 >
@@ -253,14 +253,14 @@ export class HaConfigLovelaceDashboards extends LitElement {
 
   private _getItems = memoize((dashboards: LovelaceDashboard[]) => {
     const defaultMode = (
-      this.hass.panels?.lovelace?.config as LovelacePanelConfig
+      this.menuai.panels?.lovelace?.config as LovelacePanelConfig
     ).mode;
-    const defaultUrlPath = this.hass.defaultPanel;
+    const defaultUrlPath = this.menuai.defaultPanel;
     const isDefault = defaultUrlPath === "lovelace";
     const result: DataTableItem[] = [
       {
-        icon: "hass:view-dashboard",
-        title: this.hass.localize("panel.states"),
+        icon: "menuai:view-dashboard",
+        title: this.menuai.localize("panel.states"),
         default: isDefault,
         show_in_sidebar: isDefault,
         require_admin: false,
@@ -270,10 +270,10 @@ export class HaConfigLovelaceDashboards extends LitElement {
         iconColor: "var(--primary-color)",
       },
     ];
-    if (isComponentLoaded(this.hass, "energy")) {
+    if (isComponentLoaded(this.menuai, "energy")) {
       result.push({
-        icon: "hass:lightning-bolt",
-        title: this.hass.localize(`ui.panel.config.dashboard.energy.main`),
+        icon: "menuai:lightning-bolt",
+        title: this.menuai.localize(`ui.panel.config.dashboard.energy.main`),
         show_in_sidebar: true,
         mode: "storage",
         url_path: "energy",
@@ -287,7 +287,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
     result.push(
       ...dashboards
         .sort((a, b) =>
-          stringCompare(a.title, b.title, this.hass.locale.language)
+          stringCompare(a.title, b.title, this.menuai.locale.language)
         )
         .map((dashboard) => ({
           filename: "",
@@ -299,22 +299,22 @@ export class HaConfigLovelaceDashboards extends LitElement {
   });
 
   protected render() {
-    if (!this.hass || this._dashboards === undefined) {
-      return html` <hass-loading-screen></hass-loading-screen> `;
+    if (!this.menuai || this._dashboards === undefined) {
+      return html` <menuai-loading-screen></menuai-loading-screen> `;
     }
 
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${lovelaceTabs}
         .columns=${this._columns(
           this.narrow,
-          this.hass.language,
+          this.menuai.language,
           this._dashboards,
-          this.hass.localize
+          this.menuai.localize
         )}
         .data=${this._getItems(this._dashboards)}
         .initialSorting=${this._activeSorting}
@@ -332,16 +332,16 @@ export class HaConfigLovelaceDashboards extends LitElement {
         <ha-md-button-menu slot="toolbar-icon">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
           <ha-md-list-item type="link" href="/config/lovelace/resources">
-            ${this.hass.localize("ui.panel.config.lovelace.resources.caption")}
+            ${this.menuai.localize("ui.panel.config.lovelace.resources.caption")}
           </ha-md-list-item>
         </ha-md-button-menu>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.lovelace.dashboards.picker.add_dashboard"
           )}
           extended
@@ -349,7 +349,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -359,7 +359,7 @@ export class HaConfigLovelaceDashboards extends LitElement {
   }
 
   private async _getDashboards() {
-    this._dashboards = await fetchDashboards(this.hass);
+    this._dashboards = await fetchDashboards(this.menuai);
   }
 
   private _navigate(ev: Event) {
@@ -413,22 +413,22 @@ export class HaConfigLovelaceDashboards extends LitElement {
       dashboard,
       urlPath,
       createDashboard: async (values: LovelaceDashboardCreateParams) => {
-        const created = await createDashboard(this.hass!, values);
+        const created = await createDashboard(this.menuai!, values);
         this._dashboards = this._dashboards!.concat(created).sort(
           (res1, res2) =>
             stringCompare(
               res1.url_path,
               res2.url_path,
-              this.hass.locale.language
+              this.menuai.locale.language
             )
         );
         if (defaultConfig) {
-          await saveConfig(this.hass!, created.url_path, defaultConfig);
+          await saveConfig(this.menuai!, created.url_path, defaultConfig);
         }
       },
       updateDashboard: async (values) => {
         const updated = await updateDashboard(
-          this.hass!,
+          this.menuai!,
           dashboard!.id,
           values
         );
@@ -438,21 +438,21 @@ export class HaConfigLovelaceDashboards extends LitElement {
       },
       removeDashboard: async () => {
         const confirm = await showConfirmationDialog(this, {
-          title: this.hass!.localize(
+          title: this.menuai!.localize(
             "ui.panel.config.lovelace.dashboards.confirm_delete_title",
             { dashboard_title: dashboard!.title }
           ),
-          text: this.hass!.localize(
+          text: this.menuai!.localize(
             "ui.panel.config.lovelace.dashboards.confirm_delete_text"
           ),
-          confirmText: this.hass!.localize("ui.common.delete"),
+          confirmText: this.menuai!.localize("ui.common.delete"),
           destructive: true,
         });
         if (!confirm) {
           return false;
         }
         try {
-          await deleteDashboard(this.hass!, dashboard!.id);
+          await deleteDashboard(this.menuai!, dashboard!.id);
           this._dashboards = this._dashboards!.filter(
             (res) => res !== dashboard
           );

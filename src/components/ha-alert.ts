@@ -20,7 +20,7 @@ const ALERT_ICONS = {
 };
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "alert-dismissed-clicked": undefined;
   }
 }

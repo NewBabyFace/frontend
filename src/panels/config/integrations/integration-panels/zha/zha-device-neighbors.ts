@@ -11,7 +11,7 @@ import "../../../../../components/ha-spinner";
 import "../../../../../components/ha-code-editor";
 import type { ZHADevice } from "../../../../../data/zha";
 import { fetchDevices } from "../../../../../data/zha";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 export interface DeviceRowData extends DataTableRowData {
   id: string;
@@ -23,7 +23,7 @@ export interface DeviceRowData extends DataTableRowData {
 
 @customElement("zha-device-neighbors")
 class ZHADeviceNeighbors extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -33,7 +33,7 @@ class ZHADeviceNeighbors extends LitElement {
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
-    if (this.hass && changedProperties.has("device")) {
+    if (this.menuai && changedProperties.has("device")) {
       this._fetchData();
     }
   }
@@ -67,14 +67,14 @@ class ZHADeviceNeighbors extends LitElement {
       narrow
         ? {
             name: {
-              title: this.hass.localize("ui.panel.config.zha.neighbors.name"),
+              title: this.menuai.localize("ui.panel.config.zha.neighbors.name"),
               sortable: true,
               filterable: true,
               direction: "asc",
               flex: 2,
             },
             lqi: {
-              title: this.hass.localize("ui.panel.config.zha.neighbors.lqi"),
+              title: this.menuai.localize("ui.panel.config.zha.neighbors.lqi"),
               sortable: true,
               filterable: true,
               type: "numeric",
@@ -82,27 +82,27 @@ class ZHADeviceNeighbors extends LitElement {
           }
         : {
             name: {
-              title: this.hass.localize("ui.panel.config.zha.neighbors.name"),
+              title: this.menuai.localize("ui.panel.config.zha.neighbors.name"),
               sortable: true,
               filterable: true,
               direction: "asc",
               flex: 2,
             },
             lqi: {
-              title: this.hass.localize("ui.panel.config.zha.neighbors.lqi"),
+              title: this.menuai.localize("ui.panel.config.zha.neighbors.lqi"),
               sortable: true,
               filterable: true,
               type: "numeric",
             },
             relationship: {
-              title: this.hass.localize(
+              title: this.menuai.localize(
                 "ui.panel.config.zha.neighbors.relationship"
               ),
               sortable: true,
               filterable: true,
             },
             depth: {
-              title: this.hass.localize("ui.panel.config.zha.neighbors.depth"),
+              title: this.menuai.localize("ui.panel.config.zha.neighbors.depth"),
               sortable: true,
               filterable: true,
               type: "numeric",
@@ -118,14 +118,14 @@ class ZHADeviceNeighbors extends LitElement {
       ${!this._devices
         ? html`<ha-spinner size="large"></ha-spinner>`
         : html`<ha-data-table
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .columns=${this._columns(this.narrow)}
             .data=${this._deviceNeighbors(this.device, this._devices)}
             auto-height
-            .searchLabel=${this.hass.localize(
+            .searchLabel=${this.menuai.localize(
               "ui.components.data-table.search"
             )}
-            .noDataText=${this.hass.localize(
+            .noDataText=${this.menuai.localize(
               "ui.components.data-table.no-data"
             )}
           ></ha-data-table>`}
@@ -133,8 +133,8 @@ class ZHADeviceNeighbors extends LitElement {
   }
 
   private async _fetchData(): Promise<void> {
-    if (this.device && this.hass) {
-      const devices = await fetchDevices(this.hass!);
+    if (this.device && this.menuai) {
+      const devices = await fetchDevices(this.menuai!);
       this._devices = new Map(
         devices.map((device: ZHADevice) => [device.ieee, device])
       );

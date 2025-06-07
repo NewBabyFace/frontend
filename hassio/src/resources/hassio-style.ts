@@ -1,6 +1,6 @@
 import { css } from "lit";
 
-export const hassioStyle = css`
+export const menuaiioStyle = css`
   .content {
     margin: 8px;
   }

@@ -2,14 +2,14 @@ import type { PropertyValues } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-yaml-editor";
 import "../ha-input-helper-text";
 import type { HaYamlEditor } from "../ha-yaml-editor";
 
 @customElement("ha-selector-object")
 export class HaObjectSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: any;
 
@@ -29,7 +29,7 @@ export class HaObjectSelector extends LitElement {
 
   protected render() {
     return html`<ha-yaml-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .readonly=${this.disabled}
         .label=${this.label}
         .required=${this.required}

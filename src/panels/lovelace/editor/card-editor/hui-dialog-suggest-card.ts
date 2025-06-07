@@ -12,7 +12,7 @@ import type { LovelaceSectionConfig } from "../../../../data/lovelace/config/sec
 import type { LovelaceConfig } from "../../../../data/lovelace/config/types";
 import { isStrategyView } from "../../../../data/lovelace/config/view";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showSaveSuccessToast } from "../../../../util/toast-saved-success";
 import "../../sections/hui-section";
 import { addCards, addSection } from "../config-util";
@@ -24,7 +24,7 @@ import type { SuggestCardDialogParams } from "./show-suggest-card-dialog";
 
 @customElement("hui-dialog-suggest-card")
 export class HuiDialogSuggestCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: SuggestCardDialogParams;
 
@@ -73,7 +73,7 @@ export class HuiDialogSuggestCard extends LitElement {
       return html`
         <div class="element-preview">
           <hui-section
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .config=${this._sectionConfig}
             preview
           ></hui-section>
@@ -86,7 +86,7 @@ export class HuiDialogSuggestCard extends LitElement {
           ${this._cardConfig.map(
             (cardConfig) => html`
               <hui-card
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .config=${cardConfig}
                 preview
               ></hui-card>
@@ -107,7 +107,7 @@ export class HuiDialogSuggestCard extends LitElement {
         open
         scrimClickAction
         @closed=${this.closeDialog}
-        .heading=${this.hass!.localize(
+        .heading=${this.menuai!.localize(
           "ui.panel.lovelace.editor.suggest_card.header"
         )}
       >
@@ -117,7 +117,7 @@ export class HuiDialogSuggestCard extends LitElement {
             ? html`
                 <div class="editor">
                   <ha-yaml-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${this._cardConfig}
                   ></ha-yaml-editor>
                 </div>
@@ -130,15 +130,15 @@ export class HuiDialogSuggestCard extends LitElement {
           dialogInitialFocus
         >
           ${this._params.yaml
-            ? this.hass!.localize("ui.common.close")
-            : this.hass!.localize("ui.common.cancel")}
+            ? this.menuai!.localize("ui.common.close")
+            : this.menuai!.localize("ui.common.cancel")}
         </mwc-button>
         ${!this._params.yaml
           ? html`
               ${!(this._sectionConfig && this._viewSupportsSection)
                 ? html`
                     <mwc-button slot="primaryAction" @click=${this._pickCard}>
-                      ${this.hass!.localize(
+                      ${this.menuai!.localize(
                         "ui.panel.lovelace.editor.suggest_card.create_own"
                       )}
                     </mwc-button>
@@ -153,7 +153,7 @@ export class HuiDialogSuggestCard extends LitElement {
                   ? html`
                       <ha-spinner aria-label="Saving" size="small"></ha-spinner>
                     `
-                  : this.hass!.localize(
+                  : this.menuai!.localize(
                       "ui.panel.lovelace.editor.suggest_card.add"
                     )}
               </mwc-button>
@@ -265,7 +265,7 @@ export class HuiDialogSuggestCard extends LitElement {
     );
     await this._params!.saveConfig(newConfig);
     this._saving = false;
-    showSaveSuccessToast(this, this.hass);
+    showSaveSuccessToast(this, this.menuai);
     this.closeDialog();
   }
 }

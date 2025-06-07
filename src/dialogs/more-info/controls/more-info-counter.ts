@@ -1,18 +1,18 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { isUnavailableState } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-counter")
 class MoreInfoCounter extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -26,7 +26,7 @@ class MoreInfoCounter extends LitElement {
           .disabled=${disabled ||
           Number(this.stateObj.state) === this.stateObj.attributes.maximum}
         >
-          ${this.hass!.localize("ui.card.counter.actions.increment")}
+          ${this.menuai!.localize("ui.card.counter.actions.increment")}
         </mwc-button>
         <mwc-button
           .action=${"decrement"}
@@ -34,14 +34,14 @@ class MoreInfoCounter extends LitElement {
           .disabled=${disabled ||
           Number(this.stateObj.state) === this.stateObj.attributes.minimum}
         >
-          ${this.hass!.localize("ui.card.counter.actions.decrement")}
+          ${this.menuai!.localize("ui.card.counter.actions.decrement")}
         </mwc-button>
         <mwc-button
           .action=${"reset"}
           @click=${this._handleActionClick}
           .disabled=${disabled}
         >
-          ${this.hass!.localize("ui.card.counter.actions.reset")}
+          ${this.menuai!.localize("ui.card.counter.actions.reset")}
         </mwc-button>
       </div>
     `;
@@ -49,7 +49,7 @@ class MoreInfoCounter extends LitElement {
 
   private _handleActionClick(e: MouseEvent): void {
     const action = (e.currentTarget as any).action;
-    this.hass.callService("counter", action, {
+    this.menuai.callService("counter", action, {
       entity_id: this.stateObj!.entity_id,
     });
   }

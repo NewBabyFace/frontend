@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import memoizeOne from "memoize-one";
 import type { FrontendLocaleData } from "../../data/translation";
 import { formatDateNumeric } from "./format_date";
@@ -10,7 +10,7 @@ import { useAmPm } from "./use_am_pm";
 export const formatDateTime = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateTimeMem(locale, config.time_zone).format(dateObj);
 
 const formatDateTimeMem = memoizeOne(
@@ -44,7 +44,7 @@ const formatDateTimeWithBrowserDefaultsMem = memoizeOne(
 export const formatShortDateTimeWithYear = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatShortDateTimeWithYearMem(locale, config.time_zone).format(dateObj);
 
 const formatShortDateTimeWithYearMem = memoizeOne(
@@ -64,7 +64,7 @@ const formatShortDateTimeWithYearMem = memoizeOne(
 export const formatShortDateTime = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatShortDateTimeMem(locale, config.time_zone).format(dateObj);
 
 const formatShortDateTimeMem = memoizeOne(
@@ -82,7 +82,7 @@ const formatShortDateTimeMem = memoizeOne(
 export const formatShortDateTimeWithConditionalYear = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => {
   const now = new Date();
   if (now.getFullYear() === dateObj.getFullYear()) {
@@ -95,7 +95,7 @@ export const formatShortDateTimeWithConditionalYear = (
 export const formatDateTimeWithSeconds = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateTimeWithSecondsMem(locale, config.time_zone).format(dateObj);
 
 const formatDateTimeWithSecondsMem = memoizeOne(
@@ -116,7 +116,7 @@ const formatDateTimeWithSecondsMem = memoizeOne(
 export const formatDateTimeNumeric = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) =>
   `${formatDateNumeric(dateObj, locale, config)}, ${formatTime(
     dateObj,

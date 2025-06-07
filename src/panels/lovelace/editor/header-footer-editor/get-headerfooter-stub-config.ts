@@ -1,9 +1,9 @@
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { getHeaderFooterElementClass } from "../../create-element/create-header-footer-element";
 import type { LovelaceHeaderFooterConfig } from "../../header-footer/types";
 
 export const getHeaderFooterStubConfig = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   type: LovelaceHeaderFooterConfig["type"],
   entities: string[],
   entitiesFallback: string[]
@@ -14,7 +14,7 @@ export const getHeaderFooterStubConfig = async (
 
   if (elClass && elClass.getStubConfig) {
     const classStubConfig = await elClass.getStubConfig(
-      hass,
+      menuai,
       entities,
       entitiesFallback
     );

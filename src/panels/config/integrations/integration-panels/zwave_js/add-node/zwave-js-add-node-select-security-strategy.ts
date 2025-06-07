@@ -3,7 +3,7 @@ import { css, html, LitElement } from "lit";
 import memoizeOne from "memoize-one";
 
 import { fireEvent } from "../../../../../../common/dom/fire_event";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { InclusionStrategy } from "../../../../../../data/zwave_js";
 import type { LocalizeFunc } from "../../../../../../common/translations/localize";
 import type { HaFormSchema } from "../../../../../../components/ha-form/types";
@@ -12,7 +12,7 @@ import "../../../../../../components/ha-form/ha-form";
 
 @customElement("zwave-js-add-node-select-security-strategy")
 export class ZWaveJsAddNodeSelectMethod extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() public _inclusionStrategy?: InclusionStrategy;
 
@@ -61,7 +61,7 @@ export class ZWaveJsAddNodeSelectMethod extends LitElement {
   render() {
     return html`
       <ha-form
-        .schema=${this._getSchema(this.hass.localize)}
+        .schema=${this._getSchema(this.menuai.localize)}
         .data=${{ strategy: this._inclusionStrategy?.toString() }}
         @value-changed=${this._selectStrategy}
         .computeLabel=${this._computeLabel}
@@ -71,7 +71,7 @@ export class ZWaveJsAddNodeSelectMethod extends LitElement {
   }
 
   private _computeLabel = () =>
-    this.hass.localize(
+    this.menuai.localize(
       "ui.panel.config.zwave_js.add_node.select_strategy.title"
     );
 
@@ -99,7 +99,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "zwave-js-add-node-select-security-strategy": ZWaveJsAddNodeSelectMethod;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "z-wave-strategy-selected": {
       strategy: InclusionStrategy;
     };

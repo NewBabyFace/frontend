@@ -9,14 +9,14 @@ import { navigate } from "../../../../../../common/navigate";
 import type { DeviceRegistryEntry } from "../../../../../../data/device_registry";
 import { fetchZHADevice } from "../../../../../../data/zha";
 import { showConfirmationDialog } from "../../../../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { showZHAManageZigbeeDeviceDialog } from "../../../../integrations/integration-panels/zha/show-dialog-zha-manage-zigbee-device";
 import { showZHAReconfigureDeviceDialog } from "../../../../integrations/integration-panels/zha/show-dialog-zha-reconfigure-device";
 import type { DeviceAction } from "../../../ha-config-device-page";
 
 export const getZHADeviceActions = async (
   el: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   device: DeviceRegistryEntry
 ): Promise<DeviceAction[]> => {
   const zigbeeConnection = device.connections.find(
@@ -27,7 +27,7 @@ export const getZHADeviceActions = async (
     return [];
   }
 
-  const zhaDevice = await fetchZHADevice(hass, zigbeeConnection[1]);
+  const zhaDevice = await fetchZHADevice(menuai, zigbeeConnection[1]);
 
   if (!zhaDevice) {
     return [];
@@ -37,7 +37,7 @@ export const getZHADeviceActions = async (
 
   if (!zhaDevice.active_coordinator) {
     actions.push({
-      label: hass.localize("ui.dialogs.zha_device_info.buttons.reconfigure"),
+      label: menuai.localize("ui.dialogs.zha_device_info.buttons.reconfigure"),
       icon: mdiCogRefresh,
       action: () => showZHAReconfigureDeviceDialog(el, { device: zhaDevice }),
     });
@@ -51,7 +51,7 @@ export const getZHADeviceActions = async (
     actions.push(
       ...[
         {
-          label: hass.localize("ui.dialogs.zha_device_info.buttons.add"),
+          label: menuai.localize("ui.dialogs.zha_device_info.buttons.add"),
           icon: mdiPlus,
           action: () => navigate(`/config/zha/add/${zhaDevice!.ieee}`),
         },
@@ -62,13 +62,13 @@ export const getZHADeviceActions = async (
   actions.push(
     ...[
       {
-        label: hass.localize("ui.dialogs.zha_device_info.buttons.manage"),
+        label: menuai.localize("ui.dialogs.zha_device_info.buttons.manage"),
         icon: mdiGroup,
         action: () =>
           showZHAManageZigbeeDeviceDialog(el, { device: zhaDevice }),
       },
       {
-        label: hass.localize("ui.dialogs.zha_device_info.buttons.view_network"),
+        label: menuai.localize("ui.dialogs.zha_device_info.buttons.view_network"),
         icon: mdiFamilyTree,
         action: () =>
           navigate(`/config/zha/visualization/${zhaDevice!.device_reg_id}`),
@@ -78,19 +78,19 @@ export const getZHADeviceActions = async (
 
   if (!zhaDevice.active_coordinator) {
     actions.push({
-      label: hass.localize("ui.dialogs.zha_device_info.buttons.remove"),
+      label: menuai.localize("ui.dialogs.zha_device_info.buttons.remove"),
       icon: mdiDelete,
       classes: "warning",
       action: async () => {
         const confirmed = await showConfirmationDialog(el, {
-          title: hass.localize(
+          title: menuai.localize(
             "ui.dialogs.zha_device_info.confirmations.remove_title"
           ),
-          text: hass.localize(
+          text: menuai.localize(
             "ui.dialogs.zha_device_info.confirmations.remove_text"
           ),
-          confirmText: hass.localize("ui.common.remove"),
-          dismissText: hass.localize("ui.common.cancel"),
+          confirmText: menuai.localize("ui.common.remove"),
+          dismissText: menuai.localize("ui.common.cancel"),
           destructive: true,
         });
 
@@ -98,7 +98,7 @@ export const getZHADeviceActions = async (
           return;
         }
 
-        await hass.callService("zha", "remove", {
+        await menuai.callService("zha", "remove", {
           ieee: zhaDevice.ieee,
         });
 

@@ -44,14 +44,14 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showVoiceCommandDialog } from "../../../dialogs/voice-command-dialog/show-ha-voice-command-dialog";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { documentationUrl } from "../../../util/documentation-url";
 import { showVoiceAssistantPipelineDetailDialog } from "./show-dialog-voice-assistant-pipeline-detail";
 
 @customElement("assist-pref")
 export class AssistPref extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public exposedEntities?: Record<
     string,
@@ -70,7 +70,7 @@ export class AssistPref extends LitElement {
 
   protected willUpdate() {
     if (!this.hasUpdated) {
-      getExposeNewEntities(this.hass, "conversation").then((value) => {
+      getExposeNewEntities(this.menuai, "conversation").then((value) => {
         this._exposeNew = value.expose_new;
       });
     }
@@ -79,14 +79,14 @@ export class AssistPref extends LitElement {
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
 
-    listAssistPipelines(this.hass).then((pipelines) => {
+    listAssistPipelines(this.menuai).then((pipelines) => {
       this._pipelines = pipelines.pipelines;
       this._preferred = pipelines.preferred_pipeline;
     });
-    this._pipelineEntitiesCount = Object.values(this.hass.entities).filter(
+    this._pipelineEntitiesCount = Object.values(this.menuai.entities).filter(
       (entity) =>
         computeDomain(entity.entity_id) === "assist_satellite" &&
-        this.hass.states[entity.entity_id].state !== "unavailable"
+        this.menuai.states[entity.entity_id].state !== "unavailable"
     ).length;
   }
 
@@ -94,7 +94,7 @@ export class AssistPref extends LitElement {
     (exposedEntities: Record<string, ExposeEntitySettings>) =>
       Object.entries(exposedEntities).filter(
         ([entityId, expose]) =>
-          expose.conversation && entityId in this.hass.states
+          expose.conversation && entityId in this.menuai.states
       ).length
   );
 
@@ -107,7 +107,7 @@ export class AssistPref extends LitElement {
             src=${brandsUrl({
               domain: "assist_pipeline",
               type: "icon",
-              darkOptimized: this.hass.themes?.darkMode,
+              darkOptimized: this.menuai.themes?.darkMode,
             })}
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
@@ -115,13 +115,13 @@ export class AssistPref extends LitElement {
         </h1>
         <div class="header-actions">
           <a
-            href=${documentationUrl(this.hass, "/docs/assist/")}
+            href=${documentationUrl(this.menuai, "/docs/assist/")}
             target="_blank"
             rel="noreferrer noopener"
             class="icon-link"
           >
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.pipeline.link_learn_how_it_works"
               )}
               .path=${mdiHelpCircle}
@@ -145,12 +145,12 @@ export class AssistPref extends LitElement {
                     : ""}
                 </span>
                 <span slot="secondary">
-                  ${formatLanguageCode(pipeline.language, this.hass.locale)}
+                  ${formatLanguageCode(pipeline.language, this.menuai.locale)}
                 </span>
                 <ha-button-menu fixed slot="meta" @click=${stopPropagation}>
                   <ha-icon-button
                     slot="trigger"
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.menu.open"
                     )}
                     .path=${mdiDotsVertical}
@@ -160,7 +160,7 @@ export class AssistPref extends LitElement {
                     .id=${pipeline.id}
                     @request-selected=${this._talkWithPipeline}
                   >
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.voice_assistants.assistants.pipeline.start_conversation"
                     )}
                     <ha-svg-icon
@@ -174,7 +174,7 @@ export class AssistPref extends LitElement {
                     .id=${pipeline.id}
                     @request-selected=${this._setPreferredPipeline}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.voice_assistants.assistants.pipeline.detail.set_as_preferred"
                     )}
                     <ha-svg-icon slot="graphic" .path=${mdiStar}></ha-svg-icon>
@@ -184,7 +184,7 @@ export class AssistPref extends LitElement {
                     .id=${pipeline.id}
                     @request-selected=${this._debugPipeline}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.voice_assistants.assistants.pipeline.detail.debug"
                     )}
                     <ha-svg-icon slot="graphic" .path=${mdiBug}></ha-svg-icon>
@@ -195,7 +195,7 @@ export class AssistPref extends LitElement {
                     .id=${pipeline.id}
                     @request-selected=${this._deletePipeline}
                   >
-                    ${this.hass.localize("ui.common.delete")}
+                    ${this.menuai.localize("ui.common.delete")}
                     <ha-svg-icon
                       slot="graphic"
                       .path=${mdiTrashCan}
@@ -207,19 +207,19 @@ export class AssistPref extends LitElement {
           )}
         </ha-list>
         <ha-button @click=${this._addPipeline} class="add" outlined>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.assistants.pipeline.add_assistant"
           )}
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-button>
         <ha-settings-row>
           <span slot="heading">
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.voice_assistants.expose.expose_new_entities"
             )}
           </span>
           <span slot="description">
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.voice_assistants.expose.expose_new_entities_info"
             )}
           </span>
@@ -234,7 +234,7 @@ export class AssistPref extends LitElement {
             href="/config/voice-assistants/expose?assistants=conversation&historyBack"
           >
             <ha-button>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.pipeline.exposed_entities",
                 {
                   number: this.exposedEntities
@@ -248,7 +248,7 @@ export class AssistPref extends LitElement {
             ? html`
                 <a href="/config/voice-assistants/assist/devices">
                   <ha-button>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.voice_assistants.assistants.pipeline.assist_devices",
                       { number: this._pipelineEntitiesCount }
                     )}
@@ -267,7 +267,7 @@ export class AssistPref extends LitElement {
       return;
     }
     try {
-      await setExposeNewEntities(this.hass, "conversation", toggle.checked);
+      await setExposeNewEntities(this.menuai, "conversation", toggle.checked);
     } catch (_err: any) {
       toggle.checked = !toggle.checked;
     }
@@ -275,12 +275,12 @@ export class AssistPref extends LitElement {
 
   private _talkWithPipeline(ev) {
     const id = ev.currentTarget.id as string;
-    showVoiceCommandDialog(this, this.hass, { pipeline_id: id });
+    showVoiceCommandDialog(this, this.menuai, { pipeline_id: id });
   }
 
   private async _setPreferredPipeline(ev) {
     const id = ev.currentTarget.id as string;
-    await setAssistPipelinePreferred(this.hass!, id);
+    await setAssistPipelinePreferred(this.menuai!, id);
     this._preferred = id;
   }
 
@@ -293,7 +293,7 @@ export class AssistPref extends LitElement {
     const id = ev.currentTarget.id as string;
     if (this._preferred === id) {
       showAlertDialog(this, {
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.voice_assistants.assistants.pipeline.delete.error_preferred"
         ),
       });
@@ -302,22 +302,22 @@ export class AssistPref extends LitElement {
     const pipeline = this._pipelines.find((res) => res.id === id);
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.config.voice_assistants.assistants.pipeline.delete.confirm_title",
           { name: pipeline!.name }
         ),
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.voice_assistants.assistants.pipeline.delete.confirm_text",
           { name: pipeline!.name }
         ),
-        confirmText: this.hass!.localize("ui.common.delete"),
+        confirmText: this.menuai!.localize("ui.common.delete"),
         destructive: true,
       }))
     ) {
       return;
     }
 
-    await deleteAssistPipeline(this.hass!, pipeline!.id);
+    await deleteAssistPipeline(this.menuai!, pipeline!.id);
     this._pipelines = this._pipelines!.filter((res) => res !== pipeline);
   }
 
@@ -338,12 +338,12 @@ export class AssistPref extends LitElement {
         this.cloudStatus?.logged_in && this.cloudStatus.active_subscription,
       pipeline,
       createPipeline: async (values) => {
-        const created = await createAssistPipeline(this.hass!, values);
+        const created = await createAssistPipeline(this.menuai!, values);
         this._pipelines = this._pipelines!.concat(created);
       },
       updatePipeline: async (values) => {
         const updated = await updateAssistPipeline(
-          this.hass!,
+          this.menuai!,
           pipeline!.id,
           values
         );

@@ -9,7 +9,7 @@ import "../../../../../components/ha-select";
 import type { Cluster, ZHADevice } from "../../../../../data/zha";
 import { fetchClustersForZhaDevice } from "../../../../../data/zha";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { computeClusterKey } from "./functions";
 import "./zha-cluster-attributes";
 import "./zha-cluster-commands";
@@ -17,7 +17,7 @@ import "../../../../../components/sl-tab-group";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "zha-cluster-selected": {
       cluster?: Cluster;
     };
@@ -28,7 +28,7 @@ const tabs = ["attributes", "commands"] as const;
 
 @customElement("zha-manage-clusters")
 export class ZHAManageClusters extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -72,7 +72,7 @@ export class ZHAManageClusters extends LitElement {
       <ha-card class="content">
         <div class="node-picker">
           <ha-select
-            .label=${this.hass!.localize("ui.panel.config.zha.common.clusters")}
+            .label=${this.menuai!.localize("ui.panel.config.zha.common.clusters")}
             class="menu"
             .value=${String(this._selectedClusterIndex)}
             @selected=${this._selectedClusterChanged}
@@ -98,7 +98,7 @@ export class ZHAManageClusters extends LitElement {
                       slot="nav"
                       .panel=${tab}
                       .active=${this._currTab === tab}
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         `ui.panel.config.zha.clusters.tabs.${tab}`
                       )}</sl-tab
                     >
@@ -111,14 +111,14 @@ export class ZHAManageClusters extends LitElement {
                   this._currTab === "attributes"
                     ? html`
                         <zha-cluster-attributes
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .device=${this.device}
                           .selectedCluster=${this._selectedCluster}
                         ></zha-cluster-attributes>
                       `
                     : html`
                         <zha-cluster-commands
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .device=${this.device}
                           .selectedCluster=${this._selectedCluster}
                         ></zha-cluster-commands>
@@ -132,9 +132,9 @@ export class ZHAManageClusters extends LitElement {
   }
 
   private async _fetchClustersForZhaDevice(): Promise<void> {
-    if (this.hass) {
+    if (this.menuai) {
       this._clusters = await fetchClustersForZhaDevice(
-        this.hass,
+        this.menuai,
         this.device!.ieee
       );
       this._clusters.sort((a, b) => a.name.localeCompare(b.name));

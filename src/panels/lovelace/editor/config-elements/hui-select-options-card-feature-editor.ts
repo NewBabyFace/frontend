@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -9,7 +9,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   LovelaceCardFeatureContext,
   SelectOptionsCardFeatureConfig,
@@ -25,7 +25,7 @@ export class HuiSelectOptionsCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -38,7 +38,7 @@ export class HuiSelectOptionsCardFeatureEditor
   private _schema = memoizeOne(
     (
       formatEntityState: FormatEntityStateFunc,
-      stateObj: HassEntity | undefined,
+      stateObj: menuaiEntity | undefined,
       customizeOptions: boolean
     ) =>
       [
@@ -70,12 +70,12 @@ export class HuiSelectOptionsCardFeatureEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const stateObj = this.context?.entity_id
-      ? this.hass.states[this.context?.entity_id]
+      ? this.menuai.states[this.context?.entity_id]
       : undefined;
 
     const data: SelectOptionsCardFeatureData = {
@@ -84,14 +84,14 @@ export class HuiSelectOptionsCardFeatureEditor
     };
 
     const schema = this._schema(
-      this.hass.formatEntityState,
+      this.menuai.formatEntityState,
       stateObj,
       data.customize_options
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -105,7 +105,7 @@ export class HuiSelectOptionsCardFeatureEditor
       .value as SelectOptionsCardFeatureData;
 
     const stateObj = this.context?.entity_id
-      ? this.hass!.states[this.context?.entity_id]
+      ? this.menuai!.states[this.context?.entity_id]
       : undefined;
 
     if (customize_options && !config.options) {
@@ -124,7 +124,7 @@ export class HuiSelectOptionsCardFeatureEditor
     switch (schema.name) {
       case "options":
       case "customize_options":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.features.types.select-options.${schema.name}`
         );
       default:

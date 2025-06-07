@@ -4,7 +4,7 @@ import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { computeRTLDirection } from "../../../../common/util/compute_rtl";
 import "../../../../components/ha-spinner";
@@ -19,9 +19,9 @@ import {
   stripCustomPrefix,
 } from "../../../../data/lovelace_custom_cards";
 import { showConfirmationDialog } from "../../../../dialogs/generic/show-dialog-box";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 import { showSaveSuccessToast } from "../../../../util/toast-saved-success";
 import "../../cards/hui-card";
@@ -35,21 +35,21 @@ import type { EditCardDialogParams } from "./show-edit-card-dialog";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "reload-lovelace": undefined;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "reload-lovelace": HASSDomEvent<undefined>;
+    "reload-lovelace": menuaiDomEvent<undefined>;
   }
 }
 
 @customElement("hui-dialog-edit-card")
 export class HuiDialogEditCard
   extends LitElement
-  implements HassDialog<EditCardDialogParams>
+  implements menuaiDialog<EditCardDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public large = false;
 
@@ -95,7 +95,7 @@ export class HuiDialogEditCard
   public closeDialog(): boolean {
     this._isEscapeEnabled = true;
     window.removeEventListener("dialog-closed", this._enableEscapeKeyClose);
-    window.removeEventListener("hass-more-info", this._disableEscapeKeyClose);
+    window.removeEventListener("menuai-more-info", this._disableEscapeKeyClose);
     if (this._dirty) {
       this._confirmCancel();
       return false;
@@ -118,7 +118,7 @@ export class HuiDialogEditCard
 
     if (oldConfig?.type !== this._cardConfig!.type) {
       this._documentationURL = getCardDocumentationURL(
-        this.hass,
+        this.menuai,
         this._cardConfig!.type
       );
     }
@@ -152,16 +152,16 @@ export class HuiDialogEditCard
           cardName = cardName.substring(0, cardName.length - 5);
         }
       } else {
-        cardName = this.hass!.localize(
+        cardName = this.menuai!.localize(
           `ui.panel.lovelace.editor.card.${this._cardConfig.type}.name`
         );
       }
-      heading = this.hass!.localize(
+      heading = this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_card.typed_header",
         { type: cardName }
       );
     } else {
-      heading = this.hass!.localize(
+      heading = this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_card.header"
       );
     }
@@ -180,7 +180,7 @@ export class HuiDialogEditCard
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" @click=${this._enlarge}>${heading}</span>
@@ -189,10 +189,10 @@ export class HuiDialogEditCard
                 <a
                   slot="actionItems"
                   href=${this._documentationURL}
-                  title=${this.hass!.localize("ui.panel.lovelace.menu.help")}
+                  title=${this.menuai!.localize("ui.panel.lovelace.menu.help")}
                   target="_blank"
                   rel="noreferrer"
-                  dir=${computeRTLDirection(this.hass)}
+                  dir=${computeRTLDirection(this.menuai)}
                 >
                   <ha-icon-button .path=${mdiHelpCircle}></ha-icon-button>
                 </a>
@@ -204,7 +204,7 @@ export class HuiDialogEditCard
             <hui-card-element-editor
               .showVisibilityTab=${this._cardConfig.type !== "conditional"}
               .sectionConfig=${this._sectionConfig}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .lovelace=${this._params.lovelaceConfig}
               .value=${this._cardConfig}
               @config-changed=${this._handleConfigChanged}
@@ -217,7 +217,7 @@ export class HuiDialogEditCard
             ${this._sectionConfig
               ? html`
                   <hui-section
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .config=${this._cardConfigInSection(this._cardConfig)}
                     preview
                     class=${this._error ? "blur" : ""}
@@ -225,7 +225,7 @@ export class HuiDialogEditCard
                 `
               : html`
                   <hui-card
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .config=${this._cardConfig}
                     preview
                     class=${this._error ? "blur" : ""}
@@ -244,7 +244,7 @@ export class HuiDialogEditCard
                 .disabled=${!this._guiModeAvailable}
                 class="gui-mode-button"
               >
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   !this._cardEditorEl || this._GUImode
                     ? "ui.panel.lovelace.editor.edit_card.show_code_editor"
                     : "ui.panel.lovelace.editor.edit_card.show_visual_editor"
@@ -254,7 +254,7 @@ export class HuiDialogEditCard
           : ""}
         <div slot="primaryAction" @click=${this._save}>
           <mwc-button @click=${this._cancel} dialogInitialFocus>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </mwc-button>
           ${this._cardConfig !== undefined && this._dirty
             ? html`
@@ -269,7 +269,7 @@ export class HuiDialogEditCard
                           size="small"
                         ></ha-spinner>
                       `
-                    : this.hass!.localize("ui.common.save")}
+                    : this.menuai!.localize("ui.common.save")}
                 </mwc-button>
               `
             : ``}
@@ -286,14 +286,14 @@ export class HuiDialogEditCard
     ev.stopPropagation();
   }
 
-  private _handleConfigChanged(ev: HASSDomEvent<ConfigChangedEvent>) {
+  private _handleConfigChanged(ev: menuaiDomEvent<ConfigChangedEvent>) {
     this._cardConfig = deepFreeze(ev.detail.config);
     this._error = ev.detail.error;
     this._guiModeAvailable = ev.detail.guiModeAvailable;
     this._dirty = true;
   }
 
-  private _handleGUIModeChanged(ev: HASSDomEvent<GUIModeChangedEvent>): void {
+  private _handleGUIModeChanged(ev: menuaiDomEvent<GUIModeChangedEvent>): void {
     ev.stopPropagation();
     this._GUImode = ev.detail.guiMode;
     this._guiModeAvailable = ev.detail.guiModeAvailable;
@@ -305,7 +305,7 @@ export class HuiDialogEditCard
 
   private _opened() {
     window.addEventListener("dialog-closed", this._enableEscapeKeyClose);
-    window.addEventListener("hass-more-info", this._disableEscapeKeyClose);
+    window.addEventListener("menuai-more-info", this._disableEscapeKeyClose);
     this._cardEditorEl?.focusYamlEditor();
   }
 
@@ -340,14 +340,14 @@ export class HuiDialogEditCard
       setTimeout(resolve, 0);
     });
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_card.unsaved_changes"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_card.confirm_cancel"
       ),
-      dismissText: this.hass!.localize("ui.common.stay"),
-      confirmText: this.hass!.localize("ui.common.leave"),
+      dismissText: this.menuai!.localize("ui.common.stay"),
+      confirmText: this.menuai!.localize("ui.common.leave"),
     });
     if (confirm) {
       this._cancel();
@@ -375,7 +375,7 @@ export class HuiDialogEditCard
       await this._params!.saveCardConfig(this._cardConfig!);
       this._saving = false;
       this._dirty = false;
-      showSaveSuccessToast(this, this.hass);
+      showSaveSuccessToast(this, this.menuai);
       this.closeDialog();
     } catch (err: any) {
       showToast(this, {

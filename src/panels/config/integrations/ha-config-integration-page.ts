@@ -97,11 +97,11 @@ import {
   showConfirmationDialog,
   showPromptDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-error-screen";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-error-screen";
+import "../../../layouts/menuai-subpage";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { documentationUrl } from "../../../util/documentation-url";
 import { fileDownload } from "../../../util/file_download";
@@ -111,12 +111,12 @@ import { QUALITY_SCALE_MAP } from "../../../data/integration_quality_scale";
 import { showSubConfigFlowDialog } from "../../../dialogs/config-flow/show-dialog-sub-config-flow";
 
 export const renderConfigEntryError = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry: ConfigEntry
 ): TemplateResult => {
   if (entry.reason) {
     if (entry.error_reason_translation_key) {
-      const lokalisePromExc = hass
+      const lokalisePromExc = menuai
         .loadBackendTranslation("exceptions", entry.domain)
         .then(
           (localize) =>
@@ -127,7 +127,7 @@ export const renderConfigEntryError = (
         );
       return html`${until(lokalisePromExc)}`;
     }
-    const lokalisePromError = hass
+    const lokalisePromError = menuai
       .loadBackendTranslation("config", entry.domain)
       .then(
         (localize) =>
@@ -138,13 +138,13 @@ export const renderConfigEntryError = (
   }
   return html`
     <br />
-    ${hass.localize("ui.panel.config.integrations.config_entry.check_the_logs")}
+    ${menuai.localize("ui.panel.config.integrations.config_entry.check_the_logs")}
   `;
 };
 
 @customElement("ha-config-integration-page")
 class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public domain!: string;
 
@@ -178,7 +178,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   @state() private _subEntries: Record<string, SubEntry[]> = {};
 
   private _configPanel = memoizeOne(
-    (domain: string, panels: HomeAssistant["panels"]): string | undefined =>
+    (domain: string, panels: menuai["panels"]): string | undefined =>
       Object.values(panels).find(
         (panel) => panel.config_panel_domain === domain
       )?.url_path || integrationsWithPanel[domain]
@@ -201,12 +201,12 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         : []
   );
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeEntityRegistry(this.hass.connection!, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection!, (entities) => {
         this._entities = entities;
       }),
-      subscribeLogInfo(this.hass.connection, (log_infos) => {
+      subscribeLogInfo(this.menuai.connection, (log_infos) => {
         for (const log_info of log_infos) {
           if (log_info.domain === this.domain) {
             this._logInfo = log_info;
@@ -218,8 +218,8 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
   protected willUpdate(changedProperties: PropertyValues): void {
     if (changedProperties.has("domain")) {
-      this.hass.loadBackendTranslation("title", [this.domain]);
-      this.hass.loadBackendTranslation("config_subentries", [this.domain]);
+      this.menuai.loadBackendTranslation("title", [this.domain]);
+      this.menuai.loadBackendTranslation("config_subentries", [this.domain]);
       this._extraConfigEntries = undefined;
       this._fetchManifest();
       this._fetchDiagnostics();
@@ -234,7 +234,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   }
 
   private async _fetchEntitySources() {
-    const entitySources = await fetchEntitySourcesWithCache(this.hass);
+    const entitySources = await fetchEntitySourcesWithCache(this.menuai);
 
     const entitiesByDomain = {};
 
@@ -281,7 +281,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         caseInsensitiveStringCompare(
           a.localized_title || "zzz",
           b.localized_title || "zzz",
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
 
@@ -305,11 +305,11 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         return caseInsensitiveStringCompare(
           a.title,
           b.title,
-          this.hass.locale.language
+          this.menuai.locale.language
         );
       });
 
-    const devices = this._getDevices(configEntries, this.hass.devices);
+    const devices = this._getDevices(configEntries, this.menuai.devices);
     const entities = this._getEntities(configEntries, this._entities);
     let numberOfEntities = entities.length;
 
@@ -331,10 +331,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     const services = !devices.some((device) => device.entry_type !== "service");
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${domainToName(this.hass.localize, this.domain)}
+        .header=${domainToName(this.menuai.localize, this.domain)}
       >
         <div class="container">
           <div class="column small">
@@ -342,11 +342,11 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
               <div class="card-content">
                 <div class="logo-container">
                   <img
-                    alt=${domainToName(this.hass.localize, this.domain)}
+                    alt=${domainToName(this.menuai.localize, this.domain)}
                     src=${brandsUrl({
                       domain: this.domain,
                       type: "logo",
-                      darkOptimized: this.hass.themes?.darkMode,
+                      darkOptimized: this.menuai.themes?.darkMode,
                     })}
                     crossorigin="anonymous"
                     referrerpolicy="no-referrer"
@@ -366,13 +366,13 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                       <ha-svg-icon path=${mdiPackageVariant}></ha-svg-icon>
                       <a
                         href=${documentationUrl(
-                          this.hass,
+                          this.menuai,
                           `/docs/quality_scale/#-custom`
                         )}
                         rel="noopener noreferrer"
                         target="_blank"
                       >
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           this._manifest.overwrites_built_in
                             ? "ui.panel.config.integrations.config_entry.custom_overwrites_core"
                             : "ui.panel.config.integrations.config_entry.custom_integration"
@@ -383,7 +383,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                 ${this._manifest?.iot_class?.startsWith("cloud_")
                   ? html`<div class="integration-info">
                       <ha-svg-icon .path=${mdiWeb}></ha-svg-icon>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.integrations.config_entry.depends_on_cloud"
                       )}
                     </div>`
@@ -391,12 +391,12 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                 ${normalEntries.length === 0 &&
                 this._manifest &&
                 !this._manifest.config_flow &&
-                this.hass.config.components.find(
+                this.menuai.config.components.find(
                   (comp) => comp.split(".")[0] === this.domain
                 )
                   ? html`<div class="integration-info info">
                       <ha-svg-icon path=${mdiFileCodeOutline}></ha-svg-icon
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.integrations.config_entry.no_config_flow"
                       )}
                     </div>`
@@ -412,7 +412,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                   ? html`
                       <a
                         href=${documentationUrl(
-                          this.hass,
+                          this.menuai,
                           `/docs/quality_scale/#-${this._manifest.quality_scale}`
                         )}
                         rel="noopener noreferrer"
@@ -426,7 +426,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                               this._manifest.quality_scale
                             ].icon}
                           ></ha-svg-icon>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             QUALITY_SCALE_MAP[this._manifest.quality_scale]
                               .translationKey
                           )}
@@ -451,7 +451,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                             : mdiDevices}
                           slot="graphic"
                         ></ha-svg-icon>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           `ui.panel.config.integrations.config_entry.${
                             services ? "services" : "devices"
                           }`,
@@ -470,7 +470,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                           .path=${mdiShapeOutline}
                           slot="graphic"
                         ></ha-svg-icon>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           `ui.panel.config.integrations.config_entry.entities`,
                           { count: numberOfEntities }
                         )}
@@ -482,7 +482,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                   ? html`<a
                       href=${this._manifest.is_built_in
                         ? documentationUrl(
-                            this.hass,
+                            this.menuai,
                             `/integrations/${this._manifest.domain}`
                           )
                         : this._manifest.documentation}
@@ -490,7 +490,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                       target="_blank"
                     >
                       <ha-list-item graphic="icon" hasMeta>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.integrations.config_entry.documentation"
                         )}
                         <ha-svg-icon
@@ -512,7 +512,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                       target="_blank"
                     >
                       <ha-list-item graphic="icon" hasMeta>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.integrations.config_entry.known_issues"
                         )}
                         <ha-svg-icon
@@ -535,10 +535,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                       graphic="icon"
                     >
                       ${this._logInfo.level === LogSeverity.DEBUG
-                        ? this.hass.localize(
+                        ? this.menuai.localize(
                             "ui.panel.config.integrations.config_entry.disable_debug_logging"
                           )
-                        : this.hass.localize(
+                        : this.menuai.localize(
                             "ui.panel.config.integrations.config_entry.enable_debug_logging"
                           )}
                       <ha-svg-icon
@@ -559,7 +559,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             ${discoveryFlows.length
               ? html`<ha-card>
                   <h1 class="card-header">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.integrations.discovered"
                     )}
                   </h1>
@@ -573,7 +573,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                             unelevated
                             .flow=${flow}
                             @click=${this._continueFlow}
-                            .label=${this.hass.localize("ui.common.add")}
+                            .label=${this.menuai.localize("ui.common.add")}
                           ></ha-button>
                         </ha-md-list-item>`
                     )}
@@ -583,7 +583,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             ${attentionFlows.length || attentionEntries.length
               ? html`<ha-card>
                   <h1 class="card-header">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.integrations.integration_page.attention_entries`
                     )}
                   </h1>
@@ -597,7 +597,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                       >
                         ${flow.localized_title}
                         <span slot="supporting-text"
-                          >${this.hass.localize(
+                          >${this.menuai.localize(
                             `ui.panel.config.integrations.${
                               attention ? "attention" : "discovered"
                             }`
@@ -608,7 +608,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                           unelevated
                           .flow=${flow}
                           @click=${this._continueFlow}
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             `ui.panel.config.integrations.${
                               attention ? "reconfigure" : "configure"
                             }`
@@ -633,10 +633,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             <ha-card>
               <h1 class="card-header">
                 ${this._manifest?.integration_type
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       `ui.panel.config.integrations.integration_page.entries_${this._manifest.integration_type}`
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       `ui.panel.config.integrations.integration_page.entries`
                     )}
               </h1>
@@ -644,13 +644,13 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                 ? html`<div class="card-content no-entries">
                     ${this._manifest &&
                     !this._manifest.config_flow &&
-                    this.hass.config.components.find(
+                    this.menuai.config.components.find(
                       (comp) => comp.split(".")[0] === this.domain
                     )
-                      ? this.hass.localize(
+                      ? this.menuai.localize(
                           "ui.panel.config.integrations.integration_page.yaml_entry"
                         )
-                      : this.hass.localize(
+                      : this.menuai.localize(
                           "ui.panel.config.integrations.integration_page.no_entries"
                         )}
                   </div>`
@@ -669,10 +669,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
               <div class="card-actions">
                 <ha-button @click=${this._addIntegration}>
                   ${this._manifest?.integration_type
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         `ui.panel.config.integrations.integration_page.add_${this._manifest.integration_type}`
                       )
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         `ui.panel.config.integrations.integration_page.add_entry`
                       )}
                 </ha-button>
@@ -680,7 +680,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             </ha-card>
           </div>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -714,7 +714,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       devicesLine.push(
         // no white space before/after template on purpose
         html`<a href=${url}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             `ui.panel.config.integrations.config_entry.${localizeKey}`,
             { count: items.length }
           )}</a
@@ -727,7 +727,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         // no white space before/after template on purpose
         html`<a
           href=${`/config/entities?historyBack=1&config_entry=${item.entry_id}${subItem ? `&sub_entry=${subItem.subentry_id}` : ""}`}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.integrations.config_entry.entities",
             { count: entities.length }
           )}</a
@@ -737,14 +737,14 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
     if (devicesLine.length === 0) {
       devicesLine = [
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.integrations.config_entry.no_devices_or_entities"
         ),
       ];
     } else if (devicesLine.length === 2) {
       devicesLine = [
         devicesLine[0],
-        ` ${this.hass.localize("ui.common.and")} `,
+        ` ${this.menuai.localize("ui.common.and")} `,
         devicesLine[1],
       ];
     } else if (devicesLine.length === 3) {
@@ -752,7 +752,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         devicesLine[0],
         ", ",
         devicesLine[1],
-        ` ${this.hass.localize("ui.common.and")} `,
+        ` ${this.menuai.localize("ui.common.and")} `,
         devicesLine[2],
       ];
     }
@@ -760,7 +760,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   }
 
   private _renderConfigEntry(item: ConfigEntry) {
-    let stateText: Parameters<typeof this.hass.localize> | undefined;
+    let stateText: Parameters<typeof this.menuai.localize> | undefined;
     let stateTextExtra: TemplateResult | string | undefined;
     let icon: string = mdiAlertCircle;
 
@@ -778,7 +778,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       stateText = [
         `ui.panel.config.integrations.config_entry.state.${item.state}`,
       ];
-      stateTextExtra = renderConfigEntryError(this.hass, item);
+      stateTextExtra = renderConfigEntryError(this.menuai, item);
     }
 
     const devices = this._getConfigEntryDevices(item);
@@ -789,11 +789,11 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
     if (item.disabled_by) {
       devicesLine.push(
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable.disabled_cause",
           {
             cause:
-              this.hass.localize(
+              this.menuai.localize(
                 `ui.panel.config.integrations.config_entry.disable.disabled_by.${item.disabled_by}`
               ) || item.disabled_by,
           }
@@ -801,7 +801,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       );
       if (item.state === "failed_unload") {
         devicesLine.push(`.
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable_restart_confirm"
         )}.`);
       }
@@ -809,7 +809,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       devicesLine = this._renderDeviceLine(item, devices, services, entities);
     }
 
-    const configPanel = this._configPanel(item.domain, this.hass.panels);
+    const configPanel = this._configPanel(item.domain, this.menuai.panels);
 
     const subEntries = this._subEntries[item.entry_id] || [];
 
@@ -826,7 +826,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         .configEntry=${item}
       >
         <div slot="headline">
-          ${item.title || domainToName(this.hass.localize, item.domain)}
+          ${item.title || domainToName(this.menuai.localize, item.domain)}
         </div>
         <div slot="supporting-text">
           <div>${devicesLine}</div>
@@ -835,7 +835,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                 <div class="message">
                   <ha-svg-icon .path=${icon}></ha-svg-icon>
                   <div>
-                    ${this.hass.localize(...stateText)}${stateTextExtra
+                    ${this.menuai.localize(...stateText)}${stateTextExtra
                       ? html`: ${stateTextExtra}`
                       : nothing}
                   </div>
@@ -845,17 +845,17 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         </div>
         ${item.disabled_by === "user"
           ? html`<ha-button unelevated slot="end" @click=${this._handleEnable}>
-              ${this.hass.localize("ui.common.enable")}
+              ${this.menuai.localize("ui.common.enable")}
             </ha-button>`
           : configPanel &&
               (item.domain !== "matter" ||
-                isDevVersion(this.hass.config.version)) &&
+                isDevVersion(this.menuai.config.version)) &&
               !stateText
             ? html`<a
                 slot="end"
                 href=${`/${configPanel}?config_entry=${item.entry_id}`}
                 ><ha-button>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.configure"
                   )}
                 </ha-button></a
@@ -863,7 +863,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             : item.supports_options
               ? html`
                   <ha-button slot="end" @click=${this._showOptions}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.integrations.config_entry.configure"
                     )}
                   </ha-button>
@@ -872,7 +872,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         <ha-md-button-menu positioning="popover" slot="end">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
           ${item.disabled_by && devices.length
@@ -883,7 +883,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                     : `/config/devices/dashboard?historyBack=1&config_entry=${item.entry_id}`}
                 >
                   <ha-svg-icon .path=${mdiDevices} slot="start"></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.integrations.config_entry.devices`,
                     { count: devices.length }
                   )}
@@ -901,7 +901,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                   .path=${mdiHandExtendedOutline}
                   slot="start"
                 ></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.integrations.config_entry.services`,
                   { count: services.length }
                 )}
@@ -917,7 +917,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                     .path=${mdiShapeOutline}
                     slot="start"
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.integrations.config_entry.entities`,
                     { count: entities.length }
                   )}
@@ -932,7 +932,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             ? html`
                 <ha-md-menu-item @click=${this._handleReload}>
                   <ha-svg-icon slot="start" .path=${mdiReload}></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.reload"
                   )}
                 </ha-md-menu-item>
@@ -941,7 +941,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
           <ha-md-menu-item @click=${this._handleRename} graphic="icon">
             <ha-svg-icon slot="start" .path=${mdiRenameBox}></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.integrations.config_entry.rename"
             )}
           </ha-md-menu-item>
@@ -955,7 +955,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                 graphic="icon"
               >
                 <ha-svg-icon slot="start" .path=${mdiPlus}></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `component.${item.domain}.config_subentries.${flowType}.initiate_flow.user`
                 )}</ha-md-menu-item
               >`
@@ -971,7 +971,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                   @click=${this._signUrl}
                 >
                   <ha-svg-icon slot="start" .path=${mdiDownload}></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.download_diagnostics"
                   )}
                 </ha-md-menu-item>
@@ -983,7 +983,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             ? html`
                 <ha-md-menu-item @click=${this._handleReconfigure}>
                   <ha-svg-icon slot="start" .path=${mdiWrench}></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.reconfigure"
                   )}
                 </ha-md-menu-item>
@@ -992,7 +992,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
           <ha-md-menu-item @click=${this._handleSystemOptions} graphic="icon">
             <ha-svg-icon slot="start" .path=${mdiCog}></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.integrations.config_entry.system_options"
             )}
           </ha-md-menu-item>
@@ -1003,7 +1003,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                     slot="start"
                     .path=${mdiPlayCircleOutline}
                   ></ha-svg-icon>
-                  ${this.hass.localize("ui.common.enable")}
+                  ${this.menuai.localize("ui.common.enable")}
                 </ha-md-menu-item>
               `
             : item.source !== "system"
@@ -1018,7 +1018,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                       class="warning"
                       .path=${mdiStopCircleOutline}
                     ></ha-svg-icon>
-                    ${this.hass.localize("ui.common.disable")}
+                    ${this.menuai.localize("ui.common.disable")}
                   </ha-md-menu-item>
                 `
               : nothing}
@@ -1030,7 +1030,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
                     class="warning"
                     .path=${mdiDelete}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.delete"
                   )}
                 </ha-md-menu-item>
@@ -1065,7 +1065,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     >
       <span slot="headline">${subEntry.title}</span>
       <span slot="supporting-text"
-        >${this.hass.localize(
+        >${this.menuai.localize(
           `component.${configEntry.domain}.config_subentries.${subEntry.subentry_type}.entry_type`
         )}
         -
@@ -1081,7 +1081,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         ?.supports_reconfigure
         ? html`
             <ha-button slot="end" @click=${this._handleReconfigureSub}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.integrations.config_entry.configure"
               )}
             </ha-button>
@@ -1090,7 +1090,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       <ha-md-button-menu positioning="popover" slot="end">
         <ha-icon-button
           slot="trigger"
-          .label=${this.hass.localize("ui.common.menu")}
+          .label=${this.menuai.localize("ui.common.menu")}
           .path=${mdiDotsVertical}
         ></ha-icon-button>
         <ha-md-menu-item class="warning" @click=${this._handleDeleteSub}>
@@ -1099,7 +1099,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
             class="warning"
             .path=${mdiDelete}
           ></ha-svg-icon>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.integrations.config_entry.delete"
           )}
         </ha-md-menu-item>
@@ -1135,12 +1135,12 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     if (!this.domain) {
       return;
     }
-    this._manifest = await fetchIntegrationManifest(this.hass, this.domain);
+    this._manifest = await fetchIntegrationManifest(this.menuai, this.domain);
     if (
       this._manifest.integration_type &&
       !["device", "hub", "service"].includes(this._manifest.integration_type)
     ) {
-      this._extraConfigEntries = await getConfigEntries(this.hass, {
+      this._extraConfigEntries = await getConfigEntries(this.menuai, {
         domain: this.domain,
       });
     }
@@ -1151,7 +1151,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       this._extraConfigEntries || this.configEntries
     )?.map((entry) =>
       entry.num_subentries
-        ? getSubEntries(this.hass, entry.entry_id).then((subEntries) => ({
+        ? getSubEntries(this.menuai, entry.entry_id).then((subEntries) => ({
             entry_id: entry.entry_id,
             subEntries,
           }))
@@ -1168,12 +1168,12 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   }
 
   private async _fetchDiagnostics() {
-    if (!this.domain || !isComponentLoaded(this.hass, "diagnostics")) {
+    if (!this.domain || !isComponentLoaded(this.menuai, "diagnostics")) {
       return;
     }
     try {
       this._diagnosticHandler = await fetchDiagnosticHandler(
-        this.hass,
+        this.menuai,
         this.domain
       );
     } catch (_err: any) {
@@ -1184,7 +1184,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   private async _handleEnableDebugLogging() {
     const integration = this.domain;
     await setIntegrationLogLevel(
-      this.hass,
+      this.menuai,
       integration,
       LogSeverity[LogSeverity.DEBUG],
       "once"
@@ -1197,14 +1197,14 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     ev.stopPropagation();
     const integration = this.domain;
     await setIntegrationLogLevel(
-      this.hass,
+      this.menuai,
       integration,
       LogSeverity[LogSeverity.NOTSET],
       "once"
     );
     const timeString = new Date().toISOString().replace(/:/g, "-");
     const logFileName = `home-assistant_${integration}_${timeString}.log`;
-    const signedUrl = await getSignedPath(this.hass, getErrorLogDownloadUrl);
+    const signedUrl = await getSignedPath(this.menuai, getErrorLogDownloadUrl);
     fileDownload(signedUrl.path, logFileName);
   }
 
@@ -1227,7 +1227,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   private _getDevices = memoizeOne(
     (
       configEntry: ConfigEntry[],
-      deviceRegistryEntries: HomeAssistant["devices"]
+      deviceRegistryEntries: menuai["devices"]
     ): DeviceRegistryEntry[] => {
       if (!deviceRegistryEntries) {
         return [];
@@ -1259,7 +1259,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       this.domain,
       this._extraConfigEntries || this.configEntries
     );
-    const deviceRegistryEntries = this._getDevices(entries, this.hass.devices);
+    const deviceRegistryEntries = this._getDevices(entries, this.menuai.devices);
     return Object.values(deviceRegistryEntries).filter(
       (device) =>
         device.config_entries.includes(configEntry.entry_id) &&
@@ -1274,7 +1274,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       this.domain,
       this._extraConfigEntries || this.configEntries
     );
-    const deviceRegistryEntries = this._getDevices(entries, this.hass.devices);
+    const deviceRegistryEntries = this._getDevices(entries, this.menuai.devices);
     return Object.values(deviceRegistryEntries).filter(
       (device) =>
         device.config_entries.includes(configEntry.entry_id) &&
@@ -1339,22 +1339,22 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     const subEntry = ((ev.target as HTMLElement).closest(".sub-entry") as any)
       .subEntry;
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.delete_confirm_title",
         { title: subEntry.title }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.delete_confirm_text"
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       destructive: true,
     });
 
     if (!confirmed) {
       return;
     }
-    await deleteSubEntry(this.hass, configEntry.entry_id, subEntry.subentry_id);
+    await deleteSubEntry(this.menuai, configEntry.entry_id, subEntry.subentry_id);
   }
 
   private _handleDisable(ev: Event): void {
@@ -1386,15 +1386,15 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     const entryId = configEntry.entry_id;
 
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.disable_confirm_title",
         { title: configEntry.title }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.disable_confirm_text"
       ),
-      confirmText: this.hass!.localize("ui.common.disable"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.disable"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       destructive: true,
     });
 
@@ -1403,10 +1403,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     }
     let result: DisableConfigEntryResult;
     try {
-      result = await disableConfigEntry(this.hass, entryId);
+      result = await disableConfigEntry(this.menuai, entryId);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable_error"
         ),
         text: err.message,
@@ -1415,7 +1415,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     }
     if (result.require_restart) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable_restart_confirm"
         ),
       });
@@ -1427,10 +1427,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
     let result: DisableConfigEntryResult;
     try {
-      result = await enableConfigEntry(this.hass, entryId);
+      result = await enableConfigEntry(this.menuai, entryId);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable_error"
         ),
         text: err.message,
@@ -1440,7 +1440,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
     if (result.require_restart) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.enable_restart_confirm"
         ),
       });
@@ -1454,26 +1454,26 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       await this._applicationCredentialForRemove(entryId);
 
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.delete_confirm_title",
         { title: configEntry.title }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.delete_confirm_text"
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       destructive: true,
     });
 
     if (!confirmed) {
       return;
     }
-    const result = await deleteConfigEntry(this.hass, entryId);
+    const result = await deleteConfigEntry(this.menuai, entryId);
 
     if (result.require_restart) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.restart_confirm"
         ),
       });
@@ -1488,7 +1488,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   // if the integration isn't loaded or there is some other error.
   private async _applicationCredentialForRemove(entryId: string) {
     try {
-      return (await fetchApplicationCredentialsConfigEntry(this.hass, entryId))
+      return (await fetchApplicationCredentialsConfigEntry(this.menuai, entryId))
         .application_credentials_id;
     } catch (_err: any) {
       // We won't prompt the user to remove credentials
@@ -1498,34 +1498,34 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
   private async _removeApplicationCredential(applicationCredentialsId: string) {
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.application_credentials.delete_title"
       ),
-      text: html`${this.hass.localize(
+      text: html`${this.menuai.localize(
           "ui.panel.config.integrations.config_entry.application_credentials.delete_prompt"
         )},
         <br />
         <br />
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.integrations.config_entry.application_credentials.delete_detail"
         )}
         <br />
         <br />
         <a
           href=${documentationUrl(
-            this.hass,
+            this.menuai,
             "/integrations/application_credentials/"
           )}
           target="_blank"
           rel="noreferrer"
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.integrations.config_entry.application_credentials.learn_more"
           )}
         </a>`,
       destructive: true,
-      confirmText: this.hass.localize("ui.common.remove"),
-      dismissText: this.hass.localize(
+      confirmText: this.menuai.localize("ui.common.remove"),
+      dismissText: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.application_credentials.dismiss"
       ),
     });
@@ -1533,10 +1533,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
       return;
     }
     try {
-      await deleteApplicationCredential(this.hass, applicationCredentialsId);
+      await deleteApplicationCredential(this.menuai, applicationCredentialsId);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.application_credentials.delete_error_title"
         ),
         text: err.message,
@@ -1547,12 +1547,12 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   private async _reloadIntegration(configEntry: ConfigEntry) {
     const entryId = configEntry.entry_id;
 
-    const result = await reloadConfigEntry(this.hass, entryId);
+    const result = await reloadConfigEntry(this.menuai, entryId);
     const locale_key = result.require_restart
       ? "reload_restart_confirm"
       : "reload_confirm";
     showAlertDialog(this, {
-      text: this.hass.localize(
+      text: this.menuai.localize(
         `ui.panel.config.integrations.config_entry.${locale_key}`
       ),
     });
@@ -1561,8 +1561,8 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   private async _reconfigureIntegration(configEntry: ConfigEntry) {
     showConfigFlowDialog(this, {
       startFlowHandler: configEntry.domain,
-      showAdvanced: this.hass.userData?.showAdvanced,
-      manifest: await fetchIntegrationManifest(this.hass, configEntry.domain),
+      showAdvanced: this.menuai.userData?.showAdvanced,
+      manifest: await fetchIntegrationManifest(this.menuai, configEntry.domain),
       entryId: configEntry.entry_id,
       navigateToResult: true,
     });
@@ -1570,16 +1570,16 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
 
   private async _editEntryName(configEntry: ConfigEntry) {
     const newName = await showPromptDialog(this, {
-      title: this.hass.localize("ui.panel.config.integrations.rename_dialog"),
+      title: this.menuai.localize("ui.panel.config.integrations.rename_dialog"),
       defaultValue: configEntry.title,
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.config.integrations.rename_input_label"
       ),
     });
     if (newName === null) {
       return;
     }
-    await updateConfigEntry(this.hass, configEntry.entry_id, {
+    await updateConfigEntry(this.menuai, configEntry.entry_id, {
       title: newName,
     });
   }
@@ -1588,7 +1588,7 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
     const anchor = ev.currentTarget;
     ev.preventDefault();
     const signedUrl = await getSignedPath(
-      this.hass,
+      this.menuai,
       anchor.getAttribute("href")
     );
     fileDownload(signedUrl.path);
@@ -1597,10 +1597,10 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
   private async _addIntegration() {
     if (!this._manifest?.config_flow) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.yaml_only_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.yaml_only"
         ),
       });
@@ -1612,15 +1612,15 @@ class HaConfigIntegrationPage extends SubscribeMixin(LitElement) {
         this._extraConfigEntries || this.configEntries
       );
       if (entries.length > 0) {
-        const localize = await this.hass.loadBackendTranslation(
+        const localize = await this.menuai.loadBackendTranslation(
           "title",
           this._manifest.name
         );
         await showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.integrations.config_flow.single_config_entry_title"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.integrations.config_flow.single_config_entry",
             {
               integration_name: domainToName(localize, this._manifest.name),

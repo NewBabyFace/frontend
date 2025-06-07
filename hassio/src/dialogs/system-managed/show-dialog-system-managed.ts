@@ -1,9 +1,9 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
-import type { HassioAddonDetails } from "../../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../../src/data/menuaiio/addon";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 
 export interface SystemManagedDialogParams {
-  addon: HassioAddonDetails;
+  addon: menuaiioAddonDetails;
   supervisor: Supervisor;
 }
 

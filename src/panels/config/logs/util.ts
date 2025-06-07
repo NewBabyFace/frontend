@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import { formatDateTimeWithSeconds } from "../../../common/datetime/format_date_time";
 import { formatTimeWithSeconds } from "../../../common/datetime/format_time";
 import type { FrontendLocaleData } from "../../../data/translation";
@@ -6,7 +6,7 @@ import type { FrontendLocaleData } from "../../../data/translation";
 export const formatSystemLogTime = (
   date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => {
   const today = new Date().setHours(0, 0, 0, 0);
   const dateTime = new Date(date * 1000);

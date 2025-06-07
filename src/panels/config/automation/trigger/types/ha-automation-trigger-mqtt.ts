@@ -4,7 +4,7 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import type { MqttTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 
 const SCHEMA = [
@@ -14,7 +14,7 @@ const SCHEMA = [
 
 @customElement("ha-automation-trigger-mqtt")
 export class HaMQTTTrigger extends LitElement implements TriggerElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: MqttTrigger;
 
@@ -29,7 +29,7 @@ export class HaMQTTTrigger extends LitElement implements TriggerElement {
       <ha-form
         .schema=${SCHEMA}
         .data=${this.trigger}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -46,7 +46,7 @@ export class HaMQTTTrigger extends LitElement implements TriggerElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<typeof SCHEMA>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.triggers.type.mqtt.${schema.name}`
     );
 }

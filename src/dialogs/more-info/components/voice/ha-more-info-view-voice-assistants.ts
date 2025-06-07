@@ -6,11 +6,11 @@ import type { ExtEntityRegistryEntry } from "../../../../data/entity_registry";
 import type { ExposeEntitySettings } from "../../../../data/expose";
 import { voiceAssistants } from "../../../../data/expose";
 import "../../../../panels/config/voice-assistants/entity-voice-settings";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-more-info-view-voice-assistants")
 class MoreInfoViewVoiceAssistants extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entry!: ExtEntityRegistryEntry;
 
@@ -29,7 +29,7 @@ class MoreInfoViewVoiceAssistants extends LitElement {
       return nothing;
     }
     return html`<entity-voice-settings
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .entityId=${this.entry.entity_id}
       .entry=${this.entry}
       .exposed=${this._calculateExposed(this.entry)}

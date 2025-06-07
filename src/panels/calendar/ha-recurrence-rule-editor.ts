@@ -15,7 +15,7 @@ import "../../components/ha-list-item";
 import "../../components/ha-select";
 import type { HaSelect } from "../../components/ha-select";
 import "../../components/ha-textfield";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type {
   MonthlyRepeatItem,
   RepeatEnd,
@@ -36,7 +36,7 @@ import {
 
 @customElement("ha-recurrence-rule-editor")
 export class RecurrenceRuleEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -46,7 +46,7 @@ export class RecurrenceRuleEditor extends LitElement {
 
   @property({ attribute: "all-day", type: Boolean }) public allDay = false;
 
-  @property({ attribute: false }) public locale!: HomeAssistant["locale"];
+  @property({ attribute: false }) public locale!: menuai["locale"];
 
   @property() public timezone?: string;
 
@@ -87,7 +87,7 @@ export class RecurrenceRuleEditor extends LitElement {
 
     if (changedProps.has("dtstart") || changedProps.has("_interval")) {
       this._monthlyRepeatItems = this.dtstart
-        ? getMonthlyRepeatItems(this.hass, this._interval, this.dtstart)
+        ? getMonthlyRepeatItems(this.menuai, this._interval, this.dtstart)
         : [];
       this._computeWeekday();
       const selectElement = this._monthlyRepeatSelect;
@@ -179,7 +179,7 @@ export class RecurrenceRuleEditor extends LitElement {
     return html`
       <ha-select
         id="freq"
-        label=${this.hass.localize("ui.components.calendar.event.repeat.label")}
+        label=${this.menuai.localize("ui.components.calendar.event.repeat.label")}
         @selected=${this._onRepeatSelected}
         @closed=${stopPropagation}
         fixedMenuPosition
@@ -187,25 +187,25 @@ export class RecurrenceRuleEditor extends LitElement {
         .value=${this._freq}
       >
         <ha-list-item value="none">
-          ${this.hass.localize("ui.components.calendar.event.repeat.freq.none")}
+          ${this.menuai.localize("ui.components.calendar.event.repeat.freq.none")}
         </ha-list-item>
         <ha-list-item value="yearly">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.components.calendar.event.repeat.freq.yearly"
           )}
         </ha-list-item>
         <ha-list-item value="monthly">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.components.calendar.event.repeat.freq.monthly"
           )}
         </ha-list-item>
         <ha-list-item value="weekly">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.components.calendar.event.repeat.freq.weekly"
           )}
         </ha-list-item>
         <ha-list-item value="daily">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.components.calendar.event.repeat.freq.daily"
           )}
         </ha-list-item>
@@ -219,7 +219,7 @@ export class RecurrenceRuleEditor extends LitElement {
       ${this._monthlyRepeatItems.length > 0
         ? html`<ha-select
             id="monthly"
-            label=${this.hass.localize(
+            label=${this.menuai.localize(
               "ui.components.calendar.event.repeat.monthly.label"
             )}
             @selected=${this._onMonthlyDetailSelected}
@@ -251,7 +251,7 @@ export class RecurrenceRuleEditor extends LitElement {
               .value=${item}
               .selected=${this._weekday.has(item)}
               @click=${this._onWeekdayToggle}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 `ui.components.calendar.event.repeat.weekly.weekday.${
                   item.toLowerCase() as Lowercase<WeekdayStr>
                 }`
@@ -272,13 +272,13 @@ export class RecurrenceRuleEditor extends LitElement {
     return html`
       <ha-textfield
         id="interval"
-        label=${this.hass.localize(
+        label=${this.menuai.localize(
           "ui.components.calendar.event.repeat.interval.label"
         )}
         type="number"
         min="1"
         .value=${this._interval}
-        .suffix=${this.hass.localize(
+        .suffix=${this.menuai.localize(
           `ui.components.calendar.event.repeat.interval.${this
             ._freq!}` as LocalizeKeys
         )}
@@ -291,7 +291,7 @@ export class RecurrenceRuleEditor extends LitElement {
     return html`
       <ha-select
         id="end"
-        label=${this.hass.localize(
+        label=${this.menuai.localize(
           "ui.components.calendar.event.repeat.end.label"
         )}
         .value=${this._end}
@@ -301,26 +301,26 @@ export class RecurrenceRuleEditor extends LitElement {
         naturalMenuWidth
       >
         <ha-list-item value="never">
-          ${this.hass.localize("ui.components.calendar.event.repeat.end.never")}
+          ${this.menuai.localize("ui.components.calendar.event.repeat.end.never")}
         </ha-list-item>
         <ha-list-item value="after">
-          ${this.hass.localize("ui.components.calendar.event.repeat.end.after")}
+          ${this.menuai.localize("ui.components.calendar.event.repeat.end.after")}
         </ha-list-item>
         <ha-list-item value="on">
-          ${this.hass.localize("ui.components.calendar.event.repeat.end.on")}
+          ${this.menuai.localize("ui.components.calendar.event.repeat.end.on")}
         </ha-list-item>
       </ha-select>
       ${this._end === "after"
         ? html`
             <ha-textfield
               id="after"
-              label=${this.hass.localize(
+              label=${this.menuai.localize(
                 "ui.components.calendar.event.repeat.end_after.label"
               )}
               type="number"
               min="1"
               .value=${this._count!}
-              suffix=${this.hass.localize(
+              suffix=${this.menuai.localize(
                 "ui.components.calendar.event.repeat.end_after.ocurrences"
               )}
               @change=${this._onCountChange}
@@ -331,7 +331,7 @@ export class RecurrenceRuleEditor extends LitElement {
         ? html`
             <ha-date-input
               id="on"
-              label=${this.hass.localize(
+              label=${this.menuai.localize(
                 "ui.components.calendar.event.repeat.end_on.label"
               )}
               .locale=${this.locale}
@@ -469,7 +469,7 @@ export class RecurrenceRuleEditor extends LitElement {
       const format = this.allDay ? "yyyyMMdd" : "yyyyMMdd'T'HHmmss";
       const newUntilValue = formatInTimeZone(
         until,
-        this.hass.config.time_zone,
+        this.menuai.config.time_zone,
         format
       );
       contentline += `;UNTIL=${newUntilValue}`;

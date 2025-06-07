@@ -11,11 +11,11 @@ import type { HaRadio } from "../../../../components/ha-radio";
 import "../../../../components/ha-textfield";
 import type { InputText } from "../../../../data/input_text";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-input_text-form")
 class HaInputTextForm extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public new = false;
 
@@ -60,7 +60,7 @@ class HaInputTextForm extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -70,27 +70,27 @@ class HaInputTextForm extends LitElement {
           .value=${this._name}
           .configValue=${"name"}
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.name"
           )}
           autoValidate
           required
-          .validationMessage=${this.hass!.localize(
+          .validationMessage=${this.menuai!.localize(
             "ui.dialogs.helper_settings.required_error_msg"
           )}
           dialogInitialFocus
         ></ha-textfield>
         <ha-icon-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._icon}
           .configValue=${"icon"}
           @value-changed=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.icon"
           )}
         ></ha-icon-picker>
         <ha-expansion-panel
-          header=${this.hass.localize(
+          header=${this.menuai.localize(
             "ui.dialogs.helper_settings.generic.advanced_settings"
           )}
           outlined
@@ -102,7 +102,7 @@ class HaInputTextForm extends LitElement {
             min="0"
             max="255"
             @input=${this._valueChanged}
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_text.min"
             )}
           ></ha-textfield>
@@ -113,14 +113,14 @@ class HaInputTextForm extends LitElement {
             max="255"
             type="number"
             @input=${this._valueChanged}
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_text.max"
             )}
           ></ha-textfield>
           <div class="layout horizontal center justified">
-            ${this.hass.localize("ui.dialogs.helper_settings.input_text.mode")}
+            ${this.menuai.localize("ui.dialogs.helper_settings.input_text.mode")}
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.dialogs.helper_settings.input_text.text"
               )}
             >
@@ -132,7 +132,7 @@ class HaInputTextForm extends LitElement {
               ></ha-radio>
             </ha-formfield>
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.dialogs.helper_settings.input_text.password"
               )}
             >
@@ -148,10 +148,10 @@ class HaInputTextForm extends LitElement {
             .value=${this._pattern || ""}
             .configValue=${"pattern"}
             @input=${this._valueChanged}
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_text.pattern_label"
             )}
-            .helper=${this.hass!.localize(
+            .helper=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_text.pattern_helper"
             )}
           ></ha-textfield>

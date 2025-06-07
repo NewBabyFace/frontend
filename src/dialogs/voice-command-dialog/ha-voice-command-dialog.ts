@@ -26,13 +26,13 @@ import {
   listAssistPipelines,
 } from "../../data/assist_pipeline";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 import type { VoiceCommandDialogParams } from "./show-ha-voice-command-dialog";
 
 @customElement("ha-voice-command-dialog")
 export class HaVoiceCommandDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -92,7 +92,7 @@ export class HaVoiceCommandDialog extends LitElement {
       <ha-dialog
         open
         @closed=${this.closeDialog}
-        .heading=${this.hass.localize("ui.dialogs.voice_command.title")}
+        .heading=${this.menuai.localize("ui.dialogs.voice_command.title")}
         flexContent
         hideactions
       >
@@ -100,11 +100,11 @@ export class HaVoiceCommandDialog extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <div slot="title">
-            ${this.hass.localize("ui.dialogs.voice_command.title")}
+            ${this.menuai.localize("ui.dialogs.voice_command.title")}
             <ha-button-menu
               @opened=${this._loadPipelines}
               @closed=${stopPropagation}
@@ -143,11 +143,11 @@ export class HaVoiceCommandDialog extends LitElement {
                           : nothing}
                       </ha-list-item>`
                   )}
-              ${this.hass.user?.is_admin
+              ${this.menuai.user?.is_admin
                 ? html`<li divider role="separator"></li>
                     <a href="/config/voice-assistants/assistants"
                       ><ha-list-item
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.dialogs.voice_command.manage_assistants"
                         )}</ha-list-item
                       ></a
@@ -156,13 +156,13 @@ export class HaVoiceCommandDialog extends LitElement {
             </ha-button-menu>
           </div>
           <a
-            href=${documentationUrl(this.hass, "/docs/assist/")}
+            href=${documentationUrl(this.menuai, "/docs/assist/")}
             slot="actionItems"
             target="_blank"
             rel="noopener noreferer"
           >
             <ha-icon-button
-              .label=${this.hass.localize("ui.common.help")}
+              .label=${this.menuai.localize("ui.common.help")}
               .path=${mdiHelpCircleOutline}
             ></ha-icon-button>
           </a>
@@ -170,14 +170,14 @@ export class HaVoiceCommandDialog extends LitElement {
 
         ${this._errorLoadAssist
           ? html`<ha-alert alert-type="error">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.dialogs.voice_command.${this._errorLoadAssist}_error_load_assist`
               )}
             </ha-alert>`
           : this._pipeline
             ? html`
                 <ha-assist-chat
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .pipeline=${this._pipeline}
                   .startListening=${this._startListening}
                 >
@@ -206,7 +206,7 @@ export class HaVoiceCommandDialog extends LitElement {
       return;
     }
     const { pipelines, preferred_pipeline } = await listAssistPipelines(
-      this.hass
+      this.menuai
     );
     this._pipelines = pipelines;
     this._preferredPipeline = preferred_pipeline || undefined;
@@ -222,7 +222,7 @@ export class HaVoiceCommandDialog extends LitElement {
     this._errorLoadAssist = undefined;
     const pipelineId = this._pipelineId!;
     try {
-      const pipeline = await getAssistPipeline(this.hass, pipelineId);
+      const pipeline = await getAssistPipeline(this.menuai, pipelineId);
       // Verify the pipeline is still the same.
       if (pipelineId === this._pipelineId) {
         this._pipeline = pipeline;

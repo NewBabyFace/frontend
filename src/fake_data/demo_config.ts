@@ -1,7 +1,7 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import { STATE_RUNNING } from "home-assistant-js-websocket";
 
-export const demoConfig: HassConfig = {
+export const demoConfig: menuaiConfig = {
   location_name: "Home",
   elevation: 300,
   latitude: 52.3731339,
@@ -72,7 +72,7 @@ export const demoConfig: HassConfig = {
   recovery_mode: false,
   safe_mode: false,
   state: STATE_RUNNING,
-  internal_url: "http://homeassistant.local:8123",
+  internal_url: "http://menuai.local:8123",
   external_url: null,
   currency: "USD",
   language: "en",

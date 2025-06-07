@@ -4,7 +4,7 @@ import { customElement } from "lit/decorators";
 import "../../../../src/components/ha-tip";
 import "../../../../src/components/ha-card";
 import { applyThemesOnElement } from "../../../../src/common/dom/apply_themes_on_element";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 
 const tips: (string | TemplateResult)[] = [
   "Test tip",
@@ -22,7 +22,7 @@ export class DemoHaTip extends LitElement {
             <div class="card-content">
               ${tips.map(
                 (tip) =>
-                  html`<ha-tip .hass=${provideHass(this)}>${tip}</ha-tip>`
+                  html`<ha-tip .menuai=${providemenuai(this)}>${tip}</ha-tip>`
               )}
             </div>
           </ha-card>

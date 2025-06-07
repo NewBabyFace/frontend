@@ -1,7 +1,7 @@
 import { consume } from "@lit/context";
 import "@material/mwc-button";
 import { mdiDelete, mdiDotsVertical, mdiImagePlus, mdiPencil } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket/dist/types";
+import type { menuaiEntity } from "home-assistant-js-websocket/dist/types";
 import type { CSSResultGroup } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -41,24 +41,24 @@ import type { RelatedResult } from "../../../data/search";
 import { findRelated } from "../../../data/search";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-error-screen";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-error-screen";
+import "../../../layouts/menuai-subpage";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../logbook/ha-logbook";
 import {
   loadAreaRegistryDetailDialog,
   showAreaRegistryDetailDialog,
 } from "./show-dialog-area-registry-detail";
 
-declare interface NameAndEntity<EntityType extends HassEntity> {
+declare interface NameAndEntity<EntityType extends menuaiEntity> {
   name: string;
   entity: EntityType;
 }
 
 @customElement("ha-config-area-page")
 class HaConfigAreaPage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public areaId!: string;
 
@@ -138,24 +138,24 @@ class HaConfigAreaPage extends LitElement {
   }
 
   protected render() {
-    if (!this.hass.areas || !this.hass.devices || !this.hass.entities) {
+    if (!this.menuai.areas || !this.menuai.devices || !this.menuai.entities) {
       return nothing;
     }
 
-    const area = this.hass.areas[this.areaId];
+    const area = this.menuai.areas[this.areaId];
 
     if (!area) {
       return html`
-        <hass-error-screen
-          .hass=${this.hass}
-          .error=${this.hass.localize("ui.panel.config.areas.area_not_found")}
-        ></hass-error-screen>
+        <menuai-error-screen
+          .menuai=${this.menuai}
+          .error=${this.menuai.localize("ui.panel.config.areas.area_not_found")}
+        ></menuai-error-screen>
       `;
     }
 
     const memberships = this._memberships(
       this.areaId,
-      Object.values(this.hass.devices),
+      Object.values(this.menuai.devices),
       this._entityReg
     );
     const { devices, entities } = memberships;
@@ -163,15 +163,15 @@ class HaConfigAreaPage extends LitElement {
     // Pre-compute the entity and device names, so we can sort by them
     if (devices) {
       devices.forEach((entry) => {
-        entry.name = computeDeviceNameDisplay(entry, this.hass);
+        entry.name = computeDeviceNameDisplay(entry, this.menuai);
       });
-      sortDeviceRegistryByName(devices, this.hass.locale.language);
+      sortDeviceRegistryByName(devices, this.menuai.locale.language);
     }
     if (entities) {
       entities.forEach((entry) => {
-        entry.name = computeEntityRegistryName(this.hass, entry);
+        entry.name = computeEntityRegistryName(this.menuai, entry);
       });
-      sortEntityRegistryByName(entities, this.hass.locale.language);
+      sortEntityRegistryByName(entities, this.menuai.locale.language);
     }
 
     // Group entities by domain
@@ -187,7 +187,7 @@ class HaConfigAreaPage extends LitElement {
     let relatedScenes: NameAndEntity<SceneEntity>[] = [];
     let relatedScripts: NameAndEntity<ScriptEntity>[] = [];
 
-    if (isComponentLoaded(this.hass, "automation")) {
+    if (isComponentLoaded(this.menuai, "automation")) {
       ({
         groupedEntities: groupedAutomations,
         relatedEntities: relatedAutomations,
@@ -197,7 +197,7 @@ class HaConfigAreaPage extends LitElement {
       ));
     }
 
-    if (isComponentLoaded(this.hass, "scene")) {
+    if (isComponentLoaded(this.menuai, "scene")) {
       ({ groupedEntities: groupedScenes, relatedEntities: relatedScenes } =
         this._prepareEntities<SceneEntity>(
           groupedEntities.scene,
@@ -205,7 +205,7 @@ class HaConfigAreaPage extends LitElement {
         ));
     }
 
-    if (isComponentLoaded(this.hass, "script")) {
+    if (isComponentLoaded(this.menuai, "script")) {
       ({ groupedEntities: groupedScripts, relatedEntities: relatedScripts } =
         this._prepareEntities<ScriptEntity>(
           groupedEntities.script,
@@ -214,8 +214,8 @@ class HaConfigAreaPage extends LitElement {
     }
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .header=${html`${area.icon
           ? html`<ha-icon
@@ -227,7 +227,7 @@ class HaConfigAreaPage extends LitElement {
         <ha-button-menu slot="toolbar-icon">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
@@ -236,7 +236,7 @@ class HaConfigAreaPage extends LitElement {
             .entry=${area}
             @click=${this._showSettings}
           >
-            ${this.hass.localize("ui.panel.config.areas.edit_settings")}
+            ${this.menuai.localize("ui.panel.config.areas.edit_settings")}
             <ha-svg-icon slot="graphic" .path=${mdiPencil}> </ha-svg-icon>
           </ha-list-item>
 
@@ -245,7 +245,7 @@ class HaConfigAreaPage extends LitElement {
             graphic="icon"
             @click=${this._deleteConfirm}
           >
-            ${this.hass.localize("ui.panel.config.areas.editor.delete")}
+            ${this.menuai.localize("ui.panel.config.areas.editor.delete")}
             <ha-svg-icon class="warning" slot="graphic" .path=${mdiDelete}>
             </ha-svg-icon>
           </ha-list-item>
@@ -260,7 +260,7 @@ class HaConfigAreaPage extends LitElement {
                     .path=${mdiPencil}
                     .entry=${area}
                     @click=${this._showSettings}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.areas.edit_settings"
                     )}
                     class="img-edit-btn"
@@ -269,7 +269,7 @@ class HaConfigAreaPage extends LitElement {
               : html`<mwc-button
                   .entry=${area}
                   @click=${this._showSettings}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.areas.add_picture"
                   )}
                 >
@@ -277,7 +277,7 @@ class HaConfigAreaPage extends LitElement {
                 </mwc-button>`}
             <ha-card
               outlined
-              .header=${this.hass.localize("ui.panel.config.devices.caption")}
+              .header=${this.menuai.localize("ui.panel.config.devices.caption")}
               >${devices.length
                 ? html`<ha-list>
                     ${devices.map(
@@ -293,7 +293,7 @@ class HaConfigAreaPage extends LitElement {
                   </ha-list>`
                 : html`
                     <div class="no-entries">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.devices.no_devices"
                       )}
                     </div>
@@ -301,7 +301,7 @@ class HaConfigAreaPage extends LitElement {
             </ha-card>
             <ha-card
               outlined
-              .header=${this.hass.localize(
+              .header=${this.menuai.localize(
                 "ui.panel.config.areas.editor.linked_entities_caption"
               )}
             >
@@ -326,7 +326,7 @@ class HaConfigAreaPage extends LitElement {
                   >`
                 : html`
                     <div class="no-entries">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.areas.editor.no_linked_entities"
                       )}
                     </div>
@@ -334,17 +334,17 @@ class HaConfigAreaPage extends LitElement {
             </ha-card>
           </div>
           <div class="column">
-            ${isComponentLoaded(this.hass, "automation")
+            ${isComponentLoaded(this.menuai, "automation")
               ? html`
                   <ha-card
                     outlined
-                    .header=${this.hass.localize(
+                    .header=${this.menuai.localize(
                       "ui.panel.config.devices.automation.automations_heading"
                     )}
                   >
                     ${groupedAutomations?.length
                       ? html`<h3>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.areas.assigned_to_area"
                             )}:
                           </h3>
@@ -359,7 +359,7 @@ class HaConfigAreaPage extends LitElement {
                       : ""}
                     ${relatedAutomations?.length
                       ? html`<h3>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.areas.targeting_area"
                             )}:
                           </h3>
@@ -375,7 +375,7 @@ class HaConfigAreaPage extends LitElement {
                     ${!groupedAutomations?.length && !relatedAutomations?.length
                       ? html`
                           <div class="no-entries">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.devices.automation.no_automations"
                             )}
                           </div>
@@ -384,17 +384,17 @@ class HaConfigAreaPage extends LitElement {
                   </ha-card>
                 `
               : ""}
-            ${isComponentLoaded(this.hass, "scene")
+            ${isComponentLoaded(this.menuai, "scene")
               ? html`
                   <ha-card
                     outlined
-                    .header=${this.hass.localize(
+                    .header=${this.menuai.localize(
                       "ui.panel.config.devices.scene.scenes_heading"
                     )}
                   >
                     ${groupedScenes?.length
                       ? html`<h3>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.areas.assigned_to_area"
                             )}:
                           </h3>
@@ -406,7 +406,7 @@ class HaConfigAreaPage extends LitElement {
                       : ""}
                     ${relatedScenes?.length
                       ? html`<h3>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.areas.targeting_area"
                             )}:
                           </h3>
@@ -419,7 +419,7 @@ class HaConfigAreaPage extends LitElement {
                     ${!groupedScenes?.length && !relatedScenes?.length
                       ? html`
                           <div class="no-entries">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.devices.scene.no_scenes"
                             )}
                           </div>
@@ -428,17 +428,17 @@ class HaConfigAreaPage extends LitElement {
                   </ha-card>
                 `
               : ""}
-            ${isComponentLoaded(this.hass, "script")
+            ${isComponentLoaded(this.menuai, "script")
               ? html`
                   <ha-card
                     outlined
-                    .header=${this.hass.localize(
+                    .header=${this.menuai.localize(
                       "ui.panel.config.devices.script.scripts_heading"
                     )}
                   >
                     ${groupedScripts?.length
                       ? html`<h3>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.areas.assigned_to_area"
                             )}:
                           </h3>
@@ -448,7 +448,7 @@ class HaConfigAreaPage extends LitElement {
                       : ""}
                     ${relatedScripts?.length
                       ? html`<h3>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.areas.targeting_area"
                             )}:
                           </h3>
@@ -459,7 +459,7 @@ class HaConfigAreaPage extends LitElement {
                     ${!groupedScripts?.length && !relatedScripts?.length
                       ? html`
                           <div class="no-entries">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.devices.script.no_scripts"
                             )}
                           </div>
@@ -470,14 +470,14 @@ class HaConfigAreaPage extends LitElement {
               : ""}
           </div>
           <div class="column">
-            ${isComponentLoaded(this.hass, "logbook")
+            ${isComponentLoaded(this.menuai, "logbook")
               ? html`
                   <ha-card
                     outlined
-                    .header=${this.hass.localize("panel.logbook")}
+                    .header=${this.menuai.localize("panel.logbook")}
                   >
                     <ha-logbook
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .time=${this._logbookTime}
                       .entityIds=${this._allEntities(memberships)}
                       .deviceIds=${this._allDeviceIds(memberships.devices)}
@@ -490,11 +490,11 @@ class HaConfigAreaPage extends LitElement {
               : ""}
           </div>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
-  private _prepareEntities<EntityType extends HassEntity>(
+  private _prepareEntities<EntityType extends menuaiEntity>(
     entries?: EntityRegistryEntry[],
     relatedEntityIds?: string[]
   ): {
@@ -506,7 +506,7 @@ class HaConfigAreaPage extends LitElement {
 
     if (entries?.length) {
       entries.forEach((entity) => {
-        const entityState = this.hass.states[
+        const entityState = this.menuai.states[
           entity.entity_id
         ] as unknown as EntityType;
         if (entityState) {
@@ -520,13 +520,13 @@ class HaConfigAreaPage extends LitElement {
         caseInsensitiveStringCompare(
           entry1.name!,
           entry2.name!,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
     }
     if (relatedEntityIds?.length) {
       relatedEntityIds.forEach((entity) => {
-        const entityState = this.hass.states[entity] as EntityType;
+        const entityState = this.menuai.states[entity] as EntityType;
         if (entityState) {
           relatedEntities.push({
             name: entityState ? computeStateName(entityState) : "",
@@ -538,7 +538,7 @@ class HaConfigAreaPage extends LitElement {
         caseInsensitiveStringCompare(
           entry1.name!,
           entry2.name!,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
     }
@@ -550,7 +550,7 @@ class HaConfigAreaPage extends LitElement {
     return html`<ha-tooltip
       .distance=${-4}
       .disabled=${!!entityState.attributes.id}
-      .content=${this.hass.localize("ui.panel.config.devices.cant_edit")}
+      .content=${this.menuai.localize("ui.panel.config.devices.cant_edit")}
     >
       <a
         href=${ifDefined(
@@ -571,7 +571,7 @@ class HaConfigAreaPage extends LitElement {
     return html`<ha-tooltip
       .disabled=${!!entityState.attributes.id}
       .distance=${-4}
-      .content=${this.hass.localize("ui.panel.config.devices.cant_edit")}
+      .content=${this.menuai.localize("ui.panel.config.devices.cant_edit")}
     >
       <a
         href=${ifDefined(
@@ -605,7 +605,7 @@ class HaConfigAreaPage extends LitElement {
   }
 
   private async _findRelated() {
-    this._related = await findRelated(this.hass, "area", this.areaId);
+    this._related = await findRelated(this.menuai, "area", this.areaId);
   }
 
   private _showSettings(ev: MouseEvent) {
@@ -624,25 +624,25 @@ class HaConfigAreaPage extends LitElement {
     showAreaRegistryDetailDialog(this, {
       entry,
       updateEntry: async (values) =>
-        updateAreaRegistryEntry(this.hass!, entry!.area_id, values),
+        updateAreaRegistryEntry(this.menuai!, entry!.area_id, values),
     });
   }
 
   private async _deleteConfirm() {
-    const area = this.hass.areas[this.areaId];
+    const area = this.menuai.areas[this.areaId];
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.areas.delete.confirmation_title",
         { name: area!.name }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.areas.delete.confirmation_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: async () => {
-        await deleteAreaRegistryEntry(this.hass!, area!.area_id);
+        await deleteAreaRegistryEntry(this.menuai!, area!.area_id);
         afterNextRender(() => history.back());
       },
     });

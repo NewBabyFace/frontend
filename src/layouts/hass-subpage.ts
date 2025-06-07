@@ -4,12 +4,12 @@ import { customElement, eventOptions, property } from "lit/decorators";
 import { restoreScroll } from "../common/decorators/restore-scroll";
 import "../components/ha-icon-button-arrow-prev";
 import "../components/ha-menu-button";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { haStyleScrollbar } from "../resources/styles";
 
-@customElement("hass-subpage")
-class HassSubpage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuai-subpage")
+class menuaiSubpage extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public header?: string;
 
@@ -32,8 +32,8 @@ class HassSubpage extends LitElement {
         ${this.mainPage || history.state?.root
           ? html`
               <ha-menu-button
-                .hassio=${this.supervisor}
-                .hass=${this.hass}
+                .menuaiio=${this.supervisor}
+                .menuai=${this.menuai}
                 .narrow=${this.narrow}
               ></ha-menu-button>
             `
@@ -41,13 +41,13 @@ class HassSubpage extends LitElement {
             ? html`
                 <a href=${this.backPath}>
                   <ha-icon-button-arrow-prev
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                   ></ha-icon-button-arrow-prev>
                 </a>
               `
             : html`
                 <ha-icon-button-arrow-prev
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   @click=${this._backTapped}
                 ></ha-icon-button-arrow-prev>
               `}
@@ -174,6 +174,6 @@ class HassSubpage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hass-subpage": HassSubpage;
+    "menuai-subpage": menuaiSubpage;
   }
 }

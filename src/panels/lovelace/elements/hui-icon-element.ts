@@ -2,7 +2,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { ifDefined } from "lit/directives/if-defined";
 import "../../../components/ha-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeTooltip } from "../common/compute-tooltip";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
@@ -22,7 +22,7 @@ export class HuiIconElement extends LitElement implements LovelaceElement {
     return { type: "icon", icon: "mdi:alert-circle" };
   }
 
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @state() private _config?: IconElementConfig;
 
@@ -39,14 +39,14 @@ export class HuiIconElement extends LitElement implements LovelaceElement {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
     return html`
       <ha-icon
         .icon=${this._config.icon}
-        .title=${computeTooltip(this.hass, this._config)}
+        .title=${computeTooltip(this.menuai, this._config)}
         @action=${this._handleAction}
         .actionHandler=${actionHandler({
           hasHold: hasAction(this._config!.hold_action),
@@ -60,7 +60,7 @@ export class HuiIconElement extends LitElement implements LovelaceElement {
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   static styles = css`

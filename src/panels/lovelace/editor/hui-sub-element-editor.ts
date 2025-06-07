@@ -2,11 +2,11 @@ import { mdiCodeBraces, mdiListBoxOutline } from "@mdi/js";
 import type { TemplateResult } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-icon-button";
 import "../../../components/ha-icon-button-prev";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./entity-row-editor/hui-row-element-editor";
 import "./feature-editor/hui-card-feature-element-editor";
 import "./header-footer-editor/hui-header-footer-element-editor";
@@ -16,14 +16,14 @@ import "./picture-element-editor/hui-picture-element-element-editor";
 import type { GUIModeChangedEvent, SubElementEditorConfig } from "./types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "go-back": undefined;
   }
 }
 
 @customElement("hui-sub-element-editor")
 export class HuiSubElementEditor extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property({ attribute: false }) public config!: SubElementEditorConfig;
 
@@ -43,21 +43,21 @@ export class HuiSubElementEditor extends LitElement {
       <div class="header">
         <div class="back-title">
           <ha-icon-button-prev
-            .label=${this.hass!.localize("ui.common.back")}
+            .label=${this.menuai!.localize("ui.common.back")}
             @click=${this._goBack}
           ></ha-icon-button-prev>
           <span slot="title">
             ${this.config?.type === "element"
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   `ui.panel.lovelace.editor.sub-element-editor.types.element_type`,
                   {
                     type:
-                      this.hass.localize(
+                      this.menuai.localize(
                         `ui.panel.lovelace.editor.card.picture-elements.element_types.${elementType}`
                       ) || elementType,
                   }
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   `ui.panel.lovelace.editor.sub-element-editor.types.${this.config?.type}`
                 )}
           </span>
@@ -66,7 +66,7 @@ export class HuiSubElementEditor extends LitElement {
           class="gui-mode-button"
           @click=${this._toggleMode}
           .disabled=${!this._guiModeAvailable}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             this._guiMode
               ? "ui.panel.lovelace.editor.edit_card.show_code_editor"
               : "ui.panel.lovelace.editor.edit_card.show_visual_editor"
@@ -86,7 +86,7 @@ export class HuiSubElementEditor extends LitElement {
         return html`
           <hui-row-element-editor
             class="editor"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this.config.elementConfig}
             .context=${this.config.context}
             @config-changed=${this._handleConfigChanged}
@@ -98,7 +98,7 @@ export class HuiSubElementEditor extends LitElement {
         return html`
           <hui-headerfooter-element-editor
             class="editor"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this.config.elementConfig}
             .context=${this.config.context}
             @config-changed=${this._handleConfigChanged}
@@ -109,7 +109,7 @@ export class HuiSubElementEditor extends LitElement {
         return html`
           <hui-picture-element-element-editor
             class="editor"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this.config.elementConfig}
             .context=${this.config.context}
             @config-changed=${this._handleConfigChanged}
@@ -120,7 +120,7 @@ export class HuiSubElementEditor extends LitElement {
         return html`
           <hui-card-feature-element-editor
             class="editor"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this.config.elementConfig}
             .context=${this.config.context}
             @config-changed=${this._handleConfigChanged}
@@ -131,7 +131,7 @@ export class HuiSubElementEditor extends LitElement {
         return html`
           <hui-heading-badge-element-editor
             class="editor"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this.config.elementConfig}
             .context=${this.config.context}
             @config-changed=${this._handleConfigChanged}
@@ -151,7 +151,7 @@ export class HuiSubElementEditor extends LitElement {
     this._editorElement?.toggleMode();
   }
 
-  private _handleGUIModeChanged(ev: HASSDomEvent<GUIModeChangedEvent>): void {
+  private _handleGUIModeChanged(ev: menuaiDomEvent<GUIModeChangedEvent>): void {
     ev.stopPropagation();
     this._guiMode = ev.detail.guiMode;
     this._guiModeAvailable = ev.detail.guiModeAvailable;

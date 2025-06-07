@@ -1,5 +1,5 @@
 import { mdiAlertCircle } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { styleMap } from "lit/directives/style-map";
@@ -14,7 +14,7 @@ import "../../../components/ha-heading-badge";
 import "../../../components/ha-state-icon";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
 import "../../../state-display/state-display";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
 import { hasAction } from "../common/has-action";
@@ -45,7 +45,7 @@ export class HuiEntityHeadingBadge
     return document.createElement("hui-heading-entity-editor");
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityHeadingBadgeConfig;
 
@@ -68,11 +68,11 @@ export class HuiEntityHeadingBadge
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   private _computeStateColor = memoizeOne(
-    (entity: HassEntity, color?: string) => {
+    (entity: menuaiEntity, color?: string) => {
       if (!color || color === "none") {
         return undefined;
       }
@@ -109,21 +109,21 @@ export class HuiEntityHeadingBadge
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const config = this._config;
 
     const entityId = config.entity;
-    const stateObj = this.hass!.states[entityId];
+    const stateObj = this.menuai!.states[entityId];
 
     if (!stateObj) {
       return html`
         <ha-heading-badge class="error" .title=${entityId}>
           <ha-svg-icon
             slot="icon"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .path=${mdiAlertCircle}
           ></ha-svg-icon>
           -
@@ -154,7 +154,7 @@ export class HuiEntityHeadingBadge
           ? html`
               <ha-state-icon
                 slot="icon"
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .icon=${config.icon}
                 .stateObj=${stateObj}
               ></ha-state-icon>
@@ -163,7 +163,7 @@ export class HuiEntityHeadingBadge
         ${config.show_state
           ? html`
               <state-display
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
                 .content=${config.state_content}
                 .name=${config.name}

@@ -32,13 +32,13 @@ import {
   showPromptDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../action/ha-automation-action";
 import "../condition/ha-automation-condition";
 
 @customElement("ha-automation-option-row")
 export default class HaAutomationOptionRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public option!: Option;
 
@@ -68,7 +68,7 @@ export default class HaAutomationOptionRow extends LitElement {
   private _getDescription() {
     const conditions = ensureArray<Condition | string>(this.option.conditions);
     if (!conditions || conditions.length === 0) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.automation.editor.actions.type.choose.no_conditions"
       );
     }
@@ -76,10 +76,10 @@ export default class HaAutomationOptionRow extends LitElement {
     if (typeof conditions[0] === "string") {
       str += conditions[0];
     } else {
-      str += describeCondition(conditions[0], this.hass, this._entityReg);
+      str += describeCondition(conditions[0], this.menuai, this._entityReg);
     }
     if (conditions.length > 1) {
-      str += this.hass.localize(
+      str += this.menuai.localize(
         "ui.panel.config.automation.editor.actions.type.choose.option_description_additional",
         { numberOfAdditionalConditions: conditions.length - 1 }
       );
@@ -98,7 +98,7 @@ export default class HaAutomationOptionRow extends LitElement {
           id="option"
         >
           <h3 slot="header">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.editor.actions.type.choose.option",
               { number: this.index + 1 }
             )}:
@@ -117,18 +117,18 @@ export default class HaAutomationOptionRow extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item graphic="icon" .disabled=${this.disabled}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.rename"
               )}
               <ha-svg-icon slot="graphic" .path=${mdiRenameBox}></ha-svg-icon>
             </ha-list-item>
 
             <ha-list-item graphic="icon" .disabled=${this.disabled}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.duplicate"
               )}
               <ha-svg-icon
@@ -141,7 +141,7 @@ export default class HaAutomationOptionRow extends LitElement {
               graphic="icon"
               .disabled=${this.disabled || this.first}
             >
-              ${this.hass.localize("ui.panel.config.automation.editor.move_up")}
+              ${this.menuai.localize("ui.panel.config.automation.editor.move_up")}
               <ha-svg-icon slot="graphic" .path=${mdiArrowUp}></ha-svg-icon>
             </ha-list-item>
 
@@ -149,7 +149,7 @@ export default class HaAutomationOptionRow extends LitElement {
               graphic="icon"
               .disabled=${this.disabled || this.last}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.move_down"
               )}
               <ha-svg-icon slot="graphic" .path=${mdiArrowDown}></ha-svg-icon>
@@ -160,7 +160,7 @@ export default class HaAutomationOptionRow extends LitElement {
               graphic="icon"
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.choose.remove_option"
               )}
               <ha-svg-icon
@@ -173,7 +173,7 @@ export default class HaAutomationOptionRow extends LitElement {
 
           <div class="card-content">
             <h4>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.choose.conditions"
               )}:
             </h4>
@@ -182,19 +182,19 @@ export default class HaAutomationOptionRow extends LitElement {
                 this.option.conditions
               )}
               .disabled=${this.disabled}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               @value-changed=${this._conditionChanged}
             ></ha-automation-condition>
             <h4>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.choose.sequence"
               )}:
             </h4>
             <ha-automation-action
               .actions=${ensureArray(this.option.sequence) || []}
               .disabled=${this.disabled}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               @value-changed=${this._actionChanged}
             ></ha-automation-action>
@@ -226,14 +226,14 @@ export default class HaAutomationOptionRow extends LitElement {
 
   private _removeOption() {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.type.choose.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.delete_confirm_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: () =>
         fireEvent(this, "value-changed", {
@@ -244,16 +244,16 @@ export default class HaAutomationOptionRow extends LitElement {
 
   private async _renameOption(): Promise<void> {
     const alias = await showPromptDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.type.choose.change_alias"
       ),
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.type.choose.alias"
       ),
       inputType: "string",
       placeholder: capitalizeFirstLetter(this._getDescription()),
       defaultValue: this.option.alias,
-      confirmText: this.hass.localize("ui.common.submit"),
+      confirmText: this.menuai.localize("ui.common.submit"),
     });
     if (alias !== null) {
       const value = { ...this.option };

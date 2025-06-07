@@ -5,7 +5,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-expansion-panel";
 import "./ha-icon";
@@ -14,7 +14,7 @@ import "./ha-list";
 
 @customElement("ha-filter-states")
 export class HaFilterStates extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 

@@ -10,13 +10,13 @@ import "../components/ha-svg-icon";
 import type { Analytics } from "../data/analytics";
 import { setAnalyticsPreferences } from "../data/analytics";
 import { onboardAnalyticsStep } from "../data/onboarding";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { documentationUrl } from "../util/documentation-url";
 import { onBoardingStyles } from "./styles";
 
 @customElement("onboarding-analytics")
 class OnboardingAnalytics extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public localize!: LocalizeFunc;
 
@@ -32,7 +32,7 @@ class OnboardingAnalytics extends LitElement {
       <p>${this.localize("ui.panel.page-onboarding.analytics.intro")}</p>
       <p>
         <a
-          href=${documentationUrl(this.hass, "/integrations/analytics/")}
+          href=${documentationUrl(this.menuai, "/integrations/analytics/")}
           target="_blank"
           rel="noreferrer"
         >
@@ -80,11 +80,11 @@ class OnboardingAnalytics extends LitElement {
     ev.preventDefault();
     try {
       await setAnalyticsPreferences(
-        this.hass,
+        this.menuai,
         this._analyticsDetails!.preferences
       );
 
-      await onboardAnalyticsStep(this.hass);
+      await onboardAnalyticsStep(this.menuai);
       fireEvent(this, "onboarding-step", {
         type: "analytics",
       });

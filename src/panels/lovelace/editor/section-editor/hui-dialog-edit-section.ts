@@ -17,9 +17,9 @@ import type { HaYamlEditor } from "../../../../components/ha-yaml-editor";
 import "../../../../components/sl-tab-group";
 import type { LovelaceSectionRawConfig } from "../../../../data/lovelace/config/section";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   findLovelaceContainer,
   updateLovelaceContainer,
@@ -33,9 +33,9 @@ const TABS = ["tab-settings", "tab-visibility"] as const;
 @customElement("hui-dialog-edit-section")
 export class HuiDialogEditSection
   extends LitElement
-  implements HassDialog<EditSectionDialogParams>
+  implements menuaiDialog<EditSectionDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: EditSectionDialogParams;
 
@@ -84,7 +84,7 @@ export class HuiDialogEditSection
       return nothing;
     }
 
-    const heading = this.hass!.localize(
+    const heading = this.menuai!.localize(
       "ui.panel.lovelace.editor.edit_section.header"
     );
 
@@ -93,7 +93,7 @@ export class HuiDialogEditSection
     if (this._yamlMode) {
       content = html`
         <ha-yaml-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           dialogInitialFocus
           @value-changed=${this._viewYamlChanged}
         ></ha-yaml-editor>
@@ -103,7 +103,7 @@ export class HuiDialogEditSection
         case "tab-settings":
           content = html`
             <hui-section-settings-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .config=${this._config}
               .viewConfig=${this._viewConfig}
               @value-changed=${this._configChanged}
@@ -114,7 +114,7 @@ export class HuiDialogEditSection
         case "tab-visibility":
           content = html`
             <hui-section-visibility-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .config=${this._config}
               @value-changed=${this._configChanged}
             >
@@ -139,7 +139,7 @@ export class HuiDialogEditSection
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">${heading}</span>
@@ -153,11 +153,11 @@ export class HuiDialogEditSection
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass!.localize("ui.common.menu")}
+              .label=${this.menuai!.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item graphic="icon">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.lovelace.editor.edit_view.edit_${!this._yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon
@@ -176,7 +176,7 @@ export class HuiDialogEditSection
                         .panel=${tab}
                         .active=${this._currTab === tab}
                       >
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.edit_section.${tab.replace("-", "_")}`
                         )}
                       </sl-tab>
@@ -188,11 +188,11 @@ export class HuiDialogEditSection
         </ha-dialog-header>
         ${content}
         <ha-button slot="secondaryAction" @click=${this._cancel}>
-          ${this.hass!.localize("ui.common.cancel")}
+          ${this.menuai!.localize("ui.common.cancel")}
         </ha-button>
 
         <ha-button slot="primaryAction" @click=${this._save}>
-          ${this.hass!.localize("ui.common.save")}
+          ${this.menuai!.localize("ui.common.save")}
         </ha-button>
       </ha-dialog>
     `;

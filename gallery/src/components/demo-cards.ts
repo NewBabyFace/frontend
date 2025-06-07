@@ -3,7 +3,7 @@ import { customElement, property, query, state } from "lit/decorators";
 import { applyThemesOnElement } from "../../../src/common/dom/apply_themes_on_element";
 import "../../../src/components/ha-formfield";
 import "../../../src/components/ha-switch";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import "./demo-card";
 import type { DemoCardConfig } from "./demo-card";
 import "../ha-demo-options";
@@ -12,7 +12,7 @@ import "../ha-demo-options";
 class DemoCards extends LitElement {
   @property({ attribute: false }) public configs!: DemoCardConfig[];
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _showConfig = false;
 
@@ -35,7 +35,7 @@ class DemoCards extends LitElement {
               <demo-card
                 .config=${config}
                 .showConfig=${this._showConfig}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               ></demo-card>
             `
           )}

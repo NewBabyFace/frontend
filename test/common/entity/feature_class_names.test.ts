@@ -1,5 +1,5 @@
 import { assert, describe, it } from "vitest";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
 import { featureClassNames } from "../../../src/common/entity/feature_class_names";
 
@@ -18,7 +18,7 @@ describe("featureClassNames", () => {
 
   it("Matches no features", () => {
     // eslint-disable-next-line
-    const stateObj = <HassEntity>{
+    const stateObj = <menuaiEntity>{
       attributes: {
         supported_features: 64,
       },
@@ -28,7 +28,7 @@ describe("featureClassNames", () => {
 
   it("Matches one feature", () => {
     // eslint-disable-next-line
-    const stateObj = <HassEntity>{
+    const stateObj = <menuaiEntity>{
       attributes: {
         supported_features: 72,
       },
@@ -41,7 +41,7 @@ describe("featureClassNames", () => {
 
   it("Matches two features", () => {
     // eslint-disable-next-line
-    const stateObj = <HassEntity>{
+    const stateObj = <menuaiEntity>{
       attributes: {
         supported_features: 73,
       },

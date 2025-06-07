@@ -43,16 +43,16 @@ const compressAppModernBrotli = () =>
 const compressAppModernZopfli = () =>
   compressModern(paths.app_output_root, paths.app_output_latest, "zopfli");
 
-const compressHassioModernBrotli = () =>
+const compressmenuaiioModernBrotli = () =>
   compressModern(
-    paths.hassio_output_root,
-    paths.hassio_output_latest,
+    paths.menuaiio_output_root,
+    paths.menuaiio_output_latest,
     "brotli"
   );
-const compressHassioModernZopfli = () =>
+const compressmenuaiioModernZopfli = () =>
   compressModern(
-    paths.hassio_output_root,
-    paths.hassio_output_latest,
+    paths.menuaiio_output_root,
+    paths.menuaiio_output_latest,
     "zopfli"
   );
 
@@ -61,10 +61,10 @@ const compressAppOtherBrotli = () =>
 const compressAppOtherZopfli = () =>
   compressOther(paths.app_output_root, paths.app_output_latest, "zopfli");
 
-const compressHassioOtherBrotli = () =>
-  compressOther(paths.hassio_output_root, paths.hassio_output_latest, "brotli");
-const compressHassioOtherZopfli = () =>
-  compressOther(paths.hassio_output_root, paths.hassio_output_latest, "zopfli");
+const compressmenuaiioOtherBrotli = () =>
+  compressOther(paths.menuaiio_output_root, paths.menuaiio_output_latest, "brotli");
+const compressmenuaiioOtherZopfli = () =>
+  compressOther(paths.menuaiio_output_root, paths.menuaiio_output_latest, "zopfli");
 
 gulp.task(
   "compress-app",
@@ -76,11 +76,11 @@ gulp.task(
   )
 );
 gulp.task(
-  "compress-hassio",
+  "compress-menuaiio",
   gulp.parallel(
-    compressHassioModernBrotli,
-    compressHassioOtherBrotli,
-    compressHassioModernZopfli,
-    compressHassioOtherZopfli
+    compressmenuaiioModernBrotli,
+    compressmenuaiioOtherBrotli,
+    compressmenuaiioModernZopfli,
+    compressmenuaiioOtherZopfli
   )
 );

@@ -10,11 +10,11 @@ import type { HaRadio } from "../../../../components/ha-radio";
 import "../../../../components/ha-textfield";
 import type { InputNumber } from "../../../../data/input_number";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-input_number-form")
 class HaInputNumberForm extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public new = false;
 
@@ -70,7 +70,7 @@ class HaInputNumberForm extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -80,22 +80,22 @@ class HaInputNumberForm extends LitElement {
           .value=${this._name}
           .configValue=${"name"}
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.name"
           )}
           autoValidate
           required
-          .validationMessage=${this.hass!.localize(
+          .validationMessage=${this.menuai!.localize(
             "ui.dialogs.helper_settings.required_error_msg"
           )}
           dialogInitialFocus
         ></ha-textfield>
         <ha-icon-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._icon}
           .configValue=${"icon"}
           @value-changed=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.icon"
           )}
         ></ha-icon-picker>
@@ -105,7 +105,7 @@ class HaInputNumberForm extends LitElement {
           type="number"
           step="any"
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.input_number.min"
           )}
         ></ha-textfield>
@@ -115,22 +115,22 @@ class HaInputNumberForm extends LitElement {
           type="number"
           step="any"
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.input_number.max"
           )}
         ></ha-textfield>
         <ha-expansion-panel
-          header=${this.hass.localize(
+          header=${this.menuai.localize(
             "ui.dialogs.helper_settings.generic.advanced_settings"
           )}
           outlined
         >
           <div class="layout horizontal center justified">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.dialogs.helper_settings.input_number.mode"
             )}
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.dialogs.helper_settings.input_number.slider"
               )}
             >
@@ -142,7 +142,7 @@ class HaInputNumberForm extends LitElement {
               ></ha-radio>
             </ha-formfield>
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.dialogs.helper_settings.input_number.box"
               )}
             >
@@ -160,7 +160,7 @@ class HaInputNumberForm extends LitElement {
             type="number"
             step="any"
             @input=${this._valueChanged}
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_number.step"
             )}
           ></ha-textfield>
@@ -169,7 +169,7 @@ class HaInputNumberForm extends LitElement {
             .value=${this._unit_of_measurement || ""}
             .configValue=${"unit_of_measurement"}
             @input=${this._valueChanged}
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_number.unit_of_measurement"
             )}
           ></ha-textfield>

@@ -2,12 +2,12 @@ import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { isComponentLoaded } from "../../../common/config/is_component_loaded";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import "../../../components/ha-card";
 import "../../../components/ha-md-list";
 import "../../../components/ha-md-list-item";
 import "../../../components/ha-icon-next";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import "./ha-config-network";
 import "./ha-config-url-form";
 import "./supervisor-hostname";
@@ -17,7 +17,7 @@ const NETWORK_BROWSERS = ["dhcp", "ssdp", "zeroconf"] as const;
 
 @customElement("ha-config-section-network")
 class HaConfigSectionNetwork extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -25,30 +25,30 @@ class HaConfigSectionNetwork extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.network.caption")}
+        .header=${this.menuai.localize("ui.panel.config.network.caption")}
       >
         <div class="content">
-          ${isComponentLoaded(this.hass, "hassio")
+          ${isComponentLoaded(this.menuai, "menuaiio")
             ? html`<supervisor-hostname
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .narrow=${this.narrow}
                 ></supervisor-hostname>
-                <supervisor-network .hass=${this.hass}></supervisor-network>`
+                <supervisor-network .menuai=${this.menuai}></supervisor-network>`
             : ""}
-          <ha-config-url-form .hass=${this.hass}></ha-config-url-form>
-          <ha-config-network .hass=${this.hass}></ha-config-network>
+          <ha-config-url-form .menuai=${this.menuai}></ha-config-url-form>
+          <ha-config-network .menuai=${this.menuai}></ha-config-network>
           ${NETWORK_BROWSERS.some((component) =>
-            isComponentLoaded(this.hass, component)
+            isComponentLoaded(this.menuai, component)
           )
             ? html`
                 <ha-card
                   outlined
                   class="discovery-card"
-                  header=${this.hass.localize(
+                  header=${this.menuai.localize(
                     "ui.panel.config.network.discovery.title"
                   )}
                 >
@@ -57,12 +57,12 @@ class HaConfigSectionNetwork extends LitElement {
                       (domain) => html`
                         <ha-md-list-item type="link" href="/config/${domain}">
                           <div slot="headline">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               `ui.panel.config.network.discovery.${domain}`
                             )}
                           </div>
                           <div slot="supporting-text">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               `ui.panel.config.network.discovery.${domain}_info`
                             )}
                           </div>
@@ -75,7 +75,7 @@ class HaConfigSectionNetwork extends LitElement {
               `
             : ""}
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

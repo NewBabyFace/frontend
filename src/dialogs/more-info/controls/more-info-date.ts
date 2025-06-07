@@ -1,17 +1,17 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../components/ha-date-input";
 import "../../../components/ha-time-input";
 import { setDateValue } from "../../../data/date";
 import { isUnavailableState, UNAVAILABLE } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-date")
 class MoreInfoDate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected render() {
     if (!this.stateObj || this.stateObj.state === UNAVAILABLE) {
@@ -20,7 +20,7 @@ class MoreInfoDate extends LitElement {
 
     return html`
       <ha-date-input
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
         .value=${isUnavailableState(this.stateObj.state)
           ? undefined
           : this.stateObj.state}
@@ -33,7 +33,7 @@ class MoreInfoDate extends LitElement {
 
   private _dateChanged(ev: CustomEvent<{ value: string }>): void {
     if (ev.detail.value) {
-      setDateValue(this.hass!, this.stateObj!.entity_id, ev.detail.value);
+      setDateValue(this.menuai!, this.stateObj!.entity_id, ev.detail.value);
     }
   }
 

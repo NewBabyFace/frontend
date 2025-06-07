@@ -12,7 +12,7 @@ import {
   optional,
   string,
 } from "superstruct";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/ha-expansion-panel";
@@ -22,7 +22,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import "../../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { migrateHeadingCardConfig } from "../../cards/hui-heading-card";
 import type { HeadingCardConfig } from "../../cards/types";
 import type { UiAction } from "../../components/hui-action-editor";
@@ -55,7 +55,7 @@ export class HuiHeadingCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: HeadingCardConfig;
 
@@ -114,7 +114,7 @@ export class HuiHeadingCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -126,11 +126,11 @@ export class HuiHeadingCardEditor
       data.heading_style = "title";
     }
 
-    const schema = this._schema(this.hass!.localize);
+    const schema = this._schema(this.menuai!.localize);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -139,13 +139,13 @@ export class HuiHeadingCardEditor
       <ha-expansion-panel outlined>
         <ha-svg-icon slot="leading-icon" .path=${mdiListBox}></ha-svg-icon>
         <h3 slot="header">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.heading.entities"
           )}
         </h3>
         <div class="content">
           <hui-heading-badges-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .badges=${this._badges(this._config!.badges)}
             @heading-badges-changed=${this._badgesChanged}
             @edit-heading-badge=${this._editBadge}
@@ -158,7 +158,7 @@ export class HuiHeadingCardEditor
 
   private _badgesChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -172,7 +172,7 @@ export class HuiHeadingCardEditor
 
   private _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -181,7 +181,7 @@ export class HuiHeadingCardEditor
     fireEvent(this, "config-changed", { config });
   }
 
-  private _editBadge(ev: HASSDomEvent<{ index: number }>): void {
+  private _editBadge(ev: menuaiDomEvent<{ index: number }>): void {
     ev.stopPropagation();
     const index = ev.detail.index;
     const config = this._badges(this._config!.badges)[index];
@@ -208,11 +208,11 @@ export class HuiHeadingCardEditor
     switch (schema.name) {
       case "heading_style":
       case "heading":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.heading.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

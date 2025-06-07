@@ -5,7 +5,7 @@ import "../../../components/ha-cover-controls";
 import "../../../components/ha-cover-tilt-controls";
 import type { CoverEntity } from "../../../data/cover";
 import { isTiltOnly } from "../../../data/cover";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -13,7 +13,7 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-cover-entity-row")
 class HuiCoverEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -29,32 +29,32 @@ class HuiCoverEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity] as CoverEntity;
+    const stateObj = this.menuai.states[this._config.entity] as CoverEntity;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         ${isTiltOnly(stateObj)
           ? html`
               <ha-cover-tilt-controls
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-cover-tilt-controls>
             `
           : html`
               <ha-cover-controls
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-cover-controls>
             `}

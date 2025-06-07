@@ -5,7 +5,7 @@ import {
   domainToName,
   type IntegrationManifest,
 } from "../../../data/integration";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./ha-integration-header";
 import "../../../components/ha-card";
 import { brandsUrl } from "../../../util/brands-url";
@@ -13,7 +13,7 @@ import { haStyle } from "../../../resources/styles";
 
 @customElement("ha-integration-action-card")
 export class HaIntegrationActionCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public banner!: string;
 
@@ -34,7 +34,7 @@ export class HaIntegrationActionCard extends LitElement {
             src=${brandsUrl({
               domain: this.domain,
               type: "icon",
-              darkOptimized: this.hass.themes?.darkMode,
+              darkOptimized: this.menuai.themes?.darkMode,
             })}
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
@@ -44,7 +44,7 @@ export class HaIntegrationActionCard extends LitElement {
           <h2>${this.label}</h2>
           <h3>
             ${this.localizedDomainName ||
-            domainToName(this.hass.localize, this.domain, this.manifest)}
+            domainToName(this.menuai.localize, this.domain, this.manifest)}
           </h3>
         </div>
         <div class="filler"></div>

@@ -1,29 +1,29 @@
 import type { TemplateResult } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HASSDomEvent } from "../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../common/dom/fire_event";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-settings-row";
 import "../../components/ha-switch";
 import type { HaSwitch } from "../../components/ha-switch";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
-    "hass-suspend-when-hidden": { suspend: HomeAssistant["suspendWhenHidden"] };
+  interface menuaiDomEvents {
+    "menuai-suspend-when-hidden": { suspend: menuai["suspendWhenHidden"] };
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "hass-suspend-when-hidden": HASSDomEvent<{
-      suspend: HomeAssistant["suspendWhenHidden"];
+    "menuai-suspend-when-hidden": menuaiDomEvent<{
+      suspend: menuai["suspendWhenHidden"];
     }>;
   }
 }
 
 @customElement("ha-set-suspend-row")
 class HaSetSuspendRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -31,13 +31,13 @@ class HaSetSuspendRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.suspend.header")}
+          ${this.menuai.localize("ui.panel.profile.suspend.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.suspend.description")}
+          ${this.menuai.localize("ui.panel.profile.suspend.description")}
         </span>
         <ha-switch
-          .checked=${this.hass.suspendWhenHidden}
+          .checked=${this.menuai.suspendWhenHidden}
           @change=${this._checkedChanged}
         ></ha-switch>
       </ha-settings-row>
@@ -46,10 +46,10 @@ class HaSetSuspendRow extends LitElement {
 
   private async _checkedChanged(ev: Event) {
     const suspend = (ev.target as HaSwitch).checked;
-    if (suspend === this.hass.suspendWhenHidden) {
+    if (suspend === this.menuai.suspendWhenHidden) {
       return;
     }
-    fireEvent(this, "hass-suspend-when-hidden", {
+    fireEvent(this, "menuai-suspend-when-hidden", {
       suspend,
     });
   }

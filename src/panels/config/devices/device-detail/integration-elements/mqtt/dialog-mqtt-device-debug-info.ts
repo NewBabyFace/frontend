@@ -11,14 +11,14 @@ import type { HaSwitch } from "../../../../../../components/ha-switch";
 import type { MQTTDeviceDebugInfo } from "../../../../../../data/mqtt";
 import { fetchMQTTDebugInfo } from "../../../../../../data/mqtt";
 import { haStyleDialog } from "../../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import "./mqtt-discovery-payload";
 import "./mqtt-messages";
 import type { MQTTDeviceDebugInfoDialogParams } from "./show-dialog-mqtt-device-debug-info";
 
 @customElement("dialog-mqtt-device-debug-info")
 class DialogMQTTDeviceDebugInfo extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _params?: MQTTDeviceDebugInfoDialogParams;
 
@@ -32,7 +32,7 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
     params: MQTTDeviceDebugInfoDialogParams
   ): Promise<void> {
     this._params = params;
-    fetchMQTTDebugInfo(this.hass, params.device.id).then((results) => {
+    fetchMQTTDebugInfo(this.menuai, params.device.id).then((results) => {
       this._debugInfo = results;
     });
   }
@@ -46,19 +46,19 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
       <ha-dialog
         open
         @closed=${this._close}
-        .heading=${this.hass!.localize(
+        .heading=${this.menuai!.localize(
           "ui.dialogs.mqtt_device_debug_info.title",
-          { device: computeDeviceNameDisplay(this._params.device, this.hass) }
+          { device: computeDeviceNameDisplay(this._params.device, this.menuai) }
         )}
       >
         <h4>
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.dialogs.mqtt_device_debug_info.payload_display"
           )}
         </h4>
         <div>
           <ha-formfield
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.mqtt_device_debug_info.deserialize"
             )}
           >
@@ -72,7 +72,7 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
         </div>
         <div>
           <ha-formfield
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.mqtt_device_debug_info.show_as_yaml"
             )}
           >
@@ -84,31 +84,31 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
           </ha-formfield>
         </div>
         <h4>
-          ${this.hass!.localize("ui.dialogs.mqtt_device_debug_info.entities")}
+          ${this.menuai!.localize("ui.dialogs.mqtt_device_debug_info.entities")}
         </h4>
         <ul class="entitylist">
           ${this._debugInfo.entities.length
             ? this._renderEntities()
             : html`
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.dialogs.mqtt_device_debug_info.no_entity_debug_info"
                 )}
               `}
         </ul>
         <h4>
-          ${this.hass!.localize("ui.dialogs.mqtt_device_debug_info.triggers")}
+          ${this.menuai!.localize("ui.dialogs.mqtt_device_debug_info.triggers")}
         </h4>
         <ul class="triggerlist">
           ${this._debugInfo.triggers.length
             ? this._renderTriggers()
             : html`
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.dialogs.mqtt_device_debug_info.no_trigger_debug_info"
                 )}
               `}
         </ul>
         <mwc-button slot="primaryAction" @click=${this._close}>
-          ${this.hass!.localize("ui.common.close")}
+          ${this.menuai!.localize("ui.common.close")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -132,7 +132,7 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
       ${this._debugInfo!.entities.map(
         (entity) => html`
           <li class="entitylistitem">
-            ${computeStateName(this.hass.states[entity.entity_id])}
+            ${computeStateName(this.menuai.states[entity.entity_id])}
             (<code>${entity.entity_id}</code>)
             <br />MQTT discovery data:
             <ul class="discoverydata">
@@ -142,7 +142,7 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
               </li>
               <li>
                 <mqtt-discovery-payload
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .payload=${entity.discovery_data.payload}
                   .showAsYaml=${this._showAsYaml}
                   .summary=${"Payload"}
@@ -157,13 +157,13 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
                   <li>
                     <code>${topic.topic}</code>
                     <mqtt-messages
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       direction="Received"
                       .messages=${topic.messages}
                       .showDeserialized=${this._showDeserialized}
                       .showAsYaml=${this._showAsYaml}
                       .subscribedTopic=${topic.topic}
-                      .summary=${this.hass!.localize(
+                      .summary=${this.menuai!.localize(
                         "ui.dialogs.mqtt_device_debug_info.recent_messages",
                         { n: topic.messages.length }
                       )}
@@ -180,13 +180,13 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
                   <li>
                     <code>${topic.topic}</code>
                     <mqtt-messages
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       direction="Transmitted"
                       .messages=${topic.messages}
                       .showDeserialized=${this._showDeserialized}
                       .showAsYaml=${this._showAsYaml}
                       .subscribedTopic=${topic.topic}
-                      .summary=${this.hass!.localize(
+                      .summary=${this.menuai!.localize(
                         "ui.dialogs.mqtt_device_debug_info.recent_tx_messages",
                         { n: topic.messages.length }
                       )}
@@ -215,7 +215,7 @@ class DialogMQTTDeviceDebugInfo extends LitElement {
               </li>
               <li>
                 <mqtt-discovery-payload
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .payload=${trigger.discovery_data.payload}
                   .showAsYaml=${this._showAsYaml}
                   .summary=${"Payload"}

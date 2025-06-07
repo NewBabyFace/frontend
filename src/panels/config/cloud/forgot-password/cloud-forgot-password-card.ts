@@ -11,11 +11,11 @@ import { haStyle } from "../../../../resources/styles";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import { cloudForgotPassword } from "../../../../data/cloud";
 import { forgotPasswordHaCloud } from "../../../../data/onboarding";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("cloud-forgot-password-card")
 export class CloudForgotPasswordCard extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public localize!: LocalizeFunc;
 
@@ -96,8 +96,8 @@ export class CloudForgotPasswordCard extends LitElement {
     this._inProgress = true;
 
     try {
-      if (this.hass) {
-        await cloudForgotPassword(this.hass, email);
+      if (this.menuai) {
+        await cloudForgotPassword(this.menuai, email);
       } else {
         // for onboarding
         await forgotPasswordHaCloud(email);

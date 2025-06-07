@@ -15,7 +15,7 @@ import "../../../state-control/cover/ha-state-control-cover-buttons";
 import "../../../state-control/cover/ha-state-control-cover-position";
 import "../../../state-control/cover/ha-state-control-cover-tilt-position";
 import "../../../state-control/cover/ha-state-control-cover-toggle";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-state-header";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
@@ -23,7 +23,7 @@ type Mode = "position" | "button";
 
 @customElement("more-info-cover")
 class MoreInfoCover extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: CoverEntity;
 
@@ -49,11 +49,11 @@ class MoreInfoCover extends LitElement {
   }
 
   private get _stateOverride() {
-    const stateDisplay = this.hass.formatEntityState(this.stateObj!);
+    const stateDisplay = this.menuai.formatEntityState(this.stateObj!);
 
     const positionStateDisplay = computeCoverPositionStateDisplay(
       this.stateObj!,
-      this.hass
+      this.menuai
     );
 
     if (positionStateDisplay) {
@@ -63,7 +63,7 @@ class MoreInfoCover extends LitElement {
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -97,7 +97,7 @@ class MoreInfoCover extends LitElement {
 
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .stateOverride=${this._stateOverride}
       ></ha-more-info-state-header>
@@ -110,7 +110,7 @@ class MoreInfoCover extends LitElement {
                     ? html`
                         <ha-state-control-cover-position
                           .stateObj=${this.stateObj}
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                         ></ha-state-control-cover-position>
                       `
                     : nothing}
@@ -118,7 +118,7 @@ class MoreInfoCover extends LitElement {
                     ? html`
                         <ha-state-control-cover-tilt-position
                           .stateObj=${this.stateObj}
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                         ></ha-state-control-cover-tilt-position>
                       `
                     : nothing}
@@ -132,14 +132,14 @@ class MoreInfoCover extends LitElement {
                     ? html`
                         <ha-state-control-cover-toggle
                           .stateObj=${this.stateObj}
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                         ></ha-state-control-cover-toggle>
                       `
                     : supportsOpenClose || supportsTilt
                       ? html`
                           <ha-state-control-cover-buttons
                             .stateObj=${this.stateObj}
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                           ></ha-state-control-cover-buttons>
                         `
                       : nothing}
@@ -153,7 +153,7 @@ class MoreInfoCover extends LitElement {
               ? html`
                   <ha-icon-button-group>
                     <ha-icon-button-toggle
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.dialogs.more_info_control.cover.switch_mode.position`
                       )}
                       .selected=${this._mode === "position"}
@@ -162,7 +162,7 @@ class MoreInfoCover extends LitElement {
                       @click=${this._setMode}
                     ></ha-icon-button-toggle>
                     <ha-icon-button-toggle
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.dialogs.more_info_control.cover.switch_mode.button`
                       )}
                       .selected=${this._mode === "button"}
@@ -177,7 +177,7 @@ class MoreInfoCover extends LitElement {
         </div>
       </div>
       <ha-attributes
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         extra-filters="current_position,current_tilt_position"
       ></ha-attributes>

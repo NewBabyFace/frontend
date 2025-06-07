@@ -5,12 +5,12 @@ import { fireEvent } from "../../common/dom/fire_event";
 import { createCloseHeading } from "../../components/ha-dialog";
 import "../../components/ha-hls-player";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { WebBrowserPlayMediaDialogParams } from "./show-media-player-dialog";
 
 @customElement("hui-dialog-web-browser-play-media")
 export class HuiDialogWebBrowserPlayMedia extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: WebBrowserPlayMediaDialogParams;
 
@@ -35,9 +35,9 @@ export class HuiDialogWebBrowserPlayMedia extends LitElement {
         open
         hideActions
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._params.title ||
-            this.hass.localize("ui.components.media-browser.media_player")
+            this.menuai.localize("ui.components.media-browser.media_player")
         )}
         @closed=${this.closeDialog}
       >
@@ -48,7 +48,7 @@ export class HuiDialogWebBrowserPlayMedia extends LitElement {
                   src=${this._params.sourceUrl}
                   type=${this._params.sourceType}
                 />
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.components.media-browser.audio_not_supported"
                 )}
               </audio>
@@ -60,7 +60,7 @@ export class HuiDialogWebBrowserPlayMedia extends LitElement {
                     src=${this._params.sourceUrl}
                     type=${this._params.sourceType}
                   />
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.components.media-browser.video_not_supported"
                   )}
                 </video>
@@ -71,7 +71,7 @@ export class HuiDialogWebBrowserPlayMedia extends LitElement {
                     controls
                     autoplay
                     playsinline
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .url=${this._params.sourceUrl}
                   ></ha-hls-player>
                 `
@@ -80,7 +80,7 @@ export class HuiDialogWebBrowserPlayMedia extends LitElement {
                     alt=${this._params.title || nothing}
                     src=${this._params.sourceUrl}
                   />`
-                : html`${this.hass.localize(
+                : html`${this.menuai.localize(
                     "ui.components.media-browser.media_not_supported"
                   )}`}
       </ha-dialog>

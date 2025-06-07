@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -10,7 +10,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   ClimateSwingModesCardFeatureConfig,
   LovelaceCardFeatureContext,
@@ -26,7 +26,7 @@ export class HuiClimateSwingModesCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -40,7 +40,7 @@ export class HuiClimateSwingModesCardFeatureEditor
     (
       localize: LocalizeFunc,
       formatEntityAttributeValue: FormatEntityAttributeValueFunc,
-      stateObj: HassEntity | undefined,
+      stateObj: menuaiEntity | undefined,
       customizeModes: boolean
     ) =>
       [
@@ -91,12 +91,12 @@ export class HuiClimateSwingModesCardFeatureEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const stateObj = this.context?.entity_id
-      ? this.hass.states[this.context?.entity_id]
+      ? this.menuai.states[this.context?.entity_id]
       : undefined;
 
     const data: ClimateSwingModesCardFeatureData = {
@@ -106,15 +106,15 @@ export class HuiClimateSwingModesCardFeatureEditor
     };
 
     const schema = this._schema(
-      this.hass.localize,
-      this.hass.formatEntityAttributeValue,
+      this.menuai.localize,
+      this.menuai.formatEntityAttributeValue,
       stateObj,
       data.customize_modes
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -128,7 +128,7 @@ export class HuiClimateSwingModesCardFeatureEditor
       .value as ClimateSwingModesCardFeatureData;
 
     const stateObj = this.context?.entity_id
-      ? this.hass!.states[this.context?.entity_id]
+      ? this.menuai!.states[this.context?.entity_id]
       : undefined;
 
     if (customize_modes && !config.swing_modes) {
@@ -148,7 +148,7 @@ export class HuiClimateSwingModesCardFeatureEditor
       case "style":
       case "swing_modes":
       case "customize_modes":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.features.types.climate-swing-modes.${schema.name}`
         );
       default:

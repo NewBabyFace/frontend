@@ -23,29 +23,29 @@ export const showConfigFlowDialog = (
   showFlowDialog(element, dialogParams, {
     flowType: "config_flow",
     showDevices: true,
-    createFlow: async (hass, handler) => {
+    createFlow: async (menuai, handler) => {
       const [step] = await Promise.all([
-        createConfigFlow(hass, handler, dialogParams.entryId),
-        hass.loadFragmentTranslation("config"),
-        hass.loadBackendTranslation("config", handler),
-        hass.loadBackendTranslation("selector", handler),
+        createConfigFlow(menuai, handler, dialogParams.entryId),
+        menuai.loadFragmentTranslation("config"),
+        menuai.loadBackendTranslation("config", handler),
+        menuai.loadBackendTranslation("selector", handler),
         // Used as fallback if no header defined for step
-        hass.loadBackendTranslation("title", handler),
+        menuai.loadBackendTranslation("title", handler),
       ]);
       return step;
     },
-    fetchFlow: async (hass, flowId) => {
-      const step = await fetchConfigFlow(hass, flowId);
-      await hass.loadFragmentTranslation("config");
-      await hass.loadBackendTranslation("config", step.handler);
-      await hass.loadBackendTranslation("selector", step.handler);
+    fetchFlow: async (menuai, flowId) => {
+      const step = await fetchConfigFlow(menuai, flowId);
+      await menuai.loadFragmentTranslation("config");
+      await menuai.loadBackendTranslation("config", step.handler);
+      await menuai.loadBackendTranslation("selector", step.handler);
       return step;
     },
     handleFlowStep: handleConfigFlowStep,
     deleteFlow: deleteConfigFlow,
 
-    renderAbortDescription(hass, step) {
-      const description = hass.localize(
+    renderAbortDescription(menuai, step) {
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.abort.${step.reason}`,
         step.description_placeholders
       );
@@ -57,17 +57,17 @@ export const showConfigFlowDialog = (
         : step.reason;
     },
 
-    renderShowFormStepHeader(hass, step) {
+    renderShowFormStepHeader(menuai, step) {
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.translation_domain || step.handler}.config.step.${step.step_id}.title`,
           step.description_placeholders
-        ) || hass.localize(`component.${step.handler}.title`)
+        ) || menuai.localize(`component.${step.handler}.title`)
       );
     },
 
-    renderShowFormStepDescription(hass, step) {
-      const description = hass.localize(
+    renderShowFormStepDescription(menuai, step) {
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.step.${step.step_id}.description`,
         step.description_placeholders
       );
@@ -83,9 +83,9 @@ export const showConfigFlowDialog = (
         : "";
     },
 
-    renderShowFormStepFieldLabel(hass, step, field, options) {
+    renderShowFormStepFieldLabel(menuai, step, field, options) {
       if (field.type === "expandable") {
-        return hass.localize(
+        return menuai.localize(
           `component.${step.handler}.config.step.${step.step_id}.sections.${field.name}.name`,
           step.description_placeholders
         );
@@ -94,16 +94,16 @@ export const showConfigFlowDialog = (
       const prefix = options?.path?.[0] ? `sections.${options.path[0]}.` : "";
 
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.handler}.config.step.${step.step_id}.${prefix}data.${field.name}`,
           step.description_placeholders
         ) || field.name
       );
     },
 
-    renderShowFormStepFieldHelper(hass, step, field, options) {
+    renderShowFormStepFieldHelper(menuai, step, field, options) {
       if (field.type === "expandable") {
-        return hass.localize(
+        return menuai.localize(
           `component.${step.translation_domain || step.handler}.config.step.${step.step_id}.sections.${field.name}.description`,
           step.description_placeholders
         );
@@ -111,7 +111,7 @@ export const showConfigFlowDialog = (
 
       const prefix = options?.path?.[0] ? `sections.${options.path[0]}.` : "";
 
-      const description = hass.localize(
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.step.${step.step_id}.${prefix}data_description.${field.name}`,
         step.description_placeholders
       );
@@ -121,25 +121,25 @@ export const showConfigFlowDialog = (
         : "";
     },
 
-    renderShowFormStepFieldError(hass, step, error) {
+    renderShowFormStepFieldError(menuai, step, error) {
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.translation_domain || step.translation_domain || step.handler}.config.error.${error}`,
           step.description_placeholders
         ) || error
       );
     },
 
-    renderShowFormStepFieldLocalizeValue(hass, step, key) {
-      return hass.localize(`component.${step.handler}.selector.${key}`);
+    renderShowFormStepFieldLocalizeValue(menuai, step, key) {
+      return menuai.localize(`component.${step.handler}.selector.${key}`);
     },
 
-    renderShowFormStepSubmitButton(hass, step) {
+    renderShowFormStepSubmitButton(menuai, step) {
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.handler}.config.step.${step.step_id}.submit`
         ) ||
-        hass.localize(
+        menuai.localize(
           `ui.panel.config.integrations.config_flow.${
             step.last_step === false ? "next" : "submit"
           }`
@@ -147,26 +147,26 @@ export const showConfigFlowDialog = (
       );
     },
 
-    renderExternalStepHeader(hass, step) {
+    renderExternalStepHeader(menuai, step) {
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.handler}.config.step.${step.step_id}.title`
         ) ||
-        hass.localize(
+        menuai.localize(
           "ui.panel.config.integrations.config_flow.external_step.open_site"
         )
       );
     },
 
-    renderExternalStepDescription(hass, step) {
-      const description = hass.localize(
+    renderExternalStepDescription(menuai, step) {
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.${step.step_id}.description`,
         step.description_placeholders
       );
 
       return html`
         <p>
-          ${hass.localize(
+          ${menuai.localize(
             "ui.panel.config.integrations.config_flow.external_step.description"
           )}
         </p>
@@ -182,8 +182,8 @@ export const showConfigFlowDialog = (
       `;
     },
 
-    renderCreateEntryDescription(hass, step) {
-      const description = hass.localize(
+    renderCreateEntryDescription(menuai, step) {
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.create_entry.${
           step.description || "default"
         }`,
@@ -203,16 +203,16 @@ export const showConfigFlowDialog = (
       `;
     },
 
-    renderShowFormProgressHeader(hass, step) {
+    renderShowFormProgressHeader(menuai, step) {
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.handler}.config.step.${step.step_id}.title`
-        ) || hass.localize(`component.${step.handler}.title`)
+        ) || menuai.localize(`component.${step.handler}.title`)
       );
     },
 
-    renderShowFormProgressDescription(hass, step) {
-      const description = hass.localize(
+    renderShowFormProgressDescription(menuai, step) {
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.progress.${step.progress_action}`,
         step.description_placeholders
       );
@@ -223,16 +223,16 @@ export const showConfigFlowDialog = (
         : "";
     },
 
-    renderMenuHeader(hass, step) {
+    renderMenuHeader(menuai, step) {
       return (
-        hass.localize(
+        menuai.localize(
           `component.${step.handler}.config.step.${step.step_id}.title`
-        ) || hass.localize(`component.${step.handler}.title`)
+        ) || menuai.localize(`component.${step.handler}.title`)
       );
     },
 
-    renderMenuDescription(hass, step) {
-      const description = hass.localize(
+    renderMenuDescription(menuai, step) {
+      const description = menuai.localize(
         `component.${step.translation_domain || step.handler}.config.step.${step.step_id}.description`,
         step.description_placeholders
       );
@@ -243,25 +243,25 @@ export const showConfigFlowDialog = (
         : "";
     },
 
-    renderMenuOption(hass, step, option) {
-      return hass.localize(
+    renderMenuOption(menuai, step, option) {
+      return menuai.localize(
         `component.${step.translation_domain || step.handler}.config.step.${step.step_id}.menu_options.${option}`,
         step.description_placeholders
       );
     },
 
-    renderLoadingDescription(hass, reason, handler, step) {
+    renderLoadingDescription(menuai, reason, handler, step) {
       if (reason !== "loading_flow" && reason !== "loading_step") {
         return "";
       }
       const domain = step?.handler || handler;
-      return hass.localize(
+      return menuai.localize(
         `ui.panel.config.integrations.config_flow.loading.${reason}`,
         {
           integration: domain
-            ? domainToName(hass.localize, domain)
+            ? domainToName(menuai.localize, domain)
             : // when we are continuing a config flow, we only know the ID and not the domain
-              hass.localize(
+              menuai.localize(
                 "ui.panel.config.integrations.config_flow.loading.fallback_title"
               ),
         }

@@ -12,7 +12,7 @@ import {
   optional,
   string,
 } from "superstruct";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-expansion-panel";
 import "../../../../components/ha-form/ha-form";
@@ -21,7 +21,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import "../../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   LovelaceCardFeatureConfig,
   LovelaceCardFeatureContext,
@@ -77,7 +77,7 @@ export class HuiHumidifierCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: HumidifierCardConfig;
 
@@ -93,7 +93,7 @@ export class HuiHumidifierCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -102,7 +102,7 @@ export class HuiHumidifierCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -111,13 +111,13 @@ export class HuiHumidifierCardEditor
       <ha-expansion-panel outlined>
         <ha-svg-icon slot="leading-icon" .path=${mdiListBox}></ha-svg-icon>
         <h3 slot="header">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.generic.features"
           )}
         </h3>
         <div class="content">
           <hui-card-features-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .context=${featureContext}
             .featuresTypes=${COMPATIBLE_FEATURES_TYPES}
             .features=${this._config!.features ?? []}
@@ -135,7 +135,7 @@ export class HuiHumidifierCardEditor
 
   private _featuresChanged(ev: CustomEvent) {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -152,7 +152,7 @@ export class HuiHumidifierCardEditor
     fireEvent(this, "config-changed", { config });
   }
 
-  private _editDetailElement(ev: HASSDomEvent<EditDetailElementEvent>): void {
+  private _editDetailElement(ev: menuaiDomEvent<EditDetailElementEvent>): void {
     const index = ev.detail.subElementConfig.index;
     const config = this._config!.features![index!];
 
@@ -180,12 +180,12 @@ export class HuiHumidifierCardEditor
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) => {
     if (schema.name === "show_current_as_primary") {
-      return this.hass!.localize(
+      return this.menuai!.localize(
         "ui.panel.lovelace.editor.card.humidifier.show_current_as_primary"
       );
     }
 
-    return this.hass!.localize(
+    return this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     );
   };

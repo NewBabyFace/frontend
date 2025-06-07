@@ -36,8 +36,8 @@ import {
   isLocalAgent,
   isNetworkMountAgent,
 } from "../../../data/backup";
-import "../../../layouts/hass-subpage";
-import type { HomeAssistant } from "../../../types";
+import "../../../layouts/menuai-subpage";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { showRestoreBackupDialog } from "./dialogs/show-dialog-restore-backup";
 import { fireEvent } from "../../../common/dom/fire_event";
@@ -73,7 +73,7 @@ const computeAgents = (backup: BackupContentExtended) => {
 
 @customElement("ha-config-backup-details")
 class HaConfigBackupDetails extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -100,33 +100,33 @@ class HaConfigBackupDetails extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
-    const isHassio = isComponentLoaded(this.hass, "hassio");
+    const ismenuaiio = isComponentLoaded(this.menuai, "menuaiio");
 
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/backup/backups"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .header=${this._backup?.name ||
-        this.hass.localize("ui.panel.config.backup.details.header")}
+        this.menuai.localize("ui.panel.config.backup.details.header")}
       >
         <ha-button-menu slot="toolbar-icon" @action=${this._handleAction}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
           <ha-list-item graphic="icon">
             <ha-svg-icon slot="graphic" .path=${mdiDownload}></ha-svg-icon>
-            ${this.hass.localize("ui.common.download")}
+            ${this.menuai.localize("ui.common.download")}
           </ha-list-item>
           <ha-list-item graphic="icon" class="warning">
             <ha-svg-icon slot="graphic" .path=${mdiDelete}></ha-svg-icon>
-            ${this.hass.localize("ui.common.delete")}
+            ${this.menuai.localize("ui.common.delete")}
           </ha-list-item>
         </ha-button-menu>
         <div class="content">
@@ -136,11 +136,11 @@ class HaConfigBackupDetails extends LitElement {
             ? html`
                 <ha-alert
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.panel.config.backup.details.not_found"
                   )}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.details.not_found_description",
                     { backupId: this.backupId }
                   )}
@@ -153,19 +153,19 @@ class HaConfigBackupDetails extends LitElement {
               : html`
                   <ha-backup-details-summary
                     .backup=${this._backup}
-                    .hass=${this.hass}
-                    .localize=${this.hass.localize}
-                    .isHassio=${isHassio}
+                    .menuai=${this.menuai}
+                    .localize=${this.menuai.localize}
+                    .ismenuaiio=${ismenuaiio}
                   ></ha-backup-details-summary>
                   <ha-backup-details-restore
                     .backup=${this._backup}
                     @backup-restore=${this._restore}
-                    .hass=${this.hass}
-                    .localize=${this.hass.localize}
+                    .menuai=${this.menuai}
+                    .localize=${this.menuai.localize}
                   ></ha-backup-details-restore>
                   <ha-card>
                     <div class="card-header">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.backup.details.locations.title"
                       )}
                     </div>
@@ -176,7 +176,7 @@ class HaConfigBackupDetails extends LitElement {
 
                           const domain = computeDomain(agentId);
                           const name = computeBackupAgentName(
-                            this.hass.localize,
+                            this.menuai.localize,
                             agentId,
                             this.agents
                           );
@@ -209,7 +209,7 @@ class HaConfigBackupDetails extends LitElement {
                                             type: "icon",
                                             useFallback: true,
                                             darkOptimized:
-                                              this.hass.themes?.darkMode,
+                                              this.menuai.themes?.darkMode,
                                           })}
                                           crossorigin="anonymous"
                                           referrerpolicy="no-referrer"
@@ -225,7 +225,7 @@ class HaConfigBackupDetails extends LitElement {
                                        ? html`
                                            <span class="dot error"></span>
                                            <span>
-                                             ${this.hass.localize(
+                                             ${this.menuai.localize(
                                                "ui.panel.config.backup.details.locations.backup_failed"
                                              )}
                                            </span>
@@ -234,7 +234,7 @@ class HaConfigBackupDetails extends LitElement {
                                          ? html`
                                              <span class="dot warning"></span>
                                              <span>
-                                               ${this.hass.localize(
+                                               ${this.menuai.localize(
                                                  "ui.panel.config.backup.details.locations.unencrypted"
                                                )}</span
                                              >
@@ -242,7 +242,7 @@ class HaConfigBackupDetails extends LitElement {
                                          : html`
                                              <span class="dot success"></span>
                                              <span
-                                               >${this.hass.localize(
+                                               >${this.menuai.localize(
                                                  "ui.panel.config.backup.details.locations.encrypted"
                                                )}</span
                                              >
@@ -261,7 +261,7 @@ class HaConfigBackupDetails extends LitElement {
                                       >
                                         <ha-icon-button
                                           slot="trigger"
-                                          .label=${this.hass.localize(
+                                          .label=${this.menuai.localize(
                                             "ui.common.menu"
                                           )}
                                           .path=${mdiDotsVertical}
@@ -271,7 +271,7 @@ class HaConfigBackupDetails extends LitElement {
                                             slot="graphic"
                                             .path=${mdiDownload}
                                           ></ha-svg-icon>
-                                          ${this.hass.localize(
+                                          ${this.menuai.localize(
                                             "ui.panel.config.backup.details.locations.download"
                                           )}
                                         </ha-list-item>
@@ -287,7 +287,7 @@ class HaConfigBackupDetails extends LitElement {
                   </ha-card>
                 `}
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -303,13 +303,13 @@ class HaConfigBackupDetails extends LitElement {
 
   private async _fetchBackup() {
     try {
-      const response = await fetchBackupDetails(this.hass, this.backupId);
+      const response = await fetchBackupDetails(this.menuai, this.backupId);
       this._backup = response.backup;
       this._agents = computeAgents(response.backup);
     } catch (err: any) {
       this._error =
         err?.message ||
-        this.hass.localize("ui.panel.config.backup.details.error");
+        this.menuai.localize("ui.panel.config.backup.details.error");
     }
   }
 
@@ -331,14 +331,14 @@ class HaConfigBackupDetails extends LitElement {
   }
 
   private async _downloadBackup(agentId?: string): Promise<void> {
-    await downloadBackup(this.hass, this, this._backup!, this.config, agentId);
+    await downloadBackup(this.menuai, this, this._backup!, this.config, agentId);
   }
 
   private async _deleteBackup(): Promise<void> {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize("ui.panel.config.backup.dialogs.delete.title"),
-      text: this.hass.localize("ui.panel.config.backup.dialogs.delete.text"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      title: this.menuai.localize("ui.panel.config.backup.dialogs.delete.title"),
+      text: this.menuai.localize("ui.panel.config.backup.dialogs.delete.text"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
     });
 
@@ -346,7 +346,7 @@ class HaConfigBackupDetails extends LitElement {
       return;
     }
 
-    await deleteBackup(this.hass, this._backup!.backup_id);
+    await deleteBackup(this.menuai, this._backup!.backup_id);
     fireEvent(this, "ha-refresh-backup-info");
     navigate("/config/backup");
   }

@@ -93,7 +93,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "zwave-js-add-node-code-input": ZWaveJsAddNodeCodeInput;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "z-wave-submit";
   }
 }

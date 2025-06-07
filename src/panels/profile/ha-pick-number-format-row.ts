@@ -8,11 +8,11 @@ import "../../components/ha-list-item";
 import "../../components/ha-select";
 import "../../components/ha-settings-row";
 import { NumberFormat } from "../../data/translation";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-pick-number-format-row")
 class NumberFormatRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -20,26 +20,26 @@ class NumberFormatRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.number_format.header")}
+          ${this.menuai.localize("ui.panel.profile.number_format.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.number_format.description")}
+          ${this.menuai.localize("ui.panel.profile.number_format.description")}
         </span>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.profile.number_format.dropdown_label"
           )}
-          .disabled=${this.hass.locale === undefined}
-          .value=${this.hass.locale.number_format}
+          .disabled=${this.menuai.locale === undefined}
+          .value=${this.menuai.locale.number_format}
           @selected=${this._handleFormatSelection}
           naturalMenuWidth
         >
           ${Object.values(NumberFormat).map((format) => {
             const formattedNumber = formatNumber(1234567.89, {
-              ...this.hass.locale,
+              ...this.menuai.locale,
               number_format: format,
             });
-            const value = this.hass.localize(
+            const value = this.menuai.localize(
               `ui.panel.profile.number_format.formats.${format}`
             );
             const twoLine = value.slice(value.length - 2) !== "89"; // Display explicit number formats on one line
@@ -58,7 +58,7 @@ class NumberFormatRow extends LitElement {
   }
 
   private async _handleFormatSelection(ev) {
-    fireEvent(this, "hass-number-format-select", ev.target.value);
+    fireEvent(this, "menuai-number-format-select", ev.target.value);
   }
 }
 

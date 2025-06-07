@@ -27,10 +27,10 @@ import {
 } from "../../../data/backup";
 import type { ManagerStateEvent } from "../../../data/backup_manager";
 import type { CloudStatus } from "../../../data/cloud";
-import "../../../layouts/hass-subpage";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-subpage";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import "./components/overview/ha-backup-overview-backups";
 import "./components/overview/ha-backup-overview-onboarding";
 import "./components/overview/ha-backup-overview-progress";
@@ -43,7 +43,7 @@ import { showUploadBackupDialog } from "./dialogs/show-dialog-upload-backup";
 
 @customElement("ha-config-backup-overview")
 class HaConfigBackupOverview extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatus;
 
@@ -87,7 +87,7 @@ class HaConfigBackupOverview extends LitElement {
     }
 
     fireEvent(this, "ha-refresh-backup-config");
-    await generateBackupWithAutomaticSettings(this.hass);
+    await generateBackupWithAutomaticSettings(this.menuai);
     fireEvent(this, "ha-refresh-backup-info");
   }
 
@@ -118,12 +118,12 @@ class HaConfigBackupOverview extends LitElement {
         return;
       }
 
-      await generateBackup(this.hass, params);
+      await generateBackup(this.menuai, params);
       fireEvent(this, "ha-refresh-backup-info");
       return;
     }
     if (type === "automatic") {
-      await generateBackupWithAutomaticSettings(this.hass);
+      await generateBackupWithAutomaticSettings(this.menuai);
       fireEvent(this, "ha-refresh-backup-info");
     }
   }
@@ -137,21 +137,21 @@ class HaConfigBackupOverview extends LitElement {
       "state" in this.manager && this.manager.state === "in_progress";
 
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.backup.overview.header")}
+        .header=${this.menuai.localize("ui.panel.config.backup.overview.header")}
       >
         <ha-button-menu slot="toolbar-icon">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
           <ha-list-item graphic="icon" @request-selected=${this._uploadBackup}>
             <ha-svg-icon slot="graphic" .path=${mdiUpload}></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.overview.menu.upload_backup"
             )}
           </ha-list-item>
@@ -162,11 +162,11 @@ class HaConfigBackupOverview extends LitElement {
                 ([agentId, error]) =>
                   html`<ha-alert
                     alert-type="error"
-                    .title=${this.hass.localize(
+                    .title=${this.menuai.localize(
                       "ui.panel.config.backup.overview.agent_error",
                       {
                         name: computeBackupAgentName(
-                          this.hass.localize,
+                          this.menuai.localize,
                           agentId,
                           this.agents
                         ),
@@ -180,7 +180,7 @@ class HaConfigBackupOverview extends LitElement {
           ${backupInProgress
             ? html`
                 <ha-backup-overview-progress
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .manager=${this.manager}
                 >
                 </ha-backup-overview-progress>
@@ -188,7 +188,7 @@ class HaConfigBackupOverview extends LitElement {
             : this._needsOnboarding
               ? html`
                   <ha-backup-overview-onboarding
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     @button-click=${this._handleOnboardingButtonClick}
                   >
                   </ha-backup-overview-onboarding>
@@ -196,7 +196,7 @@ class HaConfigBackupOverview extends LitElement {
               : this.config
                 ? html`
                     <ha-backup-overview-summary
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .backups=${this.backups}
                       .config=${this.config}
                       .fetching=${this.fetching}
@@ -206,14 +206,14 @@ class HaConfigBackupOverview extends LitElement {
                 : nothing}
 
           <ha-backup-overview-backups
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .backups=${this.backups}
           ></ha-backup-overview-backups>
 
           ${!this._needsOnboarding && this.config
             ? html`
                 <ha-backup-overview-settings
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .config=${this.config!}
                   .agents=${this.agents}
                 ></ha-backup-overview-settings>
@@ -224,7 +224,7 @@ class HaConfigBackupOverview extends LitElement {
         <ha-fab
           slot="fab"
           ?disabled=${backupInProgress}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.backup.overview.new_backup"
           )}
           extended
@@ -236,7 +236,7 @@ class HaConfigBackupOverview extends LitElement {
               </div>`
             : html`<ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>`}
         </ha-fab>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

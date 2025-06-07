@@ -1,14 +1,14 @@
 import type {
-  HassConfig,
-  HassEntities,
-  HassEntity,
-  HassEntityAttributeBase,
+  menuaiConfig,
+  menuaiEntities,
+  menuaiEntity,
+  menuaiEntityAttributeBase,
 } from "home-assistant-js-websocket";
 import { computeDomain } from "../common/entity/compute_domain";
 import { computeStateDisplayFromEntityAttributes } from "../common/entity/compute_state_display";
 import { computeStateNameFromEntityAttributes } from "../common/entity/compute_state_name";
 import type { LocalizeFunc } from "../common/translations/localize";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { FrontendLocaleData } from "./translation";
 import type { Statistics } from "./recorder";
 
@@ -91,14 +91,14 @@ export interface HistoryStreamMessage {
 }
 
 export const entityIdHistoryNeedsAttributes = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ) =>
-  !hass.states[entityId] ||
+  !menuai.states[entityId] ||
   NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
 
 export const fetchDateWS = (
-  hass: HomeAssistant,
+  menuai: menuai,
   startTime: Date,
   endTime: Date,
   entityIds: string[]
@@ -109,17 +109,17 @@ export const fetchDateWS = (
     end_time: endTime.toISOString(),
     minimal_response: true,
     no_attributes: !entityIds.some((entityId) =>
-      entityIdHistoryNeedsAttributes(hass, entityId)
+      entityIdHistoryNeedsAttributes(menuai, entityId)
     ),
   };
   if (entityIds.length !== 0) {
-    return hass.callWS<HistoryStates>({ ...params, entity_ids: entityIds });
+    return menuai.callWS<HistoryStates>({ ...params, entity_ids: entityIds });
   }
-  return hass.callWS<HistoryStates>(params);
+  return menuai.callWS<HistoryStates>(params);
 };
 
 export const subscribeHistory = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callbackFunction: (data: HistoryStates) => void,
   startTime: Date,
   endTime: Date,
@@ -132,25 +132,25 @@ export const subscribeHistory = (
     end_time: endTime.toISOString(),
     minimal_response: true,
     no_attributes: !entityIds.some((entityId) =>
-      entityIdHistoryNeedsAttributes(hass, entityId)
+      entityIdHistoryNeedsAttributes(menuai, entityId)
     ),
   };
-  const stream = new HistoryStream(hass);
-  return hass.connection.subscribeMessage<HistoryStreamMessage>(
+  const stream = new HistoryStream(menuai);
+  return menuai.connection.subscribeMessage<HistoryStreamMessage>(
     (message) => callbackFunction(stream.processMessage(message)),
     params
   );
 };
 
 class HistoryStream {
-  hass: HomeAssistant;
+  menuai: menuai;
 
   hoursToShow?: number;
 
   combinedHistory: HistoryStates;
 
-  constructor(hass: HomeAssistant, hoursToShow?: number) {
-    this.hass = hass;
+  constructor(menuai: menuai, hoursToShow?: number) {
+    this.menuai = menuai;
     this.hoursToShow = hoursToShow;
     this.combinedHistory = {};
   }
@@ -230,7 +230,7 @@ class HistoryStream {
 }
 
 export const subscribeHistoryStatesTimeWindow = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callbackFunction: (data: HistoryStates) => void,
   hoursToShow: number,
   entityIds: string[],
@@ -249,11 +249,11 @@ export const subscribeHistoryStatesTimeWindow = (
     no_attributes:
       noAttributes ??
       !entityIds.some((entityId) =>
-        entityIdHistoryNeedsAttributes(hass, entityId)
+        entityIdHistoryNeedsAttributes(menuai, entityId)
       ),
   };
-  const stream = new HistoryStream(hass, hoursToShow);
-  return hass.connection.subscribeMessage<HistoryStreamMessage>(
+  const stream = new HistoryStream(menuai, hoursToShow);
+  return menuai.connection.subscribeMessage<HistoryStreamMessage>(
     (message) => callbackFunction(stream.processMessage(message)),
     params
   );
@@ -273,11 +273,11 @@ const equalState = (obj1: LineChartState, obj2: LineChartState) =>
 const processTimelineEntity = (
   localize: LocalizeFunc,
   locale: FrontendLocaleData,
-  config: HassConfig,
-  entities: HomeAssistant["entities"],
+  config: menuaiConfig,
+  entities: menuai["entities"],
   entityId: string,
   states: EntityHistoryState[],
-  current_state: HassEntity | undefined
+  current_state: menuaiEntity | undefined
 ): TimelineEntity => {
   const data: TimelineState[] = [];
   const first: EntityHistoryState = states[0];
@@ -286,7 +286,7 @@ const processTimelineEntity = (
       continue;
     }
 
-    const currentAttributes: HassEntityAttributeBase = {};
+    const currentAttributes: menuaiEntityAttributeBase = {};
     if (current_state?.attributes.device_class) {
       currentAttributes.device_class = current_state?.attributes.device_class;
     }
@@ -326,7 +326,7 @@ const processLineChartEntities = (
   unit: string,
   device_class: string | undefined,
   entities: HistoryStates,
-  hassEntities: HassEntities
+  menuaiEntities: menuaiEntities
 ): LineChartUnit => {
   const data: LineChartEntity[] = [];
 
@@ -376,8 +376,8 @@ const processLineChartEntities = (
     }
 
     const attributes =
-      entityId in hassEntities
-        ? hassEntities[entityId].attributes
+      entityId in menuaiEntities
+        ? menuaiEntities[entityId].attributes
         : "friendly_name" in first.a
           ? first.a
           : undefined;
@@ -407,7 +407,7 @@ const isNumericFromAttributes = (attributes: Record<string, any>) =>
   "unit_of_measurement" in attributes || "state_class" in attributes;
 
 const isNumericSensorEntity = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   sensorNumericalDeviceClasses: string[]
 ) =>
   stateObj.attributes.device_class != null &&
@@ -416,7 +416,7 @@ const isNumericSensorEntity = (
 const BLANK_UNIT = " ";
 
 export const convertStatisticsToHistory = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statistics: Statistics,
   statisticIds: string[],
   sensorNumericDeviceClasses: string[],
@@ -443,10 +443,10 @@ export const convertStatisticsToHistory = (
   });
 
   const statisticsHistory = computeHistory(
-    hass,
+    menuai,
     statsHistoryStates,
     [],
-    hass.localize,
+    menuai.localize,
     sensorNumericDeviceClasses,
     splitDeviceClasses,
     true
@@ -464,7 +464,7 @@ export const convertStatisticsToHistory = (
 };
 
 export const computeHistory = (
-  hass: HomeAssistant,
+  menuai: menuai,
   stateHistory: HistoryStates,
   entityIds: string[],
   localize: LocalizeFunc,
@@ -482,12 +482,12 @@ export const computeHistory = (
   allEntities.forEach((entity) => {
     if (entity in stateHistory) {
       localStateHistory[entity] = stateHistory[entity];
-    } else if (hass.states[entity]) {
+    } else if (menuai.states[entity]) {
       localStateHistory[entity] = [
         {
-          s: hass.states[entity].state,
-          a: hass.states[entity].attributes,
-          lu: new Date(hass.states[entity].last_updated).getTime() / 1000,
+          s: menuai.states[entity].state,
+          a: menuai.states[entity].attributes,
+          lu: new Date(menuai.states[entity].last_updated).getTime() / 1000,
         },
       ];
     }
@@ -505,7 +505,7 @@ export const computeHistory = (
     const domain = computeDomain(entityId);
 
     const currentState =
-      entityId in hass.states ? hass.states[entityId] : undefined;
+      entityId in menuai.states ? menuai.states[entityId] : undefined;
     const numericStateFromHistory =
       currentState || isNumericFromDomain(domain)
         ? undefined
@@ -531,9 +531,9 @@ export const computeHistory = (
     } else {
       unit = {
         zone: localize("ui.dialogs.more_info_control.zone.graph_unit"),
-        climate: hass.config.unit_system.temperature,
+        climate: menuai.config.unit_system.temperature,
         humidifier: "%",
-        water_heater: hass.config.unit_system.temperature,
+        water_heater: menuai.config.unit_system.temperature,
       }[domain];
     }
 
@@ -553,9 +553,9 @@ export const computeHistory = (
       timelineDevices.push(
         processTimelineEntity(
           localize,
-          hass.locale,
-          hass.config,
-          hass.entities,
+          menuai.locale,
+          menuai.config,
+          menuai.entities,
           entityId,
           stateInfo,
           currentState
@@ -583,7 +583,7 @@ export const computeHistory = (
       unit,
       deviceClass,
       lineChartDevices[key],
-      hass.states
+      menuai.states
     );
   });
 
@@ -598,7 +598,7 @@ export const computeGroupKey = (
 
 export const isNumericEntity = (
   domain: string,
-  currentState: HassEntity | undefined,
+  currentState: menuaiEntity | undefined,
   numericStateFromHistory: EntityHistoryState | undefined,
   sensorNumericalDeviceClasses: string[],
   forceNumeric = false

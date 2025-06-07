@@ -5,7 +5,7 @@ import { classMap } from "lit/directives/class-map";
 import { ifDefined } from "lit/directives/if-defined";
 import "../../../components/ha-card";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
 import { hasAction } from "../common/has-action";
@@ -26,7 +26,7 @@ export class HuiPictureHeaderFooter
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public type!: "header" | "footer";
 
@@ -45,14 +45,14 @@ export class HuiPictureHeaderFooter
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.size === 1 && changedProps.has("hass")) {
-      return !changedProps.get("hass");
+    if (changedProps.size === 1 && changedProps.has("menuai")) {
+      return !changedProps.get("menuai");
     }
     return true;
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
@@ -72,7 +72,7 @@ export class HuiPictureHeaderFooter
         class=${classMap({
           clickable,
         })}
-        src=${this.hass.hassUrl(this._config.image)}
+        src=${this.menuai.menuaiUrl(this._config.image)}
       />
     `;
   }
@@ -89,7 +89,7 @@ export class HuiPictureHeaderFooter
   `;
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 }
 

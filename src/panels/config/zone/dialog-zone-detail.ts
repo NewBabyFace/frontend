@@ -11,11 +11,11 @@ import type { SchemaUnion } from "../../../components/ha-form/types";
 import type { ZoneMutableParams } from "../../../data/zone";
 import { getZoneEditorInitData } from "../../../data/zone";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { ZoneDetailDialogParams } from "./show-dialog-zone-detail";
 
 class DialogZoneDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: Record<string, string>;
 
@@ -35,7 +35,7 @@ class DialogZoneDetail extends LitElement {
       let movedHomeLocation;
       if (!initConfig?.latitude || !initConfig?.longitude) {
         movedHomeLocation = addDistanceToCoord(
-          [this.hass.config.latitude, this.hass.config.longitude],
+          [this.menuai.config.latitude, this.menuai.config.longitude],
           Math.random() * 500 * (Math.random() < 0.5 ? -1 : 1),
           Math.random() * 500 * (Math.random() < 0.5 ? -1 : 1)
         );
@@ -83,15 +83,15 @@ class DialogZoneDetail extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._params.entry
             ? this._params.entry.name
-            : this.hass!.localize("ui.panel.config.zone.detail.new_zone")
+            : this.menuai!.localize("ui.panel.config.zone.detail.new_zone")
         )}
       >
         <div>
           <ha-form
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .schema=${this._schema(this._data.icon)}
             .data=${this._formData(this._data)}
             .error=${this._error}
@@ -108,7 +108,7 @@ class DialogZoneDetail extends LitElement {
                 @click=${this._deleteEntry}
                 .disabled=${this._submitting}
               >
-                ${this.hass!.localize("ui.panel.config.zone.detail.delete")}
+                ${this.menuai!.localize("ui.panel.config.zone.detail.delete")}
               </mwc-button>
             `
           : nothing}
@@ -118,8 +118,8 @@ class DialogZoneDetail extends LitElement {
           .disabled=${!valid || this._submitting}
         >
           ${this._params.entry
-            ? this.hass!.localize("ui.panel.config.zone.detail.update")
-            : this.hass!.localize("ui.panel.config.zone.detail.create")}
+            ? this.menuai!.localize("ui.panel.config.zone.detail.update")
+            : this.menuai!.localize("ui.panel.config.zone.detail.create")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -176,7 +176,7 @@ class DialogZoneDetail extends LitElement {
 
   private _computeLabel = (
     entry: SchemaUnion<ReturnType<typeof this._schema>>
-  ): string => this.hass.localize(`ui.panel.config.zone.detail.${entry.name}`);
+  ): string => this.menuai.localize(`ui.panel.config.zone.detail.${entry.name}`);
 
   private async _updateEntry() {
     this._submitting = true;

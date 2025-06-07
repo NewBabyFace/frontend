@@ -2,7 +2,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { ImageSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-icon-button";
 import "../ha-textarea";
 import "../ha-textfield";
@@ -14,7 +14,7 @@ import { URL_PREFIX } from "../../data/image_upload";
 
 @customElement("ha-selector-image")
 export class HaImageSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: any;
 
@@ -46,16 +46,16 @@ export class HaImageSelector extends LitElement {
     return html`
       <div>
         <label>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.components.selectors.image.select_image_with_label",
             {
               label:
                 this.label ||
-                this.hass.localize("ui.components.selectors.image.image"),
+                this.menuai.localize("ui.components.selectors.image.image"),
             }
           )}
           <ha-formfield
-            .label=${this.hass.localize("ui.components.selectors.image.upload")}
+            .label=${this.menuai.localize("ui.components.selectors.image.upload")}
           >
             <ha-radio
               name="mode"
@@ -65,7 +65,7 @@ export class HaImageSelector extends LitElement {
             ></ha-radio>
           </ha-formfield>
           <ha-formfield
-            .label=${this.hass.localize("ui.components.selectors.image.url")}
+            .label=${this.menuai.localize("ui.components.selectors.image.url")}
           >
             <ha-radio
               name="mode"
@@ -91,7 +91,7 @@ export class HaImageSelector extends LitElement {
             `
           : html`
               <ha-picture-upload
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this.value?.startsWith(URL_PREFIX) ? this.value : null}
                 .original=${this.selector.image?.original}
                 .cropOptions=${this.selector.image?.crop}

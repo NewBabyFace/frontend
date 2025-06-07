@@ -30,7 +30,7 @@ import {
   statisticsHaveType,
 } from "../../data/recorder";
 import type { ECOption } from "../../resources/echarts";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./ha-chart-base";
 
 export const supportedStatTypeMap: Record<StatisticType, StatisticType> = {
@@ -44,7 +44,7 @@ export const supportedStatTypeMap: Record<StatisticType, StatisticType> = {
 
 @customElement("statistics-chart")
 export class StatisticsChart extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public statisticsData?: Statistics;
 
@@ -107,7 +107,7 @@ export class StatisticsChart extends LitElement {
   private _computedStyle?: CSSStyleDeclaration;
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    return changedProps.size > 1 || !changedProps.has("hass");
+    return changedProps.size > 1 || !changedProps.has("menuai");
   }
 
   public willUpdate(changedProps: PropertyValues) {
@@ -144,15 +144,15 @@ export class StatisticsChart extends LitElement {
   }
 
   protected render(): TemplateResult {
-    if (!isComponentLoaded(this.hass, "history")) {
+    if (!isComponentLoaded(this.menuai, "history")) {
       return html`<div class="info">
-        ${this.hass.localize("ui.components.history_charts.history_disabled")}
+        ${this.menuai.localize("ui.components.history_charts.history_disabled")}
       </div>`;
     }
 
     if (this.isLoadingData && !this.statisticsData) {
       return html`<div class="info">
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.components.statistics_charts.loading_statistics"
         )}
       </div>`;
@@ -160,7 +160,7 @@ export class StatisticsChart extends LitElement {
 
     if (!this.statisticsData || !Object.keys(this.statisticsData).length) {
       return html`<div class="info">
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.components.statistics_charts.no_statistics_found"
         )}
       </div>`;
@@ -168,7 +168,7 @@ export class StatisticsChart extends LitElement {
 
     return html`
       <ha-chart-base
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._chartData}
         .options=${this._chartOptions}
         .height=${this.height}
@@ -193,7 +193,7 @@ export class StatisticsChart extends LitElement {
   private _renderTooltip = (params: any) => {
     const rendered: Record<string, boolean> = {};
     const unit = this.unit
-      ? `${blankBeforeUnit(this.unit, this.hass.locale)}${this.unit}`
+      ? `${blankBeforeUnit(this.unit, this.menuai.locale)}${this.unit}`
       : "";
     return params
       .map((param, index: number) => {
@@ -201,8 +201,8 @@ export class StatisticsChart extends LitElement {
         rendered[param.seriesName] = true;
 
         const statisticId = this._statisticIds[param.seriesIndex];
-        const stateObj = this.hass.states[statisticId];
-        const entry = this.hass.entities[statisticId];
+        const stateObj = this.menuai.states[statisticId];
+        const entry = this.menuai.entities[statisticId];
         // max series can have 3 values, as the second value is the max-min to form a band
         const rawValue = String(param.value[2] ?? param.value[1]);
 
@@ -212,7 +212,7 @@ export class StatisticsChart extends LitElement {
 
         const value = `${formatNumber(
           rawValue,
-          this.hass.locale,
+          this.menuai.locale,
           options
         )}${unit}`;
 
@@ -220,8 +220,8 @@ export class StatisticsChart extends LitElement {
           index === 0
             ? formatDateTimeWithSeconds(
                 new Date(param.value[0]),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               ) + "<br>"
             : "";
         return `${time}${param.marker} ${param.seriesName}: ${value}`;
@@ -295,7 +295,7 @@ export class StatisticsChart extends LitElement {
         nameTextStyle: {
           align: "left",
         },
-        position: computeRTL(this.hass) ? "right" : "left",
+        position: computeRTL(this.menuai) ? "right" : "left",
         scale:
           this.chartType !== "bar" ||
           this.logarithmicScale ||
@@ -330,7 +330,7 @@ export class StatisticsChart extends LitElement {
   private _getStatisticsMetaData = memoizeOne(
     async (statisticIds: string[] | undefined) => {
       const statsMetadataArray = await getStatisticMetadata(
-        this.hass,
+        this.menuai,
         statisticIds
       );
       const statisticsMetaData = {};
@@ -387,15 +387,15 @@ export class StatisticsChart extends LitElement {
       const meta = statisticsMetaData?.[statistic_id];
       let name = names[statistic_id];
       if (name === undefined) {
-        name = getStatisticLabel(this.hass, statistic_id, meta);
+        name = getStatisticLabel(this.menuai, statistic_id, meta);
       }
 
       if (!this.unit) {
         if (unit === undefined) {
-          unit = getDisplayUnit(this.hass, statistic_id, meta);
+          unit = getDisplayUnit(this.menuai, statistic_id, meta);
         } else if (
           unit !== null &&
-          unit !== getDisplayUnit(this.hass, statistic_id, meta)
+          unit !== getDisplayUnit(this.menuai, statistic_id, meta)
         ) {
           // Clear unit if not all statistics have same unit
           unit = null;
@@ -490,10 +490,10 @@ export class StatisticsChart extends LitElement {
             cursor: "default",
             data: [],
             name: name
-              ? `${name} (${this.hass.localize(
+              ? `${name} (${this.menuai.localize(
                   `ui.components.statistics_charts.statistic_types.${type}`
                 )})`
-              : this.hass.localize(
+              : this.menuai.localize(
                   `ui.components.statistics_charts.statistic_types.${type}`
                 ),
             symbol: "none",

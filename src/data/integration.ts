@@ -1,7 +1,7 @@
 import type { Connection } from "home-assistant-js-websocket";
 import { createCollection } from "home-assistant-js-websocket";
 import type { LocalizeFunc } from "../common/translations/localize";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { debounce } from "../common/util/debounce";
 
 export const integrationsWithPanel = {
@@ -95,7 +95,7 @@ export const domainToName = (
 ) => localize(`component.${domain}.title`) || manifest?.name || domain;
 
 export const fetchIntegrationManifests = (
-  hass: HomeAssistant,
+  menuai: menuai,
   integrations?: string[]
 ) => {
   const params: any = {
@@ -104,16 +104,16 @@ export const fetchIntegrationManifests = (
   if (integrations) {
     params.integrations = integrations;
   }
-  return hass.callWS<IntegrationManifest[]>(params);
+  return menuai.callWS<IntegrationManifest[]>(params);
 };
 
 export const fetchIntegrationManifest = (
-  hass: HomeAssistant,
+  menuai: menuai,
   integration: string
-) => hass.callWS<IntegrationManifest>({ type: "manifest/get", integration });
+) => menuai.callWS<IntegrationManifest>({ type: "manifest/get", integration });
 
-export const fetchIntegrationSetups = (hass: HomeAssistant) =>
-  hass.callWS<IntegrationSetup[]>({ type: "integration/setup_info" });
+export const fetchIntegrationSetups = (menuai: menuai) =>
+  menuai.callWS<IntegrationSetup[]>({ type: "integration/setup_info" });
 
 export const fetchIntegrationLogInfo = (conn) =>
   conn.sendMessagePromise({
@@ -121,12 +121,12 @@ export const fetchIntegrationLogInfo = (conn) =>
   });
 
 export const setIntegrationLogLevel = (
-  hass: HomeAssistant,
+  menuai: menuai,
   integration: string,
   level: string,
   persistence: IntegrationLogPersistance
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "logger/integration_log_level",
     integration,
     level,
@@ -158,8 +158,8 @@ export const subscribeLogInfo = (
     onChange
   );
 
-export const waitForIntegrationSetup = (hass: HomeAssistant, domain: string) =>
-  hass.callWS<{ integration_loaded: boolean }>({
+export const waitForIntegrationSetup = (menuai: menuai, domain: string) =>
+  menuai.callWS<{ integration_loaded: boolean }>({
     type: "integration/wait",
     domain,
   });

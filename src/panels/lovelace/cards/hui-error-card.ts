@@ -1,7 +1,7 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { mdiAlertCircleOutline, mdiAlertOutline } from "@mdi/js";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCard, LovelaceGridOptions } from "../types";
 import type { ErrorCardConfig } from "./types";
 import "../../../components/ha-card";
@@ -14,7 +14,7 @@ const ERROR_ICONS = {
 
 @customElement("hui-error-card")
 export class HuiErrorCard extends LitElement implements LovelaceCard {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public preview = false;
 
@@ -44,8 +44,8 @@ export class HuiErrorCard extends LitElement implements LovelaceCard {
   protected render() {
     const error =
       this._config?.error ||
-      this.hass?.localize("ui.errors.config.configuration_error");
-    const showTitle = this.hass === undefined || this.hass?.user?.is_admin;
+      this.menuai?.localize("ui.errors.config.configuration_error");
+    const showTitle = this.menuai === undefined || this.menuai?.user?.is_admin;
 
     return html`
       <ha-card class="${this.severity} ${showTitle ? "" : "no-title"}">

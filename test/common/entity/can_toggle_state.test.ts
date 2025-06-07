@@ -3,7 +3,7 @@ import { assert, describe, it } from "vitest";
 import { canToggleState } from "../../../src/common/entity/can_toggle_state";
 
 describe("canToggleState", () => {
-  const hass: any = {
+  const menuai: any = {
     services: {
       light: {
         turn_on: null, // Service keys only need to be present for test
@@ -21,7 +21,7 @@ describe("canToggleState", () => {
       entity_id: "light.bla",
       state: "on",
     };
-    assert.isTrue(canToggleState(hass, stateObj));
+    assert.isTrue(canToggleState(menuai, stateObj));
   });
 
   it("Detects group with toggle", () => {
@@ -33,7 +33,7 @@ describe("canToggleState", () => {
       },
     };
 
-    assert.isTrue(canToggleState(hass, stateObj));
+    assert.isTrue(canToggleState(menuai, stateObj));
   });
 
   it("Detects group without toggle", () => {
@@ -41,7 +41,7 @@ describe("canToggleState", () => {
       entity_id: "group.devices",
       state: "home",
     };
-    assert.isFalse(canToggleState(hass, stateObj));
+    assert.isFalse(canToggleState(menuai, stateObj));
   });
 
   it("Detects climate with toggle", () => {
@@ -51,7 +51,7 @@ describe("canToggleState", () => {
         supported_features: 4096,
       },
     };
-    assert.isTrue(canToggleState(hass, stateObj));
+    assert.isTrue(canToggleState(menuai, stateObj));
   });
 
   it("Detects climate without toggle", () => {
@@ -61,7 +61,7 @@ describe("canToggleState", () => {
         supported_features: 0,
       },
     };
-    assert.isFalse(canToggleState(hass, stateObj));
+    assert.isFalse(canToggleState(menuai, stateObj));
   });
 
   it("Detects group with missing entity", () => {
@@ -73,7 +73,7 @@ describe("canToggleState", () => {
       },
     };
 
-    assert.isFalse(canToggleState(hass, stateObj));
+    assert.isFalse(canToggleState(menuai, stateObj));
   });
 
   it("Detects group with off state", () => {
@@ -85,6 +85,6 @@ describe("canToggleState", () => {
       },
     };
 
-    assert.isTrue(canToggleState(hass, stateObj));
+    assert.isTrue(canToggleState(menuai, stateObj));
   });
 });

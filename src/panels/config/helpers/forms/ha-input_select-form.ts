@@ -15,11 +15,11 @@ import type { HaTextField } from "../../../../components/ha-textfield";
 import type { InputSelect } from "../../../../data/input_select";
 import { showConfirmationDialog } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-input_select-form")
 class HaInputSelectForm extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public new = false;
 
@@ -67,7 +67,7 @@ class HaInputSelectForm extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -77,27 +77,27 @@ class HaInputSelectForm extends LitElement {
           dialogInitialFocus
           autoValidate
           required
-          .validationMessage=${this.hass!.localize(
+          .validationMessage=${this.menuai!.localize(
             "ui.dialogs.helper_settings.required_error_msg"
           )}
           .value=${this._name}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.name"
           )}
           .configValue=${"name"}
           @input=${this._valueChanged}
         ></ha-textfield>
         <ha-icon-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._icon}
           .configValue=${"icon"}
           @value-changed=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.icon"
           )}
         ></ha-icon-picker>
         <div class="header">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.dialogs.helper_settings.input_select.options"
           )}:
         </div>
@@ -118,7 +118,7 @@ class HaInputSelectForm extends LitElement {
                       <ha-icon-button
                         slot="meta"
                         .index=${index}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.helper_settings.input_select.remove_option"
                         )}
                         @click=${this._removeOption}
@@ -129,7 +129,7 @@ class HaInputSelectForm extends LitElement {
                 )
               : html`
                   <ha-list-item noninteractive>
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.dialogs.helper_settings.input_select.no_options"
                     )}
                   </ha-list-item>
@@ -140,13 +140,13 @@ class HaInputSelectForm extends LitElement {
           <ha-textfield
             class="flex-auto"
             id="option_input"
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_select.add_option"
             )}
             @keydown=${this._handleKeyAdd}
           ></ha-textfield>
           <ha-button @click=${this._addOption}
-            >${this.hass!.localize(
+            >${this.menuai!.localize(
               "ui.dialogs.helper_settings.input_select.add"
             )}</ha-button
           >
@@ -178,10 +178,10 @@ class HaInputSelectForm extends LitElement {
     const index = (ev.target as any).index;
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.dialogs.helper_settings.input_select.confirm_delete.delete"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.dialogs.helper_settings.input_select.confirm_delete.prompt"
         ),
         destructive: true,

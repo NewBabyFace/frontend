@@ -1,5 +1,5 @@
 import { timeCachePromiseFunc } from "../common/util/time-cache-function-promise";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 interface EntitySource {
   domain: string;
@@ -7,11 +7,11 @@ interface EntitySource {
 
 export type EntitySources = Record<string, EntitySource>;
 
-const fetchEntitySources = (hass: HomeAssistant): Promise<EntitySources> =>
-  hass.callWS({ type: "entity/source" });
+const fetchEntitySources = (menuai: menuai): Promise<EntitySources> =>
+  menuai.callWS({ type: "entity/source" });
 
 export const fetchEntitySourcesWithCache = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<EntitySources> =>
   timeCachePromiseFunc(
     "_entitySources",
@@ -20,6 +20,6 @@ export const fetchEntitySourcesWithCache = (
     fetchEntitySources,
     // We base the cache on number of states. If number of states
     // changes we force a refresh
-    (hass2) => Object.keys(hass2.states).length,
-    hass
+    (menuai2) => Object.keys(menuai2.states).length,
+    menuai
   );

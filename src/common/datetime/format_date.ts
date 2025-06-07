@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import memoizeOne from "memoize-one";
 import type { FrontendLocaleData } from "../../data/translation";
 import { DateFormat } from "../../data/translation";
@@ -8,7 +8,7 @@ import { resolveTimeZone } from "./resolve-time-zone";
 export const formatDateWeekdayDay = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateWeekdayDayMem(locale, config.time_zone).format(dateObj);
 
 const formatDateWeekdayDayMem = memoizeOne(
@@ -25,7 +25,7 @@ const formatDateWeekdayDayMem = memoizeOne(
 export const formatDate = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateMem(locale, config.time_zone).format(dateObj);
 
 const formatDateMem = memoizeOne(
@@ -42,7 +42,7 @@ const formatDateMem = memoizeOne(
 export const formatDateShort = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateShortMem(locale, config.time_zone).format(dateObj);
 
 const formatDateShortMem = memoizeOne(
@@ -59,7 +59,7 @@ const formatDateShortMem = memoizeOne(
 export const formatDateNumeric = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => {
   const formatter = formatDateNumericMem(locale, config.time_zone);
 
@@ -123,7 +123,7 @@ const formatDateNumericMem = memoizeOne(
 export const formatDateVeryShort = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateVeryShortMem(locale, config.time_zone).format(dateObj);
 
 const formatDateVeryShortMem = memoizeOne(
@@ -139,7 +139,7 @@ const formatDateVeryShortMem = memoizeOne(
 export const formatDateMonthYear = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateMonthYearMem(locale, config.time_zone).format(dateObj);
 
 const formatDateMonthYearMem = memoizeOne(
@@ -155,7 +155,7 @@ const formatDateMonthYearMem = memoizeOne(
 export const formatDateMonth = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateMonthMem(locale, config.time_zone).format(dateObj);
 
 const formatDateMonthMem = memoizeOne(
@@ -170,7 +170,7 @@ const formatDateMonthMem = memoizeOne(
 export const formatDateYear = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateYearMem(locale, config.time_zone).format(dateObj);
 
 const formatDateYearMem = memoizeOne(
@@ -185,7 +185,7 @@ const formatDateYearMem = memoizeOne(
 export const formatDateWeekday = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateWeekdayMem(locale, config.time_zone).format(dateObj);
 
 const formatDateWeekdayMem = memoizeOne(
@@ -200,7 +200,7 @@ const formatDateWeekdayMem = memoizeOne(
 export const formatDateWeekdayShort = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatDateWeekdayShortMem(locale, config.time_zone).format(dateObj);
 
 const formatDateWeekdayShortMem = memoizeOne(

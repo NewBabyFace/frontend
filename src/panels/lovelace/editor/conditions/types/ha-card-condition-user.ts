@@ -11,7 +11,7 @@ import "../../../../../components/ha-list";
 import "../../../../../components/user/ha-user-badge";
 import type { User } from "../../../../../data/user";
 import { fetchUsers } from "../../../../../data/user";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { UserCondition } from "../../../common/validate-condition";
 
 const userConditionStruct = object({
@@ -21,7 +21,7 @@ const userConditionStruct = object({
 
 @customElement("ha-card-condition-user")
 export class HaCardConditionUser extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: UserCondition;
 
@@ -39,7 +39,7 @@ export class HaCardConditionUser extends LitElement {
 
   private _sortedUsers = memoizeOne((users: User[]) =>
     users.sort((a, b) =>
-      stringCompare(a.name, b.name, this.hass.locale.language)
+      stringCompare(a.name, b.name, this.menuai.locale.language)
     )
   );
 
@@ -49,7 +49,7 @@ export class HaCardConditionUser extends LitElement {
   }
 
   private async _fetchUsers() {
-    const users = await fetchUsers(this.hass);
+    const users = await fetchUsers(this.menuai);
     this._users = users.filter((user) => !user.system_generated);
   }
 
@@ -69,7 +69,7 @@ export class HaCardConditionUser extends LitElement {
             >
               <ha-user-badge
                 slot="graphic"
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .user=${user}
               ></ha-user-badge>
               <span>${user.name}</span>

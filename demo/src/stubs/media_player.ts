@@ -1,5 +1,5 @@
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockMediaPlayer = (hass: MockHomeAssistant) => {
-  hass.mockWS("media_player_thumbnail", () => Promise.reject());
+export const mockMediaPlayer = (menuai: Mockmenuai) => {
+  menuai.mockWS("media_player_thumbnail", () => Promise.reject());
 };

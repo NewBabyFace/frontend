@@ -28,9 +28,9 @@ import {
   fetchBackupAgentsInfo,
   fetchBackupConfig,
 } from "../../../../data/backup";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../components/config/ha-backup-config-data";
 import type { BackupConfigData } from "../components/config/ha-backup-config-data";
 import "../components/ha-backup-agents-picker";
@@ -45,7 +45,7 @@ interface FormData {
 
 const INITIAL_DATA: FormData = {
   data: {
-    include_homeassistant: true,
+    include_menuai: true,
     include_database: true,
     include_folders: [],
     include_all_addons: true,
@@ -60,8 +60,8 @@ const STEPS = ["data", "sync"] as const;
 const DISALLOWED_AGENTS_NO_HA = [CLOUD_AGENT];
 
 @customElement("ha-dialog-generate-backup")
-class DialogGenerateBackup extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogGenerateBackup extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _step?: "data" | "sync";
 
@@ -97,7 +97,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
   }
 
   private async _fetchAgents() {
-    const { agents } = await fetchBackupAgentsInfo(this.hass);
+    const { agents } = await fetchBackupAgentsInfo(this.menuai);
     this._agents = agents
       .filter(
         (agent) =>
@@ -109,7 +109,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
   }
 
   private async _fetchBackupConfig() {
-    const { config } = await fetchBackupConfig(this.hass);
+    const { config } = await fetchBackupConfig(this.menuai);
     this._backupConfig = config;
   }
 
@@ -169,7 +169,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
       return nothing;
     }
 
-    const dialogTitle = this.hass.localize(
+    const dialogTitle = this.menuai.localize(
       `ui.panel.config.backup.dialogs.generate.${this._step}.title`
     );
 
@@ -185,7 +185,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
             ? html`
                 <ha-icon-button
                   slot="navigationIcon"
-                  .label=${this.hass.localize("ui.common.close")}
+                  .label=${this.menuai.localize("ui.common.close")}
                   .path=${mdiClose}
                   @click=${this.closeDialog}
                 ></ha-icon-button>
@@ -205,7 +205,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
           ${isFirstStep
             ? html`
                 <ha-button @click=${this.closeDialog}>
-                  ${this.hass.localize("ui.common.cancel")}
+                  ${this.menuai.localize("ui.common.cancel")}
                 </ha-button>
               `
             : nothing}
@@ -216,7 +216,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
                   .disabled=${this._formData.agents_mode === "custom" &&
                   !selectedAgents.length}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.dialogs.generate.actions.create"
                   )}
                 </ha-button>
@@ -226,7 +226,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
                   @click=${this._nextStep}
                   .disabled=${this._step === "data" && this._noDataSelected}
                 >
-                  ${this.hass.localize("ui.common.next")}
+                  ${this.menuai.localize("ui.common.next")}
                 </ha-button>
               `}
         </div>
@@ -235,13 +235,13 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
   }
 
   private get _noDataSelected() {
-    const hassio = isComponentLoaded(this.hass, "hassio");
+    const menuaiio = isComponentLoaded(this.menuai, "menuaiio");
     if (
-      this._formData?.data.include_homeassistant ||
+      this._formData?.data.include_menuai ||
       this._formData?.data.include_database ||
-      (hassio && this._formData?.data.include_folders?.length) ||
-      (hassio && this._formData?.data.include_all_addons) ||
-      (hassio && this._formData?.data.include_addons?.length)
+      (menuaiio && this._formData?.data.include_folders?.length) ||
+      (menuaiio && this._formData?.data.include_all_addons) ||
+      (menuaiio && this._formData?.data.include_addons?.length)
     ) {
       return false;
     }
@@ -255,7 +255,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
 
     return html`
       <ha-backup-config-data
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._formData.data}
         @value-changed=${this._dataConfigChanged}
       ></ha-backup-config-data>
@@ -281,7 +281,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
     return html`
       <ha-textfield
         name="name"
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.backup.dialogs.generate.sync.name"
         )}
         .value=${this._formData.name}
@@ -291,12 +291,12 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
       <ha-md-list>
         <ha-md-list-item>
           <span slot="headline">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.generate.sync.locations"
             )}
           </span>
           <span slot="supporting-text">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.generate.sync.locations_description"
             )}
           </span>
@@ -311,7 +311,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
               .disabled=${disabledAgentIds.length}
             >
               <div slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.generate.sync.locations_options.all",
                   { count: this._allAgentIds.length }
                 )}
@@ -319,7 +319,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
             </ha-md-select-option>
             <ha-md-select-option value="custom">
               <div slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.generate.sync.locations_options.custom"
                 )}
               </div>
@@ -331,11 +331,11 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
         ? html`
             <ha-alert
               alert-type="info"
-              .title=${this.hass.localize(
+              .title=${this.menuai.localize(
                 "ui.panel.config.backup.dialogs.generate.sync.ha_cloud_alert.title"
               )}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.dialogs.generate.sync.ha_cloud_alert.description"
               )}
             </ha-alert>
@@ -344,14 +344,14 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
       ${this._formData.agents_mode === "custom"
         ? html`
             <ha-expansion-panel
-              .header=${this.hass.localize(
+              .header=${this.menuai.localize(
                 "ui.panel.config.backup.dialogs.generate.sync.locations"
               )}
               outlined
               expanded
             >
               <ha-backup-agents-picker
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._formData.agent_ids}
                 @value-changed=${this._agentsChanged}
                 .agents=${this._agents}
@@ -390,7 +390,7 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
       return [];
     }
     const allAgents = this._allAgentIds;
-    return !this._formData.data.include_homeassistant
+    return !this._formData.data.include_menuai
       ? DISALLOWED_AGENTS_NO_HA.filter((agentId) => allAgents.includes(agentId))
       : [];
   }
@@ -408,20 +408,20 @@ class DialogGenerateBackup extends LitElement implements HassDialog {
       name,
       password,
       agent_ids: agents_mode === "all" ? this._allAgentIds : agent_ids,
-      // We always include homeassistant if we include database
-      include_homeassistant:
-        data.include_homeassistant || data.include_database,
+      // We always include menuai if we include database
+      include_menuai:
+        data.include_menuai || data.include_database,
       include_database: data.include_database,
     };
 
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       params.include_folders = data.include_folders;
       params.include_all_addons = data.include_all_addons;
       params.include_addons = data.include_addons;
     }
 
-    // Ensure we don't upload to disallowed agents if we are not including homeassistant
-    if (!params.include_homeassistant) {
+    // Ensure we don't upload to disallowed agents if we are not including menuai
+    if (!params.include_menuai) {
       params.agent_ids = params.agent_ids.filter(
         (agentId) => !DISALLOWED_AGENTS_NO_HA.includes(agentId)
       );

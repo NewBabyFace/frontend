@@ -27,7 +27,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "action-handler": ActionHandler;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     action: ActionHandlerDetail;
   }
 }

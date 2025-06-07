@@ -4,7 +4,7 @@ import "../../../components/ha-label-badge";
 import "../../../components/ha-svg-icon";
 import type { LovelaceSectionElement } from "../../../data/lovelace";
 import type { LovelaceSectionConfig } from "../../../data/lovelace/config/section";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 export interface ErrorSectionConfig extends LovelaceSectionConfig {
   error: string;
@@ -30,7 +30,7 @@ export class HuiErrorSection
   extends LitElement
   implements LovelaceSectionElement
 {
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @property({ attribute: false }) public isStrategy = false;
 

@@ -14,13 +14,13 @@ import type { LovelaceConfig } from "../../../../data/lovelace/config/types";
 import type { LovelaceDashboard } from "../../../../data/lovelace/dashboard";
 import { fetchDashboards } from "../../../../data/lovelace/dashboard";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { SelectDashboardDialogParams } from "./show-select-dashboard-dialog";
 import type { HaMdDialog } from "../../../../components/ha-md-dialog";
 
 @customElement("hui-dialog-select-dashboard")
 export class HuiDialogSelectDashboard extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _params?: SelectDashboardDialogParams;
 
@@ -62,7 +62,7 @@ export class HuiDialogSelectDashboard extends LitElement {
 
     const dialogTitle =
       this._params.header ||
-      this.hass.localize("ui.panel.lovelace.editor.select_dashboard.header");
+      this.menuai.localize("ui.panel.lovelace.editor.select_dashboard.header");
 
     return html`
       <ha-md-dialog
@@ -74,7 +74,7 @@ export class HuiDialogSelectDashboard extends LitElement {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             @click=${this.closeDialog}
             .disabled=${this._saving}
@@ -85,7 +85,7 @@ export class HuiDialogSelectDashboard extends LitElement {
           ${this._dashboards && !this._saving
             ? html`
                 <ha-md-select
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.lovelace.editor.select_view.dashboard_label"
                   )}
                   @change=${this._dashboardChanged}
@@ -111,7 +111,7 @@ export class HuiDialogSelectDashboard extends LitElement {
         </div>
         <div slot="actions">
           <ha-button @click=${this.closeDialog} .disabled=${this._saving}>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </ha-button>
           <ha-button
             @click=${this._selectDashboard}
@@ -119,7 +119,7 @@ export class HuiDialogSelectDashboard extends LitElement {
             this._fromUrlPath === this._toUrlPath ||
             this._saving}
           >
-            ${this._params.actionLabel || this.hass!.localize("ui.common.move")}
+            ${this._params.actionLabel || this.menuai!.localize("ui.common.move")}
           </ha-button>
         </div>
       </ha-md-dialog>
@@ -133,13 +133,13 @@ export class HuiDialogSelectDashboard extends LitElement {
         url_path: "lovelace",
         require_admin: false,
         show_in_sidebar: true,
-        title: this.hass.localize("ui.common.default"),
-        mode: this.hass.panels.lovelace?.config?.mode,
+        title: this.menuai.localize("ui.common.default"),
+        mode: this.menuai.panels.lovelace?.config?.mode,
       },
-      ...(this._params!.dashboards || (await fetchDashboards(this.hass))),
+      ...(this._params!.dashboards || (await fetchDashboards(this.menuai))),
     ];
 
-    const currentPath = this._fromUrlPath || this.hass.defaultPanel;
+    const currentPath = this._fromUrlPath || this.menuai.defaultPanel;
     for (const dashboard of this._dashboards!) {
       if (dashboard.url_path !== currentPath) {
         this._toUrlPath = dashboard.url_path;

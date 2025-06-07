@@ -19,7 +19,7 @@ import { autocompleteLoginFields } from "../../data/auth";
 import type { DataEntryFlowStepForm } from "../../data/data_entry_flow";
 import { previewModule } from "../../data/preview";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { FlowConfig } from "./show-dialog-data-entry-flow";
 import { configFlowContentStyles } from "./styles";
 
@@ -31,7 +31,7 @@ class StepFlowForm extends LitElement {
 
   @property({ attribute: false }) public step!: DataEntryFlowStepForm;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _loading = false;
 
@@ -59,12 +59,12 @@ class StepFlowForm extends LitElement {
 
     return html`
       <div class="content" @click=${this._clickHandler}>
-        ${this.flowConfig.renderShowFormStepDescription(this.hass, this.step)}
+        ${this.flowConfig.renderShowFormStepDescription(this.menuai, this.step)}
         ${this._errorMsg
           ? html`<ha-alert alert-type="error">${this._errorMsg}</ha-alert>`
           : ""}
         <ha-form
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
           .data=${stepData}
           .disabled=${this._loading}
@@ -82,12 +82,12 @@ class StepFlowForm extends LitElement {
       ${step.preview
         ? html`<div class="preview" @set-flow-errors=${this._setError}>
             <h3>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.integrations.config_flow.preview"
               )}:
             </h3>
             ${dynamicElement(`flow-preview-${previewModule(step.preview)}`, {
-              hass: this.hass,
+              menuai: this.menuai,
               domain: step.preview,
               flowType: this.flowConfig.flowType,
               handler: step.handler,
@@ -108,7 +108,7 @@ class StepFlowForm extends LitElement {
               <div>
                 <mwc-button @click=${this._submitStep}>
                   ${this.flowConfig.renderShowFormStepSubmitButton(
-                    this.hass,
+                    this.menuai,
                     this.step
                   )}
                 </mwc-button>
@@ -181,7 +181,7 @@ class StepFlowForm extends LitElement {
           checkAllRequiredFields(this.step.data_schema, stepData);
 
     if (!allRequiredInfoFilledIn) {
-      this._errorMsg = this.hass.localize(
+      this._errorMsg = this.menuai.localize(
         "ui.panel.config.integrations.config_flow.not_all_required_fields"
       );
       return;
@@ -206,7 +206,7 @@ class StepFlowForm extends LitElement {
 
     try {
       const step = await this.flowConfig.handleFlowStep(
-        this.hass,
+        this.menuai,
         this.step.flow_id,
         toSendData
       );
@@ -245,7 +245,7 @@ class StepFlowForm extends LitElement {
 
   private _labelCallback = (field: HaFormSchema, _data, options): string =>
     this.flowConfig.renderShowFormStepFieldLabel(
-      this.hass,
+      this.menuai,
       this.step,
       field,
       options
@@ -256,18 +256,18 @@ class StepFlowForm extends LitElement {
     options
   ): string | TemplateResult =>
     this.flowConfig.renderShowFormStepFieldHelper(
-      this.hass,
+      this.menuai,
       this.step,
       field,
       options
     );
 
   private _errorCallback = (error: string) =>
-    this.flowConfig.renderShowFormStepFieldError(this.hass, this.step, error);
+    this.flowConfig.renderShowFormStepFieldError(this.menuai, this.step, error);
 
   private _localizeValueCallback = (key: string) =>
     this.flowConfig.renderShowFormStepFieldLocalizeValue(
-      this.hass,
+      this.menuai,
       this.step,
       key
     );
@@ -301,7 +301,7 @@ class StepFlowForm extends LitElement {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "set-flow-errors": { errors: DataEntryFlowStepForm["errors"] };
   }
   interface HTMLElementTagNameMap {

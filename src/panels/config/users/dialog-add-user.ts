@@ -20,13 +20,13 @@ import {
   deleteUser,
 } from "../../../data/user";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant, ValueChangedEvent } from "../../../types";
+import type { menuai, ValueChangedEvent } from "../../../types";
 import type { AddUserDialogParams } from "./show-dialog-add-user";
 import "../../../components/ha-password-field";
 
 @customElement("dialog-add-user")
 export class DialogAddUser extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _loading = false;
 
@@ -89,8 +89,8 @@ export class DialogAddUser extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.users.add_user.caption")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.users.add_user.caption")
         )}
       >
         <div>
@@ -99,12 +99,12 @@ export class DialogAddUser extends LitElement {
             ? html`<ha-textfield
                 class="name"
                 name="name"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.users.editor.name"
                 )}
                 .value=${this._name}
                 required
-                .validationMessage=${this.hass.localize(
+                .validationMessage=${this.menuai.localize(
                   "ui.common.error_required"
                 )}
                 @input=${this._handleValueChanged}
@@ -115,29 +115,29 @@ export class DialogAddUser extends LitElement {
           <ha-textfield
             class="username"
             name="username"
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.users.editor.username"
             )}
             .value=${this._username}
             required
             @input=${this._handleValueChanged}
-            .validationMessage=${this.hass.localize("ui.common.error_required")}
+            .validationMessage=${this.menuai.localize("ui.common.error_required")}
             dialogInitialFocus
           ></ha-textfield>
 
           <ha-password-field
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.users.add_user.password"
             )}
             name="password"
             .value=${this._password}
             required
             @input=${this._handleValueChanged}
-            .validationMessage=${this.hass.localize("ui.common.error_required")}
+            .validationMessage=${this.menuai.localize("ui.common.error_required")}
           ></ha-password-field>
 
           <ha-password-field
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.users.add_user.password_confirm"
             )}
             name="passwordConfirm"
@@ -147,18 +147,18 @@ export class DialogAddUser extends LitElement {
             .invalid=${this._password !== "" &&
             this._passwordConfirm !== "" &&
             this._passwordConfirm !== this._password}
-            .errorMessage=${this.hass.localize(
+            .errorMessage=${this.menuai.localize(
               "ui.panel.config.users.add_user.password_not_match"
             )}
           ></ha-password-field>
           <ha-settings-row>
             <span slot="heading">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.users.editor.local_access_only"
               )}
             </span>
             <span slot="description">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.users.editor.local_access_only_description"
               )}
             </span>
@@ -170,10 +170,10 @@ export class DialogAddUser extends LitElement {
           </ha-settings-row>
           <ha-settings-row>
             <span slot="heading">
-              ${this.hass.localize("ui.panel.config.users.editor.admin")}
+              ${this.menuai.localize("ui.panel.config.users.editor.admin")}
             </span>
             <span slot="description">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.users.editor.admin_description"
               )}
             </span>
@@ -183,7 +183,7 @@ export class DialogAddUser extends LitElement {
           ${!this._isAdmin
             ? html`
                 <ha-alert alert-type="info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.users.users_privileges_note"
                   )}
                 </ha-alert>
@@ -205,7 +205,7 @@ export class DialogAddUser extends LitElement {
                 this._password !== this._passwordConfirm}
                 @click=${this._createUser}
               >
-                ${this.hass.localize("ui.panel.config.users.add_user.create")}
+                ${this.menuai.localize("ui.panel.config.users.add_user.create")}
               </ha-button>
             `}
       </ha-dialog>
@@ -256,7 +256,7 @@ export class DialogAddUser extends LitElement {
     let user: User;
     try {
       const userResponse = await createUser(
-        this.hass,
+        this.menuai,
         this._name,
         [this._isAdmin ? SYSTEM_GROUP_ID_ADMIN : SYSTEM_GROUP_ID_USER],
         this._localOnly
@@ -270,13 +270,13 @@ export class DialogAddUser extends LitElement {
 
     try {
       await createAuthForUser(
-        this.hass,
+        this.menuai,
         user.id,
         this._username,
         this._password
       );
     } catch (err: any) {
-      await deleteUser(this.hass, user.id);
+      await deleteUser(this.menuai, user.id);
       this._loading = false;
       this._error = err.message;
       return;
@@ -285,7 +285,7 @@ export class DialogAddUser extends LitElement {
     user.username = this._username;
     user.credentials = [
       {
-        type: "homeassistant",
+        type: "menuai",
       },
     ];
     this._params!.userAddedCallback(user);

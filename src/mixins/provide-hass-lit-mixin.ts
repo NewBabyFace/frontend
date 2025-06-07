@@ -1,29 +1,29 @@
 import type { PropertyValues, ReactiveElement } from "lit";
-import type { Constructor, HomeAssistant } from "../types";
+import type { Constructor, menuai } from "../types";
 
-export interface ProvideHassElement {
-  provideHass(element: HTMLElement);
+export interface ProvidemenuaiElement {
+  providemenuai(element: HTMLElement);
 }
 
-export const ProvideHassLitMixin = <T extends Constructor<ReactiveElement>>(
+export const ProvidemenuaiLitMixin = <T extends Constructor<ReactiveElement>>(
   superClass: T
 ) =>
   class extends superClass {
-    protected hass!: HomeAssistant;
+    protected menuai!: menuai;
 
-    private __provideHass: HTMLElement[] = [];
+    private __providemenuai: HTMLElement[] = [];
 
-    public provideHass(el) {
-      this.__provideHass.push(el);
-      el.hass = this.hass;
+    public providemenuai(el) {
+      this.__providemenuai.push(el);
+      el.menuai = this.menuai;
     }
 
     protected updated(changedProps: PropertyValues) {
       super.updated(changedProps);
 
-      if (changedProps.has("hass")) {
-        this.__provideHass.forEach((el) => {
-          (el as any).hass = this.hass;
+      if (changedProps.has("menuai")) {
+        this.__providemenuai.forEach((el) => {
+          (el as any).menuai = this.menuai;
         });
       }
     }

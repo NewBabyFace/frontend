@@ -2,7 +2,7 @@ import type {
   ActionConfig,
   ConfirmationRestrictionConfig,
 } from "../../../data/lovelace/config/action";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LegacyStateFilter } from "../common/evaluate-filter";
 import type { Condition } from "../common/validate-condition";
 import type { TimestampRenderingFormat } from "../components/types";
@@ -92,7 +92,7 @@ export type LovelaceRowConfig =
   | TextConfig;
 
 export interface LovelaceRow extends HTMLElement {
-  hass?: HomeAssistant;
+  menuai?: menuai;
   preview?: boolean;
   setConfig(config: LovelaceRowConfig);
 }

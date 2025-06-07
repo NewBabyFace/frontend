@@ -1,18 +1,18 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../components/ha-alert";
 import "../../../components/ha-spinner";
 import "../../../components/ha-markdown";
 import "../../../components/ha-textfield";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-configurator")
 export class MoreInfoConfigurator extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @state() private _isConfiguring = false;
 
@@ -78,7 +78,7 @@ export class MoreInfoConfigurator extends LitElement {
 
     this._isConfiguring = true;
 
-    this.hass.callService("configurator", "configure", data).then(
+    this.menuai.callService("configurator", "configure", data).then(
       () => {
         this._isConfiguring = false;
       },

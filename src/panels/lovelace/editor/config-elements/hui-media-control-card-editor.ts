@@ -4,7 +4,7 @@ import { assert, assign, object, optional, string } from "superstruct";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/entity/ha-entity-picker";
 import "../../../../components/ha-theme-picker";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { MediaControlCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -25,7 +25,7 @@ export class HuiMediaControlCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: MediaControlCardConfig;
 
@@ -43,17 +43,17 @@ export class HuiMediaControlCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <div class="card-config">
         <ha-entity-picker
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.lovelace.editor.card.generic.entity"
           )}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._entity}
           .configValue=${"entity"}
           .includeDomains=${includeDomains}
@@ -62,12 +62,12 @@ export class HuiMediaControlCardEditor
           allow-custom-entity
         ></ha-entity-picker>
         <ha-theme-picker
-          .label=${`${this.hass!.localize(
+          .label=${`${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.generic.theme"
-          )} (${this.hass!.localize(
+          )} (${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.config.optional"
           )})`}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._theme}
           .configValue=${"theme"}
           @value-changed=${this._valueChanged}
@@ -77,7 +77,7 @@ export class HuiMediaControlCardEditor
   }
 
   private _valueChanged(ev: EntitiesEditorEvent): void {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
     const target = ev.target! as EditorTarget;

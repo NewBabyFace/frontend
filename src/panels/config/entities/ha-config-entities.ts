@@ -15,7 +15,7 @@ import {
   mdiToggleSwitch,
   mdiToggleSwitchOffOutline,
 } from "@mdi/js";
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
@@ -25,7 +25,7 @@ import memoize from "memoize-one";
 import { computeCssColor } from "../../../common/color/compute-color";
 import { formatShortDateTimeWithConditionalYear } from "../../../common/datetime/format_date_time";
 import { storage } from "../../../common/decorators/storage";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { computeAreaName } from "../../../common/entity/compute_area_name";
 import {
   computeDeviceName,
@@ -102,12 +102,12 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-tabs-subpage-data-table";
-import type { HaTabsSubpageDataTable } from "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-tabs-subpage-data-table";
+import type { HaTabsSubpageDataTable } from "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { configSections } from "../ha-panel-config";
 import type { Helper } from "../helpers/const";
 import { isHelperDomain } from "../helpers/const";
@@ -124,7 +124,7 @@ export interface StateEntity
 }
 
 export interface EntityRow extends StateEntity {
-  entity?: HassEntity;
+  entity?: menuaiEntity;
   unavailable: boolean;
   restored: boolean;
   status: string | undefined;
@@ -141,7 +141,7 @@ export interface EntityRow extends StateEntity {
 
 @customElement("ha-config-entities")
 export class HaConfigEntities extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -219,7 +219,7 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
   })
   private _activeHiddenColumns?: string[];
 
-  @query("hass-tabs-subpage-data-table", true)
+  @query("menuai-tabs-subpage-data-table", true)
   private _dataTable!: HaTabsSubpageDataTable;
 
   public connectedCallback() {
@@ -299,11 +299,11 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
                   <ha-state-icon
                     title=${ifDefined(
                       entry.entity
-                        ? this.hass.formatEntityState(entry.entity)
+                        ? this.menuai.formatEntityState(entry.entity)
                         : undefined
                     )}
                     slot="item-icon"
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .stateObj=${entry.entity}
                   ></ha-state-icon>
                 `
@@ -370,7 +370,7 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
         template: (entry) =>
           entry.disabled_by === null
             ? ""
-            : this.hass.localize(
+            : this.menuai.localize(
                 `config_entry.disabled_by.${entry.disabled_by}`
               ),
       },
@@ -395,22 +395,22 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
                   <ha-tooltip
                     placement="left"
                     .content=${entry.restored
-                      ? this.hass.localize(
+                      ? this.menuai.localize(
                           "ui.panel.config.entities.picker.status.not_provided"
                         )
                       : entry.unavailable
-                        ? this.hass.localize(
+                        ? this.menuai.localize(
                             "ui.panel.config.entities.picker.status.unavailable"
                           )
                         : entry.disabled_by
-                          ? this.hass.localize(
+                          ? this.menuai.localize(
                               "ui.panel.config.entities.picker.status.disabled"
                             )
                           : entry.hidden_by
-                            ? this.hass.localize(
+                            ? this.menuai.localize(
                                 "ui.panel.config.entities.picker.status.hidden"
                               )
-                            : this.hass.localize(
+                            : this.menuai.localize(
                                 "ui.panel.config.entities.picker.status.unmanageable"
                               )}
                   >
@@ -442,8 +442,8 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
           entry.created_at
             ? formatShortDateTimeWithConditionalYear(
                 new Date(entry.created_at * 1000),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )
             : "—",
       },
@@ -456,8 +456,8 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
           entry.modified_at
             ? formatShortDateTimeWithConditionalYear(
                 new Date(entry.modified_at * 1000),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )
             : "—",
       },
@@ -493,8 +493,8 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
     (
       localize: LocalizeFunc,
       entities: StateEntity[],
-      devices: HomeAssistant["devices"],
-      areas: HomeAssistant["areas"],
+      devices: menuai["devices"],
+      areas: menuai["areas"],
       stateEntities: StateEntity[],
       filters: DataTableFiltersValues,
       filteredItems: DataTableFiltersItems,
@@ -644,7 +644,7 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
       const duplicatedDevicesNames = getDuplicatedDeviceNames(devices);
 
       for (const entry of filteredEntities) {
-        const entity = this.hass.states[entry.entity_id];
+        const entity = this.menuai.states[entry.entity_id];
         const unavailable = entity?.state === UNAVAILABLE;
         const restored = entity?.attributes.restored === true;
         const deviceId = entry.device_id;
@@ -678,7 +678,7 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
 
         const entityName = computeEntityEntryName(
           entry as EntityRegistryEntry,
-          this.hass
+          this.menuai
         );
 
         const deviceName = device ? computeDeviceName(device) : undefined;
@@ -733,25 +733,25 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
     }
   );
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
     ];
   }
 
   protected render() {
-    if (!this.hass || this._entities === undefined) {
-      return html` <hass-loading-screen></hass-loading-screen> `;
+    if (!this.menuai || this._entities === undefined) {
+      return html` <menuai-loading-screen></menuai-loading-screen> `;
     }
 
     const { filteredEntities, filteredDomains } =
       this._filteredEntitiesAndDomains(
-        this.hass.localize,
+        this.menuai.localize,
         this._entities,
-        this.hass.devices,
-        this.hass.areas,
+        this.menuai.devices,
+        this.menuai.areas,
         this._stateEntities,
         this._filters,
         this._filteredItems,
@@ -768,12 +768,12 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
     const labelItems = html` ${this._labels?.map((label) => {
         const color = label.color ? computeCssColor(label.color) : undefined;
         const selected = this._selected.every((entityId) =>
-          this.hass.entities[entityId]?.labels.includes(label.label_id)
+          this.menuai.entities[entityId]?.labels.includes(label.label_id)
         );
         const partial =
           !selected &&
           this._selected.some((entityId) =>
-            this.hass.entities[entityId]?.labels.includes(label.label_id)
+            this.menuai.entities[entityId]?.labels.includes(label.label_id)
           );
         return html`<ha-md-menu-item
           .value=${label.label_id}
@@ -798,22 +798,22 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateLabel}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.labels.add_label")}
+          ${this.menuai.localize("ui.panel.config.labels.add_label")}
         </div></ha-md-menu-item
       >`;
 
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .backPath=${
           this._searchParms.has("historyBack") ? undefined : "/config"
         }
         .route=${this.route}
         .tabs=${configSections.devices}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${filteredEntities}
-        .searchLabel=${this.hass.localize(
+        .searchLabel=${this.menuai.localize(
           "ui.panel.config.entities.picker.search",
           { number: filteredEntities.length }
         )}
@@ -850,7 +850,7 @@ export class HaConfigEntities extends SubscribeMixin(LitElement) {
         class=${this.narrow ? "narrow" : ""}
       >
         <ha-integration-overflow-menu
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           slot="toolbar-icon"
         ></ha-integration-overflow-menu>
 
@@ -860,7 +860,7 @@ ${
     ? html`<ha-md-button-menu slot="selection-bar">
         <ha-assist-chip
           slot="trigger"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.automation.picker.bulk_actions.add_label"
           )}
         >
@@ -874,7 +874,7 @@ ${
   ${
     this.narrow
       ? html`<ha-assist-chip
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.automation.picker.bulk_action"
           )}
           slot="trigger"
@@ -883,7 +883,7 @@ ${
         </ha-assist-chip>`
       : html`<ha-icon-button
           .path=${mdiDotsVertical}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.automation.picker.bulk_action"
           )}
           slot="trigger"
@@ -899,7 +899,7 @@ ${
       ? html`<ha-sub-menu>
             <ha-md-menu-item slot="item">
               <div slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.picker.bulk_actions.add_label"
                 )}
               </div>
@@ -914,7 +914,7 @@ ${
   <ha-md-menu-item .clickAction=${this._enableSelected}>
     <ha-svg-icon slot="start" .path=${mdiToggleSwitch}></ha-svg-icon>
     <div slot="headline">
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.entities.picker.enable_selected.button"
       )}
     </div>
@@ -925,7 +925,7 @@ ${
       .path=${mdiToggleSwitchOffOutline}
     ></ha-svg-icon>
     <div slot="headline">
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.entities.picker.disable_selected.button"
       )}
     </div>
@@ -938,7 +938,7 @@ ${
       .path=${mdiEye}
     ></ha-svg-icon>
     <div slot="headline">
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.entities.picker.unhide_selected.button"
       )}
     </div>
@@ -949,7 +949,7 @@ ${
       .path=${mdiEyeOff}
     ></ha-svg-icon>
     <div slot="headline">
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.entities.picker.hide_selected.button"
       )}
     </div>
@@ -963,7 +963,7 @@ ${
       .path=${mdiRestore}
     ></ha-svg-icon>
     <div slot="headline">
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.entities.picker.restore_entity_id_selected.button"
       )}
     </div>
@@ -977,7 +977,7 @@ ${
       .path=${mdiDelete}
     ></ha-svg-icon>
     <div slot="headline">
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.entities.picker.delete_selected.button"
       )}
     </div>
@@ -988,7 +988,7 @@ ${
           Array.isArray(this._filters.config_entry) &&
           this._filters.config_entry.length
             ? html`<ha-alert slot="filter-pane">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.entities.picker.filtering_by_config_entry"
                 )}
                 ${this._entries?.find(
@@ -1006,7 +1006,7 @@ ${
             : nothing
         }
         <ha-filter-floor-areas
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           type="entity"
           .value=${this._filters["ha-filter-floor-areas"]}
           @data-table-filter-changed=${this._filterChanged}
@@ -1016,7 +1016,7 @@ ${
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-floor-areas>
         <ha-filter-devices
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"entity"}
           .value=${this._filters["ha-filter-devices"]}
           @data-table-filter-changed=${this._filterChanged}
@@ -1026,7 +1026,7 @@ ${
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-devices>
         <ha-filter-domains
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._filters["ha-filter-domains"]}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
@@ -1035,7 +1035,7 @@ ${
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-domains>
         <ha-filter-integrations
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._filters["ha-filter-integrations"]}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
@@ -1044,12 +1044,12 @@ ${
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-integrations>
         <ha-filter-states
-          .hass=${this.hass}
-          .label=${this.hass.localize(
+          .menuai=${this.menuai}
+          .label=${this.menuai.localize(
             "ui.panel.config.entities.picker.headers.status"
           )}
           .value=${this._filters["ha-filter-states"]}
-          .states=${this._states(this.hass.localize)}
+          .states=${this._states(this.menuai.localize)}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
           .expanded=${this._expandedFilter === "ha-filter-states"}
@@ -1057,7 +1057,7 @@ ${
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-states>
         <ha-filter-labels
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._filters["ha-filter-labels"]}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
@@ -1068,7 +1068,7 @@ ${
         ${
           includeAddDeviceFab
             ? html`<ha-fab
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.devices.add_device"
                 )}
                 extended
@@ -1079,7 +1079,7 @@ ${
               </ha-fab>`
             : nothing
         }
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -1099,7 +1099,7 @@ ${
   }
 
   protected firstUpdated() {
-    fetchEntitySourcesWithCache(this.hass).then((sources) => {
+    fetchEntitySourcesWithCache(this.menuai).then((sources) => {
       this._entitySources = sources;
     });
     this._setFiltersFromUrl();
@@ -1150,15 +1150,15 @@ ${
 
   public willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
-    const oldHass = changedProps.get("hass");
+    const oldmenuai = changedProps.get("menuai");
     let changed = false;
-    if (!this.hass || !this._entities) {
+    if (!this.menuai || !this._entities) {
       return;
     }
 
     if (
-      (changedProps.has("hass") &&
-        (!oldHass || oldHass.states !== this.hass.states)) ||
+      (changedProps.has("menuai") &&
+        (!oldmenuai || oldmenuai.states !== this.menuai.states)) ||
       changedProps.has("_entities") ||
       changedProps.has("_entitySources")
     ) {
@@ -1166,18 +1166,18 @@ ${
       const regEntityIds = new Set(
         this._entities.map((entity) => entity.entity_id)
       );
-      for (const entityId of Object.keys(this.hass.states)) {
+      for (const entityId of Object.keys(this.menuai.states)) {
         if (regEntityIds.has(entityId)) {
           continue;
         }
         if (
           changedProps.has("_entitySources") ||
-          (changedProps.has("hass") && (!oldHass || !oldHass.states[entityId]))
+          (changedProps.has("menuai") && (!oldmenuai || !oldmenuai.states[entityId]))
         ) {
           changed = true;
         }
         stateEntities.push({
-          name: computeStateName(this.hass.states[entityId]),
+          name: computeStateName(this.menuai.states[entityId]),
           entity_id: entityId,
           platform:
             this._entitySources?.[entityId]?.domain || computeDomain(entityId),
@@ -1211,29 +1211,29 @@ ${
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
 
   private _enableSelected = async () => {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.entities.picker.enable_selected.confirm_title",
         { number: this._selected.length }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.entities.picker.enable_selected.confirm_text"
       ),
-      confirmText: this.hass.localize("ui.common.enable"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.enable"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
       confirm: async () => {
         let require_restart = false;
         let reload_delay = 0;
         const result = await Promise.allSettled(
           this._selected.map(async (entity) => {
             const updateResult = await updateEntityRegistryEntry(
-              this.hass,
+              this.menuai,
               entity,
               {
                 disabled_by: null,
@@ -1251,7 +1251,7 @@ ${
         if (hasRejectedItems(result)) {
           const rejected = rejectedItems(result);
           showAlertDialog(this, {
-            title: this.hass.localize(
+            title: this.menuai.localize(
               "ui.panel.config.common.multiselect.failed",
               {
                 number: rejected.length,
@@ -1270,13 +1270,13 @@ ${
         // Otherwise, show a dialog explaining that some patience is needed
         if (require_restart) {
           showAlertDialog(this, {
-            text: this.hass.localize(
+            text: this.menuai.localize(
               "ui.dialogs.entity_registry.editor.enabled_restart_confirm"
             ),
           });
         } else if (reload_delay) {
           showAlertDialog(this, {
-            text: this.hass.localize(
+            text: this.menuai.localize(
               "ui.dialogs.entity_registry.editor.enabled_delay_confirm",
               { delay: reload_delay }
             ),
@@ -1288,18 +1288,18 @@ ${
 
   private _disableSelected = () => {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.entities.picker.disable_selected.confirm_title",
         { number: this._selected.length }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.entities.picker.disable_selected.confirm_text"
       ),
-      confirmText: this.hass.localize("ui.common.disable"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.disable"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
       confirm: () => {
         this._selected.forEach((entity) =>
-          updateEntityRegistryEntry(this.hass, entity, {
+          updateEntityRegistryEntry(this.menuai, entity, {
             disabled_by: "user",
           })
         );
@@ -1310,18 +1310,18 @@ ${
 
   private _hideSelected = () => {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.entities.picker.hide_selected.confirm_title",
         { number: this._selected.length }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.entities.picker.hide_selected.confirm"
       ),
-      confirmText: this.hass.localize("ui.common.hide"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.hide"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
       confirm: () => {
         this._selected.forEach((entity) =>
-          updateEntityRegistryEntry(this.hass, entity, {
+          updateEntityRegistryEntry(this.menuai, entity, {
             hidden_by: "user",
           })
         );
@@ -1332,7 +1332,7 @@ ${
 
   private _unhideSelected = () => {
     this._selected.forEach((entity) =>
-      updateEntityRegistryEntry(this.hass, entity, {
+      updateEntityRegistryEntry(this.menuai, entity, {
         hidden_by: null,
       })
     );
@@ -1349,13 +1349,13 @@ ${
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       const entityReg =
-        this.hass.entities[entityId] ||
+        this.menuai.entities[entityId] ||
         this._entities.find((entReg) => entReg.entity_id === entityId);
       if (!entityReg) {
         return;
       }
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           labels:
             action === "add"
               ? entityReg.labels.concat(label)
@@ -1367,7 +1367,7 @@ ${
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1382,26 +1382,26 @@ ${rejected
   private _bulkCreateLabel = () => {
     showLabelDetailDialog(this, {
       createEntry: async (values) => {
-        const label = await createLabelRegistryEntry(this.hass, values);
+        const label = await createLabelRegistryEntry(this.menuai, values);
         this._bulkLabel(label.label_id, "add");
       },
     });
   };
 
   private _restoreEntityIdSelected = () => {
-    regenerateEntityIds(this, this.hass, this._selected);
+    regenerateEntityIds(this, this.menuai, this._selected);
 
     this._clearSelection();
   };
 
   private _removeSelected = async () => {
-    if (!this._entities || !this.hass) {
+    if (!this._entities || !this.menuai) {
       return;
     }
 
     const manifestsProm = this._manifests
       ? undefined
-      : fetchIntegrationManifests(this.hass);
+      : fetchIntegrationManifests(this.menuai);
     const helperDomains = [
       ...new Set(this._selected.map((s) => computeDomain(s))),
     ].filter((d) => isHelperDomain(d));
@@ -1410,7 +1410,7 @@ ${rejected
       ? undefined
       : this._loadConfigEntries();
     const domainProms = helperDomains.map((d) =>
-      HELPERS_CRUD[d].fetch(this.hass)
+      HELPERS_CRUD[d].fetch(this.menuai)
     );
     const helpersResult = await Promise.all(domainProms);
     let fetchedHelpers: Helper[] = [];
@@ -1426,7 +1426,7 @@ ${rejected
 
     const removeableEntities = this._selected.filter((entity_id) =>
       isDeletableEntity(
-        this.hass,
+        this.menuai,
         entity_id,
         this._manifests!,
         this._entities,
@@ -1435,28 +1435,28 @@ ${rejected
       )
     );
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         `ui.panel.config.entities.picker.delete_selected.confirm_title`
       ),
       text:
         removeableEntities.length === this._selected.length
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.panel.config.entities.picker.delete_selected.confirm_text"
             )
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.panel.config.entities.picker.delete_selected.confirm_partly_text",
               {
                 deletable: removeableEntities.length,
                 selected: this._selected.length,
               }
             ),
-      confirmText: this.hass.localize("ui.common.delete"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
       destructive: true,
       confirm: () => {
         removeableEntities.forEach((entity_id) =>
           deleteEntity(
-            this.hass,
+            this.menuai,
             entity_id,
             this._manifests!,
             this._entities,
@@ -1479,20 +1479,20 @@ ${rejected
   }
 
   private async _loadConfigEntries() {
-    this._entries = await getConfigEntries(this.hass);
+    this._entries = await getConfigEntries(this.menuai);
   }
 
   private async _loadSubEntries(entryId: string) {
-    this._subEntries = await getSubEntries(this.hass, entryId);
+    this._subEntries = await getSubEntries(this.menuai, entryId);
   }
 
   private _addDevice() {
     const { filteredConfigEntry, filteredDomains } =
       this._filteredEntitiesAndDomains(
-        this.hass.localize,
+        this.menuai.localize,
         this._entities!,
-        this.hass.devices,
-        this.hass.areas,
+        this.menuai.devices,
+        this.menuai.areas,
         this._stateEntities,
         this._filters,
         this._filteredItems,
@@ -1505,7 +1505,7 @@ ${rejected
         [...filteredDomains][0]
       )
     ) {
-      protocolIntegrationPicked(this, this.hass, [...filteredDomains][0], {
+      protocolIntegrationPicked(this, this.menuai, [...filteredDomains][0], {
         config_entry: filteredConfigEntry?.entry_id,
       });
       return;
@@ -1536,13 +1536,13 @@ ${rejected
     return [
       haStyle,
       css`
-        hass-tabs-subpage-data-table {
+        menuai-tabs-subpage-data-table {
           --data-table-row-height: 60px;
         }
-        hass-tabs-subpage-data-table.narrow {
+        menuai-tabs-subpage-data-table.narrow {
           --data-table-row-height: 72px;
         }
-        hass-loading-screen {
+        menuai-loading-screen {
           --app-header-background-color: var(--sidebar-background-color);
           --app-header-text-color: var(--sidebar-text-color);
         }

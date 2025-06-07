@@ -19,13 +19,13 @@ import "../../../components/ha-yaml-editor";
 import type { Field } from "../../../data/script";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 const preventDefault = (ev) => ev.preventDefault();
 
 @customElement("ha-script-field-row")
 export default class HaScriptFieldRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public key!: string;
 
@@ -94,12 +94,12 @@ export default class HaScriptFieldRow extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
 
             <ha-list-item graphic="icon">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.automation.editor.edit_${!this._yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon
@@ -113,7 +113,7 @@ export default class HaScriptFieldRow extends LitElement {
               graphic="icon"
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.delete"
               )}
               <ha-svg-icon
@@ -131,13 +131,13 @@ export default class HaScriptFieldRow extends LitElement {
             ${this._yamlMode
               ? html` ${this._yamlError
                     ? html`<ha-alert alert-type="error">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           `ui.panel.config.script.editor.field.${this._yamlError}`
                         )}
                       </ha-alert>`
                     : nothing}
                   <ha-yaml-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${yamlValue}
                     @value-changed=${this._onYamlChange}
                   ></ha-yaml-editor>`
@@ -145,7 +145,7 @@ export default class HaScriptFieldRow extends LitElement {
                   .schema=${schema}
                   .data=${data}
                   .error=${this._uiError}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .disabled=${this.disabled}
                   .computeLabel=${this._computeLabelCallback}
                   .computeError=${this._computeError}
@@ -170,14 +170,14 @@ export default class HaScriptFieldRow extends LitElement {
 
   private _onDelete() {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.script.editor.field_delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.script.editor.field_delete_confirm_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: () => {
         fireEvent(this, "value-changed", { value: null });
@@ -213,12 +213,12 @@ export default class HaScriptFieldRow extends LitElement {
     }
     const slugifyName = this.field.name
       ? slugify(this.field.name)
-      : this.hass.localize("ui.panel.config.script.editor.field.field") ||
+      : this.menuai.localize("ui.panel.config.script.editor.field.field") ||
         "field";
     const regex = new RegExp(`^${slugifyName}(_\\d)?$`);
     if (regex.test(this.key)) {
       let key = !value.name
-        ? this.hass.localize("ui.panel.config.script.editor.field.field") ||
+        ? this.menuai.localize("ui.panel.config.script.editor.field.field") ||
           "field"
         : slugify(value.name);
       if (this.excludeKeys.includes(key)) {
@@ -277,14 +277,14 @@ export default class HaScriptFieldRow extends LitElement {
   ): string => {
     switch (schema.name) {
       default:
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.script.editor.field.${schema.name}`
         );
     }
   };
 
   private _computeError = (error: string) =>
-    this.hass.localize(`ui.panel.config.script.editor.field.${error}` as any) ||
+    this.menuai.localize(`ui.panel.config.script.editor.field.${error}` as any) ||
     error;
 
   static get styles(): CSSResultGroup {

@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
 const BATTERY_ICONS = {
   10: "mdi:battery-10",
@@ -25,7 +25,7 @@ const BATTERY_CHARGING_ICONS = {
   100: "mdi:battery-charging",
 };
 
-export const batteryIcon = (stateObj: HassEntity, state?: string) => {
+export const batteryIcon = (stateObj: menuaiEntity, state?: string) => {
   const level = state ?? stateObj.state;
   return batteryLevelIcon(level);
 };

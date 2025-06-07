@@ -5,12 +5,12 @@ import "../../../../../components/ha-textfield";
 import "../../../../../components/ha-formfield";
 import "../../../../../components/ha-switch";
 import type { StopAction } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ActionElement } from "../ha-automation-action-row";
 
 @customElement("ha-automation-action-stop")
 export class HaStopAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public action!: StopAction;
 
@@ -25,7 +25,7 @@ export class HaStopAction extends LitElement implements ActionElement {
 
     return html`
       <ha-textfield
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.stop.stop"
         )}
         .value=${stop}
@@ -33,7 +33,7 @@ export class HaStopAction extends LitElement implements ActionElement {
         @change=${this._stopChanged}
       ></ha-textfield>
       <ha-textfield
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.stop.response_variable"
         )}
         .value=${response_variable || ""}
@@ -42,7 +42,7 @@ export class HaStopAction extends LitElement implements ActionElement {
       ></ha-textfield>
       <ha-formfield
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.stop.error"
         )}
       >

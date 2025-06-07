@@ -1,13 +1,13 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
-export interface HassioResponse<T> {
+export interface menuaiioResponse<T> {
   data: T;
   message?: string;
   result: "ok" | "error";
 }
 
-export interface HassioStats {
+export interface menuaiioStats {
   blk_read: number;
   blk_write: number;
   cpu_percent: number;
@@ -18,7 +18,7 @@ export interface HassioStats {
   network_tx: number;
 }
 
-export const hassioApiResultExtractor = <T>(response: HassioResponse<T>) =>
+export const menuaiioApiResultExtractor = <T>(response: menuaiioResponse<T>) =>
   response.data;
 
 export const extractApiErrorMessage = (error: any): string =>
@@ -45,22 +45,22 @@ export const ignoreSupervisorError = (error): boolean => {
   return false;
 };
 
-export const fetchHassioStats = async (
-  hass: HomeAssistant,
+export const fetchmenuaiioStats = async (
+  menuai: menuai,
   container: string
-): Promise<HassioStats> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+): Promise<menuaiioStats> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${container}/stats`,
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioStats>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioStats>>(
       "GET",
-      `hassio/${container}/stats`
+      `menuaiio/${container}/stats`
     )
   );
 };

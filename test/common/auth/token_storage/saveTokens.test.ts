@@ -19,7 +19,7 @@ describe("token_storage.saveTokens", () => {
       access_token: "test",
       expires: 1800,
       expires_in: 1800,
-      hassUrl: "http://localhost",
+      menuaiUrl: "http://localhost",
       refresh_token: "refresh",
       clientId: "client",
     };
@@ -44,7 +44,7 @@ describe("token_storage.saveTokens", () => {
       access_token: "test",
       expires: 1800,
       expires_in: 1800,
-      hassUrl: "http://localhost",
+      menuaiUrl: "http://localhost",
       refresh_token: "refresh",
       clientId: "client",
     };
@@ -75,7 +75,7 @@ describe("token_storage.saveTokens", () => {
     expect(extractSearchParamSpy).toHaveBeenCalledWith("storeToken");
     expect(setItemSpy).toHaveBeenCalledOnce();
     expect(setItemSpy).toHaveBeenCalledWith(
-      "hassTokens",
+      "menuaiTokens",
       JSON.stringify(tokens)
     );
   });
@@ -85,7 +85,7 @@ describe("token_storage.saveTokens", () => {
       access_token: "test",
       expires: 1800,
       expires_in: 1800,
-      hassUrl: "http://localhost",
+      menuaiUrl: "http://localhost",
       refresh_token: "refresh",
       clientId: "client",
     };
@@ -125,7 +125,7 @@ describe("token_storage.saveTokens", () => {
     expect(extractSearchParamSpy).toBeCalledTimes(0);
     expect(setItemSpy).toHaveBeenCalledOnce();
     expect(setItemSpy).toHaveBeenCalledWith(
-      "hassTokens",
+      "menuaiTokens",
       JSON.stringify(tokens)
     );
     // eslint-disable-next-line no-console

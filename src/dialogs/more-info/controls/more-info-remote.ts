@@ -5,7 +5,7 @@ import { supportsFeature } from "../../../common/entity/supports-feature";
 import "../../../components/ha-attributes";
 import type { RemoteEntity } from "../../../data/remote";
 import { REMOTE_SUPPORT_ACTIVITY } from "../../../data/remote";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../../components/ha-select";
 import "../../../components/ha-list-item";
 
@@ -13,12 +13,12 @@ const filterExtraAttributes = "activity_list,current_activity";
 
 @customElement("more-info-remote")
 class MoreInfoRemote extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: RemoteEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -28,7 +28,7 @@ class MoreInfoRemote extends LitElement {
       ${supportsFeature(stateObj, REMOTE_SUPPORT_ACTIVITY)
         ? html`
             <ha-select
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.dialogs.more_info_control.remote.activity"
               )}
               .value=${stateObj.attributes.current_activity || ""}
@@ -40,7 +40,7 @@ class MoreInfoRemote extends LitElement {
               ${stateObj.attributes.activity_list?.map(
                 (activity) => html`
                   <ha-list-item .value=${activity}>
-                    ${this.hass.formatEntityAttributeValue(
+                    ${this.menuai.formatEntityAttributeValue(
                       stateObj,
                       "activity",
                       activity
@@ -53,7 +53,7 @@ class MoreInfoRemote extends LitElement {
         : nothing}
 
       <ha-attributes
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .extraFilters=${filterExtraAttributes}
       ></ha-attributes>
@@ -68,7 +68,7 @@ class MoreInfoRemote extends LitElement {
       return;
     }
 
-    this.hass.callService("remote", "turn_on", {
+    this.menuai.callService("remote", "turn_on", {
       entity_id: this.stateObj!.entity_id,
       activity: newVal,
     });

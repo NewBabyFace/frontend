@@ -11,7 +11,7 @@ import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { storage } from "../../common/decorators/storage";
-import type { HASSDomEvent } from "../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../common/dom/fire_event";
 import { fireEvent } from "../../common/dom/fire_event";
 import { navigate } from "../../common/navigate";
 import "../../components/ha-icon-button";
@@ -39,7 +39,7 @@ import type { ResolvedMediaSource } from "../../data/media_source";
 import { resolveMediaSource } from "../../data/media_source";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant, Route } from "../../types";
+import type { menuai, Route } from "../../types";
 import "./ha-bar-media-player";
 import type { BarMediaPlayer } from "./ha-bar-media-player";
 import { showWebBrowserPlayMediaDialog } from "./show-media-player-dialog";
@@ -56,7 +56,7 @@ const createMediaPanelUrl = (entityId: string, items: MediaPlayerItemId[]) => {
 
 @customElement("ha-panel-media-browser")
 class PanelMediaBrowser extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -105,31 +105,31 @@ class PanelMediaBrowser extends LitElement {
           : html`
               <ha-menu-button
                 slot="navigationIcon"
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .narrow=${this.narrow}
               ></ha-menu-button>
             `}
         <div slot="title">
           ${!this._currentItem
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.components.media-browser.media-player-browser"
               )
             : this._currentItem.title}
         </div>
         <ha-media-manage-button
           slot="actionItems"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .currentItem=${this._currentItem}
           @media-refresh=${this._refreshMedia}
         ></ha-media-manage-button>
         <ha-button-menu slot="actionItems" @action=${this._handleMenuAction}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
           <ha-list-item graphic="icon">
-            ${this.hass.localize("ui.components.media-browser.auto")}
+            ${this.menuai.localize("ui.components.media-browser.auto")}
             <ha-svg-icon
               class=${this._preferredLayout === "auto"
                 ? "selected_menu_item"
@@ -139,7 +139,7 @@ class PanelMediaBrowser extends LitElement {
             ></ha-svg-icon>
           </ha-list-item>
           <ha-list-item graphic="icon">
-            ${this.hass.localize("ui.components.media-browser.grid")}
+            ${this.menuai.localize("ui.components.media-browser.grid")}
             <ha-svg-icon
               class=${this._preferredLayout === "grid"
                 ? "selected_menu_item"
@@ -149,7 +149,7 @@ class PanelMediaBrowser extends LitElement {
             ></ha-svg-icon>
           </ha-list-item>
           <ha-list-item graphic="icon">
-            ${this.hass.localize("ui.components.media-browser.list")}
+            ${this.menuai.localize("ui.components.media-browser.list")}
             <ha-svg-icon
               slot="graphic"
               class=${this._preferredLayout === "list"
@@ -160,7 +160,7 @@ class PanelMediaBrowser extends LitElement {
           </ha-list-item>
         </ha-button-menu>
         <ha-media-player-browse
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entityId=${this._entityId}
           .navigateIds=${this._navigateIds}
           .preferredLayout=${this._preferredLayout}
@@ -169,7 +169,7 @@ class PanelMediaBrowser extends LitElement {
         ></ha-media-player-browse>
       </ha-top-app-bar-fixed>
       <ha-bar-media-player
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityId=${this._entityId}
         .narrow=${this.narrow}
         @player-picked=${this._playerPicked}
@@ -197,7 +197,7 @@ class PanelMediaBrowser extends LitElement {
     if (
       !this.hasUpdated &&
       this._entityId !== BROWSER_PLAYER &&
-      !(this._entityId in this.hass.states)
+      !(this._entityId in this.menuai.states)
     ) {
       this._entityId = BROWSER_PLAYER;
     }
@@ -220,11 +220,11 @@ class PanelMediaBrowser extends LitElement {
       // Can happen if URL bookmarked or stored in local storage
       if (
         routePlayer !== BROWSER_PLAYER &&
-        this.hass.states[routePlayer] === undefined
+        this.menuai.states[routePlayer] === undefined
       ) {
         navigate(`/media-browser/${BROWSER_PLAYER}`, { replace: true });
         showAlertDialog(this, {
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.media-browser.error.player_not_exist",
             {
               name: routePlayer,
@@ -260,7 +260,7 @@ class PanelMediaBrowser extends LitElement {
     );
   }
 
-  private _mediaBrowsed(ev: { detail: HASSDomEvents["media-browsed"] }) {
+  private _mediaBrowsed(ev: { detail: menuaiDomEvents["media-browsed"] }) {
     if (ev.detail.ids === this._navigateIds) {
       this._currentItem = ev.detail.current;
       return;
@@ -272,7 +272,7 @@ class PanelMediaBrowser extends LitElement {
   }
 
   private async _mediaPicked(
-    ev: HASSDomEvent<MediaPickedEvent>
+    ev: menuaiDomEvent<MediaPickedEvent>
   ): Promise<void> {
     const item = ev.detail.item;
 
@@ -280,7 +280,7 @@ class PanelMediaBrowser extends LitElement {
       this._player.showResolvingNewMediaPicked();
       try {
         await mediaPlayerPlayMedia(
-          this.hass,
+          this.menuai,
           this._entityId,
           item.media_content_id,
           item.media_content_type
@@ -294,7 +294,7 @@ class PanelMediaBrowser extends LitElement {
     // We won't cancel current media being played if we're going to
     // open a camera.
     if (isCameraMediaSource(item.media_content_id)) {
-      fireEvent(this, "hass-more-info", {
+      fireEvent(this, "menuai-more-info", {
         entityId: getEntityIdFromCameraMediaSource(item.media_content_id),
       });
       return;
@@ -303,10 +303,10 @@ class PanelMediaBrowser extends LitElement {
     this._player.showResolvingNewMediaPicked();
     let resolvedUrl: ResolvedMediaSource;
     try {
-      resolvedUrl = await resolveMediaSource(this.hass, item.media_content_id);
+      resolvedUrl = await resolveMediaSource(this.menuai, item.media_content_id);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.components.media-browser.media_browsing_error"
         ),
         text: err.message,

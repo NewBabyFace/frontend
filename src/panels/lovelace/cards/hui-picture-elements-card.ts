@@ -6,7 +6,7 @@ import { computeDomain } from "../../../common/entity/compute_domain";
 import "../../../components/ha-card";
 import type { ImageEntity } from "../../../data/image";
 import { computeImageUrl } from "../../../data/image";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import type { LovelaceElement, LovelaceElementConfig } from "../elements/types";
 import type { LovelaceCard, LovelaceCardEditor } from "../types";
@@ -21,18 +21,18 @@ class HuiPictureElementsCard extends LitElement implements LovelaceCard {
     return document.createElement("hui-picture-elements-card-editor");
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _elements?: LovelaceElement[];
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): PictureElementsCardConfig {
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -88,40 +88,40 @@ class HuiPictureElementsCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
-    if (this._elements && changedProps.has("hass")) {
+    if (this._elements && changedProps.has("menuai")) {
       for (const element of this._elements) {
-        element.hass = this.hass;
+        element.menuai = this.menuai;
       }
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | PictureElementsCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     let image: string | undefined = this._config.image;
     if (this._config.image_entity) {
       const stateObj: ImageEntity | PersonEntity | undefined =
-        this.hass.states[this._config.image_entity];
+        this.menuai.states[this._config.image_entity];
       const domain: string = computeDomain(this._config.image_entity);
       switch (domain) {
         case "image":
@@ -139,7 +139,7 @@ class HuiPictureElementsCard extends LitElement implements LovelaceCard {
       <ha-card .header=${this._config.title}>
         <div id="root">
           <hui-image
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .image=${image}
             .stateImage=${this._config.state_image}
             .stateFilter=${this._config.state_filter}
@@ -177,8 +177,8 @@ class HuiPictureElementsCard extends LitElement implements LovelaceCard {
     elementConfig: LovelaceElementConfig
   ): LovelaceElement {
     const element = createStyledHuiElement(elementConfig) as LovelaceCard;
-    if (this.hass) {
-      element.hass = this.hass;
+    if (this.menuai) {
+      element.menuai = this.menuai;
     }
     element.addEventListener(
       "ll-rebuild",

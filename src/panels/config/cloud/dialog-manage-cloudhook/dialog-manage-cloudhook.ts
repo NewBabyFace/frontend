@@ -7,14 +7,14 @@ import { fireEvent } from "../../../../common/dom/fire_event";
 import { createCloseHeading } from "../../../../components/ha-dialog";
 import { showConfirmationDialog } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { documentationUrl } from "../../../../util/documentation-url";
 import type { WebhookDialogParams } from "./show-dialog-manage-cloudhook";
 
 import "../../../../components/ha-copy-textfield";
 
 export class DialogManageCloudhook extends LitElement {
-  protected hass?: HomeAssistant;
+  protected menuai?: menuai;
 
   @state() private _params?: WebhookDialogParams;
 
@@ -35,18 +35,18 @@ export class DialogManageCloudhook extends LitElement {
     const docsUrl =
       webhook.domain === "automation"
         ? documentationUrl(
-            this.hass!,
+            this.menuai!,
             "/docs/automation/trigger/#webhook-trigger"
           )
-        : documentationUrl(this.hass!, `/integrations/${webhook.domain}/`);
+        : documentationUrl(this.menuai!, `/integrations/${webhook.domain}/`);
     return html`
       <ha-dialog
         open
         hideActions
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass!,
-          this.hass!.localize(
+          this.menuai!,
+          this.menuai!.localize(
             "ui.panel.config.cloud.dialog_cloudhook.webhook_for",
             { name: webhook.name }
           )
@@ -56,23 +56,23 @@ export class DialogManageCloudhook extends LitElement {
           <p>
             ${!cloudhook.managed
               ? html`
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.cloud.dialog_cloudhook.managed_by_integration"
                   )}
                 `
               : html`
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.cloud.dialog_cloudhook.info_disable_webhook"
                   )}
                   <button class="link" @click=${this._disableWebhook}>
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.cloud.dialog_cloudhook.link_disable_webhook"
                     )}</button
                   >.
                 `}
             <br />
             <a href=${docsUrl} target="_blank" rel="noreferrer">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.config.cloud.dialog_cloudhook.view_documentation"
               )}
               <ha-svg-icon .path=${mdiOpenInNew}></ha-svg-icon>
@@ -80,9 +80,9 @@ export class DialogManageCloudhook extends LitElement {
           </p>
 
           <ha-copy-textfield
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${cloudhook.cloudhook_url}
-            .label=${this.hass!.localize("ui.panel.config.common.copy_link")}
+            .label=${this.menuai!.localize("ui.panel.config.common.copy_link")}
           ></ha-copy-textfield>
         </div>
 
@@ -93,13 +93,13 @@ export class DialogManageCloudhook extends LitElement {
           slot="secondaryAction"
         >
           <mwc-button>
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.cloud.dialog_cloudhook.view_documentation"
             )}
           </mwc-button>
         </a>
         <mwc-button @click=${this.closeDialog} slot="primaryAction">
-          ${this.hass!.localize("ui.panel.config.cloud.dialog_cloudhook.close")}
+          ${this.menuai!.localize("ui.panel.config.cloud.dialog_cloudhook.close")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -107,15 +107,15 @@ export class DialogManageCloudhook extends LitElement {
 
   private async _disableWebhook() {
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.config.cloud.dialog_cloudhook.confirm_disable_title"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.config.cloud.dialog_cloudhook.confirm_disable_text",
         { name: this._params!.webhook.name }
       ),
-      dismissText: this.hass!.localize("ui.common.cancel"),
-      confirmText: this.hass!.localize("ui.common.disable"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.disable"),
       destructive: true,
     });
     if (confirmed) {

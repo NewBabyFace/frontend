@@ -6,12 +6,12 @@ import { formatDateTime } from "../../../../common/datetime/format_date_time";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { createCloseHeading } from "../../../../components/ha-dialog";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { CloudCertificateParams as CloudCertificateDialogParams } from "./show-dialog-cloud-certificate";
 
 @customElement("dialog-cloud-certificate")
 class DialogCloudCertificate extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _params?: CloudCertificateDialogParams;
 
@@ -36,34 +36,34 @@ class DialogCloudCertificate extends LitElement {
         hideActions
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             "ui.panel.config.cloud.dialog_certificate.certificate_information"
           )
         )}
       >
         <div>
           <p>
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.cloud.dialog_certificate.certificate_expiration_date"
             )}
             ${formatDateTime(
               new Date(certificateInfo.expire_date),
-              this.hass!.locale,
-              this.hass!.config
+              this.menuai!.locale,
+              this.menuai!.config
             )}<br />
-            (${this.hass!.localize(
+            (${this.menuai!.localize(
               "ui.panel.config.cloud.dialog_certificate.will_be_auto_renewed"
             )})
           </p>
           <p class="break-word">
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.cloud.dialog_certificate.fingerprint"
             )}
             ${certificateInfo.fingerprint}
           </p>
           <p class="break-word">
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.cloud.dialog_certificate.alternative_names"
             )}
           </p>
@@ -75,7 +75,7 @@ class DialogCloudCertificate extends LitElement {
         </div>
 
         <mwc-button @click=${this.closeDialog} slot="primaryAction">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.config.cloud.dialog_certificate.close"
           )}
         </mwc-button>

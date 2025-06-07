@@ -10,18 +10,18 @@ import "../../../components/ha-dialog";
 import "../../../components/ha-expansion-panel";
 import "../../../components/ha-icon-next";
 import "../../../components/search-input";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
-import type { HassioHardwareInfo } from "../../../data/hassio/hardware";
-import { fetchHassioHardwareInfo } from "../../../data/hassio/hardware";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
+import type { menuaiioHardwareInfo } from "../../../data/menuaiio/hardware";
+import { fetchmenuaiioHardwareInfo } from "../../../data/menuaiio/hardware";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HassDialog } from "../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 const _filterDevices = memoizeOne(
   (
     showAdvanced: boolean,
-    hardware: HassioHardwareInfo,
+    hardware: menuaiioHardwareInfo,
     filter: string,
     language: string
   ) =>
@@ -41,19 +41,19 @@ const _filterDevices = memoizeOne(
 );
 
 @customElement("ha-dialog-hardware-available")
-class DialogHardwareAvailable extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogHardwareAvailable extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private _hardware?: HassioHardwareInfo;
+  @state() private _hardware?: menuaiioHardwareInfo;
 
   @state() private _filter?: string;
 
   public async showDialog(): Promise<Promise<void>> {
     try {
-      this._hardware = await fetchHassioHardwareInfo(this.hass);
+      this._hardware = await fetchmenuaiioHardwareInfo(this.menuai);
     } catch (err: any) {
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.hardware.available_hardware.failed_to_get"
         ),
         text: extractApiErrorMessage(err),
@@ -73,10 +73,10 @@ class DialogHardwareAvailable extends LitElement implements HassDialog {
     }
 
     const devices = _filterDevices(
-      this.hass.userData?.showAdvanced || false,
+      this.menuai.userData?.showAdvanced || false,
       this._hardware,
       (this._filter || "").toLowerCase(),
-      this.hass.locale.language
+      this.menuai.locale.language
     );
 
     return html`
@@ -84,26 +84,26 @@ class DialogHardwareAvailable extends LitElement implements HassDialog {
         open
         hideActions
         @closed=${this.closeDialog}
-        .heading=${this.hass.localize(
+        .heading=${this.menuai.localize(
           "ui.panel.config.hardware.available_hardware.title"
         )}
       >
         <div class="header" slot="heading">
           <h2>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.hardware.available_hardware.title"
             )}
           </h2>
           <ha-icon-button
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             dialogAction="close"
           ></ha-icon-button>
           <search-input
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .filter=${this._filter}
             @value-changed=${this._handleSearchChange}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.hardware.available_hardware.search"
             )}
           >
@@ -118,7 +118,7 @@ class DialogHardwareAvailable extends LitElement implements HassDialog {
             >
               <div class="device-property">
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.hardware.available_hardware.subsystem"
                   )}:
                 </span>
@@ -126,7 +126,7 @@ class DialogHardwareAvailable extends LitElement implements HassDialog {
               </div>
               <div class="device-property">
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.hardware.available_hardware.device_path"
                   )}:
                 </span>
@@ -136,7 +136,7 @@ class DialogHardwareAvailable extends LitElement implements HassDialog {
                 ? html`
                     <div class="device-property">
                       <span>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.hardware.available_hardware.id"
                         )}:
                       </span>
@@ -146,7 +146,7 @@ class DialogHardwareAvailable extends LitElement implements HassDialog {
                 : ""}
               <div class="attributes">
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.hardware.available_hardware.attributes"
                   )}:
                 </span>

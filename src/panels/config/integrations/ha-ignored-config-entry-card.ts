@@ -5,14 +5,14 @@ import { fireEvent } from "../../../common/dom/fire_event";
 import { deleteConfigEntry } from "../../../data/config_entries";
 import type { IntegrationManifest } from "../../../data/integration";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { ConfigEntryExtended } from "./ha-config-integrations";
 import "./ha-integration-action-card";
 import "../../../components/ha-button";
 
 @customElement("ha-ignored-config-entry-card")
 export class HaIgnoredConfigEntryCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entry!: ConfigEntryExtended;
 
@@ -21,9 +21,9 @@ export class HaIgnoredConfigEntryCard extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-integration-action-card
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .manifest=${this.manifest}
-        .banner=${this.hass.localize(
+        .banner=${this.menuai.localize(
           "ui.panel.config.integrations.ignore.ignored"
         )}
         .domain=${this.entry.domain}
@@ -36,7 +36,7 @@ export class HaIgnoredConfigEntryCard extends LitElement {
       >
         <ha-button
           @click=${this._removeIgnoredIntegration}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.integrations.ignore.stop_ignore"
           )}
         ></ha-button>
@@ -46,21 +46,21 @@ export class HaIgnoredConfigEntryCard extends LitElement {
 
   private async _removeIgnoredIntegration() {
     showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.config.integrations.ignore.confirm_delete_ignore_title",
-        { name: this.hass.localize(`component.${this.entry.domain}.title`) }
+        { name: this.menuai.localize(`component.${this.entry.domain}.title`) }
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.config.integrations.ignore.confirm_delete_ignore"
       ),
-      confirmText: this.hass!.localize(
+      confirmText: this.menuai!.localize(
         "ui.panel.config.integrations.ignore.stop_ignore"
       ),
       confirm: async () => {
-        const result = await deleteConfigEntry(this.hass, this.entry.entry_id);
+        const result = await deleteConfigEntry(this.menuai, this.entry.entry_id);
         if (result.require_restart) {
           alert(
-            this.hass.localize(
+            this.menuai.localize(
               "ui.panel.config.integrations.config_entry.restart_confirm"
             )
           );

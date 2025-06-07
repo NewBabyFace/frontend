@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface InputNumber {
   id: string;
@@ -23,31 +23,31 @@ export interface InputNumberMutableParams {
   unit_of_measurement?: string;
 }
 
-export const fetchInputNumber = (hass: HomeAssistant) =>
-  hass.callWS<InputNumber[]>({ type: "input_number/list" });
+export const fetchInputNumber = (menuai: menuai) =>
+  menuai.callWS<InputNumber[]>({ type: "input_number/list" });
 
 export const createInputNumber = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: InputNumberMutableParams
 ) =>
-  hass.callWS<InputNumber>({
+  menuai.callWS<InputNumber>({
     type: "input_number/create",
     ...values,
   });
 
 export const updateInputNumber = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<InputNumberMutableParams>
 ) =>
-  hass.callWS<InputNumber>({
+  menuai.callWS<InputNumber>({
     type: "input_number/update",
     input_number_id: id,
     ...updates,
   });
 
-export const deleteInputNumber = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteInputNumber = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "input_number/delete",
     input_number_id: id,
   });

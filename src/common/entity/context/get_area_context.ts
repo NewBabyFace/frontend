@@ -1,6 +1,6 @@
 import type { AreaRegistryEntry } from "../../../data/area_registry";
 import type { FloorRegistryEntry } from "../../../data/floor_registry";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 interface AreaContext {
   area: AreaRegistryEntry | null;
@@ -8,10 +8,10 @@ interface AreaContext {
 }
 export const getAreaContext = (
   area: AreaRegistryEntry,
-  hass: HomeAssistant
+  menuai: menuai
 ): AreaContext => {
   const floorId = area.floor_id;
-  const floor = floorId ? hass.floors[floorId] : undefined;
+  const floor = floorId ? menuai.floors[floorId] : undefined;
 
   return {
     area: area,

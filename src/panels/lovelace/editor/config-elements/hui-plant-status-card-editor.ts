@@ -4,7 +4,7 @@ import { assert, assign, object, optional, string } from "superstruct";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { PlantStatusCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -29,7 +29,7 @@ export class HuiPlantStatusCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: PlantStatusCardConfig;
 
@@ -39,13 +39,13 @@ export class HuiPlantStatusCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -60,18 +60,18 @@ export class HuiPlantStatusCardEditor
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) => {
     if (schema.name === "entity") {
-      return this.hass!.localize(
+      return this.menuai!.localize(
         "ui.panel.lovelace.editor.card.generic.entity"
       );
     }
     if (schema.name === "theme") {
-      return `${this.hass!.localize(
+      return `${this.menuai!.localize(
         "ui.panel.lovelace.editor.card.generic.theme"
-      )} (${this.hass!.localize(
+      )} (${this.menuai!.localize(
         "ui.panel.lovelace.editor.card.config.optional"
       )})`;
     }
-    return this.hass!.localize(
+    return this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     );
   };

@@ -17,11 +17,11 @@ import {
   setProtectedAlarmControlPanelMode,
 } from "../../data/alarm_control_panel";
 import { UNAVAILABLE } from "../../data/entity";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-state-control-alarm_control_panel-modes")
 export class HaStateControlAlarmControlPanelModes extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: AlarmControlPanelEntity;
 
@@ -49,7 +49,7 @@ export class HaStateControlAlarmControlPanelModes extends LitElement {
   private async _setMode(mode: AlarmMode) {
     await setProtectedAlarmControlPanelMode(
       this,
-      this.hass!,
+      this.menuai!,
       this.stateObj!,
       mode
     );
@@ -77,7 +77,7 @@ export class HaStateControlAlarmControlPanelModes extends LitElement {
 
     const options = modes.map<ControlSelectOption>((mode) => ({
       value: mode,
-      label: this.hass.localize(`ui.card.alarm_control_panel.modes.${mode}`),
+      label: this.menuai.localize(`ui.card.alarm_control_panel.modes.${mode}`),
       path: ALARM_MODES[mode].path,
     }));
 
@@ -87,7 +87,7 @@ export class HaStateControlAlarmControlPanelModes extends LitElement {
         .options=${options}
         .value=${this._currentMode}
         @value-changed=${this._valueChanged}
-        .ariaLabel=${this.hass.localize(
+        .ariaLabel=${this.menuai.localize(
           "ui.card.alarm_control_panel.modes_label"
         )}
         style=${styleMap({

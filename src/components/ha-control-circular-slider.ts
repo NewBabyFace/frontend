@@ -39,7 +39,7 @@ function rad2deg(rad: number) {
 type ActiveSlider = "low" | "high" | "value";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "value-changing": { value: unknown };
     "low-changing": { value: unknown };
     "low-changed": { value: unknown };

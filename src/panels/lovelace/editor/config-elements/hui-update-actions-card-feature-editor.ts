@@ -5,7 +5,7 @@ import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   LovelaceCardFeatureContext,
   UpdateActionsCardFeatureConfig,
@@ -20,7 +20,7 @@ export class HuiUpdateActionsCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -54,12 +54,12 @@ export class HuiUpdateActionsCardFeatureEditor
 
   private get _stateObj() {
     return this.context?.entity_id
-      ? this.hass!.states[this.context?.entity_id]
+      ? this.menuai!.states[this.context?.entity_id]
       : undefined;
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -67,7 +67,7 @@ export class HuiUpdateActionsCardFeatureEditor
       this._stateObj != null &&
       supportsFeature(this._stateObj, UpdateEntityFeature.BACKUP);
 
-    const schema = this._schema(this.hass.localize, supportsBackup);
+    const schema = this._schema(this.menuai.localize, supportsBackup);
 
     const data = { ...this._config };
 
@@ -77,7 +77,7 @@ export class HuiUpdateActionsCardFeatureEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -96,7 +96,7 @@ export class HuiUpdateActionsCardFeatureEditor
   ) => {
     switch (schema.name) {
       case "backup":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.features.types.update-actions.${schema.name}`
         );
       default:
@@ -114,7 +114,7 @@ export class HuiUpdateActionsCardFeatureEditor
     switch (schema.name) {
       case "backup":
         if (!supportsBackup) {
-          return this.hass!.localize(
+          return this.menuai!.localize(
             "ui.panel.lovelace.editor.features.types.update-actions.backup_not_supported"
           );
         }

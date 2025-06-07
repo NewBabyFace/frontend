@@ -24,13 +24,13 @@ import "../../../components/ha-timezone-picker";
 import type { ConfigUpdateValues } from "../../../data/core";
 import { saveCoreConfig } from "../../../data/core";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, ValueChangedEvent } from "../../../types";
+import type { menuai, ValueChangedEvent } from "../../../types";
 
 @customElement("ha-config-section-general")
 class HaConfigSectionGeneral extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -58,15 +58,15 @@ class HaConfigSectionGeneral extends LitElement {
 
   protected render(): TemplateResult {
     const canEdit = ["storage", "default"].includes(
-      this.hass.config.config_source
+      this.menuai.config.config_source
     );
     const disabled = this._submitting || !canEdit;
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.core.caption")}
+        .header=${this.menuai.localize("ui.panel.config.core.caption")}
       >
         <div class="content">
           ${this._error
@@ -77,7 +77,7 @@ class HaConfigSectionGeneral extends LitElement {
               ${!canEdit
                 ? html`
                     <ha-alert>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.core.section.core.core_config.edit_requires_storage"
                       )}
                     </ha-alert>
@@ -85,7 +85,7 @@ class HaConfigSectionGeneral extends LitElement {
                 : nothing}
               <ha-textfield
                 name="name"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.location_name"
                 )}
                 .disabled=${disabled}
@@ -93,7 +93,7 @@ class HaConfigSectionGeneral extends LitElement {
                 @change=${this._handleChange}
               ></ha-textfield>
               <ha-timezone-picker
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.time_zone"
                 )}
                 name="timeZone"
@@ -103,14 +103,14 @@ class HaConfigSectionGeneral extends LitElement {
               >
               </ha-timezone-picker>
               <ha-textfield
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.elevation"
                 )}
                 name="elevation"
                 type="number"
                 .disabled=${disabled}
                 .value=${this._elevation}
-                .suffix=${this.hass.localize(
+                .suffix=${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.elevation_meters"
                 )}
                 @change=${this._handleChange}
@@ -118,19 +118,19 @@ class HaConfigSectionGeneral extends LitElement {
               </ha-textfield>
               <div>
                 <div>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.core.section.core.core_config.unit_system"
                   )}
                 </div>
                 <ha-formfield
                   .label=${html`
                     <span style="font-size: 14px">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.core.section.core.core_config.metric_example"
                       )}
                     </span>
                     <div style="color: var(--secondary-text-color)">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.core.section.core.core_config.unit_system_metric"
                       )}
                     </div>
@@ -147,12 +147,12 @@ class HaConfigSectionGeneral extends LitElement {
                 <ha-formfield
                   .label=${html`
                     <span style="font-size: 14px">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.core.section.core.core_config.us_customary_example"
                       )}
                     </span>
                     <div style="color: var(--secondary-text-color)">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.core.section.core.core_config.unit_system_us_customary"
                       )}
                     </div>
@@ -169,7 +169,7 @@ class HaConfigSectionGeneral extends LitElement {
                 ${this._unitSystem !== this._configuredUnitSystem()
                   ? html`
                       <ha-formfield
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.core.section.core.core_config.update_units_label"
                         )}
                       >
@@ -180,13 +180,13 @@ class HaConfigSectionGeneral extends LitElement {
                         ></ha-checkbox>
                       </ha-formfield>
                       <div class="secondary">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.core.section.core.core_config.update_units_text_1"
                         )}
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.core.section.core.core_config.update_units_text_2"
                         )} <br /><br />
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.core.section.core.core_config.update_units_text_3"
                         )}
                       </div>
@@ -195,8 +195,8 @@ class HaConfigSectionGeneral extends LitElement {
               </div>
               <div>
                 <ha-currency-picker
-                  .language=${this.hass.locale.language}
-                  .label=${this.hass.localize(
+                  .language=${this.menuai.locale.language}
+                  .label=${this.menuai.localize(
                     "ui.panel.config.core.section.core.core_config.currency"
                   )}
                   name="currency"
@@ -210,14 +210,14 @@ class HaConfigSectionGeneral extends LitElement {
                   target="_blank"
                   rel="noopener noreferrer"
                   class="find-value"
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.core.section.core.core_config.find_currency_value"
                   )}</a
                 >
               </div>
               <ha-country-picker
-                .hass=${this.hass}
-                .label=${this.hass.localize(
+                .menuai=${this.menuai}
+                .label=${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.country"
                 )}
                 name="country"
@@ -227,9 +227,9 @@ class HaConfigSectionGeneral extends LitElement {
                 @value-changed=${this._handleValueChanged}
               ></ha-country-picker>
               <ha-language-picker
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 native-name
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.language"
                 )}
                 name="language"
@@ -243,17 +243,17 @@ class HaConfigSectionGeneral extends LitElement {
 
             <ha-settings-row>
               <div slot="heading">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.edit_location"
                 )}
               </div>
               <div slot="description" class="secondary">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.core.section.core.core_config.edit_location_description"
                 )}
               </div>
               <mwc-button @click=${this._editLocation} .disabled=${disabled}
-                >${this.hass.localize("ui.common.edit")}</mwc-button
+                >${this.menuai.localize("ui.common.edit")}</mwc-button
               >
             </ha-settings-row>
             <div class="card-actions">
@@ -261,29 +261,29 @@ class HaConfigSectionGeneral extends LitElement {
                 @click=${this._updateEntry}
                 .disabled=${disabled}
               >
-                ${this.hass!.localize("ui.panel.config.zone.detail.update")}
+                ${this.menuai!.localize("ui.panel.config.zone.detail.update")}
               </ha-progress-button>
             </div>
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private _configuredUnitSystem() {
-    return this.hass.config.unit_system.temperature === UNIT_C
+    return this.menuai.config.unit_system.temperature === UNIT_C
       ? "metric"
       : "us_customary";
   }
 
   protected firstUpdated(): void {
     this._unitSystem = this._configuredUnitSystem();
-    this._currency = this.hass.config.currency;
-    this._country = this.hass.config.country;
-    this._language = this.hass.config.language;
-    this._elevation = this.hass.config.elevation;
-    this._timeZone = this.hass.config.time_zone || "Etc/GMT";
-    this._name = this.hass.config.location_name;
+    this._currency = this.menuai.config.currency;
+    this._country = this.menuai.config.country;
+    this._language = this.menuai.config.language;
+    this._elevation = this.menuai.config.elevation;
+    this._timeZone = this.menuai.config.time_zone || "Etc/GMT";
+    this._name = this.menuai.config.location_name;
     this._updateUnits = true;
   }
 
@@ -316,16 +316,16 @@ class HaConfigSectionGeneral extends LitElement {
     if (unitSystemChanged && this._updateUnits) {
       if (
         !(await showConfirmationDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.core.section.core.core_config.update_units_confirm_title"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.core.section.core.core_config.update_units_confirm_text"
           ),
-          confirmText: this.hass!.localize(
+          confirmText: this.menuai!.localize(
             "ui.panel.config.core.section.core.core_config.update_units_confirm_update"
           ),
-          dismissText: this.hass!.localize("ui.common.cancel"),
+          dismissText: this.menuai!.localize("ui.common.cancel"),
         }))
       ) {
         return;
@@ -345,7 +345,7 @@ class HaConfigSectionGeneral extends LitElement {
     this._error = undefined;
 
     try {
-      await saveCoreConfig(this.hass, {
+      await saveCoreConfig(this.menuai, {
         currency: this._currency,
         elevation: Number(this._elevation),
         unit_system: this._unitSystem,

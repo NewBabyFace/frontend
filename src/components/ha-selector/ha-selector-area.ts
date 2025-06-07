@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -16,13 +16,13 @@ import {
   filterSelectorDevices,
   filterSelectorEntities,
 } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-area-picker";
 import "../ha-areas-picker";
 
 @customElement("ha-selector-area")
 export class HaAreaSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: AreaSelector;
 
@@ -71,13 +71,13 @@ export class HaAreaSelector extends LitElement {
       this._hasIntegration(this.selector) &&
       !this._entitySources
     ) {
-      fetchEntitySourcesWithCache(this.hass).then((sources) => {
+      fetchEntitySourcesWithCache(this.menuai).then((sources) => {
         this._entitySources = sources;
       });
     }
     if (!this._configEntries && this._hasIntegration(this.selector)) {
       this._configEntries = [];
-      getConfigEntries(this.hass).then((entries) => {
+      getConfigEntries(this.menuai).then((entries) => {
         this._configEntries = entries;
       });
     }
@@ -91,7 +91,7 @@ export class HaAreaSelector extends LitElement {
     if (!this.selector.area?.multiple) {
       return html`
         <ha-area-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this.value}
           .label=${this.label}
           .helper=${this.helper}
@@ -110,7 +110,7 @@ export class HaAreaSelector extends LitElement {
 
     return html`
       <ha-areas-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .helper=${this.helper}
         .pickAreaLabel=${this.label}
@@ -127,7 +127,7 @@ export class HaAreaSelector extends LitElement {
     `;
   }
 
-  private _filterEntities = (entity: HassEntity): boolean => {
+  private _filterEntities = (entity: menuaiEntity): boolean => {
     if (!this.selector.area?.entity) {
       return true;
     }
@@ -145,8 +145,8 @@ export class HaAreaSelector extends LitElement {
     const deviceIntegrations = this._entitySources
       ? this._deviceIntegrationLookup(
           this._entitySources,
-          Object.values(this.hass.entities),
-          Object.values(this.hass.devices),
+          Object.values(this.menuai.entities),
+          Object.values(this.menuai.devices),
           this._configEntries
         )
       : undefined;

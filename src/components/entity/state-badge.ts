@@ -1,5 +1,5 @@
 import { mdiAlert } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { property, state } from "lit/decorators";
@@ -14,13 +14,13 @@ import {
 import { iconColorCSS } from "../../common/style/icon_color_css";
 import { cameraUrlWithWidthHeight } from "../../data/camera";
 import { CLIMATE_HVAC_ACTION_TO_MODE } from "../../data/climate";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-state-icon";
 
 export class StateBadge extends LitElement {
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property({ attribute: false }) public overrideIcon?: string;
 
@@ -97,7 +97,7 @@ export class StateBadge extends LitElement {
     const domain = stateObj ? computeStateDomain(stateObj) : undefined;
 
     return html`<ha-state-icon
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       style=${styleMap(this._iconStyle)}
       data-domain=${ifDefined(domain)}
       data-state=${ifDefined(stateObj?.state)}
@@ -136,8 +136,8 @@ export class StateBadge extends LitElement {
           let imageUrl =
             stateObj.attributes.entity_picture_local ||
             stateObj.attributes.entity_picture;
-          if (this.hass) {
-            imageUrl = this.hass.hassUrl(imageUrl);
+          if (this.menuai) {
+            imageUrl = this.menuai.menuaiUrl(imageUrl);
           }
           if (domain === "camera") {
             imageUrl = cameraUrlWithWidthHeight(imageUrl, 80, 80);
@@ -180,8 +180,8 @@ export class StateBadge extends LitElement {
         }
       } else if (this.overrideImage) {
         let imageUrl = this.overrideImage;
-        if (this.hass) {
-          imageUrl = this.hass.hassUrl(imageUrl);
+        if (this.menuai) {
+          imageUrl = this.menuai.menuaiUrl(imageUrl);
         }
         backgroundImage = `url(${imageUrl})`;
         this.icon = false;

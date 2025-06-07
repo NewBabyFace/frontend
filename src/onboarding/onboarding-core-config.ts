@@ -12,13 +12,13 @@ import type { ConfigUpdateValues } from "../data/core";
 import { saveCoreConfig } from "../data/core";
 import { countryCurrency } from "../data/currency";
 import { onboardCoreConfigStep } from "../data/onboarding";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import { getLocalLanguage } from "../util/common-translation";
 import "./onboarding-location";
 
 @customElement("onboarding-core-config")
 class OnboardingCoreConfig extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public onboardingLocalize!: LocalizeFunc;
 
@@ -45,7 +45,7 @@ class OnboardingCoreConfig extends LitElement {
   protected render(): TemplateResult {
     if (!this._location) {
       return html`<onboarding-location
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .onboardingLocalize=${this.onboardingLocalize}
         @value-changed=${this._locationChanged}
       ></onboarding-location>`;
@@ -68,8 +68,8 @@ class OnboardingCoreConfig extends LitElement {
 
       <ha-country-picker
         class="flex"
-        .language=${this.hass.locale.language}
-        .label=${this.hass.localize(
+        .language=${this.menuai.locale.language}
+        .label=${this.menuai.localize(
           "ui.panel.config.core.section.core.core_config.country"
         ) || "Country"}
         required
@@ -157,7 +157,7 @@ class OnboardingCoreConfig extends LitElement {
     ev.preventDefault();
     this._working = true;
     try {
-      await saveCoreConfig(this.hass, {
+      await saveCoreConfig(this.menuai, {
         location_name: this.onboardingLocalize(
           "ui.panel.page-onboarding.core-config.location_name_default"
         ),
@@ -173,7 +173,7 @@ class OnboardingCoreConfig extends LitElement {
         country: this._country,
         language: this._language,
       });
-      const result = await onboardCoreConfigStep(this.hass);
+      const result = await onboardCoreConfigStep(this.menuai);
       fireEvent(this, "onboarding-step", {
         type: "core_config",
         result,

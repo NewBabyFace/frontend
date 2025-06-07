@@ -17,14 +17,14 @@ describe("computeEntityName", () => {
       attributes: { friendly_name: "Kitchen Light" },
       state: "on",
     };
-    const hass = {
+    const menuai = {
       entities: {},
       devices: {},
       states: {
         "light.kitchen": stateObj,
       },
     };
-    expect(computeEntityName(stateObj as any, hass as any)).toBe(
+    expect(computeEntityName(stateObj as any, menuai as any)).toBe(
       "Kitchen Light"
     );
     vi.restoreAllMocks();
@@ -36,7 +36,7 @@ describe("computeEntityName", () => {
       attributes: {},
       state: "on",
     };
-    const hass = {
+    const menuai = {
       entities: {
         "light.kitchen": {
           entity_id: "light.kitchen",
@@ -48,7 +48,7 @@ describe("computeEntityName", () => {
         "light.kitchen": stateObj,
       },
     };
-    expect(computeEntityName(stateObj as any, hass as any)).toBe(
+    expect(computeEntityName(stateObj as any, menuai as any)).toBe(
       "Ceiling Light"
     );
   });
@@ -57,8 +57,8 @@ describe("computeEntityName", () => {
 describe("computeEntityEntryName", () => {
   it("returns entry.name if no device", () => {
     const entry = { entity_id: "light.kitchen", name: "Ceiling Light" };
-    const hass = { devices: {}, states: {} };
-    expect(computeEntityEntryName(entry as any, hass as any)).toBe(
+    const menuai = { devices: {}, states: {} };
+    expect(computeEntityEntryName(entry as any, menuai as any)).toBe(
       "Ceiling Light"
     );
   });
@@ -75,11 +75,11 @@ describe("computeEntityEntryName", () => {
       name: "Kitchen Light",
       device_id: "dev1",
     };
-    const hass = {
+    const menuai = {
       devices: { dev1: {} },
       states: {},
     };
-    expect(computeEntityEntryName(entry as any, hass as any)).toBe("Light");
+    expect(computeEntityEntryName(entry as any, menuai as any)).toBe("Light");
     vi.restoreAllMocks();
   });
 
@@ -92,11 +92,11 @@ describe("computeEntityEntryName", () => {
       name: "Kitchen Light",
       device_id: "dev1",
     };
-    const hass = {
+    const menuai = {
       devices: { dev1: {} },
       states: {},
     };
-    expect(computeEntityEntryName(entry as any, hass as any)).toBeUndefined();
+    expect(computeEntityEntryName(entry as any, menuai as any)).toBeUndefined();
     vi.restoreAllMocks();
   });
 
@@ -105,13 +105,13 @@ describe("computeEntityEntryName", () => {
       "Fallback Name"
     );
     const entry = { entity_id: "light.kitchen" };
-    const hass = {
+    const menuai = {
       devices: {},
       states: {
         "light.kitchen": { entity_id: "light.kitchen" },
       },
     };
-    expect(computeEntityEntryName(entry as any, hass as any)).toBe(
+    expect(computeEntityEntryName(entry as any, menuai as any)).toBe(
       "Fallback Name"
     );
     vi.restoreAllMocks();
@@ -119,19 +119,19 @@ describe("computeEntityEntryName", () => {
 
   it("returns original_name if present", () => {
     const entry = { entity_id: "light.kitchen", original_name: "Old Name" };
-    const hass = {
+    const menuai = {
       devices: {},
       states: {},
     };
-    expect(computeEntityEntryName(entry as any, hass as any)).toBe("Old Name");
+    expect(computeEntityEntryName(entry as any, menuai as any)).toBe("Old Name");
   });
 
   it("returns undefined if no name, original_name, or device", () => {
     const entry = { entity_id: "light.kitchen" };
-    const hass = {
+    const menuai = {
       devices: {},
       states: {},
     };
-    expect(computeEntityEntryName(entry as any, hass as any)).toBeUndefined();
+    expect(computeEntityEntryName(entry as any, menuai as any)).toBeUndefined();
   });
 });

@@ -40,9 +40,9 @@ import {
   fetchIntegrationManifests,
 } from "../../../data/integration";
 import { TRIGGER_GROUPS, TRIGGER_ICONS } from "../../../data/trigger";
-import type { HassDialog } from "../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { AddAutomationElementDialogParams } from "./show-add-automation-element-dialog";
 import { PASTE_VALUE } from "./show-add-automation-element-dialog";
 import { HaFuse } from "../../../resources/fuse";
@@ -85,8 +85,8 @@ const ENTITY_DOMAINS_OTHER = new Set([
 const ENTITY_DOMAINS_MAIN = new Set(["notify"]);
 
 @customElement("add-automation-element-dialog")
-class DialogAddAutomationElement extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogAddAutomationElement extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: AddAutomationElementDialogParams;
 
@@ -112,10 +112,10 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
     this._params = params;
     this._group = params.group;
     if (this._params?.type === "action") {
-      this.hass.loadBackendTranslation("services");
+      this.menuai.loadBackendTranslation("services");
       this._fetchManifests();
       this._calculateUsedDomains();
-      getServiceIcons(this.hass);
+      getServiceIcons(this.menuai);
     }
     this._fullScreen = matchMedia(
       "all and (max-width: 450px), all and (max-height: 500px)"
@@ -177,7 +177,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
       filter: string,
       domains: Set<string> | undefined,
       localize: LocalizeFunc,
-      services: HomeAssistant["services"],
+      services: menuai["services"],
       manifests?: DomainManifestLookup
     ): ListItem[] => {
       const items = this._items(type, group, localize, services, manifests);
@@ -210,7 +210,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
       type: AddAutomationElementDialogParams["type"],
       group: string | undefined,
       localize: LocalizeFunc,
-      services: HomeAssistant["services"],
+      services: menuai["services"],
       manifests?: DomainManifestLookup
     ): ListItem[] => {
       const groups = this._getGroups(type, group);
@@ -240,7 +240,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
       group: string | undefined,
       domains: Set<string> | undefined,
       localize: LocalizeFunc,
-      services: HomeAssistant["services"],
+      services: menuai["services"],
       manifests?: DomainManifestLookup
     ): ListItem[] => {
       if (type === "action" && isService(group)) {
@@ -304,14 +304,14 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
         if (!a.group && b.group) {
           return -1;
         }
-        return stringCompare(a.name, b.name, this.hass.locale.language);
+        return stringCompare(a.name, b.name, this.menuai.locale.language);
       });
     }
   );
 
   private _serviceGroups = (
     localize: LocalizeFunc,
-    services: HomeAssistant["services"],
+    services: menuai["services"],
     manifests: DomainManifestLookup | undefined,
     domains: Set<string> | undefined,
     type: "helper" | "other" | undefined
@@ -340,7 +340,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
           group: true,
           icon: html`
             <ha-domain-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .domain=${domain}
               brand-fallback
             ></ha-domain-icon>
@@ -352,14 +352,14 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
       }
     });
     return result.sort((a, b) =>
-      stringCompare(a.name, b.name, this.hass.locale.language)
+      stringCompare(a.name, b.name, this.menuai.locale.language)
     );
   };
 
   private _services = memoizeOne(
     (
       localize: LocalizeFunc,
-      services: HomeAssistant["services"],
+      services: menuai["services"],
       manifests: DomainManifestLookup | undefined,
       group?: string
     ): ListItem[] => {
@@ -382,18 +382,18 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
             group: false,
             icon: html`
               <ha-service-icon
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .service=${`${dmn}.${service}`}
               ></ha-service-icon>
             `,
             key: `${SERVICE_PREFIX}${dmn}.${service}`,
             name: `${domain ? "" : `${domainToName(localize, dmn)}: `}${
-              this.hass.localize(`component.${dmn}.services.${service}.name`) ||
+              this.menuai.localize(`component.${dmn}.services.${service}.name`) ||
               services[dmn][service]?.name ||
               service
             }`,
             description:
-              this.hass.localize(
+              this.menuai.localize(
                 `component.${dmn}.services.${service}.description`
               ) || services[dmn][service]?.description,
           });
@@ -403,7 +403,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
       if (domain) {
         addDomain(domain);
         return result.sort((a, b) =>
-          stringCompare(a.name, b.name, this.hass.locale.language)
+          stringCompare(a.name, b.name, this.menuai.locale.language)
         );
       }
 
@@ -434,7 +434,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
 
   private async _fetchManifests() {
     const manifests = {};
-    const fetched = await fetchIntegrationManifests(this.hass);
+    const fetched = await fetchIntegrationManifests(this.menuai);
     for (const manifest of fetched) {
       manifests[manifest.domain] = manifest;
     }
@@ -442,7 +442,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
   }
 
   private _calculateUsedDomains() {
-    const domains = new Set(Object.keys(this.hass.states).map(computeDomain));
+    const domains = new Set(Object.keys(this.menuai.states).map(computeDomain));
     if (!deepEqual(domains, this._domains)) {
       this._domains = domains;
     }
@@ -459,8 +459,8 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
   protected willUpdate(changedProperties: PropertyValues): void {
     if (
       this._params?.type === "action" &&
-      changedProperties.has("hass") &&
-      changedProperties.get("hass")?.states !== this.hass.states
+      changedProperties.has("menuai") &&
+      changedProperties.get("menuai")?.states !== this.menuai.states
     ) {
       this._calculateUsedDomains();
     }
@@ -477,26 +477,26 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
           this._group,
           this._filter,
           this._domains,
-          this.hass.localize,
-          this.hass.services,
+          this.menuai.localize,
+          this.menuai.services,
           this._manifests
         )
       : this._getGroupItems(
           this._params.type,
           this._group,
           this._domains,
-          this.hass.localize,
-          this.hass.services,
+          this.menuai.localize,
+          this.menuai.services,
           this._manifests
         );
 
     const groupName = isService(this._group)
       ? domainToName(
-          this.hass.localize,
+          this.menuai.localize,
           getService(this._group!),
           this._manifests?.[getService(this._group!)]
         )
-      : this.hass.localize(
+      : this.menuai.localize(
           // @ts-ignore
           `ui.panel.config.automation.editor.${this._params.type}s.groups.${this._group}.label`
         );
@@ -514,7 +514,7 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
             <span slot="title"
               >${this._group
                 ? groupName
-                : this.hass.localize(
+                : this.menuai.localize(
                     `ui.panel.config.automation.editor.${this._params.type}s.add`
                   )}</span
             >
@@ -531,15 +531,15 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
           </ha-dialog-header>
           <search-input
             dialogInitialFocus=${ifDefined(this._fullScreen ? undefined : "")}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .filter=${this._filter}
             @value-changed=${this._filterChanged}
             .label=${groupName
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.config.automation.editor.search_in",
                   { group: groupName }
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   `ui.panel.config.automation.editor.${this._params.type}s.search`
                 )}
           ></search-input>
@@ -562,11 +562,11 @@ class DialogAddAutomationElement extends LitElement implements HassDialog {
                   .value=${PASTE_VALUE}
                   @click=${this._selected}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.automation.editor.${this._params.type}s.paste`
                   )}
                   <span slot="supporting-text"
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       // @ts-ignore
                       `ui.panel.config.automation.editor.${this._params.type}s.type.${this._params.clipboardItem}.label`
                     )}</span

@@ -18,9 +18,9 @@ import "../../../components/ha-list";
 import "../../../components/ha-list-item";
 import "../../../components/ha-metric";
 import "../../../components/ha-svg-icon";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
-import type { HassioHostInfo } from "../../../data/hassio/host";
-import { fetchHassioHostInfo } from "../../../data/hassio/host";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
+import type { menuaiioHostInfo } from "../../../data/menuaiio/host";
+import { fetchmenuaiioHostInfo } from "../../../data/menuaiio/host";
 import type {
   SupervisorMount,
   SupervisorMounts,
@@ -33,8 +33,8 @@ import {
   reloadSupervisorMount,
 } from "../../../data/supervisor/mounts";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-subpage";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-subpage";
+import type { menuai, Route } from "../../../types";
 import {
   getValueInPercentage,
   roundWithOneDecimal,
@@ -45,7 +45,7 @@ import { showMountViewDialog } from "./show-dialog-view-mount";
 
 @customElement("ha-config-section-storage")
 class HaConfigSectionStorage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -53,13 +53,13 @@ class HaConfigSectionStorage extends LitElement {
 
   @state() private _error?: { code: string; message: string };
 
-  @state() private _hostInfo?: HassioHostInfo;
+  @state() private _hostInfo?: menuaiioHostInfo;
 
   @state() private _mountsInfo?: SupervisorMounts | null;
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       this._load();
     }
   }
@@ -73,11 +73,11 @@ class HaConfigSectionStorage extends LitElement {
     );
     const isHAOS = this._hostInfo?.features.includes("haos");
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.storage.caption")}
+        .header=${this.menuai.localize("ui.panel.config.storage.caption")}
       >
         <div class="content">
           ${this._error
@@ -91,13 +91,13 @@ class HaConfigSectionStorage extends LitElement {
             ? html`
                 <ha-card
                   outlined
-                  .header=${this.hass.localize(
+                  .header=${this.menuai.localize(
                     "ui.panel.config.storage.disk_metrics"
                   )}
                 >
                   <div class="card-content">
                     <ha-metric
-                      .heading=${this.hass.localize(
+                      .heading=${this.menuai.localize(
                         "ui.panel.config.storage.used_space"
                       )}
                       .value=${this._getUsedSpace(
@@ -111,7 +111,7 @@ class HaConfigSectionStorage extends LitElement {
                       ? // prettier-ignore
                         html`
                           <ha-metric
-                            .heading=${this.hass.localize(
+                            .heading=${this.menuai.localize(
                               "ui.panel.config.storage.emmc_lifetime_used"
                             )}
                             .value=${this._hostInfo.disk_life_time}
@@ -124,7 +124,7 @@ class HaConfigSectionStorage extends LitElement {
                   ${this._hostInfo
                     ? html`<div class="card-actions">
                         <mwc-button @click=${this._moveDatadisk}>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.storage.datadisk.title"
                           )}
                         </mwc-button>
@@ -136,7 +136,7 @@ class HaConfigSectionStorage extends LitElement {
 
           <ha-card
             outlined
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.storage.network_mounts.title"
             )}
           >
@@ -144,12 +144,12 @@ class HaConfigSectionStorage extends LitElement {
               ? html`<ha-alert
                   class="mounts-not-supported"
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.panel.config.storage.network_mounts.not_supported.title"
                   )}
                 >
                   ${isHAOS
-                    ? html`${this.hass.localize(
+                    ? html`${this.menuai.localize(
                           "ui.panel.config.storage.network_mounts.not_supported.os",
                           { version: "10.2" }
                         )}
@@ -157,11 +157,11 @@ class HaConfigSectionStorage extends LitElement {
                           slot="action"
                           @click=${this._navigateToUpdates}
                         >
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.storage.network_mounts.not_supported.navigate_to_updates"
                           )}
                         </mwc-button>`
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         "ui.panel.config.storage.network_mounts.not_supported.supervised"
                       )}
                 </ha-alert>`
@@ -211,7 +211,7 @@ class HaConfigSectionStorage extends LitElement {
                 : html`<div class="no-mounts">
                     <ha-svg-icon .path=${mdiNas}></ha-svg-icon>
                     <p>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.storage.network_mounts.no_mounts"
                       )}
                     </p>
@@ -219,7 +219,7 @@ class HaConfigSectionStorage extends LitElement {
             ${this._mountsInfo !== null
               ? html`<div class="card-actions">
                   <mwc-button @click=${this._addMount}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.storage.network_mounts.add_title"
                     )}
                   </mwc-button>
@@ -227,13 +227,13 @@ class HaConfigSectionStorage extends LitElement {
               : nothing}
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private async _load() {
     try {
-      this._hostInfo = await fetchHassioHostInfo(this.hass);
+      this._hostInfo = await fetchmenuaiioHostInfo(this.menuai);
     } catch (err: any) {
       this._error = err.message || err;
     }
@@ -258,10 +258,10 @@ class HaConfigSectionStorage extends LitElement {
     ev.stopPropagation();
     const mount: SupervisorMount = (ev.currentTarget as any).mount;
     try {
-      await reloadSupervisorMount(this.hass, mount);
+      await reloadSupervisorMount(this.menuai, mount);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.storage.network_mounts.errors.reload",
           { mount: mount.name }
         ),
@@ -288,7 +288,7 @@ class HaConfigSectionStorage extends LitElement {
 
   private async _reloadMounts(): Promise<void> {
     try {
-      this._mountsInfo = await fetchSupervisorMounts(this.hass);
+      this._mountsInfo = await fetchSupervisorMounts(this.menuai);
     } catch (err: any) {
       this._error = err.message || err;
       this._mountsInfo = null;

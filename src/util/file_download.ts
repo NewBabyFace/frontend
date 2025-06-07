@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { isIosApp } from "./is_ios";
 
 export const fileDownload = (href: string, filename = ""): void => {
@@ -12,5 +12,5 @@ export const fileDownload = (href: string, filename = ""): void => {
   document.body.removeChild(element);
 };
 
-export const downloadFileSupported = (hass: HomeAssistant): boolean =>
-  !isIosApp(hass) || !!hass.auth.external?.config.downloadFileSupported;
+export const downloadFileSupported = (menuai: menuai): boolean =>
+  !isIosApp(menuai) || !!menuai.auth.external?.config.downloadFileSupported;

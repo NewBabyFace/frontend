@@ -12,7 +12,7 @@ import {
   MediaPlayerEntityFeature,
 } from "../../data/media-player";
 import type { MediaSelector, MediaSelectorValue } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { brandsUrl, extractDomainFromBrandUrl } from "../../util/brands-url";
 import "../ha-alert";
 import "../ha-form/ha-form";
@@ -26,7 +26,7 @@ const MANUAL_SCHEMA = [
 
 @customElement("ha-selector-media")
 export class HaMediaSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: MediaSelector;
 
@@ -53,7 +53,7 @@ export class HaMediaSelector extends LitElement {
       if (thumbnail && thumbnail.startsWith("/")) {
         this._thumbnailUrl = undefined;
         // Thumbnails served by local API require authentication
-        getSignedPath(this.hass, thumbnail).then((signedPath) => {
+        getSignedPath(this.menuai, thumbnail).then((signedPath) => {
           this._thumbnailUrl = signedPath.path;
         });
       } else if (
@@ -66,7 +66,7 @@ export class HaMediaSelector extends LitElement {
           domain: extractDomainFromBrandUrl(thumbnail),
           type: "icon",
           useFallback: true,
-          darkOptimized: this.hass.themes?.darkMode,
+          darkOptimized: this.menuai.themes?.darkMode,
         });
       } else {
         this._thumbnailUrl = thumbnail;
@@ -76,7 +76,7 @@ export class HaMediaSelector extends LitElement {
 
   protected render() {
     const stateObj = this.value?.entity_id
-      ? this.hass.states[this.value.entity_id]
+      ? this.menuai.states[this.value.entity_id]
       : undefined;
 
     const supportsBrowse =
@@ -85,10 +85,10 @@ export class HaMediaSelector extends LitElement {
         supportsFeature(stateObj, MediaPlayerEntityFeature.BROWSE_MEDIA));
 
     return html`<ha-entity-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value?.entity_id}
         .label=${this.label ||
-        this.hass.localize("ui.components.selectors.media.pick_media_player")}
+        this.menuai.localize("ui.components.selectors.media.pick_media_player")}
         .disabled=${this.disabled}
         .helper=${this.helper}
         .required=${this.required}
@@ -98,12 +98,12 @@ export class HaMediaSelector extends LitElement {
       ></ha-entity-picker>
       ${!supportsBrowse
         ? html`<ha-alert>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.components.selectors.media.browse_not_supported"
               )}
             </ha-alert>
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .data=${this.value}
               .schema=${MANUAL_SCHEMA}
               .computeLabel=${this._computeLabelCallback}
@@ -159,7 +159,7 @@ export class HaMediaSelector extends LitElement {
             </div>
             <div class="title">
               ${!this.value?.media_content_id
-                ? this.hass.localize("ui.components.selectors.media.pick_media")
+                ? this.menuai.localize("ui.components.selectors.media.pick_media")
                 : this.value.metadata?.title || this.value.media_content_id}
             </div>
           </ha-card>`}`;
@@ -168,7 +168,7 @@ export class HaMediaSelector extends LitElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<typeof MANUAL_SCHEMA>
   ): string =>
-    this.hass.localize(`ui.components.selectors.media.${schema.name}`);
+    this.menuai.localize(`ui.components.selectors.media.${schema.name}`);
 
   private _entityChanged(ev: CustomEvent) {
     ev.stopPropagation();

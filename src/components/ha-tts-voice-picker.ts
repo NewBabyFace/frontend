@@ -6,7 +6,7 @@ import { stopPropagation } from "../common/dom/stop_propagation";
 import { debounce } from "../common/util/debounce";
 import type { TTSVoice } from "../data/tts";
 import { listTTSVoices } from "../data/tts";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-select";
 import type { HaSelect } from "./ha-select";
@@ -23,7 +23,7 @@ export class HaTTSVoicePicker extends LitElement {
 
   @property() public language?: string;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public disabled = false;
 
@@ -42,7 +42,7 @@ export class HaTTSVoicePicker extends LitElement {
     return html`
       <ha-select
         .label=${this.label ||
-        this.hass!.localize("ui.components.tts-voice-picker.voice")}
+        this.menuai!.localize("ui.components.tts-voice-picker.voice")}
         .value=${value}
         .required=${this.required}
         .disabled=${this.disabled}
@@ -53,7 +53,7 @@ export class HaTTSVoicePicker extends LitElement {
       >
         ${!this.required
           ? html`<ha-list-item .value=${NONE}>
-              ${this.hass!.localize("ui.components.tts-voice-picker.none")}
+              ${this.menuai!.localize("ui.components.tts-voice-picker.none")}
             </ha-list-item>`
           : nothing}
         ${this._voices.map(
@@ -86,7 +86,7 @@ export class HaTTSVoicePicker extends LitElement {
       return;
     }
     this._voices = (
-      await listTTSVoices(this.hass, this.engineId, this.language)
+      await listTTSVoices(this.menuai, this.engineId, this.language)
     ).voices;
 
     if (!this.value) {
@@ -122,7 +122,7 @@ export class HaTTSVoicePicker extends LitElement {
   private _changed(ev): void {
     const target = ev.target as HaSelect;
     if (
-      !this.hass ||
+      !this.menuai ||
       target.value === "" ||
       target.value === this.value ||
       (this.value === undefined && target.value === NONE)

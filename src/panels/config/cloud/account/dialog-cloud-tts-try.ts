@@ -20,12 +20,12 @@ import { MediaPlayerEntityFeature } from "../../../../data/media-player";
 import { convertTextToSpeech } from "../../../../data/tts";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { TryTtsDialogParams } from "./show-dialog-cloud-tts-try";
 
 @customElement("dialog-cloud-try-tts")
 export class DialogTryTts extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _loadingExample = false;
 
@@ -68,27 +68,27 @@ export class DialogTryTts extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.cloud.account.tts.dialog.header")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.cloud.account.tts.dialog.header")
         )}
       >
         <div>
           <ha-textarea
             autogrow
             id="message"
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.cloud.account.tts.dialog.message"
             )}
             .value=${this._message ||
-            this.hass.localize(
+            this.menuai.localize(
               "ui.panel.config.cloud.account.tts.dialog.example_message",
-              { name: this.hass.user!.name }
+              { name: this.menuai.user!.name }
             )}
           >
           </ha-textarea>
 
           <ha-select
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.cloud.account.tts.dialog.target"
             )}
             id="target"
@@ -99,11 +99,11 @@ export class DialogTryTts extends LitElement {
             @closed=${stopPropagation}
           >
             <ha-list-item value="browser">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.cloud.account.tts.dialog.target_browser"
               )}
             </ha-list-item>
-            ${Object.values(this.hass.states)
+            ${Object.values(this.menuai.states)
               .filter(
                 (entity) =>
                   computeStateDomain(entity) === "media_player" &&
@@ -120,7 +120,7 @@ export class DialogTryTts extends LitElement {
         </div>
         <mwc-button
           slot="primaryAction"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.cloud.account.tts.dialog.play"
           )}
           @click=${this._playExample}
@@ -131,7 +131,7 @@ export class DialogTryTts extends LitElement {
         <mwc-button
           slot="secondaryAction"
           .disabled=${target === "browser"}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.cloud.account.tts.dialog.create_automation"
           )}
           @click=${this._createAutomation}
@@ -160,7 +160,7 @@ export class DialogTryTts extends LitElement {
       audio.play();
       this._playBrowser(message, audio);
     } else {
-      this.hass.callService("tts", "cloud_say", {
+      this.menuai.callService("tts", "cloud_say", {
         entity_id: this._target,
         message,
       });
@@ -192,7 +192,7 @@ export class DialogTryTts extends LitElement {
 
     let url;
     try {
-      const result = await convertTextToSpeech(this.hass, {
+      const result = await convertTextToSpeech(this.menuai, {
         platform: "cloud",
         message,
         language,

@@ -28,7 +28,7 @@ import {
 } from "../../../data/entity_registry";
 import type { VacuumEntity } from "../../../data/vacuum";
 import { VacuumEntityFeature } from "../../../data/vacuum";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 interface VacuumCommand {
   translationKey: string;
@@ -99,12 +99,12 @@ const VACUUM_COMMANDS: VacuumCommand[] = [
 
 @customElement("more-info-vacuum")
 class MoreInfoVacuum extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: VacuumEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -118,7 +118,7 @@ class MoreInfoVacuum extends LitElement {
         ? html` <div class="flex-horizontal">
             <div>
               <span class="status-subtitle"
-                >${this.hass!.localize(
+                >${this.menuai!.localize(
                   "ui.dialogs.more_info_control.vacuum.status"
                 )}:
               </span>
@@ -126,8 +126,8 @@ class MoreInfoVacuum extends LitElement {
                 <strong>
                   ${supportsFeature(stateObj, VacuumEntityFeature.STATUS) &&
                   stateObj.attributes.status
-                    ? this.hass.formatEntityAttributeValue(stateObj, "status")
-                    : this.hass.formatEntityState(stateObj)}
+                    ? this.menuai.formatEntityAttributeValue(stateObj, "status")
+                    : this.menuai.formatEntityState(stateObj)}
                 </strong>
               </span>
             </div>
@@ -139,7 +139,7 @@ class MoreInfoVacuum extends LitElement {
             <div>
               <p></p>
               <div class="status-subtitle">
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.dialogs.more_info_control.vacuum.commands"
                 )}
               </div>
@@ -153,7 +153,7 @@ class MoreInfoVacuum extends LitElement {
                         .path=${item.icon}
                         .entry=${item}
                         @click=${this._callService}
-                        .label=${this.hass!.localize(
+                        .label=${this.menuai!.localize(
                           `ui.dialogs.more_info_control.vacuum.${item.translationKey}`
                         )}
                         .disabled=${stateObj.state === UNAVAILABLE}
@@ -170,7 +170,7 @@ class MoreInfoVacuum extends LitElement {
             <div>
               <div class="flex-horizontal">
                 <ha-select
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.dialogs.more_info_control.vacuum.fan_speed"
                   )}
                   .disabled=${stateObj.state === UNAVAILABLE}
@@ -183,7 +183,7 @@ class MoreInfoVacuum extends LitElement {
                   ${stateObj.attributes.fan_speed_list!.map(
                     (mode) => html`
                       <ha-list-item .value=${mode}>
-                        ${this.hass.formatEntityAttributeValue(
+                        ${this.menuai.formatEntityAttributeValue(
                           stateObj,
                           "fan_speed",
                           mode
@@ -197,7 +197,7 @@ class MoreInfoVacuum extends LitElement {
                 >
                   <span>
                     <ha-svg-icon .path=${mdiFan}></ha-svg-icon>
-                    ${this.hass.formatEntityAttributeValue(
+                    ${this.menuai.formatEntityAttributeValue(
                       stateObj,
                       "fan_speed"
                     )}
@@ -210,7 +210,7 @@ class MoreInfoVacuum extends LitElement {
         : ""}
 
       <ha-attributes
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .extraFilters=${filterExtraAttributes}
       ></ha-attributes>
@@ -220,7 +220,7 @@ class MoreInfoVacuum extends LitElement {
   private _deviceEntities = memoizeOne(
     (
       deviceId: string,
-      entities: HomeAssistant["entities"]
+      entities: menuai["entities"]
     ): EntityRegistryDisplayEntry[] => {
       const entries = Object.values(entities);
       return entries.filter((entity) => entity.device_id === deviceId);
@@ -230,15 +230,15 @@ class MoreInfoVacuum extends LitElement {
   private _renderBattery() {
     const stateObj = this.stateObj!;
 
-    const deviceId = this.hass.entities[stateObj.entity_id]?.device_id;
+    const deviceId = this.menuai.entities[stateObj.entity_id]?.device_id;
 
     const entities = deviceId
-      ? this._deviceEntities(deviceId, this.hass.entities)
+      ? this._deviceEntities(deviceId, this.menuai.entities)
       : [];
 
-    const batteryEntity = findBatteryEntity(this.hass, entities);
+    const batteryEntity = findBatteryEntity(this.menuai, entities);
     const battery = batteryEntity
-      ? this.hass.states[batteryEntity.entity_id]
+      ? this.menuai.states[batteryEntity.entity_id]
       : undefined;
     const batteryDomain = battery ? computeStateDomain(battery) : undefined;
 
@@ -248,21 +248,21 @@ class MoreInfoVacuum extends LitElement {
       (batteryDomain === "binary_sensor" || !isNaN(battery.state as any))
     ) {
       const batteryChargingEntity = findBatteryChargingEntity(
-        this.hass,
+        this.menuai,
         entities
       );
       const batteryCharging = batteryChargingEntity
-        ? this.hass.states[batteryChargingEntity?.entity_id]
+        ? this.menuai.states[batteryChargingEntity?.entity_id]
         : undefined;
 
       return html`
         <div>
           <span>
             ${batteryDomain === "sensor"
-              ? this.hass.formatEntityState(battery)
+              ? this.menuai.formatEntityState(battery)
               : nothing}
             <ha-battery-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .batteryStateObj=${battery}
               .batteryChargingStateObj=${batteryCharging}
             ></ha-battery-icon>
@@ -279,7 +279,7 @@ class MoreInfoVacuum extends LitElement {
       return html`
         <div>
           <span>
-            ${this.hass.formatEntityAttributeValue(
+            ${this.menuai.formatEntityAttributeValue(
               stateObj,
               "battery_level",
               Math.round(stateObj.attributes.battery_level)
@@ -296,7 +296,7 @@ class MoreInfoVacuum extends LitElement {
 
   private _callService(ev: CustomEvent) {
     const entry = (ev.target! as any).entry as VacuumCommand;
-    this.hass.callService("vacuum", entry.serviceName, {
+    this.menuai.callService("vacuum", entry.serviceName, {
       entity_id: this.stateObj!.entity_id,
     });
   }
@@ -309,7 +309,7 @@ class MoreInfoVacuum extends LitElement {
       return;
     }
 
-    this.hass.callService("vacuum", "set_fan_speed", {
+    this.menuai.callService("vacuum", "set_fan_speed", {
       entity_id: this.stateObj!.entity_id,
       fan_speed: newVal,
     });

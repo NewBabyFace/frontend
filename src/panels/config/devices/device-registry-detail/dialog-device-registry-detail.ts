@@ -12,12 +12,12 @@ import type { HaSwitch } from "../../../../components/ha-switch";
 import "../../../../components/ha-textfield";
 import type { DeviceRegistryEntry } from "../../../../data/device_registry";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { DeviceRegistryDetailDialogParams } from "./show-dialog-device-registry-detail";
 
 @customElement("dialog-device-registry-detail")
 class DialogDeviceRegistryDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _nameByUser!: string;
 
@@ -60,7 +60,7 @@ class DialogDeviceRegistryDetail extends LitElement {
       <ha-dialog
         open
         @closed=${this.closeDialog}
-        .heading=${computeDeviceNameDisplay(device, this.hass)}
+        .heading=${computeDeviceNameDisplay(device, this.menuai)}
       >
         <div>
           ${this._error
@@ -70,7 +70,7 @@ class DialogDeviceRegistryDetail extends LitElement {
             <ha-textfield
               .value=${this._nameByUser}
               @input=${this._nameChanged}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.dialogs.device-registry-detail.name"
               )}
               .placeholder=${device.name || ""}
@@ -78,12 +78,12 @@ class DialogDeviceRegistryDetail extends LitElement {
               dialogInitialFocus
             ></ha-textfield>
             <ha-area-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${this._areaId}
               @value-changed=${this._areaPicked}
             ></ha-area-picker>
             <ha-labels-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${this._labels}
               @value-changed=${this._labelsChanged}
             ></ha-labels-picker>
@@ -96,10 +96,10 @@ class DialogDeviceRegistryDetail extends LitElement {
               </ha-switch>
               <div>
                 <div>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.device-registry-detail.enabled_label",
                     {
-                      type: this.hass.localize(
+                      type: this.menuai.localize(
                         `ui.dialogs.device-registry-detail.type.${
                           device.entry_type || "device"
                         }`
@@ -109,21 +109,21 @@ class DialogDeviceRegistryDetail extends LitElement {
                 </div>
                 <div class="secondary">
                   ${this._disabledBy && this._disabledBy !== "user"
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         "ui.dialogs.device-registry-detail.enabled_cause",
                         {
-                          type: this.hass.localize(
+                          type: this.menuai.localize(
                             `ui.dialogs.device-registry-detail.type.${
                               device.entry_type || "device"
                             }`
                           ),
-                          cause: this.hass.localize(
+                          cause: this.menuai.localize(
                             `config_entry.disabled_by.${this._disabledBy}`
                           ),
                         }
                       )
                     : ""}
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.device-registry-detail.enabled_description"
                   )}
                 </div>
@@ -136,14 +136,14 @@ class DialogDeviceRegistryDetail extends LitElement {
           @click=${this.closeDialog}
           .disabled=${this._submitting}
         >
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           slot="primaryAction"
           @click=${this._updateEntry}
           .disabled=${this._submitting}
         >
-          ${this.hass.localize("ui.dialogs.device-registry-detail.update")}
+          ${this.menuai.localize("ui.dialogs.device-registry-detail.update")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -179,7 +179,7 @@ class DialogDeviceRegistryDetail extends LitElement {
     } catch (err: any) {
       this._error =
         err.message ||
-        this.hass.localize("ui.dialogs.device-registry-detail.unknown_error");
+        this.menuai.localize("ui.dialogs.device-registry-detail.unknown_error");
     } finally {
       this._submitting = false;
     }

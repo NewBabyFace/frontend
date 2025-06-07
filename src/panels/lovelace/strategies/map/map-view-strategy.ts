@@ -1,7 +1,7 @@
 import { ReactiveElement } from "lit";
 import { customElement } from "lit/decorators";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { MapCardConfig } from "../../cards/types";
 
 export interface MapViewStrategyConfig {
@@ -12,11 +12,11 @@ export interface MapViewStrategyConfig {
 export class MapViewStrategy extends ReactiveElement {
   static async generate(
     _config: MapViewStrategyConfig,
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<LovelaceViewConfig> {
     return {
       type: "panel",
-      title: hass.localize("panel.map"),
+      title: menuai.localize("panel.map"),
       icon: "mdi:map",
       cards: [
         {

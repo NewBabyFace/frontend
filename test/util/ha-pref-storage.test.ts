@@ -1,9 +1,9 @@
 import { describe, expect, afterEach, vi, test, beforeEach } from "vitest";
-import type { HomeAssistant } from "../../src/types";
+import type { menuai } from "../../src/types";
 import { FallbackStorage } from "../test_helper/local-storage-fallback";
 
 describe("ha-pref-storage", () => {
-  const mockHass = {
+  const mockmenuai = {
     dockedSidebar: "auto",
     selectedTheme: { theme: "default" },
     unknownKey: "unknownValue",
@@ -23,7 +23,7 @@ describe("ha-pref-storage", () => {
 
     window.localStorage.setItem = vi.fn();
 
-    storeState(mockHass as unknown as HomeAssistant);
+    storeState(mockmenuai as unknown as menuai);
     expect(window.localStorage.setItem).toHaveBeenCalledTimes(8);
     expect(window.localStorage.setItem).toHaveBeenCalledWith(
       "dockedSidebar",
@@ -58,7 +58,7 @@ describe("ha-pref-storage", () => {
       error: vi.fn(),
     } as unknown as Console;
 
-    storeState(mockHass as unknown as HomeAssistant);
+    storeState(mockmenuai as unknown as menuai);
     expect(window.localStorage.setItem).toHaveBeenCalledTimes(2);
     expect(window.localStorage.setItem).toHaveBeenCalledWith(
       "dockedSidebar",

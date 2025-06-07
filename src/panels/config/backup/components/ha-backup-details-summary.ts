@@ -11,29 +11,29 @@ import {
   computeBackupType,
   type BackupContentExtended,
 } from "../../../../data/backup";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { bytesToString } from "../../../../util/bytes-to-string";
 
 @customElement("ha-backup-details-summary")
 class HaBackupDetailsSummary extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Object }) public backup!: BackupContentExtended;
 
-  @property({ type: Boolean, attribute: "hassio" }) public isHassio = false;
+  @property({ type: Boolean, attribute: "menuaiio" }) public ismenuaiio = false;
 
   render() {
     const backupDate = new Date(this.backup.date);
     const formattedDate = formatDateTime(
       backupDate,
-      this.hass.locale,
-      this.hass.config
+      this.menuai.locale,
+      this.menuai.config
     );
 
     const errors: { title: string; items: string[] }[] = [];
     if (this.backup.failed_addons?.length) {
       errors.push({
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.backup.details.summary.error.failed_addons"
         ),
         items: this.backup.failed_addons.map(
@@ -43,7 +43,7 @@ class HaBackupDetailsSummary extends LitElement {
     }
     if (this.backup.failed_folders?.length) {
       errors.push({
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.backup.details.summary.error.failed_folders"
         ),
         items: this.backup.failed_folders.map((folder) =>
@@ -55,24 +55,24 @@ class HaBackupDetailsSummary extends LitElement {
     return html`
       <ha-card>
         <div class="card-header">
-          ${this.hass.localize("ui.panel.config.backup.details.summary.title")}
+          ${this.menuai.localize("ui.panel.config.backup.details.summary.title")}
         </div>
         <div class="card-content">
           ${errors.length ? this._renderErrorSummary(errors) : nothing}
           <ha-md-list class="summary">
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize("ui.panel.config.backup.backup_type")}
+                ${this.menuai.localize("ui.panel.config.backup.backup_type")}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
-                  `ui.panel.config.backup.type.${computeBackupType(this.backup, this.isHassio)}`
+                ${this.menuai.localize(
+                  `ui.panel.config.backup.type.${computeBackupType(this.backup, this.ismenuaiio)}`
                 )}
               </span>
             </ha-md-list-item>
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.details.summary.size"
                 )}
               </span>
@@ -82,7 +82,7 @@ class HaBackupDetailsSummary extends LitElement {
             </ha-md-list-item>
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.details.summary.created"
                 )}
               </span>
@@ -98,7 +98,7 @@ class HaBackupDetailsSummary extends LitElement {
     return html`
       <ha-alert
         alert-type="error"
-        .title=${this.hass.localize(
+        .title=${this.menuai.localize(
           "ui.panel.config.backup.details.summary.error.title"
         )}
       >
@@ -118,15 +118,15 @@ class HaBackupDetailsSummary extends LitElement {
   private _localizeFolder(folder: string): string {
     switch (folder) {
       case "media":
-        return this.hass.localize(`ui.panel.config.backup.data_picker.media`);
+        return this.menuai.localize(`ui.panel.config.backup.data_picker.media`);
       case "share":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.backup.data_picker.share_folder`
         );
       case "ssl":
-        return this.hass.localize(`ui.panel.config.backup.data_picker.ssl`);
+        return this.menuai.localize(`ui.panel.config.backup.data_picker.ssl`);
       case "addons/local":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.backup.data_picker.local_addons`
         );
     }

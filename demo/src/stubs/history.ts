@@ -1,9 +1,9 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { HistoryStates } from "../../../src/data/history";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 const generateStateHistory = (
-  state: HassEntity,
+  state: menuaiEntity,
   deltas,
   start_date: Date,
   end_date: Date
@@ -40,8 +40,8 @@ const generateStateHistory = (
 
 const incrementalUnits = ["clients", "queries", "ads"];
 
-export const mockHistory = (mockHass: MockHomeAssistant) => {
-  mockHass.mockWS(
+export const mockHistory = (mockmenuai: Mockmenuai) => {
+  mockmenuai.mockWS(
     "history/stream",
     (
       {
@@ -53,7 +53,7 @@ export const mockHistory = (mockHass: MockHomeAssistant) => {
         start_time: string;
         end_time?: string;
       },
-      hass,
+      menuai,
       onChange
     ) => {
       const states: HistoryStates = {};
@@ -64,7 +64,7 @@ export const mockHistory = (mockHass: MockHomeAssistant) => {
       for (const entityId of entity_ids) {
         states[entityId] = [];
 
-        const state = hass.states[entityId];
+        const state = menuai.states[entityId];
 
         if (!state) {
           continue;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Home Assistant</title>
+    <title>MenuAI</title>
     <%= renderTemplate("_header.html.template") %>
     <%= renderTemplate("_style_base.html.template") %>
     <style>
@@ -46,7 +46,7 @@
   <body>
     <div class="content">
       <div class="header">
-        <img src="/static/icons/favicon-192x192.png" alt="Home Assistant" />
+        <img src="/static/icons/favicon-192x192.png" alt="MenuAI" />
       </div>
       <ha-authorize></ha-authorize>
     </div>
@@ -55,7 +55,7 @@
     <%= renderTemplate("_script_loader.html.template") %>
     <script crossorigin="use-credentials">
       if (window.latestJS) {
-        window.providersPromise = fetch("<%= hassUrl %>/auth/providers", {
+        window.providersPromise = fetch("<%= menuaiUrl %>/auth/providers", {
           credentials: "same-origin",
         });
       }

@@ -1,23 +1,23 @@
 import { mdiLightbulbOutline } from "@mdi/js";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 import "./ha-svg-icon";
 
 @customElement("ha-tip")
 class HaTip extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   public render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     return html`
       <ha-svg-icon .path=${mdiLightbulbOutline}></ha-svg-icon>
       <span class="prefix"
-        >${this.hass.localize("ui.panel.config.tips.tip")}</span
+        >${this.menuai.localize("ui.panel.config.tips.tip")}</span
       >
       <span class="text"><slot></slot></span>
     `;

@@ -4,28 +4,28 @@ import { fireEvent } from "../../../../../../common/dom/fire_event";
 import "../../../../../../components/ha-icon-next";
 import "../../../../../../components/ha-md-list-item";
 import "../../../../../../components/ha-md-list";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 
 @customElement("matter-add-device-google-home")
 class MatterAddDeviceGoogleHome extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   render() {
     return html`
       <div class="content">
         <ol>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home.step_1`
             )}
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home.step_2`,
               {
                 linked_matter_apps_services: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.dialogs.matter-add-device.google_home.linked_matter_apps_services`
                   )}</b
                 >`,
@@ -33,15 +33,15 @@ class MatterAddDeviceGoogleHome extends LitElement {
             )}
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home.step_3`,
               {
                 link_apps_services: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.dialogs.matter-add-device.google_home.link_apps_services`
                   )}</b
                 >`,
-                home_assistant: html`<b>Home Assistant</b>`,
+                home_assistant: html`<b>MenuAI</b>`,
               }
             )}
             <span
@@ -51,13 +51,13 @@ class MatterAddDeviceGoogleHome extends LitElement {
               @keydown=${this._nextStep}
               @click=${this._nextStep}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.dialogs.matter-add-device.google_home.no_home_assistant`
               )}
             </span>
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home.redirect`
             )}
           </li>

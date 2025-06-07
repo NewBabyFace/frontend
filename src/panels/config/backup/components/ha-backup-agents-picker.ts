@@ -13,13 +13,13 @@ import {
   isLocalAgent,
   isNetworkMountAgent,
 } from "../../../../data/backup";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { brandsUrl } from "../../../../util/brands-url";
 
 @customElement("ha-backup-agents-picker")
 class HaBackupAgentsPicker extends LitElement {
   @property({ attribute: false })
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property({ type: Boolean })
   public disabled = false;
@@ -44,7 +44,7 @@ class HaBackupAgentsPicker extends LitElement {
   private _renderAgent(agent: BackupAgent) {
     const domain = computeDomain(agent.agent_id);
     const name = computeBackupAgentName(
-      this.hass.localize,
+      this.menuai.localize,
       agent.agent_id,
       this.agents
     );
@@ -67,7 +67,7 @@ class HaBackupAgentsPicker extends LitElement {
                       domain,
                       type: "icon",
                       useFallback: true,
-                      darkOptimized: this.hass.themes?.darkMode,
+                      darkOptimized: this.menuai.themes?.darkMode,
                     })}
                     crossorigin="anonymous"
                     referrerpolicy="no-referrer"

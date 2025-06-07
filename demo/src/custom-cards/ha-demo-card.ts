@@ -7,7 +7,7 @@ import "../../../src/components/ha-card";
 import "../../../src/components/ha-button";
 import "../../../src/components/ha-spinner";
 import type { LovelaceCardConfig } from "../../../src/data/lovelace/config/card";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 import type {
   Lovelace,
   LovelaceCard,
@@ -22,7 +22,7 @@ import {
 export class HADemoCard extends LitElement implements LovelaceCard {
   @property({ attribute: false }) public lovelace?: Lovelace;
 
-  @property({ attribute: false }) public hass!: MockHomeAssistant;
+  @property({ attribute: false }) public menuai!: Mockmenuai;
 
   @state() private _switching = false;
 
@@ -50,7 +50,7 @@ export class HADemoCard extends LitElement implements LovelaceCard {
                     (conf) => html`
                       ${conf.name}
                       <small>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.page-demo.cards.demo.demo_by",
                           {
                             name: html`
@@ -68,17 +68,17 @@ export class HADemoCard extends LitElement implements LovelaceCard {
           </div>
 
           <ha-button @click=${this._nextConfig} .disabled=${this._switching}>
-            ${this.hass.localize("ui.panel.page-demo.cards.demo.next_demo")}
+            ${this.menuai.localize("ui.panel.page-demo.cards.demo.next_demo")}
           </ha-button>
         </div>
         <div class="content">
           <p class="small-hidden">
-            ${this.hass.localize("ui.panel.page-demo.cards.demo.introduction")}
+            ${this.menuai.localize("ui.panel.page-demo.cards.demo.introduction")}
           </p>
           ${until(
             selectedDemoConfig.then((conf) => {
               if (typeof conf.description === "function") {
-                return conf.description(this.hass.localize);
+                return conf.description(this.menuai.localize);
               }
               if (conf.description) {
                 return html`<p>${conf.description}</p>`;
@@ -91,7 +91,7 @@ export class HADemoCard extends LitElement implements LovelaceCard {
         <div class="actions small-hidden">
           <a href="https://www.home-assistant.io" target="_blank">
             <ha-button>
-              ${this.hass.localize("ui.panel.page-demo.cards.demo.learn_more")}
+              ${this.menuai.localize("ui.panel.page-demo.cards.demo.learn_more")}
             </ha-button>
           </a>
         </div>

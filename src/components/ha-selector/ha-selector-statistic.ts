@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { StatisticSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../entity/ha-statistics-picker";
 
 @customElement("ha-selector-statistic")
 export class HaStatisticSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: StatisticSelector;
 
@@ -23,7 +23,7 @@ export class HaStatisticSelector extends LitElement {
   protected render() {
     if (!this.selector.statistic.multiple) {
       return html`<ha-statistic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .label=${this.label}
         .helper=${this.helper}
@@ -36,7 +36,7 @@ export class HaStatisticSelector extends LitElement {
     return html`
       ${this.label ? html`<label>${this.label}</label>` : ""}
       <ha-statistics-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .helper=${this.helper}
         .disabled=${this.disabled}

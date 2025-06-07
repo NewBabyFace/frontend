@@ -16,7 +16,7 @@ import {
   getBackupTypes,
 } from "../../../../../data/backup";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { bytesToString } from "../../../../../util/bytes-to-string";
 
 interface BackupStats {
@@ -42,31 +42,31 @@ const computeBackupStats = (backups: BackupContent[]): BackupStats =>
 
 @customElement("ha-backup-overview-backups")
 class HaBackupOverviewBackups extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public backups: BackupContent[] = [];
 
   private _stats = memoizeOne(
     (
       backups: BackupContent[],
-      isHassio: boolean
+      ismenuaiio: boolean
     ): [BackupType, BackupStats][] =>
-      getBackupTypes(isHassio).map((type) => {
+      getBackupTypes(ismenuaiio).map((type) => {
         const backupsOfType = backups.filter(
-          (backup) => computeBackupType(backup, isHassio) === type
+          (backup) => computeBackupType(backup, ismenuaiio) === type
         );
         return [type, computeBackupStats(backupsOfType)] as const;
       })
   );
 
   render() {
-    const isHassio = isComponentLoaded(this.hass, "hassio");
-    const stats = this._stats(this.backups, isHassio);
+    const ismenuaiio = isComponentLoaded(this.menuai, "menuaiio");
+    const stats = this._stats(this.backups, ismenuaiio);
 
     return html`
       <ha-card class="my-backups">
         <div class="card-header">
-          ${this.hass.localize("ui.panel.config.backup.overview.backups.title")}
+          ${this.menuai.localize("ui.panel.config.backup.overview.backups.title")}
         </div>
         <div class="card-content">
           <ha-md-list>
@@ -81,13 +81,13 @@ class HaBackupOverviewBackups extends LitElement {
                     .path=${TYPE_ICONS[type]}
                   ></ha-svg-icon>
                   <div slot="headline">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.backup.overview.backups.${type}`,
                       { count }
                     )}
                   </div>
                   <div slot="supporting-text">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.backup.overview.backups.total_size",
                       { size: bytesToString(size) }
                     )}
@@ -101,7 +101,7 @@ class HaBackupOverviewBackups extends LitElement {
         <div class="card-actions">
           <a href="/config/backup/backups?type=all">
             <ha-button>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.overview.backups.show_all"
               )}
             </ha-button>

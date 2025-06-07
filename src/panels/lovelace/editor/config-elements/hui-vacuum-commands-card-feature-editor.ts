@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -6,7 +6,7 @@ import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
 import "../../../../components/ha-form/ha-form";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { supportsVacuumCommand } from "../../card-features/hui-vacuum-commands-card-feature";
 import type {
   LovelaceCardFeatureContext,
@@ -20,7 +20,7 @@ export class HuiVacuumCommandsCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -31,7 +31,7 @@ export class HuiVacuumCommandsCardFeatureEditor
   }
 
   private _schema = memoizeOne(
-    (localize: LocalizeFunc, stateObj?: HassEntity) =>
+    (localize: LocalizeFunc, stateObj?: menuaiEntity) =>
       [
         {
           name: "commands",
@@ -55,19 +55,19 @@ export class HuiVacuumCommandsCardFeatureEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const stateObj = this.context?.entity_id
-      ? this.hass.states[this.context?.entity_id]
+      ? this.menuai.states[this.context?.entity_id]
       : undefined;
 
-    const schema = this._schema(this.hass.localize, stateObj);
+    const schema = this._schema(this.menuai.localize, stateObj);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -85,11 +85,11 @@ export class HuiVacuumCommandsCardFeatureEditor
   ) => {
     switch (schema.name) {
       case "commands":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.features.types.vacuum-commands.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

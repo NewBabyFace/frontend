@@ -13,16 +13,16 @@ import {
   setZWaveJSLogLevel,
   subscribeZWaveJSLogs,
 } from "../../../../../data/zwave_js";
-import "../../../../../layouts/hass-tabs-subpage";
+import "../../../../../layouts/menuai-tabs-subpage";
 import { SubscribeMixin } from "../../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import { fileDownload } from "../../../../../util/file_download";
 import { configTabs } from "./zwave_js-config-router";
 
 @customElement("zwave_js-logs")
 class ZWaveJSLogs extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -34,9 +34,9 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
 
   @query("textarea", true) private _textarea?: HTMLTextAreaElement;
 
-  public hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  public menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeZWaveJSLogs(this.hass, this.configEntryId, (update) => {
+      subscribeZWaveJSLogs(this.menuai, this.configEntryId, (update) => {
         if (!this.hasUpdated) {
           return;
         }
@@ -52,7 +52,7 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
           this._logConfig = update.log_config;
         }
       }).then((unsub) => {
-        this._textarea!.value += `${this.hass.localize(
+        this._textarea!.value += `${this.menuai.localize(
           "ui.panel.config.zwave_js.logs.subscribed_to_logs"
         )}\n`;
         return unsub;
@@ -62,8 +62,8 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
 
   protected render() {
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .tabs=${configTabs}
@@ -72,14 +72,14 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
           <ha-card>
             <div class="card-header">
               <h1>
-                ${this.hass.localize("ui.panel.config.zwave_js.logs.title")}
+                ${this.menuai.localize("ui.panel.config.zwave_js.logs.title")}
               </h1>
             </div>
             <div class="card-content">
               ${this._logConfig
                 ? html`
                     <ha-select
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.zwave_js.logs.log_level"
                       )}
                       .value=${this._logConfig.level}
@@ -96,7 +96,7 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
                 : ""}
             </div>
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.zwave_js.logs.download_logs"
               )}
               @click=${this._downloadLogs}
@@ -105,7 +105,7 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
           </ha-card>
           <textarea readonly></textarea>
         </div>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -119,7 +119,7 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
       return;
     }
     this._logConfig = await fetchZWaveJSLogConfig(
-      this.hass!,
+      this.menuai!,
       this.configEntryId
     );
   }
@@ -141,8 +141,8 @@ class ZWaveJSLogs extends SubscribeMixin(LitElement) {
     if (this._logConfig.level === selected) {
       return;
     }
-    setZWaveJSLogLevel(this.hass!, this.configEntryId, selected);
-    this._textarea!.value += `${this.hass.localize(
+    setZWaveJSLogLevel(this.menuai!, this.configEntryId, selected);
+    this._textarea!.value += `${this.menuai.localize(
       "ui.panel.config.zwave_js.logs.log_level_changed",
       { level: capitalizeFirstLetter(selected) }
     )}\n`;

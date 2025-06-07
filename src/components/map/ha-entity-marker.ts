@@ -1,12 +1,12 @@
 import { LitElement, html, css } from "lit";
 import { property } from "lit/decorators";
 import { styleMap } from "lit/directives/style-map";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../ha-state-icon";
 
 class HaEntityMarker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "entity-id", reflect: true }) public entityId?: string;
 
@@ -36,8 +36,8 @@ class HaEntityMarker extends LitElement {
             ></div>`
           : this.showIcon && this.entityId
             ? html`<ha-state-icon
-                .hass=${this.hass}
-                .stateObj=${this.hass?.states[this.entityId]}
+                .menuai=${this.menuai}
+                .stateObj=${this.menuai?.states[this.entityId]}
               ></ha-state-icon>`
             : !this.entityUnit
               ? this.entityName
@@ -56,7 +56,7 @@ class HaEntityMarker extends LitElement {
   private _badgeTap(ev: Event) {
     ev.stopPropagation();
     if (this.entityId) {
-      fireEvent(this, "hass-more-info", { entityId: this.entityId });
+      fireEvent(this, "menuai-more-info", { entityId: this.entityId });
     }
   }
 

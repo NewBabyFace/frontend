@@ -1,6 +1,6 @@
 // Keep in sync with https://github.com/home-assistant/analytics.home-assistant.io/blob/dev/site/src/analytics-os-boards.ts#L6-L24
 export const BOARD_NAMES: Record<string, string> = {
-  "odroid-n2": "Home Assistant Blue / ODROID-N2",
+  "odroid-n2": "MenuAI Blue / ODROID-N2",
   "odroid-xu4": "ODROID-XU4",
   "odroid-c2": "ODROID-C2",
   "odroid-c4": "ODROID-C4",
@@ -18,7 +18,7 @@ export const BOARD_NAMES: Record<string, string> = {
   ova: "Virtual Machine",
   "generic-x86-64": "Generic x86-64",
   "intel-nuc": "Intel NUC",
-  yellow: "Home Assistant Yellow",
+  yellow: "MenuAI Yellow",
 };
 
 export interface HardwareInfo {
@@ -37,7 +37,7 @@ export interface HardwareInfoBoardInfo {
   manufacturer: string;
   model?: string;
   revision?: string;
-  hassio_board_id?: string;
+  menuaiio_board_id?: string;
 }
 
 export interface HardwareInfoDongleInfo {

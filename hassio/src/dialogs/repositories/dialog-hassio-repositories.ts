@@ -12,32 +12,32 @@ import "../../../../src/components/ha-spinner";
 import { createCloseHeading } from "../../../../src/components/ha-dialog";
 import "../../../../src/components/ha-icon-button";
 import type {
-  HassioAddonInfo,
-  HassioAddonRepository,
-} from "../../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+  menuaiioAddonInfo,
+  menuaiioAddonRepository,
+} from "../../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import {
   addStoreRepository,
   fetchStoreRepositories,
   removeStoreRepository,
 } from "../../../../src/data/supervisor/store";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import type { HassioRepositoryDialogParams } from "./show-dialog-repositories";
+import type { menuai } from "../../../../src/types";
+import type { menuaiioRepositoryDialogParams } from "./show-dialog-repositories";
 import type { HaTextField } from "../../../../src/components/ha-textfield";
 import "../../../../src/components/ha-textfield";
 import "../../../../src/components/ha-md-list";
 import "../../../../src/components/ha-md-list-item";
 
-@customElement("dialog-hassio-repositories")
-class HassioRepositoriesDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-repositories")
+class menuaiioRepositoriesDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @query("#repository_input", true) private _optionInput?: HaTextField;
 
-  @state() private _repositories?: HassioAddonRepository[];
+  @state() private _repositories?: menuaiioAddonRepository[];
 
-  @state() private _dialogParams?: HassioRepositoryDialogParams;
+  @state() private _dialogParams?: menuaiioRepositoryDialogParams;
 
   @state() private _opened = false;
 
@@ -46,7 +46,7 @@ class HassioRepositoriesDialog extends LitElement {
   @state() private _error?: string;
 
   public async showDialog(
-    dialogParams: HassioRepositoryDialogParams
+    dialogParams: menuaiioRepositoryDialogParams
   ): Promise<void> {
     this._dialogParams = dialogParams;
     this._opened = true;
@@ -60,23 +60,23 @@ class HassioRepositoriesDialog extends LitElement {
     this._error = "";
   }
 
-  private _filteredRepositories = memoizeOne((repos: HassioAddonRepository[]) =>
+  private _filteredRepositories = memoizeOne((repos: menuaiioAddonRepository[]) =>
     repos
       .filter(
         (repo) =>
           repo.slug !== "core" && // The core add-ons repository
           repo.slug !== "local" && // Locally managed add-ons
-          repo.slug !== "a0d7b954" && // Home Assistant Community Add-ons
+          repo.slug !== "a0d7b954" && // MenuAI Community Add-ons
           repo.slug !== "5c53de3b" && // The ESPHome repository
           repo.slug !== "d5369777" // Music Assistant repository
       )
       .sort((a, b) =>
-        caseInsensitiveStringCompare(a.name, b.name, this.hass.locale.language)
+        caseInsensitiveStringCompare(a.name, b.name, this.menuai.locale.language)
       )
   );
 
   private _filteredUsedRepositories = memoizeOne(
-    (repos: HassioAddonRepository[], addons: HassioAddonInfo[]) =>
+    (repos: menuaiioAddonRepository[], addons: menuaiioAddonInfo[]) =>
       repos
         .filter((repo) =>
           addons.some((addon) => addon.repository === repo.slug)
@@ -100,7 +100,7 @@ class HassioRepositoriesDialog extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._dialogParams!.supervisor.localize("dialog.repositories.title")
         )}
       >
@@ -230,7 +230,7 @@ class HassioRepositoriesDialog extends LitElement {
 
   private async _loadData(): Promise<void> {
     try {
-      this._repositories = await fetchStoreRepositories(this.hass);
+      this._repositories = await fetchStoreRepositories(this.menuai);
 
       fireEvent(this, "supervisor-collection-refresh", { collection: "addon" });
     } catch (err: any) {
@@ -246,7 +246,7 @@ class HassioRepositoriesDialog extends LitElement {
     this._processing = true;
 
     try {
-      await addStoreRepository(this.hass, input.value);
+      await addStoreRepository(this.menuai, input.value);
       await this._loadData();
 
       input.value = "";
@@ -259,7 +259,7 @@ class HassioRepositoriesDialog extends LitElement {
   private async _removeRepository(ev: Event) {
     const slug = (ev.currentTarget as any).slug;
     try {
-      await removeStoreRepository(this.hass, slug);
+      await removeStoreRepository(this.menuai, slug);
       await this._loadData();
     } catch (err: any) {
       this._error = extractApiErrorMessage(err);
@@ -269,6 +269,6 @@ class HassioRepositoriesDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-repositories": HassioRepositoriesDialog;
+    "dialog-menuaiio-repositories": menuaiioRepositoriesDialog;
   }
 }

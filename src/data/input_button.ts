@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface InputButton {
   id: string;
@@ -11,31 +11,31 @@ export interface InputButtonMutableParams {
   icon: string;
 }
 
-export const fetchInputButton = (hass: HomeAssistant) =>
-  hass.callWS<InputButton[]>({ type: "input_button/list" });
+export const fetchInputButton = (menuai: menuai) =>
+  menuai.callWS<InputButton[]>({ type: "input_button/list" });
 
 export const createInputButton = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: InputButtonMutableParams
 ) =>
-  hass.callWS<InputButton>({
+  menuai.callWS<InputButton>({
     type: "input_button/create",
     ...values,
   });
 
 export const updateInputButton = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<InputButtonMutableParams>
 ) =>
-  hass.callWS<InputButton>({
+  menuai.callWS<InputButton>({
     type: "input_button/update",
     input_button_id: id,
     ...updates,
   });
 
-export const deleteInputButton = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteInputButton = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "input_button/delete",
     input_button_id: id,
   });

@@ -9,7 +9,7 @@ export type Icons = Record<string, string>;
 export type Chunks = Record<string, Promise<Icons>>;
 
 const getStore = memoizeOne(async () => {
-  const iconStore = createStore("hass-icon-db", "mdi-icon-store");
+  const iconStore = createStore("menuai-icon-db", "mdi-icon-store");
 
   // Supervisor doesn't use icons, and should not update/downgrade the icon DB.
   if (!__SUPERVISOR__) {
@@ -26,7 +26,7 @@ const getStore = memoizeOne(async () => {
   return iconStore;
 });
 
-export const MDI_PREFIXES = ["mdi", "hass", "hassio", "hademo"];
+export const MDI_PREFIXES = ["mdi", "menuai", "menuaiio", "hademo"];
 
 let toRead: [
   string,

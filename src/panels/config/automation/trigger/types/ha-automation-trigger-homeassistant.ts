@@ -3,16 +3,16 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../../../common/dom/fire_event";
-import type { HassTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuaiTrigger } from "../../../../../data/automation";
+import type { menuai } from "../../../../../types";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 
-@customElement("ha-automation-trigger-homeassistant")
-export class HaHassTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("ha-automation-trigger-menuai")
+export class HamenuaiTrigger extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public trigger!: HassTrigger;
+  @property({ attribute: false }) public trigger!: menuaiTrigger;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -27,13 +27,13 @@ export class HaHassTrigger extends LitElement {
             [
               "start",
               localize(
-                "ui.panel.config.automation.editor.triggers.type.homeassistant.start"
+                "ui.panel.config.automation.editor.triggers.type.menuai.start"
               ),
             ],
             [
               "shutdown",
               localize(
-                "ui.panel.config.automation.editor.triggers.type.homeassistant.shutdown"
+                "ui.panel.config.automation.editor.triggers.type.menuai.shutdown"
               ),
             ],
           ],
@@ -41,19 +41,19 @@ export class HaHassTrigger extends LitElement {
       ] as const
   );
 
-  public static get defaultConfig(): HassTrigger {
+  public static get defaultConfig(): menuaiTrigger {
     return {
-      trigger: "homeassistant",
-      event: "start" as HassTrigger["event"],
+      trigger: "menuai",
+      event: "start" as menuaiTrigger["event"],
     };
   }
 
   protected render() {
     return html`
       <ha-form
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .data=${this.trigger}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -70,8 +70,8 @@ export class HaHassTrigger extends LitElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
-      `ui.panel.config.automation.editor.triggers.type.homeassistant.${schema.name}`
+    this.menuai.localize(
+      `ui.panel.config.automation.editor.triggers.type.menuai.${schema.name}`
     );
 
   static styles = css`
@@ -84,6 +84,6 @@ export class HaHassTrigger extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "ha-automation-trigger-homeassistant": HaHassTrigger;
+    "ha-automation-trigger-menuai": HamenuaiTrigger;
   }
 }

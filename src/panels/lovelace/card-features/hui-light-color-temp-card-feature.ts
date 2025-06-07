@@ -17,7 +17,7 @@ import {
   type LightEntity,
 } from "../../../data/light";
 import { generateColorTemperatureGradient } from "../../../dialogs/more-info/components/lights/light-color-temp-picker";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -26,11 +26,11 @@ import type {
 } from "./types";
 
 export const supportsLightColorTempCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -45,17 +45,17 @@ class HuiLightColorTempCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: LightColorTempCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as LightEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as LightEntity | undefined;
   }
 
   static getStubConfig(): LightColorTempCardFeatureConfig {
@@ -74,10 +74,10 @@ class HuiLightColorTempCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsLightColorTempCardFeature(this.hass, this.context)
+      !supportsLightColorTempCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -101,14 +101,14 @@ class HuiLightColorTempCardFeature
         .showHandle=${stateActive(this._stateObj)}
         .disabled=${this._stateObj!.state === UNAVAILABLE}
         @value-changed=${this._valueChanged}
-        .label=${this.hass.localize("ui.card.light.color_temperature")}
+        .label=${this.menuai.localize("ui.card.light.color_temperature")}
         .min=${minKelvin}
         .max=${maxKelvin}
         style=${styleMap({
           "--gradient": gradient,
         })}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.light.color_temp_kelvin}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       ></ha-control-slider>
     `;
   }
@@ -121,7 +121,7 @@ class HuiLightColorTempCardFeature
     ev.stopPropagation();
     const value = ev.detail.value;
 
-    this.hass!.callService("light", "turn_on", {
+    this.menuai!.callService("light", "turn_on", {
       entity_id: this._stateObj!.entity_id,
       color_temp_kelvin: value,
     });

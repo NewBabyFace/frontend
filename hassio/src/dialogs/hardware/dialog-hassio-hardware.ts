@@ -10,13 +10,13 @@ import "../../../../src/components/ha-dialog";
 import "../../../../src/components/ha-expansion-panel";
 import "../../../../src/components/ha-icon-button";
 import "../../../../src/components/search-input";
-import type { HassioHardwareInfo } from "../../../../src/data/hassio/hardware";
+import type { menuaiioHardwareInfo } from "../../../../src/data/menuaiio/hardware";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import type { HassioHardwareDialogParams } from "./show-dialog-hassio-hardware";
+import type { menuai } from "../../../../src/types";
+import type { menuaiioHardwareDialogParams } from "./show-dialog-menuaiio-hardware";
 
 const _filterDevices = memoizeOne(
-  (hardware: HassioHardwareInfo, filter: string, language: string) =>
+  (hardware: menuaiioHardwareInfo, filter: string, language: string) =>
     hardware.devices
       .filter(
         (device) =>
@@ -28,15 +28,15 @@ const _filterDevices = memoizeOne(
       .sort((a, b) => stringCompare(a.name, b.name, language))
 );
 
-@customElement("dialog-hassio-hardware")
-class HassioHardwareDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-hardware")
+class menuaiioHardwareDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private _dialogParams?: HassioHardwareDialogParams;
+  @state() private _dialogParams?: menuaiioHardwareDialogParams;
 
   @state() private _filter?: string;
 
-  public showDialog(dialogParams: HassioHardwareDialogParams) {
+  public showDialog(dialogParams: menuaiioHardwareDialogParams) {
     this._dialogParams = dialogParams;
   }
 
@@ -53,7 +53,7 @@ class HassioHardwareDialog extends LitElement {
     const devices = _filterDevices(
       this._dialogParams.hardware,
       (this._filter || "").toLowerCase(),
-      this.hass.locale.language
+      this.menuai.locale.language
     );
 
     return html`
@@ -76,7 +76,7 @@ class HassioHardwareDialog extends LitElement {
             dialogAction="close"
           ></ha-icon-button>
           <search-input
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .filter=${this._filter}
             @value-changed=${this._handleSearchChange}
             .label=${this._dialogParams.supervisor.localize(
@@ -194,6 +194,6 @@ class HassioHardwareDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-hardware": HassioHardwareDialog;
+    "dialog-menuaiio-hardware": menuaiioHardwareDialog;
   }
 }

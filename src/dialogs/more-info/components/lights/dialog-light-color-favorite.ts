@@ -20,7 +20,7 @@ import {
   lightSupportsColorMode,
 } from "../../../../data/light";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./light-color-rgb-picker";
 import "./light-color-temp-picker";
 import type { LightColorFavoriteDialogParams } from "./show-dialog-light-color-favorite";
@@ -29,7 +29,7 @@ export type LightPickerMode = "color_temp" | "color";
 
 @customElement("dialog-light-color-favorite")
 class DialogLightColorFavorite extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() _dialogParams?: LightColorFavoriteDialogParams;
 
@@ -116,7 +116,7 @@ class DialogLightColorFavorite extends LitElement {
   get stateObj() {
     return (
       this._entry &&
-      (this.hass.states[this._entry.entity_id] as LightEntity | undefined)
+      (this.menuai.states[this._entry.entity_id] as LightEntity | undefined)
     );
   }
 
@@ -171,7 +171,7 @@ class DialogLightColorFavorite extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" id="dialog-light-color-favorite-title"
@@ -188,7 +188,7 @@ class DialogLightColorFavorite extends LitElement {
                         <ha-icon-button-toggle
                           border-only
                           .selected=${value === this._mode}
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             `ui.dialogs.more_info_control.light.color_picker.mode.${value}`
                           )}
                           .mode=${value}
@@ -208,7 +208,7 @@ class DialogLightColorFavorite extends LitElement {
             ${this._mode === "color_temp"
               ? html`
                   <light-color-temp-picker
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .stateObj=${this.stateObj}
                     @color-changed=${this._colorChanged}
                   >
@@ -218,7 +218,7 @@ class DialogLightColorFavorite extends LitElement {
             ${this._mode === "color"
               ? html`
                   <light-color-rgb-picker
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .stateObj=${this.stateObj}
                     @color-changed=${this._colorChanged}
                   >
@@ -229,10 +229,10 @@ class DialogLightColorFavorite extends LitElement {
         </div>
         <div slot="actions">
           <ha-button @click=${this._cancelDialog}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </ha-button>
           <ha-button @click=${this._save} .disabled=${!this._color}
-            >${this.hass.localize("ui.common.save")}</ha-button
+            >${this.menuai.localize("ui.common.save")}</ha-button
           >
         </div>
       </ha-md-dialog>

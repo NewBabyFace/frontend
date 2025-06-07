@@ -8,11 +8,11 @@ import { fireEvent } from "../common/dom/fire_event";
 import { conditionalClamp } from "../common/number/clamp";
 import type { CardGridSize } from "../panels/lovelace/common/compute-card-grid-size";
 import { DEFAULT_GRID_SIZE } from "../panels/lovelace/common/compute-card-grid-size";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-grid-size-picker")
 export class HaGridSizeEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: CardGridSize;
 
@@ -60,7 +60,7 @@ export class HaGridSizeEditor extends LitElement {
     return html`
       <div class="grid">
         <ha-grid-layout-slider
-          aria-label=${this.hass.localize(
+          aria-label=${this.menuai.localize(
             "ui.components.grid-size-picker.columns"
           )}
           id="columns"
@@ -76,7 +76,7 @@ export class HaGridSizeEditor extends LitElement {
         ></ha-grid-layout-slider>
 
         <ha-grid-layout-slider
-          aria-label=${this.hass.localize(
+          aria-label=${this.menuai.localize(
             "ui.components.grid-size-picker.rows"
           )}
           id="rows"
@@ -96,10 +96,10 @@ export class HaGridSizeEditor extends LitElement {
                 @click=${this._reset}
                 class="reset"
                 .path=${mdiRestore}
-                label=${this.hass.localize(
+                label=${this.menuai.localize(
                   "ui.components.grid-size-picker.reset_default"
                 )}
-                title=${this.hass.localize(
+                title=${this.menuai.localize(
                   "ui.components.grid-size-picker.reset_default"
                 )}
               >

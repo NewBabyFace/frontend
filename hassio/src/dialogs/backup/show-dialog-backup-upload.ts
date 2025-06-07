@@ -1,7 +1,7 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
-import "./dialog-hassio-backup-upload";
+import "./dialog-menuaiio-backup-upload";
 
-export interface HassioBackupUploadDialogParams {
+export interface menuaiioBackupUploadDialogParams {
   showBackup: (slug: string) => void;
   reloadBackup?: () => Promise<void>;
   onboarding?: boolean;
@@ -9,11 +9,11 @@ export interface HassioBackupUploadDialogParams {
 
 export const showBackupUploadDialog = (
   element: HTMLElement,
-  dialogParams: HassioBackupUploadDialogParams
+  dialogParams: menuaiioBackupUploadDialogParams
 ): void => {
   fireEvent(element, "show-dialog", {
-    dialogTag: "dialog-hassio-backup-upload",
-    dialogImport: () => import("./dialog-hassio-backup-upload"),
+    dialogTag: "dialog-menuaiio-backup-upload",
+    dialogImport: () => import("./dialog-menuaiio-backup-upload"),
     dialogParams,
   });
 };

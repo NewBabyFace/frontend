@@ -27,7 +27,7 @@ import { ASSUME_CORE_START_SECONDS } from "../ha-landing-page";
 
 const ERROR_CHECK = /^[\d\s-:]+(ERROR|CRITICAL)(.*)/gm;
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "landing-page-error": undefined;
   }
 }

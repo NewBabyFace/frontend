@@ -10,7 +10,7 @@ import type {
   TimelineEntity,
 } from "../../data/history";
 import { loadVirtualizer } from "../../resources/virtualizer";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./state-history-chart-line";
 import "./state-history-chart-timeline";
 
@@ -27,14 +27,14 @@ const chunkData = (inputArray: any[], chunks: number) =>
   }, []);
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "y-width-changed": { value: number; chartIndex: number };
   }
 }
 
 @customElement("state-history-charts")
 export class StateHistoryCharts extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public historyData?: HistoryResult;
 
@@ -88,21 +88,21 @@ export class StateHistoryCharts extends LitElement {
   @restoreScroll(".container") private _savedScrollPos?: number;
 
   protected render() {
-    if (!isComponentLoaded(this.hass, "history")) {
+    if (!isComponentLoaded(this.menuai, "history")) {
       return html`<div class="info">
-        ${this.hass.localize("ui.components.history_charts.history_disabled")}
+        ${this.menuai.localize("ui.components.history_charts.history_disabled")}
       </div>`;
     }
 
     if (this.isLoadingData && !this.historyData) {
       return html`<div class="info">
-        ${this.hass.localize("ui.components.history_charts.loading_history")}
+        ${this.menuai.localize("ui.components.history_charts.loading_history")}
       </div>`;
     }
 
     if (this._isHistoryEmpty()) {
       return html`<div class="info">
-        ${this.hass.localize("ui.components.history_charts.no_history_found")}
+        ${this.menuai.localize("ui.components.history_charts.no_history_found")}
       </div>`;
     }
     const combinedItems = this.historyData!.timeline.length
@@ -140,7 +140,7 @@ export class StateHistoryCharts extends LitElement {
     if (!Array.isArray(item)) {
       return html`<div class="entry-container line">
         <state-history-chart-line
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .unit=${item.unit}
           .data=${item.data}
           .identifier=${item.identifier}
@@ -163,7 +163,7 @@ export class StateHistoryCharts extends LitElement {
     }
     return html`<div class="entry-container timeline">
       <state-history-chart-timeline
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${item}
         .startTime=${this._computedStartTime}
         .endTime=${this._computedEndTime}
@@ -180,7 +180,7 @@ export class StateHistoryCharts extends LitElement {
   };
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.size === 1 && changedProps.has("hass")) {
+    if (changedProps.size === 1 && changedProps.has("menuai")) {
       return false;
     }
     if (
@@ -259,7 +259,7 @@ export class StateHistoryCharts extends LitElement {
     }
   }
 
-  private _yWidthChanged(e: CustomEvent<HASSDomEvents["y-width-changed"]>) {
+  private _yWidthChanged(e: CustomEvent<menuaiDomEvents["y-width-changed"]>) {
     this._childYWidths[e.detail.chartIndex] = e.detail.value;
     this._maxYWidth = Math.max(...Object.values(this._childYWidths), 0);
   }

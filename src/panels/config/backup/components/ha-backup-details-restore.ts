@@ -6,7 +6,7 @@ import "../../../../components/ha-md-list";
 import "../../../../components/ha-md-list-item";
 import "../../../../components/ha-button";
 import "./ha-backup-data-picker";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import type {
   BackupContentExtended,
@@ -16,7 +16,7 @@ import { fireEvent } from "../../../../common/dom/fire_event";
 
 @customElement("ha-backup-details-restore")
 class HaBackupDetailsRestore extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public localize!: LocalizeFunc;
 
@@ -34,10 +34,10 @@ class HaBackupDetailsRestore extends LitElement {
   protected willUpdate() {
     if (!this.hasUpdated && this.haRequired) {
       this._selectedData = {
-        homeassistant_included: true,
+        menuai_included: true,
         folders: [],
         addons: [],
-        homeassistant_version: this.backup.homeassistant_version,
+        menuai_version: this.backup.menuai_version,
         database_included: this.backup.database_included,
       };
     }
@@ -55,11 +55,11 @@ class HaBackupDetailsRestore extends LitElement {
           <ha-backup-data-picker
             .translationKeyPanel=${this.translationKeyPanel}
             .localize=${this.localize}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this.backup}
             .value=${this._selectedData}
             @value-changed=${this._selectedBackupChanged}
-            .requiredItems=${this._isHomeAssistantRequired(this.haRequired)}
+            .requiredItems=${this._ismenuaiRequired(this.haRequired)}
           >
           </ha-backup-data-picker>
         </div>
@@ -87,17 +87,17 @@ class HaBackupDetailsRestore extends LitElement {
     this._selectedData = ev.detail.value;
   }
 
-  private _isHomeAssistantRequired = memoizeOne((required: boolean) =>
+  private _ismenuaiRequired = memoizeOne((required: boolean) =>
     required ? ["config"] : []
   );
 
   private get _isRestoreDisabled(): boolean {
     return (
       !this._selectedData ||
-      (this.haRequired && !this._selectedData.homeassistant_included) ||
+      (this.haRequired && !this._selectedData.menuai_included) ||
       !(
         this._selectedData?.database_included ||
-        this._selectedData?.homeassistant_included ||
+        this._selectedData?.menuai_included ||
         this._selectedData.addons.length ||
         this._selectedData.folders.length
       )
@@ -142,7 +142,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-backup-details-restore": HaBackupDetailsRestore;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "backup-restore": { selectedData?: BackupData };
   }
 }

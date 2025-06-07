@@ -1,14 +1,14 @@
 import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { until } from "lit/directives/until";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon";
 import "./ha-svg-icon";
 import { serviceSectionIcon } from "../data/icons";
 
 @customElement("ha-service-section-icon")
 export class HaServiceSectionIcon extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public service?: string;
 
@@ -25,11 +25,11 @@ export class HaServiceSectionIcon extends LitElement {
       return nothing;
     }
 
-    if (!this.hass) {
+    if (!this.menuai) {
       return this._renderFallback();
     }
 
-    const icon = serviceSectionIcon(this.hass, this.service, this.section).then(
+    const icon = serviceSectionIcon(this.menuai, this.service, this.section).then(
       (icn) => {
         if (icn) {
           return html`<ha-icon .icon=${icn}></ha-icon>`;

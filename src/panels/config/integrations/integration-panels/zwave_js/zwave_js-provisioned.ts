@@ -11,13 +11,13 @@ import {
 } from "../../../../../data/zwave_js";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
-import "../../../../../layouts/hass-tabs-subpage-data-table";
-import type { HomeAssistant, Route } from "../../../../../types";
+import "../../../../../layouts/menuai-tabs-subpage-data-table";
+import type { menuai, Route } from "../../../../../types";
 import { configTabs } from "./zwave_js-config-router";
 
 @customElement("zwave_js-provisioned")
 class ZWaveJSProvisioned extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -29,15 +29,15 @@ class ZWaveJSProvisioned extends LitElement {
 
   protected render() {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .tabs=${configTabs}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._provisioningEntries}
       >
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -53,7 +53,7 @@ class ZWaveJSProvisioned extends LitElement {
           entry.nodeId
             ? html`
                 <ha-svg-icon
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.zwave_js.provisioned.included"
                   )}
                   .path=${mdiCheckCircle}
@@ -61,7 +61,7 @@ class ZWaveJSProvisioned extends LitElement {
               `
             : html`
                 <ha-svg-icon
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.zwave_js.provisioned.not_included"
                   )}
                   .path=${mdiCloseCircleOutline}
@@ -85,7 +85,7 @@ class ZWaveJSProvisioned extends LitElement {
           const securityClasses = entry.securityClasses;
           return securityClasses
             .map((secClass) =>
-              this.hass.localize(
+              this.menuai.localize(
                 `ui.panel.config.zwave_js.security_classes.${SecurityClass[secClass]}.title`
               )
             )
@@ -98,7 +98,7 @@ class ZWaveJSProvisioned extends LitElement {
         type: "icon-button",
         template: (entry) => html`
           <ha-icon-button
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.zwave_js.provisioned.unprovision"
             )}
             .path=${mdiDelete}
@@ -117,7 +117,7 @@ class ZWaveJSProvisioned extends LitElement {
 
   private async _fetchData() {
     this._provisioningEntries = await fetchZwaveProvisioningEntries(
-      this.hass!,
+      this.menuai!,
       this.configEntryId
     );
   }
@@ -126,13 +126,13 @@ class ZWaveJSProvisioned extends LitElement {
     const dsk = ev.currentTarget.provisioningEntry.dsk;
 
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.zwave_js.provisioned.confirm_unprovision_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.zwave_js.provisioned.confirm_unprovision_text"
       ),
-      confirmText: this.hass.localize(
+      confirmText: this.menuai.localize(
         "ui.panel.config.zwave_js.provisioned.unprovison"
       ),
     });
@@ -141,7 +141,7 @@ class ZWaveJSProvisioned extends LitElement {
       return;
     }
 
-    await unprovisionZwaveSmartStartNode(this.hass, this.configEntryId, dsk);
+    await unprovisionZwaveSmartStartNode(this.menuai, this.configEntryId, dsk);
     this._fetchData();
   };
 }

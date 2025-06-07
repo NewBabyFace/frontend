@@ -7,7 +7,7 @@ import { isComponentLoaded } from "../common/config/is_component_loaded";
 import { fireEvent } from "../common/dom/fire_event";
 import { nextRender } from "../common/util/render-status";
 import { fetchStreamUrl } from "../data/camera";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-alert";
 
 type HlsLite = Omit<
@@ -17,7 +17,7 @@ type HlsLite = Omit<
 
 @customElement("ha-hls-player")
 class HaHLSPlayer extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public entityid?: string;
 
@@ -122,7 +122,7 @@ class HaHLSPlayer extends LitElement {
     this._cleanUp();
     this._resetError();
 
-    if (!isComponentLoaded(this.hass!, "stream")) {
+    if (!isComponentLoaded(this.menuai!, "stream")) {
       this._setFatalError("Streaming component is not loaded.");
       return;
     }
@@ -131,9 +131,9 @@ class HaHLSPlayer extends LitElement {
       return;
     }
     try {
-      const { url } = await fetchStreamUrl(this.hass!, this.entityid);
+      const { url } = await fetchStreamUrl(this.menuai!, this.entityid);
 
-      this._url = this.hass.hassUrl(url);
+      this._url = this.menuai.menuaiUrl(url);
       this._cleanUp();
       this._resetError();
       this._startHls();
@@ -166,13 +166,13 @@ class HaHLSPlayer extends LitElement {
 
     if (!hlsSupported) {
       this._setFatalError(
-        this.hass.localize("ui.components.media-browser.video_not_supported")
+        this.menuai.localize("ui.components.media-browser.video_not_supported")
       );
       return;
     }
 
     const useExoPlayer =
-      this.allowExoPlayer && this.hass.auth.external?.config.hasExoPlayer;
+      this.allowExoPlayer && this.menuai.auth.external?.config.hasExoPlayer;
     const masterPlaylist = await (await masterPlaylistPromise).text();
 
     if (!this.isConnected) {
@@ -218,7 +218,7 @@ class HaHLSPlayer extends LitElement {
     window.addEventListener("resize", this._resizeExoPlayer);
     this.updateComplete.then(() => nextRender()).then(this._resizeExoPlayer);
     this._videoEl.style.visibility = "hidden";
-    await this.hass!.auth.external!.fireMessage({
+    await this.menuai!.auth.external!.fireMessage({
       type: "exoplayer/play_hls",
       payload: {
         url,
@@ -232,7 +232,7 @@ class HaHLSPlayer extends LitElement {
       return;
     }
     const rect = this._videoEl.getBoundingClientRect();
-    this.hass!.auth.external!.fireMessage({
+    this.menuai!.auth.external!.fireMessage({
       type: "exoplayer/resize",
       payload: {
         left: rect.left,
@@ -344,7 +344,7 @@ class HaHLSPlayer extends LitElement {
     }
     if (this._exoPlayer) {
       window.removeEventListener("resize", this._resizeExoPlayer);
-      this.hass!.auth.external!.fireMessage({ type: "exoplayer/stop" });
+      this.menuai!.auth.external!.fireMessage({ type: "exoplayer/stop" });
       this._exoPlayer = false;
     }
     if (this._videoEl) {

@@ -1,12 +1,12 @@
 /* eslint-disable lit/lifecycle-super */
 import { customElement } from "lit/decorators";
 import { navigate } from "../../../../../../common/navigate";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { showZWaveJSAddNodeDialog } from "./show-dialog-zwave_js-add-node";
 
 @customElement("zwave_js-add-node")
 export class DialogZWaveJSAddNode extends HTMLElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   public configEntryId!: string;
 

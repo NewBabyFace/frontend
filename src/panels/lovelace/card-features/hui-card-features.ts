@@ -1,6 +1,6 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./hui-card-feature";
 import type {
   LovelaceCardFeatureConfig,
@@ -9,7 +9,7 @@ import type {
 
 @customElement("hui-card-features")
 export class HuiCardFeatures extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public context!: LovelaceCardFeatureContext;
 
@@ -25,7 +25,7 @@ export class HuiCardFeatures extends LitElement {
       ${this.features.map(
         (feature) => html`
           <hui-card-feature
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .context=${this.context}
             .color=${this.color}
             .feature=${feature}

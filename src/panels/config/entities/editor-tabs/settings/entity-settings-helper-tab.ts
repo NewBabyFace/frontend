@@ -9,7 +9,7 @@ import { removeEntityRegistryEntry } from "../../../../../data/entity_registry";
 import { HELPERS_CRUD } from "../../../../../data/helpers_crud";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { Helper } from "../../../helpers/const";
 import "../../../helpers/forms/ha-counter-form";
 import "../../../helpers/forms/ha-input_boolean-form";
@@ -26,7 +26,7 @@ import type { EntityRegistrySettingsEditor } from "../../entity-registry-setting
 
 @customElement("entity-settings-helper-tab")
 export class EntitySettingsHelperTab extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entry!: ExtEntityRegistryEntry;
 
@@ -43,7 +43,7 @@ export class EntitySettingsHelperTab extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    this._componentLoaded = isComponentLoaded(this.hass, this.entry.platform);
+    this._componentLoaded = isComponentLoaded(this.menuai, this.entry.platform);
   }
 
   protected updated(changedProperties: PropertyValues) {
@@ -65,30 +65,30 @@ export class EntitySettingsHelperTab extends LitElement {
     if (this._item === undefined) {
       return nothing;
     }
-    const stateObj = this.hass.states[this.entry.entity_id];
+    const stateObj = this.menuai.states[this.entry.entity_id];
     return html`
       <div class="form">
         ${this._error
           ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
           : ""}
         ${!this._componentLoaded
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.dialogs.helper_settings.platform_not_loaded",
               { platform: this.entry.platform }
             )
           : this._item === null
-            ? this.hass.localize("ui.dialogs.helper_settings.yaml_not_editable")
+            ? this.menuai.localize("ui.dialogs.helper_settings.yaml_not_editable")
             : html`
                 <span @value-changed=${this._valueChanged}>
                   ${dynamicElement(`ha-${this.entry.platform}-form`, {
-                    hass: this.hass,
+                    menuai: this.menuai,
                     item: this._item,
                     entry: this.entry,
                   })}
                 </span>
               `}
         <entity-registry-settings-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entry=${this.entry}
           .disabled=${this._submitting}
           @change=${this._entityRegistryChanged}
@@ -103,13 +103,13 @@ export class EntitySettingsHelperTab extends LitElement {
           .disabled=${this._submitting ||
           (!this._item && !stateObj?.attributes.restored)}
         >
-          ${this.hass.localize("ui.dialogs.entity_registry.editor.delete")}
+          ${this.menuai.localize("ui.dialogs.entity_registry.editor.delete")}
         </mwc-button>
         <mwc-button
           @click=${this._updateItem}
           .disabled=${this._submitting || (this._item && !this._item.name)}
         >
-          ${this.hass.localize("ui.dialogs.entity_registry.editor.update")}
+          ${this.menuai.localize("ui.dialogs.entity_registry.editor.update")}
         </mwc-button>
       </div>
     `;
@@ -125,7 +125,7 @@ export class EntitySettingsHelperTab extends LitElement {
   }
 
   private async _getItem() {
-    const items = await HELPERS_CRUD[this.entry.platform].fetch(this.hass!);
+    const items = await HELPERS_CRUD[this.entry.platform].fetch(this.menuai!);
     this._item = items.find((item) => item.id === this.entry.unique_id) || null;
   }
 
@@ -134,7 +134,7 @@ export class EntitySettingsHelperTab extends LitElement {
     try {
       if (this._componentLoaded && this._item) {
         await HELPERS_CRUD[this.entry.platform].update(
-          this.hass!,
+          this.menuai!,
           this._item.id,
           this._item
         );
@@ -153,11 +153,11 @@ export class EntitySettingsHelperTab extends LitElement {
   private async _confirmDeleteItem(): Promise<void> {
     if (
       !(await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.dialogs.entity_registry.editor.confirm_delete"
         ),
-        confirmText: this.hass.localize("ui.common.delete"),
-        dismissText: this.hass.localize("ui.common.cancel"),
+        confirmText: this.menuai.localize("ui.common.delete"),
+        dismissText: this.menuai.localize("ui.common.cancel"),
         destructive: true,
       }))
     ) {
@@ -169,15 +169,15 @@ export class EntitySettingsHelperTab extends LitElement {
     try {
       if (this._componentLoaded && this._item) {
         await HELPERS_CRUD[this.entry.platform].delete(
-          this.hass!,
+          this.menuai!,
           this._item.id
         );
       } else {
-        const stateObj = this.hass.states[this.entry.entity_id];
+        const stateObj = this.menuai.states[this.entry.entity_id];
         if (!stateObj?.attributes.restored) {
           return;
         }
-        await removeEntityRegistryEntry(this.hass!, this.entry.entity_id);
+        await removeEntityRegistryEntry(this.menuai!, this.entry.entity_id);
       }
       fireEvent(this, "close-dialog");
     } finally {

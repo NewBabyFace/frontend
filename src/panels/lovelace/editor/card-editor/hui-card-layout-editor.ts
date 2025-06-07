@@ -21,7 +21,7 @@ import "../../../../components/ha-yaml-editor";
 import type { LovelaceCardConfig } from "../../../../data/lovelace/config/card";
 import type { LovelaceSectionConfig } from "../../../../data/lovelace/config/section";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { HuiCard } from "../../cards/hui-card";
 import type { CardGridSize } from "../../common/compute-card-grid-size";
 import {
@@ -34,7 +34,7 @@ import type { LovelaceGridOptions } from "../../types";
 
 @customElement("hui-card-layout-editor")
 export class HuiCardLayoutEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public config!: LovelaceCardConfig;
 
@@ -90,7 +90,7 @@ export class HuiCardLayoutEditor extends LitElement {
     return html`
       <div class="header">
         <p class="intro">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.lovelace.editor.edit_card.layout.explanation"
           )}
         </p>
@@ -105,13 +105,13 @@ export class HuiCardLayoutEditor extends LitElement {
         >
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           >
           </ha-icon-button>
 
           <ha-list-item graphic="icon" .disabled=${!this._uiAvailable}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.lovelace.editor.edit_view.edit_${!this._yamlMode ? "yaml" : "ui"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -121,7 +121,7 @@ export class HuiCardLayoutEditor extends LitElement {
       ${this._yamlMode
         ? html`
             <ha-yaml-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .defaultValue=${configOptions}
               @value-changed=${this._yamlChanged}
             ></ha-yaml-editor>
@@ -132,7 +132,7 @@ export class HuiCardLayoutEditor extends LitElement {
                 "max-width": `${(this.sectionConfig.column_span ?? 1) * 250 + 40}px`,
               })}
               .columns=${gridTotalColumns}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${gridValue}
               .isDefault=${this._isDefault(configOptions)}
               @value-changed=${this._gridSizeChanged}
@@ -144,12 +144,12 @@ export class HuiCardLayoutEditor extends LitElement {
             ></ha-grid-size-picker>
             <ha-settings-row>
               <span slot="heading" data-for="full-width">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.editor.edit_card.layout.full_width"
                 )}
               </span>
               <span slot="description" data-for="full-width">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.editor.edit_card.layout.full_width_helper"
                 )}
               </span>
@@ -162,12 +162,12 @@ export class HuiCardLayoutEditor extends LitElement {
             </ha-settings-row>
             <ha-settings-row>
               <span slot="heading" data-for="precise-mode">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.editor.edit_card.layout.precise_mode"
                 )}
               </span>
               <span slot="description" data-for="precise-mode">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.editor.edit_card.layout.precise_mode_helper"
                 )}
               </span>
@@ -186,7 +186,7 @@ export class HuiCardLayoutEditor extends LitElement {
     super.firstUpdated(changedProps);
     try {
       this._cardElement = document.createElement("hui-card");
-      this._cardElement.hass = this.hass;
+      this._cardElement.menuai = this.menuai;
       this._cardElement.preview = true;
       this._cardElement.config = this.config;
       this._cardElement.addEventListener("card-updated", (ev: Event) => {
@@ -212,8 +212,8 @@ export class HuiCardLayoutEditor extends LitElement {
   protected updated(changedProps: PropertyValues<this>): void {
     super.updated(changedProps);
     if (this._cardElement) {
-      if (changedProps.has("hass")) {
-        this._cardElement.hass = this.hass;
+      if (changedProps.has("menuai")) {
+        this._cardElement.menuai = this.menuai;
       }
       if (changedProps.has("config")) {
         this._cardElement.config = this.config;

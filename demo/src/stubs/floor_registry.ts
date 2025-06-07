@@ -1,7 +1,7 @@
 import type { FloorRegistryEntry } from "../../../src/data/floor_registry";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 export const mockFloorRegistry = (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   data: FloorRegistryEntry[] = []
-) => hass.mockWS("config/floor_registry/list", () => data);
+) => menuai.mockWS("config/floor_registry/list", () => data);

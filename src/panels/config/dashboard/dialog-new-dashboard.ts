@@ -9,9 +9,9 @@ import "../../../components/ha-icon-next";
 import "../../../components/ha-list-item";
 import "../../../components/ha-list";
 import type { LovelaceRawConfig } from "../../../data/lovelace/config/types";
-import type { HassDialog } from "../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { NewDashboardDialogParams } from "./show-dialog-new-dashboard";
 
 const EMPTY_CONFIG: LovelaceRawConfig = { views: [{ title: "Home" }] };
@@ -37,8 +37,8 @@ const STRATEGIES = [
 ] as const satisfies Strategy[];
 
 @customElement("ha-dialog-new-dashboard")
-class DialogNewDashboard extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogNewDashboard extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -69,8 +69,8 @@ class DialogNewDashboard extends LitElement implements HassDialog {
         hideActions
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             `ui.panel.config.lovelace.dashboards.dialog_new.header`
           )
         )}
@@ -78,7 +78,7 @@ class DialogNewDashboard extends LitElement implements HassDialog {
         <ha-list
           innerRole="listbox"
           itemRoles="option"
-          innerAriaLabel=${this.hass.localize(
+          innerAriaLabel=${this.menuai.localize(
             `ui.panel.config.lovelace.dashboards.dialog_new.header`
           )}
           rootTabbable
@@ -93,11 +93,11 @@ class DialogNewDashboard extends LitElement implements HassDialog {
             @request-selected=${this._selected}
           >
             <ha-svg-icon slot="graphic" .path=${mdiPencilOutline}></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.lovelace.dashboards.dialog_new.create_empty`
             )}
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.lovelace.dashboards.dialog_new.create_empty_description`
               )}
             </span>
@@ -112,11 +112,11 @@ class DialogNewDashboard extends LitElement implements HassDialog {
             @request-selected=${this._selected}
           >
             <ha-svg-icon slot="graphic" .path=${mdiShape}></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.lovelace.dashboards.dialog_new.default`
             )}
             <span slot="secondary"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 `ui.panel.config.lovelace.dashboards.dialog_new.default_description`
               )}</span
             >
@@ -135,11 +135,11 @@ class DialogNewDashboard extends LitElement implements HassDialog {
                   slot="graphic"
                   .path=${strategy.iconPath}
                 ></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.lovelace.dashboards.dialog_new.strategy.${strategy.type}.title`
                 )}
                 <span slot="secondary">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.lovelace.dashboards.dialog_new.strategy.${strategy.type}.description`
                   )}
                 </span>

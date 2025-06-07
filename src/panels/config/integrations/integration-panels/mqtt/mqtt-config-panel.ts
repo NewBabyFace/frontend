@@ -10,16 +10,16 @@ import "../../../../../components/ha-list-item";
 import "../../../../../components/ha-switch";
 import { getConfigEntries } from "../../../../../data/config_entries";
 import { showOptionsFlowDialog } from "../../../../../dialogs/config-flow/show-dialog-options-flow";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "./mqtt-subscribe-card";
 
 const qosLevel = ["0", "1", "2"];
 
 @customElement("mqtt-config-panel")
 export class MQTTConfigPanel extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -65,33 +65,33 @@ export class MQTTConfigPanel extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage .narrow=${this.narrow} .hass=${this.hass}>
+      <menuai-subpage .narrow=${this.narrow} .menuai=${this.menuai}>
         <div class="content">
           <ha-card
-            .header=${this.hass.localize("ui.panel.config.mqtt.settings_title")}
+            .header=${this.menuai.localize("ui.panel.config.mqtt.settings_title")}
           >
             <div class="card-actions">
               <mwc-button @click=${this._openOptionFlow}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.mqtt.option_flow"
                 )}</mwc-button
               >
             </div>
           </ha-card>
           <ha-card
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.mqtt.description_publish"
             )}
           >
             <div class="card-content">
               <div class="panel-dev-mqtt-fields">
                 <ha-textfield
-                  .label=${this.hass.localize("ui.panel.config.mqtt.topic")}
+                  .label=${this.menuai.localize("ui.panel.config.mqtt.topic")}
                   .value=${this._topic}
                   @change=${this._handleTopic}
                 ></ha-textfield>
                 <ha-select
-                  .label=${this.hass.localize("ui.panel.config.mqtt.qos")}
+                  .label=${this.menuai.localize("ui.panel.config.mqtt.qos")}
                   .value=${this._qos}
                   @selected=${this._handleQos}
                   >${qosLevel.map(
@@ -100,7 +100,7 @@ export class MQTTConfigPanel extends LitElement {
                   )}
                 </ha-select>
                 <ha-formfield
-                  label=${this.hass!.localize("ui.panel.config.mqtt.retain")}
+                  label=${this.menuai!.localize("ui.panel.config.mqtt.retain")}
                 >
                   <ha-switch
                     @change=${this._handleRetain}
@@ -110,7 +110,7 @@ export class MQTTConfigPanel extends LitElement {
               </div>
               <p>
                 <ha-formfield
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.config.mqtt.allow_template"
                   )}
                 >
@@ -122,8 +122,8 @@ export class MQTTConfigPanel extends LitElement {
               </p>
               <p>
                 ${this._allowTemplate
-                  ? this.hass.localize("ui.panel.config.mqtt.payload")
-                  : this.hass.localize(
+                  ? this.menuai.localize("ui.panel.config.mqtt.payload")
+                  : this.menuai.localize(
                       "ui.panel.config.mqtt.payload_no_template"
                     )}
               </p>
@@ -131,7 +131,7 @@ export class MQTTConfigPanel extends LitElement {
                 mode="jinja2"
                 autocomplete-entities
                 autocomplete-icons
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._payload}
                 @value-changed=${this._handlePayload}
                 dir="ltr"
@@ -139,16 +139,16 @@ export class MQTTConfigPanel extends LitElement {
             </div>
             <div class="card-actions">
               <mwc-button @click=${this._publish}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.mqtt.publish"
                 )}</mwc-button
               >
             </div>
           </ha-card>
 
-          <mqtt-subscribe-card .hass=${this.hass}></mqtt-subscribe-card>
+          <mqtt-subscribe-card .menuai=${this.menuai}></mqtt-subscribe-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -176,10 +176,10 @@ export class MQTTConfigPanel extends LitElement {
   }
 
   private _publish(): void {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
-    this.hass.callService("mqtt", "publish", {
+    this.menuai.callService("mqtt", "publish", {
       topic: this._topic,
       payload: !this._allowTemplate ? this._payload : undefined,
       payload_template: this._allowTemplate ? this._payload : undefined,
@@ -194,7 +194,7 @@ export class MQTTConfigPanel extends LitElement {
       return;
     }
     const configEntryId = searchParams.get("config_entry") as string;
-    const configEntries = await getConfigEntries(this.hass, {
+    const configEntries = await getConfigEntries(this.menuai, {
       domain: "mqtt",
     });
     const configEntry = configEntries.find(

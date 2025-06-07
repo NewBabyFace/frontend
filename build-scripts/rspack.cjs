@@ -40,7 +40,7 @@ const createRspackConfig = ({
   latestBuild,
   isStatsBuild,
   isTestBuild,
-  isHassioBuild,
+  ismenuaiioBuild,
   dontHash,
 }) => {
   if (!dontHash) {
@@ -155,7 +155,7 @@ const createRspackConfig = ({
               : require.resolve(resource);
           } catch (err) {
             console.error(
-              "Error in Home Assistant ignore plugin",
+              "Error in MenuAI ignore plugin",
               resource,
               context
             );
@@ -168,7 +168,7 @@ const createRspackConfig = ({
         },
       }),
       new rspack.NormalModuleReplacementPlugin(
-        new RegExp(bundle.emptyPackages({ isHassioBuild }).join("|")),
+        new RegExp(bundle.emptyPackages({ ismenuaiioBuild }).join("|")),
         path.resolve(paths.root_dir, "src/util/empty.js")
       ),
       !isProdBuild && new LogStartCompilePlugin(),
@@ -281,14 +281,14 @@ const createDemoConfig = ({ isProdBuild, latestBuild, isStatsBuild }) =>
 const createCastConfig = ({ isProdBuild, latestBuild }) =>
   createRspackConfig(bundle.config.cast({ isProdBuild, latestBuild }));
 
-const createHassioConfig = ({
+const createmenuaiioConfig = ({
   isProdBuild,
   latestBuild,
   isStatsBuild,
   isTestBuild,
 }) =>
   createRspackConfig(
-    bundle.config.hassio({
+    bundle.config.menuaiio({
       isProdBuild,
       latestBuild,
       isStatsBuild,
@@ -306,7 +306,7 @@ module.exports = {
   createAppConfig,
   createDemoConfig,
   createCastConfig,
-  createHassioConfig,
+  createmenuaiioConfig,
   createGalleryConfig,
   createRspackConfig,
   createLandingPageConfig,

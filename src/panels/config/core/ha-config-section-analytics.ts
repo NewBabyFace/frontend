@@ -1,13 +1,13 @@
 import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import "../../../layouts/hass-subpage";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-subpage";
+import type { menuai, Route } from "../../../types";
 import "./ha-config-analytics";
 
 @customElement("ha-config-section-analytics")
 class HaConfigSectionAnalytics extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -15,16 +15,16 @@ class HaConfigSectionAnalytics extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.analytics.caption")}
+        .header=${this.menuai.localize("ui.panel.config.analytics.caption")}
       >
         <div class="content">
-          <ha-config-analytics .hass=${this.hass}></ha-config-analytics>
+          <ha-config-analytics .menuai=${this.menuai}></ha-config-analytics>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

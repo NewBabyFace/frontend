@@ -1,11 +1,11 @@
-import type { HassioSupervisorInfo } from "../../../src/data/hassio/supervisor";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { menuaiioSupervisorInfo } from "../../../src/data/menuaiio/supervisor";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockHassioSupervisor = (hass: MockHomeAssistant) => {
-  hass.config.components.push("hassio");
-  hass.mockWS("supervisor/api", (msg) => {
+export const mockmenuaiioSupervisor = (menuai: Mockmenuai) => {
+  menuai.config.components.push("menuaiio");
+  menuai.mockWS("supervisor/api", (msg) => {
     if (msg.endpoint === "/supervisor/info") {
-      const data: HassioSupervisorInfo = {
+      const data: menuaiioSupervisorInfo = {
         version: "2021.10.dev0805",
         version_latest: "2021.10.dev0806",
         update_available: true,
@@ -38,7 +38,7 @@ export const mockHassioSupervisor = (hass: MockHomeAssistant) => {
             name: "Z-Wave JS",
             slug: "core_zwave_js",
             description:
-              "Control a ZWave network with Home Assistant Z-Wave JS",
+              "Control a ZWave network with MenuAI Z-Wave JS",
             state: "started",
             version: "0.1.45",
             version_latest: "0.1.45",
@@ -49,7 +49,7 @@ export const mockHassioSupervisor = (hass: MockHomeAssistant) => {
           },
         ] as any,
         addons_repositories: [
-          "https://github.com/hassio-addons/repository",
+          "https://github.com/menuaiio-addons/repository",
         ] as any,
       };
       return data;

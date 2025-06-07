@@ -19,11 +19,11 @@ import type { EntityRegistryEntry } from "../../../data/entity_registry";
 import { subscribeEntityRegistry } from "../../../data/entity_registry";
 import type { UpdateEntity } from "../../../data/update";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("ha-config-updates")
 class HaConfigUpdates extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -35,12 +35,12 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
 
   @state() private _entities?: EntityRegistryEntry[];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeDeviceRegistry(this.hass.connection, (entries) => {
+      subscribeDeviceRegistry(this.menuai.connection, (entries) => {
         this._devices = entries;
       }),
-      subscribeEntityRegistry(this.hass.connection!, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection!, (entities) => {
         this._entities = entities.filter((entity) => entity.device_id !== null);
       }),
     ];
@@ -65,7 +65,7 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
 
     return html`
       <div class="title">
-        ${this.hass.localize("ui.panel.config.updates.title", {
+        ${this.menuai.localize("ui.panel.config.updates.title", {
           count: this.total || this.updateEntities.length,
         })}
       </div>
@@ -79,8 +79,8 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
 
           const areaName =
             deviceEntry && deviceEntry.entry_type !== "service"
-              ? getDeviceContext(deviceEntry, this.hass).area?.name ||
-                this.hass.localize("ui.panel.config.updates.no_area")
+              ? getDeviceContext(deviceEntry, this.menuai).area?.name ||
+                this.menuai.localize("ui.panel.config.updates.no_area")
               : undefined;
 
           return html`
@@ -97,7 +97,7 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
                 <state-badge
                   .title=${entity.attributes.title ||
                   entity.attributes.friendly_name}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .stateObj=${entity}
                   class=${ifDefined(
                     this.narrow && entity.attributes.in_progress
@@ -109,7 +109,7 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
                   ? html`<ha-spinner
                       class="absolute"
                       size="small"
-                      .ariaLabel=${this.hass.localize(
+                      .ariaLabel=${this.menuai.localize(
                         "ui.panel.config.updates.update_in_progress"
                       )}
                     ></ha-spinner>`
@@ -117,14 +117,14 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
               </div>
               <span
                 >${deviceEntry
-                  ? computeDeviceNameDisplay(deviceEntry, this.hass)
+                  ? computeDeviceNameDisplay(deviceEntry, this.menuai)
                   : entity.attributes.friendly_name}</span
               >
               <span slot="supporting-text">
                 ${areaName ? html`${areaName} ⸱ ` : nothing}
                 ${entity.attributes.title} ${entity.attributes.latest_version}
                 ${entity.attributes.skipped_version
-                  ? `(${this.hass.localize("ui.panel.config.updates.skipped")})`
+                  ? `(${this.menuai.localize("ui.panel.config.updates.skipped")})`
                   : nothing}
               </span>
               ${!this.narrow
@@ -132,7 +132,7 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
                   ? html`<div slot="end">
                       <ha-spinner
                         size="small"
-                        .ariaLabel=${this.hass.localize(
+                        .ariaLabel=${this.menuai.localize(
                           "ui.panel.config.updates.update_in_progress"
                         )}
                       ></ha-spinner>
@@ -147,7 +147,7 @@ class HaConfigUpdates extends SubscribeMixin(LitElement) {
   }
 
   private _openMoreInfo(ev: MouseEvent): void {
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: (ev.currentTarget as any).entity_id,
     });
   }

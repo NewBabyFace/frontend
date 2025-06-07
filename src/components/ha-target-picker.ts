@@ -13,8 +13,8 @@ import {
 } from "@mdi/js";
 import type { ComboBoxLightOpenedChangedEvent } from "@vaadin/combo-box/vaadin-combo-box-light";
 import type {
-  HassEntity,
-  HassServiceTarget,
+  menuaiEntity,
+  menuaiServiceTarget,
   UnsubscribeFunc,
 } from "home-assistant-js-websocket";
 import type { CSSResultGroup } from "lit";
@@ -36,7 +36,7 @@ import type { EntityRegistryDisplayEntry } from "../data/entity_registry";
 import type { LabelRegistryEntry } from "../data/label_registry";
 import { subscribeLabelRegistry } from "../data/label_registry";
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./device/ha-device-picker";
 import type { HaDevicePickerDeviceFilterFunc } from "./device/ha-device-picker";
 import "./entity/ha-entity-picker";
@@ -51,9 +51,9 @@ import "./ha-tooltip";
 
 @customElement("ha-target-picker")
 export class HaTargetPicker extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public value?: HassServiceTarget;
+  @property({ attribute: false }) public value?: menuaiServiceTarget;
 
   @property() public label?: string;
 
@@ -101,9 +101,9 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
 
   private _opened = false;
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
     ];
@@ -121,7 +121,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
       <div class="mdc-chip-set items">
         ${this.value?.floor_id
           ? ensureArray(this.value.floor_id).map((floor_id) => {
-              const floor = this.hass.floors[floor_id];
+              const floor = this.menuai.floors[floor_id];
               return this._renderChip(
                 "floor_id",
                 floor_id,
@@ -134,7 +134,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           : ""}
         ${this.value?.area_id
           ? ensureArray(this.value.area_id).map((area_id) => {
-              const area = this.hass.areas![area_id];
+              const area = this.menuai.areas![area_id];
               return this._renderChip(
                 "area_id",
                 area_id,
@@ -147,12 +147,12 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           : nothing}
         ${this.value?.device_id
           ? ensureArray(this.value.device_id).map((device_id) => {
-              const device = this.hass.devices![device_id];
+              const device = this.menuai.devices![device_id];
               return this._renderChip(
                 "device_id",
                 device_id,
                 device
-                  ? computeDeviceNameDisplay(device, this.hass)
+                  ? computeDeviceNameDisplay(device, this.menuai)
                   : device_id,
                 undefined,
                 undefined,
@@ -162,7 +162,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           : nothing}
         ${this.value?.entity_id
           ? ensureArray(this.value.entity_id).map((entity_id) => {
-              const entity = this.hass.states[entity_id];
+              const entity = this.menuai.states[entity_id];
               return this._renderChip(
                 "entity_id",
                 entity_id,
@@ -219,7 +219,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           <span role="gridcell">
             <span role="button" tabindex="0" class="mdc-chip__primary-action">
               <span class="mdc-chip__text"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.components.target-picker.add_area_id"
                 )}</span
               >
@@ -239,7 +239,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           <span role="gridcell">
             <span role="button" tabindex="0" class="mdc-chip__primary-action">
               <span class="mdc-chip__text"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.components.target-picker.add_device_id"
                 )}</span
               >
@@ -259,7 +259,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           <span role="gridcell">
             <span role="button" tabindex="0" class="mdc-chip__primary-action">
               <span class="mdc-chip__text"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.components.target-picker.add_entity_id"
                 )}</span
               >
@@ -279,7 +279,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           <span role="gridcell">
             <span role="button" tabindex="0" class="mdc-chip__primary-action">
               <span class="mdc-chip__text"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.components.target-picker.add_label_id"
                 )}</span
               >
@@ -302,7 +302,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
     type: "floor_id" | "area_id" | "device_id" | "entity_id" | "label_id",
     id: string,
     name: string,
-    entityState?: HassEntity,
+    entityState?: menuaiEntity,
     icon?: string | null,
     fallbackIconPath?: string,
     color?: string
@@ -330,7 +330,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
         ${entityState
           ? html`<ha-state-icon
               class="mdc-chip__icon mdc-chip__icon--leading"
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${entityState}
             ></ha-state-icon>`
           : ""}
@@ -343,13 +343,13 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           ? ""
           : html`<span role="gridcell">
               <ha-tooltip
-                .content=${this.hass.localize(
+                .content=${this.menuai.localize(
                   `ui.components.target-picker.expand_${type}`
                 )}
               >
                 <ha-icon-button
                   class="expand-btn mdc-chip__icon mdc-chip__icon--trailing"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.components.target-picker.expand"
                   )}
                   .path=${mdiUnfoldMoreVertical}
@@ -362,13 +362,13 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
             </span>`}
         <span role="gridcell">
           <ha-tooltip
-            .content=${this.hass.localize(
+            .content=${this.menuai.localize(
               `ui.components.target-picker.remove_${type}`
             )}
           >
             <ha-icon-button
               class="mdc-chip__icon mdc-chip__icon--trailing"
-              .label=${this.hass.localize("ui.components.target-picker.remove")}
+              .label=${this.menuai.localize("ui.components.target-picker.remove")}
               .path=${mdiClose}
               hide-title
               .id=${id}
@@ -395,13 +395,13 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
       >${this._addMode === "area_id"
         ? html`
             <ha-area-floor-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               id="input"
               .type=${"area_id"}
-              .placeholder=${this.hass.localize(
+              .placeholder=${this.menuai.localize(
                 "ui.components.target-picker.add_area_id"
               )}
-              .searchLabel=${this.hass.localize(
+              .searchLabel=${this.menuai.localize(
                 "ui.components.target-picker.add_area_id"
               )}
               .deviceFilter=${this.deviceFilter}
@@ -418,13 +418,13 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
         : this._addMode === "device_id"
           ? html`
               <ha-device-picker
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 id="input"
                 .type=${"device_id"}
-                .placeholder=${this.hass.localize(
+                .placeholder=${this.menuai.localize(
                   "ui.components.target-picker.add_device_id"
                 )}
-                .searchLabel=${this.hass.localize(
+                .searchLabel=${this.menuai.localize(
                   "ui.components.target-picker.add_device_id"
                 )}
                 .deviceFilter=${this.deviceFilter}
@@ -440,13 +440,13 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           : this._addMode === "label_id"
             ? html`
                 <ha-label-picker
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   id="input"
                   .type=${"label_id"}
-                  .placeholder=${this.hass.localize(
+                  .placeholder=${this.menuai.localize(
                     "ui.components.target-picker.add_label_id"
                   )}
-                  .searchLabel=${this.hass.localize(
+                  .searchLabel=${this.menuai.localize(
                     "ui.components.target-picker.add_label_id"
                   )}
                   no-add
@@ -462,13 +462,13 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
               `
             : html`
                 <ha-entity-picker
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   id="input"
                   .type=${"entity_id"}
-                  .placeholder=${this.hass.localize(
+                  .placeholder=${this.menuai.localize(
                     "ui.components.target-picker.add_entity_id"
                   )}
-                  .searchLabel=${this.hass.localize(
+                  .searchLabel=${this.menuai.localize(
                     "ui.components.target-picker.add_entity_id"
                   )}
                   .entityFilter=${this.entityFilter}
@@ -530,7 +530,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
     const newEntities: string[] = [];
 
     if (target.type === "floor_id") {
-      Object.values(this.hass.areas).forEach((area) => {
+      Object.values(this.menuai.areas).forEach((area) => {
         if (
           area.floor_id === target.id &&
           !this.value!.area_id?.includes(area.area_id) &&
@@ -540,7 +540,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
         }
       });
     } else if (target.type === "area_id") {
-      Object.values(this.hass.devices).forEach((device) => {
+      Object.values(this.menuai.devices).forEach((device) => {
         if (
           device.area_id === target.id &&
           !this.value!.device_id?.includes(device.id) &&
@@ -549,7 +549,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           newDevices.push(device.id);
         }
       });
-      Object.values(this.hass.entities).forEach((entity) => {
+      Object.values(this.menuai.entities).forEach((entity) => {
         if (
           entity.area_id === target.id &&
           !this.value!.entity_id?.includes(entity.entity_id) &&
@@ -559,7 +559,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
         }
       });
     } else if (target.type === "device_id") {
-      Object.values(this.hass.entities).forEach((entity) => {
+      Object.values(this.menuai.entities).forEach((entity) => {
         if (
           entity.device_id === target.id &&
           !this.value!.entity_id?.includes(entity.entity_id) &&
@@ -569,7 +569,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
         }
       });
     } else if (target.type === "label_id") {
-      Object.values(this.hass.areas).forEach((area) => {
+      Object.values(this.menuai.areas).forEach((area) => {
         if (
           area.labels.includes(target.id) &&
           !this.value!.area_id?.includes(area.area_id) &&
@@ -578,7 +578,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           newAreas.push(area.area_id);
         }
       });
-      Object.values(this.hass.devices).forEach((device) => {
+      Object.values(this.menuai.devices).forEach((device) => {
         if (
           device.labels.includes(target.id) &&
           !this.value!.device_id?.includes(device.id) &&
@@ -587,7 +587,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
           newDevices.push(device.id);
         }
       });
-      Object.values(this.hass.entities).forEach((entity) => {
+      Object.values(this.menuai.entities).forEach((entity) => {
         if (
           entity.labels.includes(target.id) &&
           !this.value!.entity_id?.includes(entity.entity_id) &&
@@ -679,7 +679,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
   }
 
   private _areaMeetsFilter(area: AreaRegistryEntry): boolean {
-    const areaDevices = Object.values(this.hass.devices).filter(
+    const areaDevices = Object.values(this.menuai.devices).filter(
       (device) => device.area_id === area.area_id
     );
 
@@ -687,7 +687,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
       return true;
     }
 
-    const areaEntities = Object.values(this.hass.entities).filter(
+    const areaEntities = Object.values(this.menuai.entities).filter(
       (entity) => entity.area_id === area.area_id
     );
 
@@ -699,7 +699,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
   }
 
   private _deviceMeetsFilter(device: DeviceRegistryEntry): boolean {
-    const devEntities = Object.values(this.hass.entities).filter(
+    const devEntities = Object.values(this.menuai.entities).filter(
       (entity) => entity.device_id === device.id
     );
 
@@ -728,7 +728,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
       return false;
     }
     if (this.includeDeviceClasses) {
-      const stateObj = this.hass.states[entity.entity_id];
+      const stateObj = this.menuai.states[entity.entity_id];
       if (!stateObj) {
         return false;
       }
@@ -741,7 +741,7 @@ export class HaTargetPicker extends SubscribeMixin(LitElement) {
     }
 
     if (this.entityFilter) {
-      const stateObj = this.hass.states[entity.entity_id];
+      const stateObj = this.menuai.states[entity.entity_id];
       if (!stateObj) {
         return false;
       }

@@ -21,7 +21,7 @@ import {
   mdiWebhook,
 } from "@mdi/js";
 
-import { mdiHomeAssistant } from "../resources/home-assistant-logo-svg";
+import { mdimenuai } from "../resources/home-assistant-logo-svg";
 import type {
   AutomationElementGroup,
   Trigger,
@@ -34,7 +34,7 @@ export const TRIGGER_ICONS = {
   event: mdiGestureDoubleTap,
   state: mdiStateMachine,
   geo_location: mdiMapMarker,
-  homeassistant: mdiHomeAssistant,
+  menuai: mdimenuai,
   mqtt: mdiSwapHorizontal,
   numeric_state: mdiNumeric,
   sun: mdiWeatherSunny,
@@ -61,7 +61,7 @@ export const TRIGGER_GROUPS: AutomationElementGroup = {
     members: {
       event: {},
       geo_location: {},
-      homeassistant: {},
+      menuai: {},
       mqtt: {},
       conversation: {},
       tag: {},

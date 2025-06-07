@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -6,7 +6,7 @@ import { isComponentLoaded } from "../../../common/config/is_component_loaded";
 import { computeDomain } from "../../../common/entity/compute_domain";
 import "../../../components/ha-spinner";
 import { subscribeHistoryStatesTimeWindow } from "../../../data/history";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import { coordinatesMinimalResponseCompressedState } from "../common/graph/coordinates";
 import "../components/hui-graph-base";
@@ -31,17 +31,17 @@ export class HuiGraphHeaderFooter
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): GraphHeaderFooterConfig {
     const maxEntities = 1;
-    const entityFilter = (stateObj: HassEntity): boolean =>
+    const entityFilter = (stateObj: menuaiEntity): boolean =>
       !isNaN(Number(stateObj.state)) &&
       !!stateObj.attributes.unit_of_measurement;
 
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -55,7 +55,7 @@ export class HuiGraphHeaderFooter
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public type!: "header" | "footer";
 
@@ -97,7 +97,7 @@ export class HuiGraphHeaderFooter
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
@@ -140,14 +140,14 @@ export class HuiGraphHeaderFooter
 
   private _subscribeHistory() {
     if (
-      !isComponentLoaded(this.hass!, "history") ||
+      !isComponentLoaded(this.menuai!, "history") ||
       this._subscribed ||
       !this._config
     ) {
       return;
     }
     this._subscribed = subscribeHistoryStatesTimeWindow(
-      this.hass!,
+      this.menuai!,
       (combinedHistory) => {
         if (!this._subscribed || !this._config) {
           // Message came in before we had a chance to unload
@@ -196,7 +196,7 @@ export class HuiGraphHeaderFooter
   }
 
   protected updated(changedProps: PropertyValues) {
-    if (!this._config || !this.hass || !changedProps.has("_config")) {
+    if (!this._config || !this.menuai || !changedProps.has("_config")) {
       return;
     }
 

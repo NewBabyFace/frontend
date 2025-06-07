@@ -1,7 +1,7 @@
 import type { LabelRegistryEntry } from "../../../src/data/label_registry";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 export const mockLabelRegistry = (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   data: LabelRegistryEntry[] = []
-) => hass.mockWS("config/label_registry/list", () => data);
+) => menuai.mockWS("config/label_registry/list", () => data);

@@ -18,7 +18,7 @@ import {
   compareWaterHeaterOperationMode,
   computeOperationModeIcon,
 } from "../../../data/water_heater";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import { filterModes } from "./common/filter-modes";
@@ -28,11 +28,11 @@ import type {
 } from "./types";
 
 export const supportsWaterHeaterOperationModesCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -44,7 +44,7 @@ class HuiWaterHeaterOperationModeCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -53,10 +53,10 @@ class HuiWaterHeaterOperationModeCardFeature
   @state() _currentOperationMode?: OperationMode;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as
+    return this.menuai.states[this.context.entity_id!] as
       | WaterHeaterEntity
       | undefined;
   }
@@ -86,11 +86,11 @@ class HuiWaterHeaterOperationModeCardFeature
   protected willUpdate(changedProp: PropertyValues): void {
     super.willUpdate(changedProp);
     if (
-      (changedProp.has("hass") || changedProp.has("context")) &&
+      (changedProp.has("menuai") || changedProp.has("context")) &&
       this._stateObj
     ) {
-      const oldHass = changedProp.get("hass") as HomeAssistant | undefined;
-      const oldStateObj = oldHass?.states[this.context!.entity_id!];
+      const oldmenuai = changedProp.get("menuai") as menuai | undefined;
+      const oldStateObj = oldmenuai?.states[this.context!.entity_id!];
       if (oldStateObj !== this._stateObj) {
         this._currentOperationMode = this._stateObj.state as OperationMode;
       }
@@ -113,7 +113,7 @@ class HuiWaterHeaterOperationModeCardFeature
   }
 
   private async _setMode(mode: OperationMode) {
-    await this.hass!.callService("water_heater", "set_operation_mode", {
+    await this.menuai!.callService("water_heater", "set_operation_mode", {
       entity_id: this._stateObj!.entity_id,
       operation_mode: mode,
     });
@@ -122,10 +122,10 @@ class HuiWaterHeaterOperationModeCardFeature
   protected render(): TemplateResult | null {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsWaterHeaterOperationModesCardFeature(this.hass, this.context)
+      !supportsWaterHeaterOperationModesCardFeature(this.menuai, this.context)
     ) {
       return null;
     }
@@ -142,7 +142,7 @@ class HuiWaterHeaterOperationModeCardFeature
       this._config.operation_modes
     ).map<ControlSelectOption>((mode) => ({
       value: mode,
-      label: this.hass!.formatEntityState(this._stateObj!, mode),
+      label: this.menuai!.formatEntityState(this._stateObj!, mode),
       path: computeOperationModeIcon(mode as OperationMode),
     }));
 
@@ -152,7 +152,7 @@ class HuiWaterHeaterOperationModeCardFeature
         .value=${this._currentOperationMode}
         @value-changed=${this._valueChanged}
         hide-label
-        .ariaLabel=${this.hass.localize("ui.card.water_heater.mode")}
+        .ariaLabel=${this.menuai.localize("ui.card.water_heater.mode")}
         style=${styleMap({
           "--control-select-color": color,
         })}

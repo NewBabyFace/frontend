@@ -15,7 +15,7 @@ import {
   getSummedData,
 } from "../../../../data/energy";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyGridNeutralityGaugeCardConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -30,17 +30,17 @@ class HuiEnergyGridGaugeCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyGridNeutralityGaugeCardConfig;
 
   @state() private _data?: EnergyData;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass!, {
+      getEnergyDataCollection(this.menuai!, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -60,17 +60,17 @@ class HuiEnergyGridGaugeCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
     if (!this._data) {
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.panel.lovelace.cards.energy.loading"
       )}`;
     }
@@ -106,21 +106,21 @@ class HuiEnergyGridGaugeCard
                 .value=${value}
                 .valueText=${formatNumber(
                   Math.abs(returnedToGrid! - consumedFromGrid!),
-                  this.hass.locale,
+                  this.menuai.locale,
                   { maximumFractionDigits: 2 }
                 )}
-                .locale=${this.hass!.locale}
+                .locale=${this.menuai!.locale}
                 .levels=${LEVELS}
                 label="kWh"
                 needle
               ></ha-gauge>
               <ha-tooltip placement="left" hoist>
                 <span slot="content">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.cards.energy.grid_neutrality_gauge.energy_dependency"
                   )}
                   <br /><br />
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.cards.energy.grid_neutrality_gauge.color_explain"
                   )}
                 </span>
@@ -128,15 +128,15 @@ class HuiEnergyGridGaugeCard
               </ha-tooltip>
               <div class="name">
                 ${returnedToGrid! >= consumedFromGrid!
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.lovelace.cards.energy.grid_neutrality_gauge.net_returned_grid"
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       "ui.panel.lovelace.cards.energy.grid_neutrality_gauge.net_consumed_grid"
                     )}
               </div>
             `
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.panel.lovelace.cards.energy.grid_neutrality_gauge.grid_neutrality_not_calculated"
             )}
       </ha-card>

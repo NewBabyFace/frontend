@@ -6,13 +6,13 @@ import { hasTemplate } from "../../../../../common/string/has-template";
 import type { HaDurationData } from "../../../../../components/ha-duration-input";
 import "../../../../../components/ha-duration-input";
 import type { DelayAction } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ActionElement } from "../ha-automation-action-row";
 import { createDurationData } from "../../../../../common/datetime/create_duration_data";
 
 @customElement("ha-automation-action-delay")
 export class HaDelayAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -33,7 +33,7 @@ export class HaDelayAction extends LitElement implements ActionElement {
       fireEvent(
         this,
         "ui-mode-not-available",
-        Error(this.hass.localize("ui.errors.config.no_template_editor_support"))
+        Error(this.menuai.localize("ui.errors.config.no_template_editor_support"))
       );
       return;
     }
@@ -43,7 +43,7 @@ export class HaDelayAction extends LitElement implements ActionElement {
 
   protected render() {
     return html`<ha-duration-input
-      .label=${this.hass.localize(
+      .label=${this.menuai.localize(
         `ui.panel.config.automation.editor.actions.type.delay.delay`
       )}
       .disabled=${this.disabled}

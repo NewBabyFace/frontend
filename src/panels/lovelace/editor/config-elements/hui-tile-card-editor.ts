@@ -14,7 +14,7 @@ import {
   string,
   union,
 } from "superstruct";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/ha-expansion-panel";
@@ -24,7 +24,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import "../../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   LovelaceCardFeatureConfig,
   LovelaceCardFeatureContext,
@@ -65,7 +65,7 @@ export class HuiTileCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: TileCardConfig;
 
@@ -245,24 +245,24 @@ export class HuiTileCardEditor
 
   private _hasCompatibleFeatures = memoizeOne(
     (context: LovelaceCardFeatureContext) =>
-      getSupportedFeaturesType(this.hass!, context).length > 0
+      getSupportedFeaturesType(this.menuai!, context).length > 0
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const entityId = this._config!.entity;
 
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       entityId,
       this._config.hide_state ?? false
     );
 
     const featuresSchema = this._featuresSchema(
-      this.hass.localize,
+      this.menuai.localize,
       this._config.vertical ?? false
     );
 
@@ -281,7 +281,7 @@ export class HuiTileCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -291,7 +291,7 @@ export class HuiTileCardEditor
       <ha-expansion-panel outlined>
         <ha-svg-icon slot="leading-icon" .path=${mdiListBox}></ha-svg-icon>
         <h3 slot="header">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.generic.features"
           )}
         </h3>
@@ -300,7 +300,7 @@ export class HuiTileCardEditor
             ? html`
                 <ha-form
                   class="features-form"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .data=${data}
                   .schema=${featuresSchema}
                   .computeLabel=${this._computeLabelCallback}
@@ -310,7 +310,7 @@ export class HuiTileCardEditor
               `
             : nothing}
           <hui-card-features-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .context=${featureContext}
             .features=${this._config!.features ?? []}
             @features-changed=${this._featuresChanged}
@@ -323,7 +323,7 @@ export class HuiTileCardEditor
 
   private _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -353,7 +353,7 @@ export class HuiTileCardEditor
 
   private _featuresChanged(ev: CustomEvent) {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -370,7 +370,7 @@ export class HuiTileCardEditor
     fireEvent(this, "config-changed", { config });
   }
 
-  private _editDetailElement(ev: HASSDomEvent<EditDetailElementEvent>): void {
+  private _editDetailElement(ev: menuaiDomEvent<EditDetailElementEvent>): void {
     const index = ev.detail.subElementConfig.index;
     const config = this._config!.features![index!];
     const featureContext = this._featureContext(this._config!.entity);
@@ -410,11 +410,11 @@ export class HuiTileCardEditor
       case "state_content":
       case "content_layout":
       case "features_position":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.tile.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }
@@ -427,12 +427,12 @@ export class HuiTileCardEditor
   ) => {
     switch (schema.name) {
       case "color":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.tile.${schema.name}_helper`
         );
       case "features_position":
         if (this._config?.vertical) {
-          return this.hass!.localize(
+          return this.menuai!.localize(
             `ui.panel.lovelace.editor.card.tile.${schema.name}_helper_vertical`
           );
         }

@@ -16,7 +16,7 @@ import type { ClimateEntity } from "../../data/climate";
 import { ClimateEntityFeature } from "../../data/climate";
 import { UNAVAILABLE } from "../../data/entity";
 import { computeCssVariable } from "../../resources/css-variables";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   createStateControlCircularSliderController,
   stateControlCircularSliderStyle,
@@ -24,7 +24,7 @@ import {
 
 @customElement("ha-state-control-climate-humidity")
 export class HaStateControlClimateHumidity extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: ClimateEntity;
 
@@ -71,7 +71,7 @@ export class HaStateControlClimateHumidity extends LitElement {
   private _debouncedCallService = debounce(() => this._callService(), 1000);
 
   private _callService() {
-    this.hass.callService("climate", "set_humidity", {
+    this.menuai.callService("climate", "set_humidity", {
       entity_id: this.stateObj!.entity_id,
       humidity: this._targetHumidity,
     });
@@ -92,20 +92,20 @@ export class HaStateControlClimateHumidity extends LitElement {
     if (this.stateObj.state === UNAVAILABLE) {
       return html`
         <p class="label disabled">
-          ${this.hass.formatEntityState(this.stateObj, UNAVAILABLE)}
+          ${this.menuai.formatEntityState(this.stateObj, UNAVAILABLE)}
         </p>
       `;
     }
 
     if (!this._targetHumidity) {
       return html`
-        <p class="label">${this.hass.formatEntityState(this.stateObj)}</p>
+        <p class="label">${this.menuai.formatEntityState(this.stateObj)}</p>
       `;
     }
 
     return html`
       <p class="label">
-        ${this.hass.localize("ui.card.climate.humidity_target")}
+        ${this.menuai.localize("ui.card.climate.humidity_target")}
       </p>
     `;
   }
@@ -139,7 +139,7 @@ export class HaStateControlClimateHumidity extends LitElement {
         .value=${humidity}
         unit="%"
         unit-position="bottom"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .formatOptions=${formatOptions}
       ></ha-big-number>
     `;
@@ -154,7 +154,7 @@ export class HaStateControlClimateHumidity extends LitElement {
       <p class="label">
         <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
         <span>
-          ${this.hass.formatEntityAttributeValue(
+          ${this.menuai.formatEntityAttributeValue(
             this.stateObj,
             "current_humidity",
             humidity

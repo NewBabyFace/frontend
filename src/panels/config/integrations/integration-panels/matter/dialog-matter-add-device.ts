@@ -14,7 +14,7 @@ import {
   redirectOnNewMatterDevice,
 } from "../../../../../data/matter";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "./matter-add-device/matter-add-device-apple-home";
 import "./matter-add-device/matter-add-device-existing";
 import "./matter-add-device/matter-add-device-generic";
@@ -36,7 +36,7 @@ export type MatterAddDeviceStep =
   | "commissioning";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "step-selected": { step: MatterAddDeviceStep };
     "pairing-code-changed": { code: string };
   }
@@ -56,7 +56,7 @@ const BACK_STEP: Record<MatterAddDeviceStep, MatterAddDeviceStep | undefined> =
 
 @customElement("dialog-matter-add-device")
 class DialogMatterAddDevice extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _open = false;
 
@@ -68,7 +68,7 @@ class DialogMatterAddDevice extends LitElement {
 
   public showDialog(): void {
     this._open = true;
-    this._unsub = redirectOnNewMatterDevice(this.hass, () =>
+    this._unsub = redirectOnNewMatterDevice(this.menuai, () =>
       this.closeDialog()
     );
   }
@@ -102,12 +102,12 @@ class DialogMatterAddDevice extends LitElement {
       <div
         @pairing-code-changed=${this._handlePairingCodeChanged}
         @step-selected=${this._handleStepSelected}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
       >
         ${dynamicElement(
           `matter-add-device-${this._step.replaceAll("_", "-")}`,
           {
-            hass: this.hass,
+            menuai: this.menuai,
           }
         )}
       </div>
@@ -119,10 +119,10 @@ class DialogMatterAddDevice extends LitElement {
     const savedStep = this._step;
     try {
       this._step = "commissioning";
-      await commissionMatterDevice(this.hass, code);
+      await commissionMatterDevice(this.menuai, code);
     } catch (_err) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.dialogs.matter-add-device.add_device_failed"
         ),
         duration: 2000,
@@ -143,14 +143,14 @@ class DialogMatterAddDevice extends LitElement {
           @click=${this._addDevice}
           .disabled=${!this._pairingCode}
         >
-          ${this.hass.localize("ui.dialogs.matter-add-device.add_device")}
+          ${this.menuai.localize("ui.dialogs.matter-add-device.add_device")}
         </ha-button>
       `;
     }
     if (this._step === "new") {
       return html`
         <ha-button slot="primaryAction" @click=${this.closeDialog}>
-          ${this.hass.localize("ui.common.ok")}
+          ${this.menuai.localize("ui.common.ok")}
         </ha-button>
       `;
     }
@@ -162,7 +162,7 @@ class DialogMatterAddDevice extends LitElement {
       return nothing;
     }
 
-    const title = this.hass.localize(
+    const title = this.menuai.localize(
       `ui.dialogs.matter-add-device.${this._step}.header`
     );
 
@@ -184,7 +184,7 @@ class DialogMatterAddDevice extends LitElement {
             ? html`
                 <ha-icon-button-arrow-prev
                   slot="navigationIcon"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   @click=${this._back}
                 ></ha-icon-button-arrow-prev>
               `
@@ -192,7 +192,7 @@ class DialogMatterAddDevice extends LitElement {
                 <ha-icon-button
                   slot="navigationIcon"
                   dialogAction="cancel"
-                  .label=${this.hass.localize("ui.common.close")}
+                  .label=${this.menuai.localize("ui.common.close")}
                   .path=${mdiClose}
                 ></ha-icon-button>
               `}

@@ -44,7 +44,7 @@ import type {
   IfActionTraceStep,
   TraceExtended,
 } from "../../data/trace";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-icon-button";
 import "../ha-service-icon";
 import "./hat-graph-branch";
@@ -62,7 +62,7 @@ export interface NodeInfo {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "graph-node-selected": NodeInfo;
   }
 }
@@ -73,7 +73,7 @@ export class HatScriptGraph extends LitElement {
 
   @property({ attribute: false }) public selected?: string;
 
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   public renderedNodes: Record<string, NodeInfo> = {};
 
@@ -448,7 +448,7 @@ export class HatScriptGraph extends LitElement {
         ${node.action
           ? html`<ha-service-icon
               slot="icon"
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .service=${node.action}
             ></ha-service-icon>`
           : nothing}

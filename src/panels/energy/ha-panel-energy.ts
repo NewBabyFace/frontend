@@ -7,7 +7,7 @@ import "../../components/ha-list-item";
 import "../../components/ha-top-app-bar-fixed";
 import type { LovelaceConfig } from "../../data/lovelace/config/types";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../lovelace/components/hui-energy-period-selector";
 import type { Lovelace } from "../lovelace/types";
 import "../lovelace/views/hui-view";
@@ -43,7 +43,7 @@ const ENERGY_LOVELACE_CONFIG: LovelaceConfig = {
 
 @customElement("ha-panel-energy")
 class PanelEnergy extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -53,16 +53,16 @@ class PanelEnergy extends LitElement {
 
   public willUpdate(changedProps: PropertyValues) {
     if (!this.hasUpdated) {
-      this.hass.loadFragmentTranslation("lovelace");
+      this.menuai.loadFragmentTranslation("lovelace");
     }
-    if (!changedProps.has("hass")) {
+    if (!changedProps.has("menuai")) {
       return;
     }
-    const oldHass = changedProps.get("hass") as this["hass"];
-    if (oldHass?.locale !== this.hass.locale) {
+    const oldmenuai = changedProps.get("menuai") as this["menuai"];
+    if (oldmenuai?.locale !== this.menuai.locale) {
       this._setLovelace();
     }
-    if (oldHass && oldHass.localize !== this.hass.localize) {
+    if (oldmenuai && oldmenuai.localize !== this.menuai.localize) {
       this._reloadView();
     }
   }
@@ -73,27 +73,27 @@ class PanelEnergy extends LitElement {
         <div class="toolbar">
           <ha-menu-button
             slot="navigationIcon"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .narrow=${this.narrow}
           ></ha-menu-button>
           ${!this.narrow
             ? html`<div class="main-title">
-                ${this.hass.localize("panel.energy")}
+                ${this.menuai.localize("panel.energy")}
               </div>`
             : nothing}
 
           <hui-energy-period-selector
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             collection-key="energy_dashboard"
           >
-            ${this.hass.user?.is_admin
+            ${this.menuai.user?.is_admin
               ? html` <ha-list-item
                   slot="overflow-menu"
                   graphic="icon"
                   @request-selected=${this._navigateConfig}
                 >
                   <ha-svg-icon slot="graphic" .path=${mdiPencil}> </ha-svg-icon>
-                  ${this.hass!.localize("ui.panel.energy.configure")}
+                  ${this.menuai!.localize("ui.panel.energy.configure")}
                 </ha-list-item>`
               : nothing}
             <ha-list-item
@@ -102,18 +102,18 @@ class PanelEnergy extends LitElement {
               @request-selected=${this._dumpCSV}
             >
               <ha-svg-icon slot="graphic" .path=${mdiDownload}> </ha-svg-icon>
-              ${this.hass!.localize("ui.panel.energy.download_data")}
+              ${this.menuai!.localize("ui.panel.energy.download_data")}
             </ha-list-item>
           </hui-energy-period-selector>
         </div>
       </div>
 
       <hui-view-container
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         @reload-energy-panel=${this._reloadView}
       >
         <hui-view
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
           .lovelace=${this._lovelace}
           .index=${this._viewIndex}
@@ -129,7 +129,7 @@ class PanelEnergy extends LitElement {
       editMode: false,
       urlPath: "energy",
       mode: "generated",
-      locale: this.hass.locale,
+      locale: this.menuai.locale,
       enableFullEditMode: () => undefined,
       saveConfig: async () => undefined,
       deleteConfig: async () => undefined,
@@ -145,7 +145,7 @@ class PanelEnergy extends LitElement {
 
   private async _dumpCSV(ev) {
     ev.stopPropagation();
-    const energyData = getEnergyDataCollection(this.hass, {
+    const energyData = getEnergyDataCollection(this.menuai, {
       key: "energy_dashboard",
     });
 
@@ -154,11 +154,11 @@ class PanelEnergy extends LitElement {
     }
 
     const gasUnit = getEnergyGasUnit(
-      this.hass,
+      this.menuai,
       energyData.prefs,
       energyData.state.statsMetadata
     );
-    const waterUnit = getEnergyWaterUnit(this.hass);
+    const waterUnit = getEnergyWaterUnit(this.menuai);
     const electricUnit = "kWh";
 
     const energy_sources = energyData.prefs.energy_sources;
@@ -210,7 +210,7 @@ class PanelEnergy extends LitElement {
       processCsvRow(stat, type, unit, stats[stat]);
     };
 
-    const currency = this.hass.config.currency;
+    const currency = this.menuai.config.currency;
 
     const printCategory = function (
       type: string,
@@ -374,7 +374,7 @@ class PanelEnergy extends LitElement {
       processCsvRow("", type, unit, data2);
     };
 
-    const hasSolar = !!solar_productions.length;
+    const menuaiolar = !!solar_productions.length;
     const hasBattery = !!battery_ins.length;
     const hasGridReturn = !!grid_productions.length;
     const hasGridSource = !!grid_consumptions.length;
@@ -408,7 +408,7 @@ class PanelEnergy extends LitElement {
       );
     }
 
-    if (hasSolar) {
+    if (menuaiolar) {
       processConsumptionData(
         "calculated_consumed_solar",
         electricUnit,
@@ -431,7 +431,7 @@ class PanelEnergy extends LitElement {
     }
 
     if (
-      (hasGridSource ? 1 : 0) + (hasSolar ? 1 : 0) + (hasBattery ? 1 : 0) >
+      (hasGridSource ? 1 : 0) + (menuaiolar ? 1 : 0) + (hasBattery ? 1 : 0) >
       1
     ) {
       processConsumptionData(
@@ -551,7 +551,7 @@ declare global {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "reload-energy-panel": undefined;
   }
 }

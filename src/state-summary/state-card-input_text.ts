@@ -1,18 +1,18 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../components/entity/state-info";
 import "../components/ha-textfield";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { haStyle } from "../resources/styles";
 import { stopPropagation } from "../common/dom/stop_propagation";
 
 @customElement("state-card-input_text")
 class StateCardInputText extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -22,7 +22,7 @@ class StateCardInputText extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         ></state-info
@@ -57,7 +57,7 @@ class StateCardInputText extends LitElement {
     if (this.value === this.stateObj.state) {
       return;
     }
-    await this.hass.callService("input_text", "set_value", {
+    await this.menuai.callService("input_text", "set_value", {
       value: this.value,
       entity_id: this.stateObj.entity_id,
     });

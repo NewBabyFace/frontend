@@ -16,13 +16,13 @@ import {
   startExternalCommissioning,
 } from "../../../../../data/matter";
 import { showPromptDialog } from "../../../../../dialogs/generic/show-dialog-box";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 @customElement("matter-config-dashboard")
 export class MatterConfigDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -37,8 +37,8 @@ export class MatterConfigDashboard extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage .narrow=${this.narrow} .hass=${this.hass} header="Matter">
-        ${isComponentLoaded(this.hass, "otbr")
+      <menuai-subpage .narrow=${this.narrow} .menuai=${this.menuai} header="Matter">
+        ${isComponentLoaded(this.menuai, "otbr")
           ? html`
               <a href="/config/thread" slot="toolbar-icon">
                 <mwc-button>Visit Thread Panel</mwc-button>
@@ -61,7 +61,7 @@ export class MatterConfigDashboard extends LitElement {
               share code.
             </div>
             <div class="card-actions">
-              ${canCommissionMatterExternal(this.hass)
+              ${canCommissionMatterExternal(this.menuai)
                 ? html`<mwc-button @click=${this._startMobileCommissioning}
                     >Commission device with mobile app</mwc-button
                   >`
@@ -81,7 +81,7 @@ export class MatterConfigDashboard extends LitElement {
             </div>
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -89,7 +89,7 @@ export class MatterConfigDashboard extends LitElement {
     if (this._unsub) {
       return;
     }
-    this._unsub = redirectOnNewMatterDevice(this.hass, () => {
+    this._unsub = redirectOnNewMatterDevice(this.menuai, () => {
       this._unsub = undefined;
     });
   }
@@ -101,7 +101,7 @@ export class MatterConfigDashboard extends LitElement {
 
   private _startMobileCommissioning() {
     this._redirectOnNewMatterDevice();
-    startExternalCommissioning(this.hass);
+    startExternalCommissioning(this.menuai);
   }
 
   private async _setWifi(): Promise<void> {
@@ -125,7 +125,7 @@ export class MatterConfigDashboard extends LitElement {
       return;
     }
     try {
-      await matterSetWifi(this.hass, networkName, psk);
+      await matterSetWifi(this.menuai, networkName, psk);
     } catch (err: any) {
       this._error = err.message;
     }
@@ -144,7 +144,7 @@ export class MatterConfigDashboard extends LitElement {
     this._error = undefined;
     this._redirectOnNewMatterDevice();
     try {
-      await commissionMatterDevice(this.hass, code);
+      await commissionMatterDevice(this.menuai, code);
     } catch (err: any) {
       this._error = err.message;
       this._stopRedirect();
@@ -164,7 +164,7 @@ export class MatterConfigDashboard extends LitElement {
     this._error = undefined;
     this._redirectOnNewMatterDevice();
     try {
-      await acceptSharedMatterDevice(this.hass, Number(code));
+      await acceptSharedMatterDevice(this.menuai, Number(code));
     } catch (err: any) {
       this._error = err.message;
       this._stopRedirect();
@@ -183,7 +183,7 @@ export class MatterConfigDashboard extends LitElement {
     }
     this._error = undefined;
     try {
-      await matterSetThread(this.hass, code);
+      await matterSetThread(this.menuai, code);
     } catch (err: any) {
       this._error = err.message;
     }

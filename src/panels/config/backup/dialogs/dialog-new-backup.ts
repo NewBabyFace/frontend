@@ -11,14 +11,14 @@ import type { HaMdDialog } from "../../../../components/ha-md-dialog";
 import "../../../../components/ha-md-list";
 import "../../../../components/ha-md-list-item";
 import "../../../../components/ha-svg-icon";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { NewBackupDialogParams } from "./show-dialog-new-backup";
 
 @customElement("ha-dialog-new-backup")
-class DialogNewBackup extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogNewBackup extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -58,18 +58,18 @@ class DialogNewBackup extends LitElement implements HassDialog {
           <ha-icon-button
             slot="navigationIcon"
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">
-            ${this.hass.localize("ui.panel.config.backup.dialogs.new.title")}
+            ${this.menuai.localize("ui.panel.config.backup.dialogs.new.title")}
           </span>
         </ha-dialog-header>
         <div slot="content">
           <ha-md-list
             innerRole="listbox"
             itemRoles="option"
-            .innerAriaLabel=${this.hass.localize(
+            .innerAriaLabel=${this.menuai.localize(
               "ui.panel.config.backup.dialogs.new.options"
             )}
             rootTabbable
@@ -82,12 +82,12 @@ class DialogNewBackup extends LitElement implements HassDialog {
             >
               <ha-svg-icon slot="start" .path=${mdiCalendarSync}></ha-svg-icon>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.new.automatic.title"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.new.automatic.description"
                 )}
               </span>
@@ -96,12 +96,12 @@ class DialogNewBackup extends LitElement implements HassDialog {
             <ha-md-list-item @click=${this._manual} type="button">
               <ha-svg-icon slot="start" .path=${mdiGestureTap}></ha-svg-icon>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.new.manual.title"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.dialogs.new.manual.description"
                 )}
               </span>

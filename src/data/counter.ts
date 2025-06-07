@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface Counter {
   id: string;
@@ -21,31 +21,31 @@ export interface CounterMutableParams {
   step: number;
 }
 
-export const fetchCounter = (hass: HomeAssistant) =>
-  hass.callWS<Counter[]>({ type: "counter/list" });
+export const fetchCounter = (menuai: menuai) =>
+  menuai.callWS<Counter[]>({ type: "counter/list" });
 
 export const createCounter = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: CounterMutableParams
 ) =>
-  hass.callWS<Counter>({
+  menuai.callWS<Counter>({
     type: "counter/create",
     ...values,
   });
 
 export const updateCounter = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<CounterMutableParams>
 ) =>
-  hass.callWS<Counter>({
+  menuai.callWS<Counter>({
     type: "counter/update",
     counter_id: id,
     ...updates,
   });
 
-export const deleteCounter = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteCounter = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "counter/delete",
     counter_id: id,
   });

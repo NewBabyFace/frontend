@@ -3,12 +3,12 @@ import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import type { LocalizeKeys } from "../../../../common/translations/localize";
 import type { AssistPipeline } from "../../../../data/assist_pipeline";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../../../components/ha-form/ha-form";
 
 @customElement("assist-pipeline-detail-config")
 export class AssistPipelineDetailConfig extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data?: Partial<AssistPipeline>;
 
@@ -53,7 +53,7 @@ export class AssistPipelineDetailConfig extends LitElement {
 
   private _computeLabel = (schema): string =>
     schema.name
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.panel.config.voice_assistants.assistants.pipeline.detail.form.${schema.name}` as LocalizeKeys
         )
       : "";
@@ -63,12 +63,12 @@ export class AssistPipelineDetailConfig extends LitElement {
       <div class="section">
         <div class="intro">
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.config.title`
             )}
           </h3>
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.config.description`
             )}
           </p>
@@ -76,7 +76,7 @@ export class AssistPipelineDetailConfig extends LitElement {
         <ha-form
           .schema=${this._schema(this.supportedLanguages)}
           .data=${this.data}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .computeLabel=${this._computeLabel}
         ></ha-form>
       </div>

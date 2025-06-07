@@ -2,12 +2,12 @@ import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { array, assert, assign, object, optional, string } from "superstruct";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   AlarmPanelCardConfig,
   AlarmPanelCardConfigState,
@@ -39,7 +39,7 @@ export class HuiAlarmPanelCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: AlarmPanelCardConfig;
 
@@ -51,7 +51,7 @@ export class HuiAlarmPanelCardEditor
   private _schema = memoizeOne(
     (
       localize: LocalizeFunc,
-      stateObj: HassEntity | undefined,
+      stateObj: menuaiEntity | undefined,
       config_states: AlarmPanelCardConfigState[]
     ) =>
       [
@@ -92,11 +92,11 @@ export class HuiAlarmPanelCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
     const defaultFilteredStates = filterSupportedAlarmStates(
       stateObj,
       DEFAULT_STATES
@@ -105,9 +105,9 @@ export class HuiAlarmPanelCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${config}
-        .schema=${this._schema(this.hass.localize, stateObj, config.states)}
+        .schema=${this._schema(this.menuai.localize, stateObj, config.states)}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
@@ -125,7 +125,7 @@ export class HuiAlarmPanelCardEditor
 
     // When changing entities, clear any states that the new entity does not support
     if (newConfig.states && newConfig.entity !== this._config?.entity) {
-      const newStateObj = this.hass?.states[newConfig.entity];
+      const newStateObj = this.menuai?.states[newConfig.entity];
       if (newStateObj) {
         newConfig.states = filterSupportedAlarmStates(
           newStateObj,
@@ -142,22 +142,22 @@ export class HuiAlarmPanelCardEditor
   ) => {
     switch (schema.name) {
       case "entity":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.entity"
         );
       case "name":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.name"
         );
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       default:
         // "states"
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.alarm-panel.available_states"
         );
     }

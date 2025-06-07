@@ -2,14 +2,14 @@ import "@material/mwc-button";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state, query } from "lit/decorators";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import { navigate } from "../../../../../common/navigate";
 import type { SelectionChangedEvent } from "../../../../../components/data-table/ha-data-table";
 import "../../../../../components/ha-spinner";
 import type { ZHADeviceEndpoint, ZHAGroup } from "../../../../../data/zha";
 import { addGroup, fetchGroupableDevices } from "../../../../../data/zha";
-import "../../../../../layouts/hass-subpage";
-import type { HomeAssistant } from "../../../../../types";
+import "../../../../../layouts/menuai-subpage";
+import type { menuai } from "../../../../../types";
 import "../../../ha-config-section";
 import "../../../../../components/ha-textfield";
 import "./zha-device-endpoint-data-table";
@@ -17,7 +17,7 @@ import type { ZHADeviceEndpointDataTable } from "./zha-device-endpoint-data-tabl
 
 @customElement("zha-add-group-page")
 export class ZHAAddGroupPage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -39,14 +39,14 @@ export class ZHAAddGroupPage extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass && this._firstUpdatedCalled) {
+    if (this.menuai && this._firstUpdatedCalled) {
       this._fetchData();
     }
   }
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
-    if (this.hass) {
+    if (this.menuai) {
       this._fetchData();
     }
     this._firstUpdatedCalled = true;
@@ -54,14 +54,14 @@ export class ZHAAddGroupPage extends LitElement {
 
   protected render() {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.zha.groups.create_group")}
+        .header=${this.menuai.localize("ui.panel.config.zha.groups.create_group")}
       >
         <ha-config-section .isWide=${!this.narrow}>
           <p slot="introduction">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zha.groups.create_group_details"
             )}
           </p>
@@ -69,7 +69,7 @@ export class ZHAAddGroupPage extends LitElement {
             type="string"
             .value=${this._groupName}
             @change=${this._handleNameChange}
-            .placeholder=${this.hass!.localize(
+            .placeholder=${this.menuai!.localize(
               "ui.panel.config.zha.groups.group_name_placeholder"
             )}
           ></ha-textfield>
@@ -78,17 +78,17 @@ export class ZHAAddGroupPage extends LitElement {
             type="number"
             .value=${this._groupId}
             @change=${this._handleGroupIdChange}
-            .placeholder=${this.hass!.localize(
+            .placeholder=${this.menuai!.localize(
               "ui.panel.config.zha.groups.group_id_placeholder"
             )}
           ></ha-textfield>
 
           <div class="header">
-            ${this.hass.localize("ui.panel.config.zha.groups.add_members")}
+            ${this.menuai.localize("ui.panel.config.zha.groups.add_members")}
           </div>
 
           <zha-device-endpoint-data-table
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .deviceEndpoints=${this.deviceEndpoints}
             .narrow=${this.narrow}
             selectable
@@ -107,27 +107,27 @@ export class ZHAAddGroupPage extends LitElement {
               ${this._processingAdd
                 ? html`<ha-spinner
                     size="small"
-                    .ariaLabel=${this.hass!.localize(
+                    .ariaLabel=${this.menuai!.localize(
                       "ui.panel.config.zha.groups.creating_group"
                     )}
                   ></ha-spinner>`
                 : ""}
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.config.zha.groups.create"
               )}</mwc-button
             >
           </div>
         </ha-config-section>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private async _fetchData() {
-    this.deviceEndpoints = await fetchGroupableDevices(this.hass!);
+    this.deviceEndpoints = await fetchGroupableDevices(this.menuai!);
   }
 
   private _handleAddSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selectedDevicesToAdd = ev.detail.value;
   }
@@ -142,7 +142,7 @@ export class ZHAAddGroupPage extends LitElement {
       ? parseInt(this._groupId as string, 10)
       : undefined;
     const group: ZHAGroup = await addGroup(
-      this.hass,
+      this.menuai,
       this._groupName,
       groupId,
       members

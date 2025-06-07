@@ -9,7 +9,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { MarkdownCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -28,7 +28,7 @@ export class HuiMarkdownCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: MarkdownCardConfig;
 
@@ -68,7 +68,7 @@ export class HuiMarkdownCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -78,13 +78,13 @@ export class HuiMarkdownCardEditor
     };
 
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this._config.text_only || false
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -112,11 +112,11 @@ export class HuiMarkdownCardEditor
     switch (schema.name) {
       case "style":
       case "content":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.markdown.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

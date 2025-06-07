@@ -3,7 +3,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { getColorByIndex } from "../../../common/color/colors";
 import { applyThemesOnElement } from "../../../common/dom/apply_themes_on_element";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { debounce } from "../../../common/util/debounce";
 import "../../../components/ha-card";
 import type { Calendar, CalendarEvent } from "../../../data/calendar";
@@ -11,7 +11,7 @@ import { fetchCalendarEvents } from "../../../data/calendar";
 import type {
   CalendarViewChanged,
   FullCalendarView,
-  HomeAssistant,
+  menuai,
 } from "../../../types";
 import "../../calendar/ha-full-calendar";
 import { findEntities } from "../common/find-entities";
@@ -27,14 +27,14 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFill: string[]
   ) {
     const includeDomains = ["calendar"];
     const maxEntities = 2;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFill,
@@ -46,7 +46,7 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _events: CalendarEvent[] = [];
 
@@ -104,7 +104,7 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this._config || !this.hass || !this._calendars.length) {
+    if (!this._config || !this.menuai || !this._calendars.length) {
       return nothing;
     }
 
@@ -120,7 +120,7 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
         <ha-full-calendar
           .narrow=${this._narrow}
           .events=${this._events}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .views=${views}
           .initialView=${this._config.initial_view!}
           .eventDisplay=${this._eventDisplay}
@@ -133,26 +133,26 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | CalendarCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      (changedProps.has("hass") && oldHass.themes !== this.hass.themes) ||
+      (changedProps.has("menuai") && oldmenuai.themes !== this.menuai.themes) ||
       (changedProps.has("_config") && oldConfig.theme !== this._config.theme)
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config!.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config!.theme);
     }
   }
 
-  private _handleViewChanged(ev: HASSDomEvent<CalendarViewChanged>): void {
+  private _handleViewChanged(ev: menuaiDomEvent<CalendarViewChanged>): void {
     this._eventDisplay =
       ev.detail.view === "dayGridMonth" ? "list-item" : "auto";
     this._startDate = ev.detail.start;
@@ -167,7 +167,7 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
 
     this._error = undefined;
     const result = await fetchCalendarEvents(
-      this.hass!,
+      this.menuai!,
       this._startDate,
       this._endDate,
       this._calendars
@@ -175,7 +175,7 @@ export class HuiCalendarCard extends LitElement implements LovelaceCard {
     this._events = result.events;
 
     if (result.errors.length > 0) {
-      this._error = `${this.hass!.localize(
+      this._error = `${this.menuai!.localize(
         "ui.components.calendar.event_retrieval_error"
       )}`;
     }

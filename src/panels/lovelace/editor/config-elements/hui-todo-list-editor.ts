@@ -7,7 +7,7 @@ import { isComponentLoaded } from "../../../../common/config/is_component_loaded
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-alert";
 import "../../../../components/ha-form/ha-form";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import type { TodoListCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
@@ -34,7 +34,7 @@ export class HuiTodoListEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: TodoListCardConfig;
 
@@ -78,16 +78,16 @@ export class HuiTodoListEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
         ${
-          !isComponentLoaded(this.hass, "todo")
+          !isComponentLoaded(this.menuai, "todo")
             ? html`
                 <ha-alert alert-type="error">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.editor.card.shopping-list.integration_not_loaded"
                   )}
                 </ha-alert>
@@ -95,9 +95,9 @@ export class HuiTodoListEditor
             : ""
         }
         <ha-form
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .data=${this._data(this._config)}
-          .schema=${this._schema(this.hass.localize, this._todoListSupportsFeature(TodoListEntityFeature.MOVE_TODO_ITEM))}
+          .schema=${this._schema(this.menuai.localize, this._todoListSupportsFeature(TodoListEntityFeature.MOVE_TODO_ITEM))}
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
         ></ha-form>
@@ -112,7 +112,7 @@ export class HuiTodoListEditor
 
   private _todoListSupportsFeature(feature: number): boolean {
     const entityStateObj = this._config?.entity
-      ? this.hass!.states[this._config?.entity]
+      ? this.menuai!.states[this._config?.entity]
       : undefined;
     return !!entityStateObj && supportsFeature(entityStateObj, feature);
   }
@@ -122,19 +122,19 @@ export class HuiTodoListEditor
   ) => {
     switch (schema.name) {
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       case "hide_completed":
       case "hide_create":
       case "display_order":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.todo-list.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

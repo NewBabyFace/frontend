@@ -7,7 +7,7 @@ import type {
   LocalizeFunc,
   LocalizeKeys,
 } from "../../common/translations/localize";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-alert";
 import "../ha-form/ha-form";
 
@@ -133,7 +133,7 @@ const SELECTOR_SCHEMAS = {
 
 @customElement("ha-selector-selector")
 export class HaSelectorSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: any;
 
@@ -148,7 +148,7 @@ export class HaSelectorSelector extends LitElement {
   private _yamlMode = false;
 
   protected shouldUpdate(changedProps: PropertyValues) {
-    if (changedProps.size === 1 && changedProps.has("hass")) {
+    if (changedProps.size === 1 && changedProps.has("menuai")) {
       return false;
     }
     return true;
@@ -213,13 +213,13 @@ export class HaSelectorSelector extends LitElement {
       };
     }
 
-    const schema = this._schema(type, this.hass.localize);
+    const schema = this._schema(type, this.menuai.localize);
 
     return html`<ha-card>
       <div class="card-content">
         <p>${this.label ? this.label : ""}</p>
         <ha-form
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .data=${data}
           .schema=${schema}
           .computeLabel=${this._computeLabelCallback}
@@ -267,7 +267,7 @@ export class HaSelectorSelector extends LitElement {
   }
 
   private _computeLabelCallback = (schema: any): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.components.selectors.selector.${schema.name}` as LocalizeKeys
     ) || schema.name;
 

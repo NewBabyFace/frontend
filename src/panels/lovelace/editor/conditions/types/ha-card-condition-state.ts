@@ -10,7 +10,7 @@ import type {
   SchemaUnion,
   HaFormSchema,
 } from "../../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { StateCondition } from "../../../common/validate-condition";
 
 const stateConditionStruct = object({
@@ -29,7 +29,7 @@ interface StateConditionData {
 
 @customElement("ha-card-condition-state")
 export class HaCardConditionState extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: StateCondition;
 
@@ -111,9 +111,9 @@ export class HaCardConditionState extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .disabled=${this.disabled}
         @value-changed=${this._valueChanged}
         .computeLabel=${this._computeLabelCallback}
@@ -142,9 +142,9 @@ export class HaCardConditionState extends LitElement {
   ): string => {
     switch (schema.name) {
       case "entity":
-        return this.hass.localize("ui.components.entity.entity-picker.entity");
+        return this.menuai.localize("ui.components.entity.entity-picker.entity");
       case "state":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.components.entity.entity-state-picker.state"
         );
       default:

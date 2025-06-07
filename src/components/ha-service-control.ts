@@ -1,8 +1,8 @@
 import { mdiHelpCircle } from "@mdi/js";
 import type {
-  HassService,
-  HassServices,
-  HassServiceTarget,
+  menuaiService,
+  menuaiServices,
+  menuaiServiceTarget,
 } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
@@ -28,7 +28,7 @@ import {
   type Selector,
   type TargetSelector,
 } from "../data/selector";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import { documentationUrl } from "../util/documentation-url";
 import "./ha-checkbox";
 import "./ha-icon-button";
@@ -55,29 +55,29 @@ const showOptionalToggle = (field) =>
   !field.required &&
   !("boolean" in field.selector && field.default);
 
-interface Field extends Omit<HassService["fields"][string], "selector"> {
+interface Field extends Omit<menuaiService["fields"][string], "selector"> {
   key: string;
   selector?: Selector;
 }
 
-interface ExtHassService extends Omit<HassService, "fields"> {
-  fields: (Omit<HassService["fields"][string], "selector"> & {
+interface ExtmenuaiService extends Omit<menuaiService, "fields"> {
+  fields: (Omit<menuaiService["fields"][string], "selector"> & {
     key: string;
     selector?: Selector;
-    fields?: Record<string, Omit<HassService["fields"][string], "selector">>;
+    fields?: Record<string, Omit<menuaiService["fields"][string], "selector">>;
     collapsed?: boolean;
   })[];
   flatFields: Field[];
-  hasSelector: string[];
+  menuaielector: string[];
 }
 
 @customElement("ha-service-control")
 export class HaServiceControl extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: {
     action: string;
-    target?: HassServiceTarget;
+    target?: menuaiServiceTarget;
     data?: Record<string, any>;
   };
 
@@ -109,8 +109,8 @@ export class HaServiceControl extends LitElement {
 
   protected willUpdate(changedProperties: PropertyValues<this>) {
     if (!this.hasUpdated) {
-      this.hass.loadBackendTranslation("services");
-      this.hass.loadBackendTranslation("selector");
+      this.menuai.loadBackendTranslation("services");
+      this.menuai.loadBackendTranslation("selector");
     }
     if (!changedProperties.has("value")) {
       return;
@@ -125,7 +125,7 @@ export class HaServiceControl extends LitElement {
 
     const serviceData = this._getServiceInfo(
       this.value?.action,
-      this.hass.services
+      this.menuai.services
     );
 
     // Fetch the manifest if we have a service selected and the service domain changed.
@@ -225,8 +225,8 @@ export class HaServiceControl extends LitElement {
   private _getServiceInfo = memoizeOne(
     (
       service?: string,
-      serviceDomains?: HassServices
-    ): ExtHassService | undefined => {
+      serviceDomains?: menuaiServices
+    ): ExtmenuaiService | undefined => {
       if (!service || !serviceDomains) {
         return undefined;
       }
@@ -248,19 +248,19 @@ export class HaServiceControl extends LitElement {
       }));
 
       const flatFields: Field[] = [];
-      const hasSelector: string[] = [];
+      const menuaielector: string[] = [];
       fields.forEach((field) => {
         if ((field as any).fields) {
           Object.entries((field as any).fields).forEach(([key, subField]) => {
             flatFields.push({ ...(subField as Field), key });
             if ((subField as any).selector) {
-              hasSelector.push(key);
+              menuaielector.push(key);
             }
           });
         } else {
           flatFields.push(field);
           if (field.selector) {
-            hasSelector.push(field.key);
+            menuaielector.push(field.key);
           }
         }
       });
@@ -269,7 +269,7 @@ export class HaServiceControl extends LitElement {
         ...serviceDomains[domain][serviceName],
         fields,
         flatFields,
-        hasSelector,
+        menuaielector,
       };
     }
   );
@@ -296,11 +296,11 @@ export class HaServiceControl extends LitElement {
     if (targetLabels) {
       targetLabels.forEach((labelId) => {
         const expanded = expandLabelTarget(
-          this.hass,
+          this.menuai,
           labelId,
-          this.hass.areas,
-          this.hass.devices,
-          this.hass.entities,
+          this.menuai.areas,
+          this.menuai.devices,
+          this.menuai.entities,
           targetSelector
         );
         targetDevices.push(...expanded.devices);
@@ -311,9 +311,9 @@ export class HaServiceControl extends LitElement {
     if (targetFloors) {
       targetFloors.forEach((floorId) => {
         const expanded = expandFloorTarget(
-          this.hass,
+          this.menuai,
           floorId,
-          this.hass.areas,
+          this.menuai.areas,
           targetSelector
         );
         targetAreas.push(...expanded.areas);
@@ -322,10 +322,10 @@ export class HaServiceControl extends LitElement {
     if (targetAreas.length) {
       targetAreas.forEach((areaId) => {
         const expanded = expandAreaTarget(
-          this.hass,
+          this.menuai,
           areaId,
-          this.hass.devices,
-          this.hass.entities,
+          this.menuai.devices,
+          this.menuai.entities,
           targetSelector
         );
         targetEntities.push(...expanded.entities);
@@ -336,9 +336,9 @@ export class HaServiceControl extends LitElement {
       targetDevices.forEach((deviceId) => {
         targetEntities.push(
           ...expandDeviceTarget(
-            this.hass,
+            this.menuai,
             deviceId,
-            this.hass.entities,
+            this.menuai.entities,
             targetSelector
           ).entities
         );
@@ -348,7 +348,7 @@ export class HaServiceControl extends LitElement {
   });
 
   private _filterField(
-    filter: ExtHassService["fields"][number]["filter"],
+    filter: ExtmenuaiService["fields"][number]["filter"],
     targetEntities: string[]
   ) {
     if (!targetEntities.length) {
@@ -356,7 +356,7 @@ export class HaServiceControl extends LitElement {
     }
     if (
       targetEntities.some((entityId) => {
-        const entityState = this.hass.states[entityId];
+        const entityState = this.menuai.states[entityId];
         if (!entityState) {
           return false;
         }
@@ -393,14 +393,14 @@ export class HaServiceControl extends LitElement {
   protected render() {
     const serviceData = this._getServiceInfo(
       this._value?.action,
-      this.hass.services
+      this.menuai.services
     );
 
     const shouldRenderServiceDataYaml =
-      (serviceData?.fields.length && !serviceData.hasSelector.length) ||
+      (serviceData?.fields.length && !serviceData.menuaielector.length) ||
       (serviceData &&
         Object.keys(this._value?.data || {}).some(
-          (key) => !serviceData!.hasSelector.includes(key)
+          (key) => !serviceData!.menuaielector.includes(key)
         ));
 
     const entityId =
@@ -426,7 +426,7 @@ export class HaServiceControl extends LitElement {
 
     const description =
       (serviceName &&
-        this.hass.localize(
+        this.menuai.localize(
           `component.${domain}.services.${serviceName}.description`
         )) ||
       serviceData?.description;
@@ -434,7 +434,7 @@ export class HaServiceControl extends LitElement {
     return html`${this.hidePicker
       ? nothing
       : html`<ha-service-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._value?.action}
           .disabled=${this.disabled}
           @value-changed=${this._serviceChanged}
@@ -449,11 +449,11 @@ export class HaServiceControl extends LitElement {
               ? html` <a
                   href=${this._manifest.is_built_in
                     ? documentationUrl(
-                        this.hass,
+                        this.menuai,
                         `/integrations/${this._manifest.domain}`
                       )
                     : this._manifest.documentation}
-                  title=${this.hass.localize(
+                  title=${this.menuai.localize(
                     "ui.components.service-control.integration_doc"
                   )}
                   target="_blank"
@@ -473,14 +473,14 @@ export class HaServiceControl extends LitElement {
             ? html`<div slot="prefix" class="checkbox-spacer"></div>`
             : ""}
           <span slot="heading"
-            >${this.hass.localize("ui.components.service-control.target")}</span
+            >${this.menuai.localize("ui.components.service-control.target")}</span
           >
           <span slot="description"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.components.service-control.target_secondary"
             )}</span
           ><ha-selector
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .selector=${this._targetSelector(
               serviceData.target as TargetSelector
             )}
@@ -491,10 +491,10 @@ export class HaServiceControl extends LitElement {
         ></ha-settings-row>`
       : entityId
         ? html`<ha-entity-picker
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .disabled=${this.disabled}
             .value=${this._value?.data?.entity_id}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               `component.${domain}.services.${serviceName}.fields.entity_id.description`
             ) || entityId.description}
             @value-changed=${this._entityPicked}
@@ -503,8 +503,8 @@ export class HaServiceControl extends LitElement {
         : ""}
     ${shouldRenderServiceDataYaml
       ? html`<ha-yaml-editor
-          .hass=${this.hass}
-          .label=${this.hass.localize(
+          .menuai=${this.menuai}
+          .label=${this.menuai.localize(
             "ui.components.service-control.action_data"
           )}
           .name=${"data"}
@@ -532,7 +532,7 @@ export class HaServiceControl extends LitElement {
             ? html`<ha-expansion-panel
                 left-chevron
                 .expanded=${!dataField.collapsed}
-                .header=${this.hass.localize(
+                .header=${this.menuai.localize(
                   `component.${domain}.services.${serviceName}.sections.${dataField.key}.name`
                 ) ||
                 dataField.name ||
@@ -545,7 +545,7 @@ export class HaServiceControl extends LitElement {
               >
                 <ha-service-section-icon
                   slot="icons"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .service=${this._value!.action}
                   .section=${dataField.key}
                 ></ha-service-section-icon>
@@ -564,17 +564,17 @@ export class HaServiceControl extends LitElement {
   }
 
   private _getSectionDescription(
-    dataField: ExtHassService["fields"][number],
+    dataField: ExtmenuaiService["fields"][number],
     domain: string | undefined,
     serviceName: string | undefined
   ) {
-    return this.hass!.localize(
+    return this.menuai!.localize(
       `component.${domain}.services.${serviceName}.sections.${dataField.key}.description`
     );
   }
 
   private _hasFilteredFields(
-    dataFields: ExtHassService["fields"],
+    dataFields: ExtmenuaiService["fields"],
     targetEntities: string[]
   ) {
     return dataFields.some(
@@ -584,7 +584,7 @@ export class HaServiceControl extends LitElement {
   }
 
   private _renderField = (
-    dataField: ExtHassService["fields"][number],
+    dataField: ExtmenuaiService["fields"][number],
     hasOptional: boolean,
     domain: string | undefined,
     serviceName: string | undefined,
@@ -636,14 +636,14 @@ export class HaServiceControl extends LitElement {
                 slot="prefix"
               ></ha-checkbox>`}
           <span slot="heading"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               `component.${domain}.services.${serviceName}.fields.${dataField.key}.name`
             ) ||
             dataField.name ||
             dataField.key}</span
           >
           <span slot="description"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               `component.${domain}.services.${serviceName}.fields.${dataField.key}.description`
             ) || dataField?.description}</span
           >
@@ -653,7 +653,7 @@ export class HaServiceControl extends LitElement {
               !this._checkedKeys.has(dataField.key) &&
               (!this._value?.data ||
                 this._value.data[dataField.key] === undefined))}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .selector=${selector}
             .key=${dataField.key}
             @value-changed=${this._serviceDataChanged}
@@ -671,7 +671,7 @@ export class HaServiceControl extends LitElement {
     if (!this._value?.action) {
       return "";
     }
-    return this.hass.localize(
+    return this.menuai.localize(
       `component.${computeDomain(this._value.action)}.selector.${key}`
     );
   };
@@ -685,7 +685,7 @@ export class HaServiceControl extends LitElement {
       this._checkedKeys.add(key);
       const field = this._getServiceInfo(
         this._value?.action,
-        this.hass.services
+        this.menuai.services
       )?.flatFields.find((_field) => _field.key === key);
 
       let defaultValue = field?.default;
@@ -736,10 +736,10 @@ export class HaServiceControl extends LitElement {
     }
 
     const newService = ev.detail.value || "";
-    let target: HassServiceTarget | undefined;
+    let target: menuaiServiceTarget | undefined;
 
     if (newService) {
-      const serviceData = this._getServiceInfo(newService, this.hass.services);
+      const serviceData = this._getServiceInfo(newService, this.menuai.services);
       const currentTarget = this._value?.target;
       if (currentTarget && serviceData?.target) {
         const targetSelector = { target: { ...serviceData.target } };
@@ -758,9 +758,9 @@ export class HaServiceControl extends LitElement {
         if (targetAreas.length) {
           targetAreas = targetAreas.filter((area) =>
             areaMeetsTargetSelector(
-              this.hass,
-              this.hass.entities,
-              this.hass.devices,
+              this.menuai,
+              this.menuai.entities,
+              this.menuai.devices,
               area,
               targetSelector
             )
@@ -769,16 +769,16 @@ export class HaServiceControl extends LitElement {
         if (targetDevices.length) {
           targetDevices = targetDevices.filter((device) =>
             deviceMeetsTargetSelector(
-              this.hass,
-              Object.values(this.hass.entities),
-              this.hass.devices[device],
+              this.menuai,
+              Object.values(this.menuai.entities),
+              this.menuai.devices[device],
               targetSelector
             )
           );
         }
         if (targetEntities.length) {
           targetEntities = targetEntities.filter((entity) =>
-            entityMeetsTargetSelector(this.hass.states[entity], targetSelector)
+            entityMeetsTargetSelector(this.menuai.states[entity], targetSelector)
           );
         }
         target = {
@@ -889,7 +889,7 @@ export class HaServiceControl extends LitElement {
   private async _fetchManifest(integration: string) {
     this._manifest = undefined;
     try {
-      this._manifest = await fetchIntegrationManifest(this.hass, integration);
+      this._manifest = await fetchIntegrationManifest(this.menuai, integration);
     } catch (_err: any) {
       // Ignore if loading manifest fails. Probably bad JSON in manifest
     }

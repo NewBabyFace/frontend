@@ -23,13 +23,13 @@ import {
 } from "../../data/todo";
 import { showConfirmationDialog } from "../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { TodoItemEditDialogParams } from "./show-dialog-todo-item-editor";
 import { supportsMarkdownHelper } from "../../common/translations/markdown_support";
 
 @customElement("dialog-todo-item-editor")
 class DialogTodoItemEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: string;
 
@@ -48,8 +48,8 @@ class DialogTodoItemEditor extends LitElement {
   @state() private _submitting = false;
 
   // Dates are manipulated and displayed in the browser timezone
-  // which may be different from the Home Assistant timezone. When
-  // events are persisted, they are relative to the Home Assistant
+  // which may be different from the MenuAI timezone. When
+  // events are persisted, they are relative to the MenuAI
   // timezone, but floating without a timezone.
   private _timeZone?: string;
 
@@ -57,8 +57,8 @@ class DialogTodoItemEditor extends LitElement {
     this._error = undefined;
     this._params = params;
     this._timeZone = resolveTimeZone(
-      this.hass.locale.time_zone,
-      this.hass.config.time_zone
+      this.menuai.locale.time_zone,
+      this.menuai.config.time_zone
     );
     if (params.item) {
       const entry = params.item;
@@ -107,8 +107,8 @@ class DialogTodoItemEditor extends LitElement {
         @closed=${this.closeDialog}
         scrimClickAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             `ui.components.todo.item.${isCreate ? "add" : "edit"}`
           )
         )}
@@ -127,11 +127,11 @@ class DialogTodoItemEditor extends LitElement {
             <ha-textfield
               class="summary"
               name="summary"
-              .label=${this.hass.localize("ui.components.todo.item.summary")}
+              .label=${this.menuai.localize("ui.components.todo.item.summary")}
               .value=${this._summary}
               required
               @input=${this._handleSummaryChanged}
-              .validationMessage=${this.hass.localize(
+              .validationMessage=${this.menuai.localize(
                 "ui.common.error_required"
               )}
               dialogInitialFocus
@@ -144,10 +144,10 @@ class DialogTodoItemEditor extends LitElement {
             ? html`<ha-textarea
                 class="description"
                 name="description"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.components.todo.item.description"
                 )}
-                .helper=${supportsMarkdownHelper(this.hass.localize)}
+                .helper=${supportsMarkdownHelper(this.menuai.localize)}
                 .value=${this._description}
                 @input=${this._handleDescriptionChanged}
                 autogrow
@@ -162,12 +162,12 @@ class DialogTodoItemEditor extends LitElement {
           )
             ? html`<div>
                 <span class="label"
-                  >${this.hass.localize("ui.components.todo.item.due")}:</span
+                  >${this.menuai.localize("ui.components.todo.item.due")}:</span
                 >
                 <div class="flex">
                   <ha-date-input
                     .value=${dueDate}
-                    .locale=${this.hass.locale}
+                    .locale=${this.menuai.locale}
                     .disabled=${!canUpdate}
                     @value-changed=${this._dueDateChanged}
                     can-clear
@@ -177,7 +177,7 @@ class DialogTodoItemEditor extends LitElement {
                   )
                     ? html`<ha-time-input
                         .value=${dueTime}
-                        .locale=${this.hass.locale}
+                        .locale=${this.menuai.locale}
                         .disabled=${!canUpdate}
                         @value-changed=${this._dueTimeChanged}
                       ></ha-time-input>`
@@ -193,7 +193,7 @@ class DialogTodoItemEditor extends LitElement {
                 @click=${this._createItem}
                 .disabled=${this._submitting}
               >
-                ${this.hass.localize("ui.components.todo.item.add")}
+                ${this.menuai.localize("ui.components.todo.item.add")}
               </mwc-button>
             `
           : html`
@@ -202,7 +202,7 @@ class DialogTodoItemEditor extends LitElement {
                 @click=${this._saveItem}
                 .disabled=${!canUpdate || this._submitting}
               >
-                ${this.hass.localize("ui.components.todo.item.save")}
+                ${this.menuai.localize("ui.components.todo.item.save")}
               </mwc-button>
               ${this._todoListSupportsFeature(
                 TodoListEntityFeature.DELETE_TODO_ITEM
@@ -214,7 +214,7 @@ class DialogTodoItemEditor extends LitElement {
                       @click=${this._deleteItem}
                       .disabled=${this._submitting}
                     >
-                      ${this.hass.localize("ui.components.todo.item.delete")}
+                      ${this.menuai.localize("ui.components.todo.item.delete")}
                     </mwc-button>
                   `
                 : ""}
@@ -227,7 +227,7 @@ class DialogTodoItemEditor extends LitElement {
     if (!this._params?.entity) {
       return false;
     }
-    const entityStateObj = this.hass!.states[this._params?.entity];
+    const entityStateObj = this.menuai!.states[this._params?.entity];
     return entityStateObj && supportsFeature(entityStateObj, feature);
   }
 
@@ -286,7 +286,7 @@ class DialogTodoItemEditor extends LitElement {
 
   private async _createItem() {
     if (!this._summary) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.todo.item.not_all_required_fields"
       );
       return;
@@ -294,7 +294,7 @@ class DialogTodoItemEditor extends LitElement {
 
     this._submitting = true;
     try {
-      await createItem(this.hass!, this._params!.entity, {
+      await createItem(this.menuai!, this._params!.entity, {
         summary: this._summary,
         description: this._description,
         due: this._due
@@ -314,7 +314,7 @@ class DialogTodoItemEditor extends LitElement {
 
   private async _saveItem() {
     if (!this._summary) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.todo.item.not_all_required_fields"
       );
       return;
@@ -324,7 +324,7 @@ class DialogTodoItemEditor extends LitElement {
     const entry = this._params!.item!;
 
     try {
-      await updateItem(this.hass!, this._params!.entity, {
+      await updateItem(this.menuai!, this._params!.entity, {
         ...entry,
         summary: this._summary,
         description:
@@ -363,13 +363,13 @@ class DialogTodoItemEditor extends LitElement {
     this._submitting = true;
     const entry = this._params!.item!;
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.components.todo.item.confirm_delete.delete"
       ),
-      text: this.hass.localize("ui.components.todo.item.confirm_delete.prompt"),
+      text: this.menuai.localize("ui.components.todo.item.confirm_delete.prompt"),
       destructive: true,
-      confirmText: this.hass.localize("ui.common.delete"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
     });
     if (!confirm) {
       // Cancel
@@ -377,7 +377,7 @@ class DialogTodoItemEditor extends LitElement {
       return;
     }
     try {
-      await deleteItems(this.hass!, this._params!.entity, [entry.uid]);
+      await deleteItems(this.menuai!, this._params!.entity, [entry.uid]);
     } catch (err: any) {
       this._error = err ? err.message : "Unknown error";
       return;

@@ -1,34 +1,34 @@
 import type { Auth, Connection } from "home-assistant-js-websocket";
 import { LitElement } from "lit";
 import { property } from "lit/decorators";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-export class HassBaseEl extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+export class menuaiBaseEl extends LitElement {
+  @property({ attribute: false }) public menuai?: menuai;
 
-  protected _pendingHass: Partial<HomeAssistant> = {};
+  protected _pendingmenuai: Partial<menuai> = {};
 
   // eslint-disable-next-line: variable-name
-  private __provideHass: HTMLElement[] = [];
+  private __providemenuai: HTMLElement[] = [];
 
-  public provideHass(el) {
-    this.__provideHass.push(el);
-    el.hass = this.hass;
+  public providemenuai(el) {
+    this.__providemenuai.push(el);
+    el.menuai = this.menuai;
   }
 
-  protected initializeHass(_auth: Auth, _conn: Connection) {
+  protected initializemenuai(_auth: Auth, _conn: Connection) {
     // implemented in connection-mixin
   }
 
   // Exists so all methods can safely call super method
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  protected hassConnected() {}
+  protected menuaiConnected() {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  protected hassReconnected() {}
+  protected menuaiReconnected() {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  protected hassDisconnected() {}
+  protected menuaiDisconnected() {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected panelUrlChanged(_newPanelUrl) {}
@@ -36,17 +36,17 @@ export class HassBaseEl extends LitElement {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected checkDataBaseMigration() {}
 
-  protected hassChanged(hass, _oldHass) {
-    this.__provideHass.forEach((el) => {
-      (el as any).hass = hass;
+  protected menuaiChanged(menuai, _oldmenuai) {
+    this.__providemenuai.forEach((el) => {
+      (el as any).menuai = menuai;
     });
   }
 
-  protected _updateHass(obj: Partial<HomeAssistant>) {
-    if (!this.hass) {
-      this._pendingHass = { ...this._pendingHass, ...obj };
+  protected _updatemenuai(obj: Partial<menuai>) {
+    if (!this.menuai) {
+      this._pendingmenuai = { ...this._pendingmenuai, ...obj };
       return;
     }
-    this.hass = { ...this.hass, ...obj };
+    this.menuai = { ...this.menuai, ...obj };
   }
 }

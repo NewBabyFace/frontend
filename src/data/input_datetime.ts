@@ -1,5 +1,5 @@
-import type { HassEntity } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuaiEntity } from "home-assistant-js-websocket";
+import type { menuai } from "../types";
 
 export interface InputDateTime {
   id: string;
@@ -18,7 +18,7 @@ export interface InputDateTimeMutableParams {
   has_date: boolean;
 }
 
-export const stateToIsoDateString = (entityState: HassEntity) =>
+export const stateToIsoDateString = (entityState: menuaiEntity) =>
   `${entityState.attributes.year || "1970"}-${String(
     entityState.attributes.month || "01"
   ).padStart(2, "0")}-${String(entityState.attributes.day || "01").padStart(
@@ -32,40 +32,40 @@ export const stateToIsoDateString = (entityState: HassEntity) =>
   )}`;
 
 export const setInputDateTimeValue = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   time: string | undefined = undefined,
   date: string | undefined = undefined
 ) => {
   const param = { entity_id: entityId, time, date };
-  hass.callService("input_datetime", "set_datetime", param);
+  menuai.callService("input_datetime", "set_datetime", param);
 };
 
-export const fetchInputDateTime = (hass: HomeAssistant) =>
-  hass.callWS<InputDateTime[]>({ type: "input_datetime/list" });
+export const fetchInputDateTime = (menuai: menuai) =>
+  menuai.callWS<InputDateTime[]>({ type: "input_datetime/list" });
 
 export const createInputDateTime = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: InputDateTimeMutableParams
 ) =>
-  hass.callWS<InputDateTime>({
+  menuai.callWS<InputDateTime>({
     type: "input_datetime/create",
     ...values,
   });
 
 export const updateInputDateTime = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<InputDateTimeMutableParams>
 ) =>
-  hass.callWS<InputDateTime>({
+  menuai.callWS<InputDateTime>({
     type: "input_datetime/update",
     input_datetime_id: id,
     ...updates,
   });
 
-export const deleteInputDateTime = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteInputDateTime = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "input_datetime/delete",
     input_datetime_id: id,
   });

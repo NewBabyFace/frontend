@@ -13,7 +13,7 @@ import type { LovelaceSectionElement } from "../../../data/lovelace";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
 import type { LovelaceSectionConfig } from "../../../data/lovelace/config/section";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiCard } from "../cards/hui-card";
 import { computeCardGridSize } from "../common/compute-card-grid-size";
 import "../components/hui-card-edit-mode";
@@ -40,7 +40,7 @@ const IMPORT_MODE_CARD_SORTABLE_OPTIONS: HaSortableOptions = {
 
 @customElement("hui-grid-section")
 export class GridSection extends LitElement implements LovelaceSectionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -136,7 +136,7 @@ export class GridSection extends LitElement implements LovelaceSectionElement {
                   ${editMode
                     ? html`
                         <hui-card-edit-mode
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .lovelace=${this.lovelace!}
                           .path=${cardPath}
                           .hiddenOverlay=${this._dragging}
@@ -156,10 +156,10 @@ export class GridSection extends LitElement implements LovelaceSectionElement {
                 <button
                   class="add"
                   @click=${this._addCard}
-                  aria-label=${this.hass.localize(
+                  aria-label=${this.menuai.localize(
                     "ui.panel.lovelace.editor.section.add_card"
                   )}
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.panel.lovelace.editor.section.add_card"
                   )}
                 >

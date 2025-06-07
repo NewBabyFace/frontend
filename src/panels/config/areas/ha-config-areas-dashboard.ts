@@ -40,8 +40,8 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-tabs-subpage";
+import type { menuai, Route } from "../../../types";
 import "../ha-config-section";
 import { configSections } from "../ha-panel-config";
 import {
@@ -56,7 +56,7 @@ const SORT_OPTIONS = { sort: false, delay: 500, delayOnTouchOnly: true };
 
 @customElement("ha-config-areas-dashboard")
 export class HaConfigAreasDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -69,9 +69,9 @@ export class HaConfigAreasDashboard extends LitElement {
   private _processAreas = memoizeOne(
     (
       areas: AreaRegistryEntry[],
-      devices: HomeAssistant["devices"],
-      entities: HomeAssistant["entities"],
-      floors: HomeAssistant["floors"]
+      devices: menuai["devices"],
+      entities: menuai["entities"],
+      floors: menuai["floors"]
     ) => {
       const processArea = (area: AreaRegistryEntry) => {
         let noDevicesInArea = 0;
@@ -118,31 +118,31 @@ export class HaConfigAreasDashboard extends LitElement {
 
   protected willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties);
-    if (changedProperties.has("hass")) {
-      const oldHass = changedProperties.get("hass");
-      if (this.hass.areas !== oldHass?.areas) {
-        this._areas = Object.values(this.hass.areas);
+    if (changedProperties.has("menuai")) {
+      const oldmenuai = changedProperties.get("menuai");
+      if (this.menuai.areas !== oldmenuai?.areas) {
+        this._areas = Object.values(this.menuai.areas);
       }
     }
   }
 
   protected render(): TemplateResult {
     const areasAndFloors =
-      !this.hass.areas ||
-      !this.hass.devices ||
-      !this.hass.entities ||
-      !this.hass.floors
+      !this.menuai.areas ||
+      !this.menuai.devices ||
+      !this.menuai.entities ||
+      !this.menuai.floors
         ? undefined
         : this._processAreas(
             this._areas,
-            this.hass.devices,
-            this.hass.entities,
-            this.hass.floors
+            this.menuai.devices,
+            this.menuai.entities,
+            this.menuai.floors
           );
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .isWide=${this.isWide}
         back-path="/config"
@@ -152,7 +152,7 @@ export class HaConfigAreasDashboard extends LitElement {
       >
         <ha-icon-button
           slot="toolbar-icon"
-          .label=${this.hass.localize("ui.common.help")}
+          .label=${this.menuai.localize("ui.common.help")}
           .path=${mdiHelpCircle}
           @click=${this._showHelp}
         ></ha-icon-button>
@@ -178,7 +178,7 @@ export class HaConfigAreasDashboard extends LitElement {
                         .path=${mdiPencil}
                         slot="graphic"
                       ></ha-svg-icon
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.areas.picker.floor.edit_floor"
                       )}</ha-list-item
                     >
@@ -188,7 +188,7 @@ export class HaConfigAreasDashboard extends LitElement {
                         .path=${mdiDelete}
                         slot="graphic"
                       ></ha-svg-icon
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.areas.picker.floor.delete_floor"
                       )}</ha-list-item
                     >
@@ -212,7 +212,7 @@ export class HaConfigAreasDashboard extends LitElement {
             ? html`<div class="floor">
                 <div class="header">
                   <h2>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.areas.picker.unassigned_areas"
                     )}
                   </h2>
@@ -237,7 +237,7 @@ export class HaConfigAreasDashboard extends LitElement {
         <ha-fab
           slot="fab"
           class="floor"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.areas.picker.create_floor"
           )}
           extended
@@ -247,7 +247,7 @@ export class HaConfigAreasDashboard extends LitElement {
         </ha-fab>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.areas.picker.create_area"
           )}
           extended
@@ -255,7 +255,7 @@ export class HaConfigAreasDashboard extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -286,20 +286,20 @@ export class HaConfigAreasDashboard extends LitElement {
         <div class="card-content">
           <div>
             ${formatListWithAnds(
-              this.hass.locale,
+              this.menuai.locale,
               [
                 area.devices &&
-                  this.hass.localize(
+                  this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.devices",
                     { count: area.devices }
                   ),
                 area.services &&
-                  this.hass.localize(
+                  this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.services",
                     { count: area.services }
                   ),
                 area.entities &&
-                  this.hass.localize(
+                  this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.entities",
                     { count: area.entities }
                   ),
@@ -322,7 +322,7 @@ export class HaConfigAreasDashboard extends LitElement {
     showAreaRegistryDetailDialog(this, {
       entry: area,
       updateEntry: async (values) =>
-        updateAreaRegistryEntry(this.hass!, area.area_id, values),
+        updateAreaRegistryEntry(this.menuai!, area.area_id, values),
     });
   }
 
@@ -341,7 +341,7 @@ export class HaConfigAreasDashboard extends LitElement {
       return a;
     });
 
-    await updateAreaRegistryEntry(this.hass, area.area_id, {
+    await updateAreaRegistryEntry(this.menuai, area.area_id, {
       floor_id: newFloorId,
     });
   }
@@ -368,19 +368,19 @@ export class HaConfigAreasDashboard extends LitElement {
 
   private async _deleteFloor(floor) {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.areas.picker.floor.confirm_delete"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.areas.picker.floor.confirm_delete_text"
       ),
-      confirmText: this.hass.localize("ui.common.delete"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
     });
     if (!confirm) {
       return;
     }
-    await deleteFloorRegistryEntry(this.hass, floor.floor_id);
+    await deleteFloorRegistryEntry(this.menuai, floor.floor_id);
   }
 
   private _createArea() {
@@ -389,14 +389,14 @@ export class HaConfigAreasDashboard extends LitElement {
 
   private _showHelp() {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.panel.config.areas.caption"),
+      title: this.menuai.localize("ui.panel.config.areas.caption"),
       text: html`
-        ${this.hass.localize("ui.panel.config.areas.picker.introduction")}
+        ${this.menuai.localize("ui.panel.config.areas.picker.introduction")}
         <p>
-          ${this.hass.localize("ui.panel.config.areas.picker.introduction2")}
+          ${this.menuai.localize("ui.panel.config.areas.picker.introduction2")}
         </p>
         <a href="/config/integrations/dashboard">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.areas.picker.integrations_page"
           )}
         </a>
@@ -408,7 +408,7 @@ export class HaConfigAreasDashboard extends LitElement {
     showAreaRegistryDetailDialog(this, {
       entry,
       createEntry: async (values) =>
-        createAreaRegistryEntry(this.hass!, values),
+        createAreaRegistryEntry(this.menuai!, values),
     });
   }
 
@@ -416,26 +416,26 @@ export class HaConfigAreasDashboard extends LitElement {
     showFloorRegistryDetailDialog(this, {
       entry,
       createEntry: async (values, addedAreas) => {
-        const floor = await createFloorRegistryEntry(this.hass!, values);
+        const floor = await createFloorRegistryEntry(this.menuai!, values);
         addedAreas.forEach((areaId) => {
-          updateAreaRegistryEntry(this.hass, areaId, {
+          updateAreaRegistryEntry(this.menuai, areaId, {
             floor_id: floor.floor_id,
           });
         });
       },
       updateEntry: async (values, addedAreas, removedAreas) => {
         const floor = await updateFloorRegistryEntry(
-          this.hass!,
+          this.menuai!,
           entry!.floor_id,
           values
         );
         addedAreas.forEach((areaId) => {
-          updateAreaRegistryEntry(this.hass, areaId, {
+          updateAreaRegistryEntry(this.menuai, areaId, {
             floor_id: floor.floor_id,
           });
         });
         removedAreas.forEach((areaId) => {
-          updateAreaRegistryEntry(this.hass, areaId, {
+          updateAreaRegistryEntry(this.menuai, areaId, {
             floor_id: null,
           });
         });

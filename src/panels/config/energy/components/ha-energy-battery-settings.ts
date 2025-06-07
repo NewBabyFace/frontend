@@ -21,7 +21,7 @@ import {
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { documentationUrl } from "../../../../util/documentation-url";
 import { showEnergySettingsBatteryDialog } from "../dialogs/show-dialogs-energy";
 import "./ha-energy-validation-result";
@@ -29,7 +29,7 @@ import { energyCardStyles } from "./styles";
 
 @customElement("ha-energy-battery-settings")
 export class EnergyBatterySettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public preferences!: EnergyPreferences;
@@ -59,17 +59,17 @@ export class EnergyBatterySettings extends LitElement {
       <ha-card outlined>
         <h1 class="card-header">
           <ha-svg-icon .path=${mdiBatteryHigh}></ha-svg-icon>
-          ${this.hass.localize("ui.panel.config.energy.battery.title")}
+          ${this.menuai.localize("ui.panel.config.energy.battery.title")}
         </h1>
 
         <div class="card-content">
           <p>
-            ${this.hass.localize("ui.panel.config.energy.battery.sub")}
+            ${this.menuai.localize("ui.panel.config.energy.battery.sub")}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href=${documentationUrl(this.hass, "/docs/energy/battery/")}
-              >${this.hass.localize(
+              href=${documentationUrl(this.menuai, "/docs/energy/battery/")}
+              >${this.menuai.localize(
                 "ui.panel.config.energy.battery.learn_more"
               )}</a
             >
@@ -77,19 +77,19 @@ export class EnergyBatterySettings extends LitElement {
           ${batteryValidation.map(
             (result) => html`
               <ha-energy-validation-result
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .issues=${result}
               ></ha-energy-validation-result>
             `
           )}
 
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.battery.battery_systems"
             )}
           </h3>
           ${batterySources.map((source) => {
-            const toEntityState = this.hass.states[source.stat_energy_to];
+            const toEntityState = this.menuai.states[source.stat_energy_to];
             return html`
               <div class="row" .source=${source}>
                 ${toEntityState?.attributes.icon
@@ -100,28 +100,28 @@ export class EnergyBatterySettings extends LitElement {
                 <div class="content">
                   <span class="label"
                     >${getStatisticLabel(
-                      this.hass,
+                      this.menuai,
                       source.stat_energy_from,
                       this.statsMetadata?.[source.stat_energy_from]
                     )}</span
                   >
                   <span class="label"
                     >${getStatisticLabel(
-                      this.hass,
+                      this.menuai,
                       source.stat_energy_to,
                       this.statsMetadata?.[source.stat_energy_to]
                     )}</span
                   >
                 </div>
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.battery.edit_battery_system"
                   )}
                   @click=${this._editSource}
                   .path=${mdiPencil}
                 ></ha-icon-button>
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.battery.delete_battery_system"
                   )}
                   @click=${this._deleteSource}
@@ -133,7 +133,7 @@ export class EnergyBatterySettings extends LitElement {
           <div class="row border-bottom">
             <ha-svg-icon .path=${mdiBatteryHigh}></ha-svg-icon>
             <mwc-button @click=${this._addSource}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.battery.add_battery_system"
               )}</mwc-button
             >
@@ -182,7 +182,7 @@ export class EnergyBatterySettings extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_source"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_source"),
       }))
     ) {
       return;
@@ -201,7 +201,7 @@ export class EnergyBatterySettings extends LitElement {
   }
 
   private async _savePreferences(preferences: EnergyPreferences) {
-    const result = await saveEnergyPreferences(this.hass, preferences);
+    const result = await saveEnergyPreferences(this.menuai, preferences);
     fireEvent(this, "value-changed", { value: result });
   }
 

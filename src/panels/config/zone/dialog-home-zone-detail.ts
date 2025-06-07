@@ -8,7 +8,7 @@ import { createCloseHeading } from "../../../components/ha-dialog";
 import "../../../components/ha-form/ha-form";
 import type { HomeZoneMutableParams } from "../../../data/zone";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HomeZoneDetailDialogParams } from "./show-dialog-home-zone-detail";
 
 const SCHEMA = [
@@ -20,7 +20,7 @@ const SCHEMA = [
 ];
 
 class DialogHomeZoneDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: Record<string, string>;
 
@@ -34,9 +34,9 @@ class DialogHomeZoneDetail extends LitElement {
     this._params = params;
     this._error = undefined;
     this._data = {
-      latitude: this.hass.config.latitude,
-      longitude: this.hass.config.longitude,
-      radius: this.hass.config.radius,
+      latitude: this.menuai.config.latitude,
+      longitude: this.menuai.config.longitude,
+      radius: this.menuai.config.radius,
     };
   }
 
@@ -62,13 +62,13 @@ class DialogHomeZoneDetail extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass!.localize("ui.panel.config.zone.edit_home")
+          this.menuai,
+          this.menuai!.localize("ui.panel.config.zone.edit_home")
         )}
       >
         <div>
           <ha-form
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .schema=${SCHEMA}
             .data=${this._formData(this._data)}
             .error=${this._error}
@@ -81,7 +81,7 @@ class DialogHomeZoneDetail extends LitElement {
           @click=${this._updateEntry}
           .disabled=${!valid || this._submitting}
         >
-          ${this.hass!.localize("ui.panel.config.zone.detail.update")}
+          ${this.menuai!.localize("ui.panel.config.zone.detail.update")}
         </mwc-button>
       </ha-dialog>
     `;

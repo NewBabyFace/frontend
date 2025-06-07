@@ -3,13 +3,13 @@ import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import type { LocalizeKeys } from "../../../../common/translations/localize";
 import type { AssistPipeline } from "../../../../data/assist_pipeline";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../../../components/ha-form/ha-form";
 import { fireEvent } from "../../../../common/dom/fire_event";
 
 @customElement("assist-pipeline-detail-conversation")
 export class AssistPipelineDetailConversation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data?: Partial<AssistPipeline>;
 
@@ -65,14 +65,14 @@ export class AssistPipelineDetailConversation extends LitElement {
 
   private _computeLabel = (schema): string =>
     schema.name
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.panel.config.voice_assistants.assistants.pipeline.detail.form.${schema.name}` as LocalizeKeys
         )
       : "";
 
   private _computeHelper = (schema): string =>
     schema.name
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.panel.config.voice_assistants.assistants.pipeline.detail.form.${schema.name}_description` as LocalizeKeys
         )
       : "";
@@ -82,12 +82,12 @@ export class AssistPipelineDetailConversation extends LitElement {
       <div class="section">
         <div class="intro">
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.conversation.title`
             )}
           </h3>
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.conversation.description`
             )}
           </p>
@@ -99,7 +99,7 @@ export class AssistPipelineDetailConversation extends LitElement {
             this._supportedLanguages
           )}
           .data=${this.data}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .computeLabel=${this._computeLabel}
           .computeHelper=${this._computeHelper}
           @supported-languages-changed=${this._supportedLanguagesChanged}

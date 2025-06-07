@@ -6,9 +6,9 @@ import type { CloudStatus } from "../../../data/cloud";
 import { entitiesContext } from "../../../data/context";
 import type { ExposeEntitySettings } from "../../../data/expose";
 import { listExposedEntities } from "../../../data/expose";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 
 export const voiceAssistantTabs = [
   {
@@ -24,8 +24,8 @@ export const voiceAssistantTabs = [
 ];
 
 @customElement("ha-config-voice-assistants")
-class HaConfigVoiceAssistants extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigVoiceAssistants extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus!: CloudStatus;
 
@@ -35,7 +35,7 @@ class HaConfigVoiceAssistants extends HassRouterPage {
 
   @state()
   @consume({ context: entitiesContext, subscribe: true })
-  _entities!: HomeAssistant["entities"];
+  _entities!: menuai["entities"];
 
   @state() private _exposedEntities?: Record<string, ExposeEntitySettings>;
 
@@ -80,7 +80,7 @@ class HaConfigVoiceAssistants extends HassRouterPage {
   };
 
   protected updatePageEl(pageEl) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.cloudStatus = this.cloudStatus;
     pageEl.narrow = this.narrow;
     pageEl.isWide = this.isWide;
@@ -96,7 +96,7 @@ class HaConfigVoiceAssistants extends HassRouterPage {
 
   private _fetchExposedEntities = async () => {
     this._exposedEntities = (
-      await listExposedEntities(this.hass)
+      await listExposedEntities(this.menuai)
     ).exposed_entities;
     if (this.lastChild) {
       (this.lastChild as any).exposedEntities = this._exposedEntities;
@@ -108,7 +108,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-config-voice-assistants": HaConfigVoiceAssistants;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "exposed-entities-changed": undefined;
   }
 }

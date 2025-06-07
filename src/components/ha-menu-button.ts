@@ -4,16 +4,16 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { subscribeNotifications } from "../data/persistent_notification";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 
 @customElement("ha-menu-button")
 class HaMenuButton extends LitElement {
-  @property({ type: Boolean }) public hassio = false;
+  @property({ type: Boolean }) public menuaiio = false;
 
   @property({ type: Boolean }) public narrow = false;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _hasNotifications = false;
 
@@ -48,10 +48,10 @@ class HaMenuButton extends LitElement {
     }
     const hasNotifications =
       this._hasNotifications &&
-      (this.narrow || this.hass.dockedSidebar === "always_hidden");
+      (this.narrow || this.menuai.dockedSidebar === "always_hidden");
     return html`
       <ha-icon-button
-        .label=${this.hass.localize("ui.sidebar.sidebar_toggle")}
+        .label=${this.menuai.localize("ui.sidebar.sidebar_toggle")}
         .path=${mdiMenu}
         @click=${this._toggleMenu}
       ></ha-icon-button>
@@ -61,10 +61,10 @@ class HaMenuButton extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    if (!this.hassio) {
+    if (!this.menuaiio) {
       return;
     }
-    // This component is used on Hass.io too, but Hass.io might run the UI
+    // This component is used on menuai.io too, but menuai.io might run the UI
     // on older frontends too, that don't have an always visible menu button
     // in the sidebar.
     this._alwaysVisible =
@@ -74,21 +74,21 @@ class HaMenuButton extends LitElement {
   protected willUpdate(changedProps) {
     super.willUpdate(changedProps);
 
-    if (!changedProps.has("narrow") && !changedProps.has("hass")) {
+    if (!changedProps.has("narrow") && !changedProps.has("menuai")) {
       return;
     }
 
-    const oldHass = changedProps.has("hass")
-      ? (changedProps.get("hass") as HomeAssistant | undefined)
-      : this.hass;
+    const oldmenuai = changedProps.has("menuai")
+      ? (changedProps.get("menuai") as menuai | undefined)
+      : this.menuai;
     const oldNarrow = changedProps.has("narrow")
       ? (changedProps.get("narrow") as boolean | undefined)
       : this.narrow;
 
     const oldShowButton =
-      oldNarrow || oldHass?.dockedSidebar === "always_hidden";
+      oldNarrow || oldmenuai?.dockedSidebar === "always_hidden";
     const showButton =
-      this.narrow || this.hass.dockedSidebar === "always_hidden";
+      this.narrow || this.menuai.dockedSidebar === "always_hidden";
 
     if (this.hasUpdated && oldShowButton === showButton) {
       return;
@@ -112,7 +112,7 @@ class HaMenuButton extends LitElement {
       throw new Error("Already subscribed");
     }
     this._unsubNotifications = subscribeNotifications(
-      this.hass.connection,
+      this.menuai.connection,
       (notifications) => {
         this._hasNotifications = notifications.length > 0;
       }
@@ -120,7 +120,7 @@ class HaMenuButton extends LitElement {
   }
 
   private _toggleMenu(): void {
-    fireEvent(this, "hass-toggle-menu");
+    fireEvent(this, "menuai-toggle-menu");
   }
 
   static styles = css`

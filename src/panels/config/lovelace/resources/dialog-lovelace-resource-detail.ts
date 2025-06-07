@@ -11,7 +11,7 @@ import "../../../../components/ha-form/ha-form";
 import "../../../../components/ha-icon-button";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
 import type { LovelaceResourcesMutableParams } from "../../../../data/lovelace/resource";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceResourceDetailsDialogParams } from "./show-dialog-lovelace-resource-detail";
 
 const detectResourceType = (url?: string) => {
@@ -33,7 +33,7 @@ const detectResourceType = (url?: string) => {
 
 @customElement("dialog-lovelace-resource-detail")
 export class DialogLovelaceResourceDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: LovelaceResourceDetailsDialogParams;
 
@@ -77,15 +77,15 @@ export class DialogLovelaceResourceDetail extends LitElement {
 
     const dialogTitle =
       this._params.resource?.url ||
-      this.hass!.localize(
+      this.menuai!.localize(
         "ui.panel.config.lovelace.resources.detail.new_resource"
       );
 
     const ariaLabel = this._params.resource?.url
-      ? this.hass!.localize(
+      ? this.menuai!.localize(
           "ui.panel.config.lovelace.resources.detail.edit_resource"
         )
-      : this.hass!.localize(
+      : this.menuai!.localize(
           "ui.panel.config.lovelace.resources.detail.new_resource"
         );
 
@@ -99,7 +99,7 @@ export class DialogLovelaceResourceDetail extends LitElement {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close") ?? "Close"}
+            .label=${this.menuai.localize("ui.common.close") ?? "Close"}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
@@ -108,11 +108,11 @@ export class DialogLovelaceResourceDetail extends LitElement {
         <div slot="content">
           <ha-alert
             alert-type="warning"
-            .title=${this.hass!.localize(
+            .title=${this.menuai!.localize(
               "ui.panel.config.lovelace.resources.detail.warning_header"
             )}
           >
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.lovelace.resources.detail.warning_text"
             )}
           </ha-alert>
@@ -120,7 +120,7 @@ export class DialogLovelaceResourceDetail extends LitElement {
           <ha-form
             .schema=${this._schema(this._data)}
             .data=${this._data}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .error=${this._error}
             .computeLabel=${this._computeLabel}
             @value-changed=${this._valueChanged}
@@ -128,17 +128,17 @@ export class DialogLovelaceResourceDetail extends LitElement {
         </div>
         <div slot="actions">
           <mwc-button @click=${this.closeDialog}>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </mwc-button>
           <mwc-button
             @click=${this._updateResource}
             .disabled=${urlInvalid || !this._data?.res_type || this._submitting}
           >
             ${this._params.resource
-              ? this.hass!.localize(
+              ? this.menuai!.localize(
                   "ui.panel.config.lovelace.resources.detail.update"
                 )
-              : this.hass!.localize(
+              : this.menuai!.localize(
                   "ui.panel.config.lovelace.resources.detail.create"
                 )}
           </mwc-button>
@@ -165,13 +165,13 @@ export class DialogLovelaceResourceDetail extends LitElement {
               options: [
                 {
                   value: "module",
-                  label: this.hass!.localize(
+                  label: this.menuai!.localize(
                     "ui.panel.config.lovelace.resources.types.module"
                   ),
                 },
                 {
                   value: "css",
-                  label: this.hass!.localize(
+                  label: this.menuai!.localize(
                     "ui.panel.config.lovelace.resources.types.css"
                   ),
                 },
@@ -179,7 +179,7 @@ export class DialogLovelaceResourceDetail extends LitElement {
                   ? ([
                       {
                         value: "js",
-                        label: this.hass!.localize(
+                        label: this.menuai!.localize(
                           "ui.panel.config.lovelace.resources.types.js"
                         ),
                       },
@@ -189,7 +189,7 @@ export class DialogLovelaceResourceDetail extends LitElement {
                   ? ([
                       {
                         value: "html",
-                        label: this.hass!.localize(
+                        label: this.menuai!.localize(
                           "ui.panel.config.lovelace.resources.types.html"
                         ),
                       },
@@ -205,7 +205,7 @@ export class DialogLovelaceResourceDetail extends LitElement {
   private _computeLabel = (
     entry: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.lovelace.resources.detail.${
         entry.name === "res_type" ? "type" : entry.name
       }`

@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface IPv6ConfiguredAddress {
   address: string;
@@ -32,23 +32,23 @@ export interface NetworkUrls {
   cloud: string;
 }
 
-export const getNetworkConfig = (hass: HomeAssistant) =>
-  hass.callWS<NetworkConfig>({
+export const getNetworkConfig = (menuai: menuai) =>
+  menuai.callWS<NetworkConfig>({
     type: "network",
   });
 
 export const setNetworkConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   configured_adapters: string[]
 ) =>
-  hass.callWS<string[]>({
+  menuai.callWS<string[]>({
     type: "network/configure",
     config: {
       configured_adapters: configured_adapters,
     },
   });
 
-export const getNetworkUrls = (hass: HomeAssistant) =>
-  hass.callWS<NetworkUrls>({
+export const getNetworkUrls = (menuai: menuai) =>
+  menuai.callWS<NetworkUrls>({
     type: "network/url",
   });

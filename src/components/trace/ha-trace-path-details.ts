@@ -17,7 +17,7 @@ import type {
 import { getDataFromPath } from "../../data/trace";
 import "../../panels/logbook/ha-logbook-renderer";
 import { traceTabStyles } from "./trace-tab-styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { NodeInfo } from "./hat-script-graph";
 import { describeCondition, describeTrigger } from "../../data/automation_i18n";
 import type { EntityRegistryEntry } from "../../data/entity_registry";
@@ -38,7 +38,7 @@ const TRACE_PATH_TABS = [
 
 @customElement("ha-trace-path-details")
 export class HaTracePathDetails extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -81,7 +81,7 @@ export class HaTracePathDetails extends LitElement {
               class=${classMap({ active: this._view === view })}
               @click=${this._showTab}
             >
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.config.automation.trace.tabs.${view}`
               )}
             </button>
@@ -100,7 +100,7 @@ export class HaTracePathDetails extends LitElement {
     const paths = this.trace.trace;
 
     if (!this.selected?.path) {
-      return this.hass!.localize(
+      return this.menuai!.localize(
         "ui.panel.config.automation.trace.path.choose"
       );
     }
@@ -113,14 +113,14 @@ export class HaTracePathDetails extends LitElement {
       ] as ChooseActionTraceStep[];
 
       if (parentTraceInfo && parentTraceInfo[0]?.result?.choice === "default") {
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.config.automation.trace.path.default_action_executed"
         );
       }
     }
 
     if (!(this.selected.path in paths)) {
-      return this.hass!.localize(
+      return this.menuai!.localize(
         "ui.panel.config.automation.trace.path.no_further_execution"
       );
     }
@@ -161,7 +161,7 @@ export class HaTracePathDetails extends LitElement {
             trace as any;
 
           if (result?.enabled === false) {
-            return html`${this.hass!.localize(
+            return html`${this.menuai!.localize(
               "ui.panel.config.automation.trace.path.disabled_step"
             )}`;
           }
@@ -176,7 +176,7 @@ export class HaTracePathDetails extends LitElement {
                   ? html`<h2>
                       ${describeTrigger(
                         currentDetail,
-                        this.hass,
+                        this.menuai,
                         this._entityReg
                       )}
                     </h2>`
@@ -184,14 +184,14 @@ export class HaTracePathDetails extends LitElement {
                     ? html`<h2>
                         ${describeCondition(
                           currentDetail,
-                          this.hass,
+                          this.menuai,
                           this._entityReg
                         )}
                       </h2>`
                     : selectedType === "action"
                       ? html`<h2>
                           ${describeAction(
-                            this.hass,
+                            this.menuai,
                             this._entityReg,
                             this._labelReg,
                             this._floorReg,
@@ -200,7 +200,7 @@ export class HaTracePathDetails extends LitElement {
                         </h2>`
                       : selectedType === "chooseOption"
                         ? html`<h2>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.automation.editor.actions.type.choose.option",
                               { number: pathParts[pathParts.length - 1] }
                             )}
@@ -212,7 +212,7 @@ export class HaTracePathDetails extends LitElement {
             ${data.length === 1
               ? nothing
               : html`<h3>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.automation.trace.path.iteration",
                     { number: idx + 1 }
                   )}
@@ -222,24 +222,24 @@ export class HaTracePathDetails extends LitElement {
               .includes("condition")
               ? html`[${describeCondition(
                     currentDetail,
-                    this.hass,
+                    this.menuai,
                     this._entityReg
                   )}]<br />`
               : nothing}
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.automation.trace.path.executed",
               {
                 time: formatDateTimeWithSeconds(
                   new Date(timestamp),
-                  this.hass.locale,
-                  this.hass.config
+                  this.menuai.locale,
+                  this.menuai.config
                 ),
               }
             )}
             <br />
             ${error
               ? html`<div class="error">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.automation.trace.path.error",
                     {
                       error: error,
@@ -248,7 +248,7 @@ export class HaTracePathDetails extends LitElement {
                 </div>`
               : nothing}
             ${result
-              ? html`${this.hass!.localize(
+              ? html`${this.menuai!.localize(
                     "ui.panel.config.automation.trace.path.result"
                   )}
                   <pre>${dump(result)}</pre>`
@@ -281,7 +281,7 @@ export class HaTracePathDetails extends LitElement {
           read-only
           dir="ltr"
         ></ha-code-editor>`
-      : this.hass!.localize(
+      : this.menuai!.localize(
           "ui.panel.config.automation.trace.path.unable_to_find_config"
         );
   }
@@ -292,7 +292,7 @@ export class HaTracePathDetails extends LitElement {
 
     if (data === undefined) {
       return html`<div class="padded-box">
-        ${this.hass!.localize(
+        ${this.menuai!.localize(
           "ui.panel.config.automation.trace.path.step_not_executed"
         )}
       </div>`;
@@ -304,14 +304,14 @@ export class HaTracePathDetails extends LitElement {
           (trace, idx) => html`
             ${data.length > 1
               ? html`<p>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.automation.trace.path.iteration",
                     { number: idx + 1 }
                   )}
                 </p>`
               : ""}
             ${Object.keys(trace.changed_variables || {}).length === 0
-              ? this.hass!.localize(
+              ? this.menuai!.localize(
                   "ui.panel.config.automation.trace.path.no_variables_changed"
                 )
               : html`<pre>${dump(trace.changed_variables).trimEnd()}</pre>`}
@@ -329,7 +329,7 @@ export class HaTracePathDetails extends LitElement {
 
     if (index === -1) {
       return html`<div class="padded-box">
-        ${this.hass!.localize(
+        ${this.menuai!.localize(
           "ui.panel.config.automation.trace.path.step_not_executed"
         )}
       </div>`;
@@ -373,17 +373,17 @@ export class HaTracePathDetails extends LitElement {
       ? html`
           <ha-logbook-renderer
             relative-time
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .entries=${entries}
             .narrow=${this.narrow}
           ></ha-logbook-renderer>
           <hat-logbook-note
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .domain=${this.trace.domain}
           ></hat-logbook-note>
         `
       : html`<div class="padded-box">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.config.automation.trace.path.no_logbook_entries"
           )}
         </div>`;

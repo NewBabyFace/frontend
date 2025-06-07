@@ -1,6 +1,6 @@
 import { mdiPlay, mdiStop } from "@mdi/js";
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -9,7 +9,7 @@ import "../../../components/ha-service-control";
 import "../../../components/ha-control-button";
 import "../../../components/ha-control-button-group";
 import "../../../components/entity/state-info";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { ScriptEntity } from "../../../data/script";
 import { canRun } from "../../../data/script";
 import { isUnavailableState } from "../../../data/entity";
@@ -21,7 +21,7 @@ import "../../../components/ha-markdown";
 
 @customElement("more-info-script")
 class MoreInfoScript extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: ScriptEntity;
 
@@ -52,13 +52,13 @@ class MoreInfoScript extends LitElement {
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
     const stateObj = this.stateObj;
 
     const script =
-      this.hass.services.script[
+      this.menuai.services.script[
         this.entry?.unique_id || computeObjectId(this.stateObj.entity_id)
       ];
     const fields = script?.fields;
@@ -73,14 +73,14 @@ class MoreInfoScript extends LitElement {
     return html`
       <ha-more-info-state-header
         .stateObj=${stateObj}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateOverride=${current > 0
           ? isParallel && current > 1
-            ? this.hass.localize("ui.card.script.running_parallel", {
+            ? this.menuai.localize("ui.card.script.running_parallel", {
                 active: current,
               })
-            : this.hass.localize("ui.card.script.running_single")
-          : this.hass.localize("ui.card.script.idle")}
+            : this.menuai.localize("ui.card.script.running_single")
+          : this.menuai.localize("ui.card.script.idle")}
         .changedOverride=${this.stateObj.attributes.last_triggered || 0}
       ></ha-more-info-state-header>
 
@@ -94,7 +94,7 @@ class MoreInfoScript extends LitElement {
       <div class=${`queue ${hasQueue ? "has-queue" : ""}`}>
         ${hasQueue
           ? html`
-              ${this.hass.localize("ui.card.script.running_queued", {
+              ${this.menuai.localize("ui.card.script.running_queued", {
                 queued: current - 1,
               })}
             `
@@ -105,14 +105,14 @@ class MoreInfoScript extends LitElement {
         ? html`
             <div class="fields">
               <div class="title">
-                ${this.hass.localize("ui.card.script.run_script")}
+                ${this.menuai.localize("ui.card.script.run_script")}
               </div>
               <ha-service-control
                 hide-picker
                 hide-description
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._scriptData}
-                .showAdvanced=${this.hass.userData?.showAdvanced}
+                .showAdvanced=${this.menuai.userData?.showAdvanced}
                 .narrow=${this.narrow}
                 @value-changed=${this._scriptDataChanged}
               ></ha-service-control>
@@ -128,8 +128,8 @@ class MoreInfoScript extends LitElement {
         >
           <ha-svg-icon .path=${mdiStop}></ha-svg-icon>
           ${(isQueued || isParallel) && current > 1
-            ? this.hass.localize("ui.card.script.cancel_all")
-            : this.hass.localize("ui.card.script.cancel")}
+            ? this.menuai.localize("ui.card.script.cancel_all")
+            : this.menuai.localize("ui.card.script.cancel")}
         </ha-control-button>
         <ha-control-button
           class="run-button"
@@ -137,7 +137,7 @@ class MoreInfoScript extends LitElement {
           .disabled=${isUnavailableState(stateObj.state) || !this._canRun()}
         >
           <ha-svg-icon .path=${mdiPlay}></ha-svg-icon>
-          ${this.hass!.localize("ui.card.script.run")}
+          ${this.menuai!.localize("ui.card.script.run")}
         </ha-control-button>
       </ha-control-button-group>
     `;
@@ -148,7 +148,7 @@ class MoreInfoScript extends LitElement {
 
     if (changedProperties.has("stateObj")) {
       const oldState = changedProperties.get("stateObj") as
-        | HassEntity
+        | menuaiEntity
         | undefined;
       const newState = this.stateObj;
 
@@ -180,7 +180,7 @@ class MoreInfoScript extends LitElement {
 
   private async _runScript(ev: Event) {
     ev.stopPropagation();
-    this.hass.callService(
+    this.menuai.callService(
       "script",
       this.entry?.unique_id || computeObjectId(this.stateObj!.entity_id),
       this._scriptData.data
@@ -188,7 +188,7 @@ class MoreInfoScript extends LitElement {
   }
 
   private _callService(service: string): void {
-    this.hass.callService("script", service, {
+    this.menuai.callService("script", service, {
       entity_id: this.stateObj!.entity_id,
     });
   }

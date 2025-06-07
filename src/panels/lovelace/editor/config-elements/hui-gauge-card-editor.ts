@@ -16,7 +16,7 @@ import {
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { DEFAULT_MAX, DEFAULT_MIN } from "../../cards/hui-gauge-card";
 import type { GaugeCardConfig } from "../../cards/types";
 import type { UiAction } from "../../components/hui-action-editor";
@@ -68,7 +68,7 @@ export class HuiGaugeCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: GaugeCardConfig;
 
@@ -189,7 +189,7 @@ export class HuiGaugeCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -204,7 +204,7 @@ export class HuiGaugeCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -242,60 +242,60 @@ export class HuiGaugeCardEditor
   ) => {
     switch (schema.name) {
       case "name":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.name"
         );
       case "entity":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.entity"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.required"
         )})`;
       case "max":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.maximum"
         );
       case "min":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.minimum"
         );
       case "show_severity":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.gauge.severity.define"
         );
       case "needle":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.gauge.needle_gauge"
         );
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       case "unit":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.unit"
         );
       case "interactions":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.interactions"
         );
       case "tap_action":
       case "hold_action":
       case "double_tap_action":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       case "attribute":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.attribute"
         );
       default:
         // "green" | "yellow" | "red"
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.gauge.severity.${schema.name}`
         );
     }

@@ -8,7 +8,7 @@ import "../../../../../components/ha-select";
 import "../../../../../components/ha-textfield";
 import type { MQTTMessage } from "../../../../../data/mqtt";
 import { subscribeMQTTTopic } from "../../../../../data/mqtt";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 import { storage } from "../../../../../common/decorators/storage";
 import "../../../../../components/ha-formfield";
@@ -19,7 +19,7 @@ const qosLevel = ["0", "1", "2"];
 
 @customElement("mqtt-subscribe-card")
 class MqttSubscribeCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state()
   @storage({
@@ -67,12 +67,12 @@ class MqttSubscribeCard extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-card
-        header=${this.hass.localize("ui.panel.config.mqtt.description_listen")}
+        header=${this.menuai.localize("ui.panel.config.mqtt.description_listen")}
       >
         <form>
           <p>
             <ha-formfield
-              label=${this.hass!.localize(
+              label=${this.menuai!.localize(
                 "ui.panel.config.mqtt.json_formatting"
               )}
             >
@@ -85,14 +85,14 @@ class MqttSubscribeCard extends LitElement {
           <div class="panel-dev-mqtt-subscribe-fields">
             <ha-textfield
               .label=${this._subscribed
-                ? this.hass.localize("ui.panel.config.mqtt.listening_to")
-                : this.hass.localize("ui.panel.config.mqtt.subscribe_to")}
+                ? this.menuai.localize("ui.panel.config.mqtt.listening_to")
+                : this.menuai.localize("ui.panel.config.mqtt.subscribe_to")}
               .disabled=${this._subscribed !== undefined}
               .value=${this._topic}
               @change=${this._handleTopic}
             ></ha-textfield>
             <ha-select
-              .label=${this.hass.localize("ui.panel.config.mqtt.qos")}
+              .label=${this.menuai.localize("ui.panel.config.mqtt.qos")}
               .disabled=${this._subscribed !== undefined}
               .value=${this._qos}
               @selected=${this._handleQos}
@@ -106,8 +106,8 @@ class MqttSubscribeCard extends LitElement {
               type="submit"
             >
               ${this._subscribed
-                ? this.hass.localize("ui.panel.config.mqtt.stop_listening")
-                : this.hass.localize("ui.panel.config.mqtt.start_listening")}
+                ? this.menuai.localize("ui.panel.config.mqtt.stop_listening")
+                : this.menuai.localize("ui.panel.config.mqtt.start_listening")}
             </mwc-button>
           </div>
         </form>
@@ -115,13 +115,13 @@ class MqttSubscribeCard extends LitElement {
           ${this._messages.map(
             (msg) => html`
               <div class="event">
-                ${this.hass.localize("ui.panel.config.mqtt.message_received", {
+                ${this.menuai.localize("ui.panel.config.mqtt.message_received", {
                   id: msg.id,
                   topic: msg.message.topic,
                   time: formatTime(
                     msg.time,
-                    this.hass!.locale,
-                    this.hass!.config
+                    this.menuai!.locale,
+                    this.menuai!.config
                   ),
                 })}
                 <pre>${msg.payload}</pre>
@@ -158,7 +158,7 @@ class MqttSubscribeCard extends LitElement {
       this._subscribed = undefined;
     } else {
       this._subscribed = await subscribeMQTTTopic(
-        this.hass!,
+        this.menuai!,
         this._topic,
         (message) => this._handleMessage(message),
         parseInt(this._qos)

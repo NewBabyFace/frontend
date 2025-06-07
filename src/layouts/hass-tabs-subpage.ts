@@ -11,7 +11,7 @@ import "../components/ha-menu-button";
 import "../components/ha-svg-icon";
 import "../components/ha-tab";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant, Route } from "../types";
+import type { menuai, Route } from "../types";
 
 export interface PageNavigation {
   path: string;
@@ -27,9 +27,9 @@ export interface PageNavigation {
   info?: any;
 }
 
-@customElement("hass-tabs-subpage")
-class HassTabsSubpage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuai-tabs-subpage")
+class menuaiTabsSubpage extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public supervisor = false;
 
@@ -72,7 +72,7 @@ class HassTabsSubpage extends LitElement {
       _narrow,
       localizeFunc
     ) => {
-      const shownTabs = tabs.filter((page) => canShowPage(this.hass, page));
+      const shownTabs = tabs.filter((page) => canShowPage(this.menuai, page));
 
       if (shownTabs.length < 2) {
         if (shownTabs.length === 1) {
@@ -88,7 +88,7 @@ class HassTabsSubpage extends LitElement {
         (page) => html`
           <a href=${page.path}>
             <ha-tab
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .active=${page.path === activeTab?.path}
               .narrow=${this.narrow}
               .name=${page.translationKey
@@ -121,10 +121,10 @@ class HassTabsSubpage extends LitElement {
     const tabs = this._getTabs(
       this.tabs,
       this._activeTab,
-      this.hass.config.components,
-      this.hass.language,
+      this.menuai.config.components,
+      this.menuai.language,
       this.narrow,
-      this.localizeFunc || this.hass.localize
+      this.localizeFunc || this.menuai.localize
     );
     const showTabs = tabs.length > 1;
     return html`
@@ -134,8 +134,8 @@ class HassTabsSubpage extends LitElement {
             ${this.mainPage || (!this.backPath && history.state?.root)
               ? html`
                   <ha-menu-button
-                    .hassio=${this.supervisor}
-                    .hass=${this.hass}
+                    .menuaiio=${this.supervisor}
+                    .menuai=${this.menuai}
                     .narrow=${this.narrow}
                   ></ha-menu-button>
                 `
@@ -143,13 +143,13 @@ class HassTabsSubpage extends LitElement {
                 ? html`
                     <a href=${this.backPath}>
                       <ha-icon-button-arrow-prev
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                       ></ha-icon-button-arrow-prev>
                     </a>
                   `
                 : html`
                     <ha-icon-button-arrow-prev
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       @click=${this._backTapped}
                     ></ha-icon-button-arrow-prev>
                   `}
@@ -394,6 +394,6 @@ class HassTabsSubpage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hass-tabs-subpage": HassTabsSubpage;
+    "menuai-tabs-subpage": menuaiTabsSubpage;
   }
 }

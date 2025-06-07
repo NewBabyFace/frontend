@@ -5,14 +5,14 @@ import { DOMAINS_TOGGLE } from "../../../common/const";
 import "../../../components/ha-switch";
 import type { HaSwitch } from "../../../components/ha-switch";
 import { forwardHaptic } from "../../../data/haptics";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { turnOnOffEntities } from "../common/entity/turn-on-off-entities";
 
 @customElement("hui-entities-toggle")
 class HuiEntitiesToggle extends LitElement {
   @property({ type: Array }) public entities?: string[];
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _toggleEntities?: string[];
 
@@ -21,7 +21,7 @@ class HuiEntitiesToggle extends LitElement {
     if (changedProperties.has("entities")) {
       this._toggleEntities = this.entities!.filter(
         (entityId) =>
-          entityId in this.hass!.states &&
+          entityId in this.menuai!.states &&
           DOMAINS_TOGGLE.has(entityId.split(".", 1)[0])
       );
     }
@@ -34,11 +34,11 @@ class HuiEntitiesToggle extends LitElement {
 
     return html`
       <ha-switch
-        aria-label=${this.hass!.localize(
+        aria-label=${this.menuai!.localize(
           "ui.panel.lovelace.card.entities.toggle"
         )}
         .checked=${this._toggleEntities!.some((entityId) => {
-          const stateObj = this.hass!.states[entityId];
+          const stateObj = this.menuai!.states[entityId];
           return stateObj && stateObj.state === "on";
         })}
         @change=${this._callService}
@@ -60,7 +60,7 @@ class HuiEntitiesToggle extends LitElement {
   private _callService(ev: MouseEvent): void {
     forwardHaptic("light");
     const turnOn = (ev.target as HaSwitch).checked;
-    turnOnOffEntities(this.hass!, this._toggleEntities!, turnOn!);
+    turnOnOffEntities(this.menuai!, this._toggleEntities!, turnOn!);
   }
 }
 

@@ -11,18 +11,18 @@ import { UNAVAILABLE, UNKNOWN } from "../../data/entity";
 import { forwardHaptic } from "../../data/haptics";
 import type { LockEntity } from "../../data/lock";
 import { callProtectedLockService } from "../../data/lock";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { fireEvent } from "../../common/dom/fire_event";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "lock-service-called": undefined;
   }
 }
 
 @customElement("ha-state-control-lock-toggle")
 export class HaStateControlLockToggle extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: LockEntity;
 
@@ -65,14 +65,14 @@ export class HaStateControlLockToggle extends LitElement {
   }
 
   private async _callService(turnOn: boolean): Promise<void> {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
     forwardHaptic("light");
     fireEvent(this, "lock-service-called");
     callProtectedLockService(
       this,
-      this.hass,
+      this.menuai,
       this.stateObj,
       turnOn ? "lock" : "unlock"
     );
@@ -88,21 +88,21 @@ export class HaStateControlLockToggle extends LitElement {
       return html`
         <div class="buttons">
           <ha-control-button
-            .label=${this.hass.localize("ui.card.lock.lock")}
+            .label=${this.menuai.localize("ui.card.lock.lock")}
             @click=${this._turnOn}
           >
             <ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${this.stateObj}
               .stateValue=${locking ? "locking" : "locked"}
             ></ha-state-icon>
           </ha-control-button>
           <ha-control-button
-            .label=${this.hass.localize("ui.card.lock.unlock")}
+            .label=${this.menuai.localize("ui.card.lock.unlock")}
             @click=${this._turnOff}
           >
             <ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${this.stateObj}
               .stateValue=${unlocking ? "unlocking" : "unlocked"}
             ></ha-state-icon>
@@ -119,8 +119,8 @@ export class HaStateControlLockToggle extends LitElement {
         .checked=${this._isOn}
         @change=${this._valueChanged}
         .ariaLabel=${this._isOn
-          ? this.hass.localize("ui.card.lock.unlock")
-          : this.hass.localize("ui.card.lock.lock")}
+          ? this.menuai.localize("ui.card.lock.unlock")
+          : this.menuai.localize("ui.card.lock.lock")}
         style=${styleMap({
           "--control-switch-on-color": color,
           "--control-switch-off-color": color,
@@ -129,14 +129,14 @@ export class HaStateControlLockToggle extends LitElement {
       >
         <ha-state-icon
           slot="icon-on"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .stateValue=${locking ? "locking" : "locked"}
           class=${classMap({ pulse: locking })}
         ></ha-state-icon>
         <ha-state-icon
           slot="icon-off"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .stateValue=${unlocking ? "unlocking" : "unlocked"}
           class=${classMap({ pulse: unlocking })}

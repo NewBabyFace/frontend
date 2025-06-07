@@ -1,5 +1,5 @@
 import type { VisibilityChangedEvent } from "@lit-labs/virtualizer";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, eventOptions, property } from "lit/decorators";
@@ -29,13 +29,13 @@ import {
   haStyleScrollbar,
 } from "../../resources/styles";
 import { loadVirtualizer } from "../../resources/virtualizer";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { brandsUrl } from "../../util/brands-url";
 import { domainToName } from "../../data/integration";
 
 declare global {
-  interface HASSDomEvents {
-    "hass-logbook-live": { enable: boolean };
+  interface menuaiDomEvents {
+    "menuai-logbook-live": { enable: boolean };
   }
 }
 
@@ -48,7 +48,7 @@ const stripEntityId = (message: string, entityId?: string) =>
 
 @customElement("ha-logbook-renderer")
 class HaLogbookRenderer extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public userIdToName = {};
 
@@ -83,16 +83,16 @@ class HaLogbookRenderer extends LitElement {
       (!this.hasUpdated && this.virtualize) ||
       (changedProps.has("virtualize") && this.virtualize)
     ) {
-      this.hass.loadBackendTranslation("services");
-      this.hass.loadBackendTranslation("title");
+      this.menuai.loadBackendTranslation("services");
+      this.menuai.loadBackendTranslation("title");
       loadVirtualizer();
     }
   }
 
   protected shouldUpdate(changedProps: PropertyValues<this>) {
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const languageChanged =
-      oldHass === undefined || oldHass.locale !== this.hass.locale;
+      oldmenuai === undefined || oldmenuai.locale !== this.menuai.locale;
 
     return (
       changedProps.has("entries") ||
@@ -105,7 +105,7 @@ class HaLogbookRenderer extends LitElement {
     if (!this.entries?.length) {
       return html`
         <div class="container no-entries">
-          ${this.hass.localize("ui.components.logbook.entries_not_found")}
+          ${this.menuai.localize("ui.components.logbook.entries_not_found")}
         </div>
       `;
     }
@@ -142,7 +142,7 @@ class HaLogbookRenderer extends LitElement {
     const previous = this.entries[index - 1] as LogbookEntry | undefined;
     const seenEntityIds: string[] = [];
     const currentStateObj = item.entity_id
-      ? this.hass.states[item.entity_id]
+      ? this.menuai.states[item.entity_id]
       : undefined;
     const historicStateObj = currentStateObj
       ? createHistoricState(currentStateObj, item.state!)
@@ -156,12 +156,12 @@ class HaLogbookRenderer extends LitElement {
       !item.icon &&
       !item.state &&
       domain &&
-      isComponentLoaded(this.hass, domain)
+      isComponentLoaded(this.menuai, domain)
         ? brandsUrl({
             domain: domain!,
             type: "icon",
             useFallback: true,
-            darkOptimized: this.hass.themes?.darkMode,
+            darkOptimized: this.menuai.themes?.darkMode,
           })
         : undefined;
 
@@ -191,8 +191,8 @@ class HaLogbookRenderer extends LitElement {
               <h4 class="date">
                 ${formatDate(
                   new Date(item.when * 1000),
-                  this.hass.locale,
-                  this.hass.config
+                  this.menuai.locale,
+                  this.menuai.config
                 )}
               </h4>
             `
@@ -203,7 +203,7 @@ class HaLogbookRenderer extends LitElement {
             ${!this.noIcon
               ? html`
                   <state-badge
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .overrideIcon=${item.icon}
                     .overrideImage=${overrideImage}
                     .stateObj=${item.icon ? undefined : historicStateObj}
@@ -230,19 +230,19 @@ class HaLogbookRenderer extends LitElement {
                 <span
                   >${formatTimeWithSeconds(
                     new Date(item.when * 1000),
-                    this.hass.locale,
-                    this.hass.config
+                    this.menuai.locale,
+                    this.menuai.config
                   )}</span
                 >
                 -
                 <ha-relative-time
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .datetime=${item.when * 1000}
                   capitalize
                 ></ha-relative-time>
                 ${item.context_user_id ? html`${this._renderUser(item)}` : ""}
                 ${hasTrace
-                  ? `- ${this.hass.localize(
+                  ? `- ${this.menuai.localize(
                       "ui.components.logbook.show_trace"
                     )}`
                   : ""}
@@ -262,14 +262,14 @@ class HaLogbookRenderer extends LitElement {
 
   @eventOptions({ passive: true })
   private _visibilityChanged(e: VisibilityChangedEvent) {
-    fireEvent(this, "hass-logbook-live", {
+    fireEvent(this, "menuai-logbook-live", {
       enable: e.first === 0,
     });
   }
 
   private _renderIndicator(item: LogbookEntry) {
-    const stateObj = this.hass.states[item.entity_id!] as
-      | HassEntity
+    const stateObj = this.menuai.states[item.entity_id!] as
+      | menuaiEntity
       | undefined;
     const computedStyles = getComputedStyle(this);
 
@@ -289,15 +289,15 @@ class HaLogbookRenderer extends LitElement {
     item: LogbookEntry,
     seenEntityIds: string[],
     domain?: string,
-    historicStateObj?: HassEntity,
+    historicStateObj?: menuaiEntity,
     noLink?: boolean
   ) {
     if (item.entity_id) {
       if (item.state) {
         return historicStateObj
           ? localizeStateMessage(
-              this.hass,
-              this.hass.localize,
+              this.menuai,
+              this.menuai.localize,
               item.state,
               historicStateObj,
               domain!
@@ -315,7 +315,7 @@ class HaLogbookRenderer extends LitElement {
         // as otherwise we display duplicate triggers
         return "";
       }
-      message = localizeTriggerSource(this.hass.localize, item.source);
+      message = localizeTriggerSource(this.menuai.localize, item.source);
     }
     return message
       ? this._formatMessageWithPossibleEntity(
@@ -367,13 +367,13 @@ class HaLogbookRenderer extends LitElement {
     // State change
     if (item.context_state) {
       const historicStateObj =
-        item.context_entity_id && item.context_entity_id in this.hass.states
+        item.context_entity_id && item.context_entity_id in this.menuai.states
           ? createHistoricState(
-              this.hass.states[item.context_entity_id],
+              this.menuai.states[item.context_entity_id],
               item.context_state
             )
           : undefined;
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.components.logbook.triggered_by_state_of"
       )}
       ${this._renderEntity(
@@ -383,8 +383,8 @@ class HaLogbookRenderer extends LitElement {
       )}
       ${historicStateObj
         ? localizeStateMessage(
-            this.hass,
-            this.hass.localize,
+            this.menuai,
+            this.menuai.localize,
             item.context_state,
             historicStateObj,
             computeDomain(item.context_entity_id!)
@@ -393,16 +393,16 @@ class HaLogbookRenderer extends LitElement {
     }
     // Service call
     if (item.context_event_type === "call_service") {
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.components.logbook.triggered_by_action"
       )}
       ${item.context_domain && item.context_service
-        ? `${domainToName(this.hass.localize, item.context_domain)}:
+        ? `${domainToName(this.menuai.localize, item.context_domain)}:
       ${
-        this.hass.localize(
+        this.menuai.localize(
           `component.${item.context_domain}.services.${item.context_service}.name`
         ) ||
-        this.hass.services[item.context_domain]?.[item.context_service]?.name ||
+        this.menuai.services[item.context_domain]?.[item.context_service]?.name ||
         item.context_service
       }`
         : ""}`;
@@ -423,10 +423,10 @@ class HaLogbookRenderer extends LitElement {
         ? item.context_source
         : item.context_message.replace("triggered by ", "");
       const contextTriggerSource = localizeTriggerSource(
-        this.hass.localize,
+        this.menuai.localize,
         triggerMsg
       );
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         item.context_event_type === "automation_triggered"
           ? "ui.components.logbook.triggered_by_automation"
           : "ui.components.logbook.triggered_by_script"
@@ -447,7 +447,7 @@ class HaLogbookRenderer extends LitElement {
     }
     // Generic externally described logbook platform
     // These are not localizable
-    return html` ${this.hass.localize("ui.components.logbook.triggered_by")}
+    return html` ${this.menuai.localize("ui.components.logbook.triggered_by")}
     ${item.context_name}
     ${this._formatMessageWithPossibleEntity(
       item.context_message,
@@ -463,13 +463,13 @@ class HaLogbookRenderer extends LitElement {
     entityName: string | undefined,
     noLink?: boolean
   ) {
-    const hasState = entityId && entityId in this.hass.states;
+    const menuaitate = entityId && entityId in this.menuai.states;
     const displayName =
       entityName ||
-      (hasState
-        ? this.hass.states[entityId].attributes.friendly_name || entityId
+      (menuaitate
+        ? this.menuai.states[entityId].attributes.friendly_name || entityId
         : entityId);
-    if (!hasState) {
+    if (!menuaitate) {
       return displayName;
     }
     return noLink
@@ -501,7 +501,7 @@ class HaLogbookRenderer extends LitElement {
     if (message.indexOf(".") !== -1) {
       const messageParts = message.split(" ");
       for (let i = 0, size = messageParts.length; i < size; i++) {
-        if (messageParts[i] in this.hass.states) {
+        if (messageParts[i] in this.menuai.states) {
           const entityId = messageParts[i];
           if (seenEntities.includes(entityId)) {
             return "";
@@ -512,7 +512,7 @@ class HaLogbookRenderer extends LitElement {
           return html`${messageParts.join(" ")}
           ${this._renderEntity(
             entityId,
-            this.hass.states[entityId].attributes.friendly_name,
+            this.menuai.states[entityId].attributes.friendly_name,
             noLink
           )}
           ${messageEnd.join(" ")}`;
@@ -526,9 +526,9 @@ class HaLogbookRenderer extends LitElement {
     // _renderEntity if its there so the user can quickly get to
     // that entity.
     //
-    if (possibleEntity && possibleEntity in this.hass.states) {
+    if (possibleEntity && possibleEntity in this.menuai.states) {
       const possibleEntityName =
-        this.hass.states[possibleEntity].attributes.friendly_name;
+        this.menuai.states[possibleEntity].attributes.friendly_name;
       if (possibleEntityName && message.endsWith(possibleEntityName)) {
         if (seenEntities.includes(possibleEntity)) {
           return "";
@@ -553,7 +553,7 @@ class HaLogbookRenderer extends LitElement {
 
     ev.preventDefault();
     ev.stopPropagation();
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: entityId,
     });
   }

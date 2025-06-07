@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -10,13 +10,13 @@ import "../../components/ha-control-switch";
 import "../../components/ha-state-icon";
 import { UNAVAILABLE, UNKNOWN } from "../../data/entity";
 import { forwardHaptic } from "../../data/haptics";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-state-control-valve-toggle")
 export class HaStateControlValveToggle extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   private _valueChanged(ev) {
     const checked = ev.target.checked as boolean;
@@ -37,12 +37,12 @@ export class HaStateControlValveToggle extends LitElement {
   }
 
   private async _callService(turnOn): Promise<void> {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
     forwardHaptic("light");
 
-    await this.hass.callService(
+    await this.menuai.callService(
       "valve",
       turnOn ? "open_valve" : "close_valve",
       {
@@ -68,7 +68,7 @@ export class HaStateControlValveToggle extends LitElement {
       return html`
         <div class="buttons">
           <ha-control-button
-            .label=${this.hass.localize("ui.card.valve.open_valve")}
+            .label=${this.menuai.localize("ui.card.valve.open_valve")}
             @click=${this._turnOn}
             .disabled=${this.stateObj.state === UNAVAILABLE}
             class=${classMap({
@@ -79,13 +79,13 @@ export class HaStateControlValveToggle extends LitElement {
             })}
           >
             <ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${this.stateObj}
               stateValue="open"
             ></ha-state-icon>
           </ha-control-button>
           <ha-control-button
-            .label=${this.hass.localize("ui.card.valve.close_valve")}
+            .label=${this.menuai.localize("ui.card.valve.close_valve")}
             @click=${this._turnOff}
             .disabled=${this.stateObj.state === UNAVAILABLE}
             class=${classMap({
@@ -96,7 +96,7 @@ export class HaStateControlValveToggle extends LitElement {
             })}
           >
             <ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${this.stateObj}
               stateValue="closed"
             ></ha-state-icon>
@@ -113,8 +113,8 @@ export class HaStateControlValveToggle extends LitElement {
         .checked=${isOn}
         @change=${this._valueChanged}
         .ariaLabel=${isOn
-          ? this.hass.localize("ui.card.valve.close_valve")
-          : this.hass.localize("ui.card.valve.open_valve")}
+          ? this.menuai.localize("ui.card.valve.close_valve")
+          : this.menuai.localize("ui.card.valve.open_valve")}
         style=${styleMap({
           "--control-switch-on-color": onColor,
           "--control-switch-off-color": offColor,
@@ -123,13 +123,13 @@ export class HaStateControlValveToggle extends LitElement {
       >
         <ha-state-icon
           slot="icon-on"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           stateValue="open"
         ></ha-state-icon>
         <ha-state-icon
           slot="icon-off"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           stateValue="closed"
         ></ha-state-icon>

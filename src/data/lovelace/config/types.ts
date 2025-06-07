@@ -1,5 +1,5 @@
 import type { Connection } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceResource } from "../resource";
 import type { LovelaceStrategyConfig } from "./strategy";
 import type { LovelaceViewRawConfig } from "./view";
@@ -42,21 +42,21 @@ export const fetchConfig = (
   });
 
 export const saveConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   urlPath: string | null,
   config: LovelaceRawConfig
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "lovelace/config/save",
     url_path: urlPath,
     config,
   });
 
 export const deleteConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   urlPath: string | null
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "lovelace/config/delete",
     url_path: urlPath,
   });

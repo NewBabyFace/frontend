@@ -4,6 +4,6 @@ module.exports = {
   // Target directory for the build.
   buildDir: path.resolve(__dirname, "build"),
   nodeDir: path.resolve(__dirname, "../node_modules"),
-  // Path where the Hass.io frontend will be publicly available.
-  publicPath: "/api/hassio/app",
+  // Path where the menuai.io frontend will be publicly available.
+  publicPath: "/api/menuaiio/app",
 };

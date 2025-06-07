@@ -1,9 +1,9 @@
 import { customElement, property, state } from "lit/decorators";
 import { navigate } from "../../../common/navigate";
 import type { CloudStatus } from "../../../data/cloud";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { ValueChangedEvent, HomeAssistant, Route } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { ValueChangedEvent, menuai, Route } from "../../../types";
 import "./account/cloud-account";
 import "./login/cloud-login-panel";
 
@@ -11,8 +11,8 @@ const LOGGED_IN_URLS = ["account", "google-assistant", "alexa"];
 const NOT_LOGGED_IN_URLS = ["login", "register", "forgot-password"];
 
 @customElement("ha-config-cloud")
-class HaConfigCloud extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigCloud extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -110,7 +110,7 @@ class HaConfigCloud extends HassRouterPage {
       return;
     }
 
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.email = this._loginEmail;
     el.isWide = this.isWide;
     el.narrow = this.narrow;

@@ -8,9 +8,9 @@ import "../../../../../components/ha-switch";
 import "../../../../../components/ha-button";
 import { getConfigEntries } from "../../../../../data/config_entries";
 import { showOptionsFlowDialog } from "../../../../../dialogs/config-flow/show-dialog-options-flow";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { subscribeBluetoothConnectionAllocations } from "../../../../../data/bluetooth";
 import {
   getValueInPercentage,
@@ -21,7 +21,7 @@ import type { BluetoothAllocationsData } from "../../../../../data/bluetooth";
 
 @customElement("bluetooth-config-dashboard")
 export class BluetoothConfigDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -37,7 +37,7 @@ export class BluetoothConfigDashboard extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass) {
+    if (this.menuai) {
       this._subscribeBluetoothConnectionAllocations();
     }
   }
@@ -49,7 +49,7 @@ export class BluetoothConfigDashboard extends LitElement {
     try {
       this._unsubConnectionAllocations =
         await subscribeBluetoothConnectionAllocations(
-          this.hass.connection,
+          this.menuai.connection,
           (data) => {
             this._connectionAllocationData = data;
           },
@@ -71,29 +71,29 @@ export class BluetoothConfigDashboard extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage .narrow=${this.narrow} .hass=${this.hass}>
+      <menuai-subpage .narrow=${this.narrow} .menuai=${this.menuai}>
         <div class="content">
           <ha-card
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.bluetooth.settings_title"
             )}
           >
             <div class="card-actions">
               <ha-button @click=${this._openOptionFlow}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.bluetooth.option_flow"
                 )}</ha-button
               >
             </div>
           </ha-card>
           <ha-card
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.bluetooth.advertisement_monitor"
             )}
           >
             <div class="card-content">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.bluetooth.advertisement_monitor_details"
                 )}
               </p>
@@ -101,14 +101,14 @@ export class BluetoothConfigDashboard extends LitElement {
             <div class="card-actions">
               <a href="/config/bluetooth/advertisement-monitor"
                 ><ha-button>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.bluetooth.advertisement_monitor"
                   )}
                 </ha-button></a
               >
               <a href="/config/bluetooth/visualization"
                 ><ha-button>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.bluetooth.visualization"
                   )}
                 </ha-button></a
@@ -116,7 +116,7 @@ export class BluetoothConfigDashboard extends LitElement {
             </div>
           </ha-card>
           <ha-card
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.bluetooth.connection_slot_allocations_monitor"
             )}
           >
@@ -126,7 +126,7 @@ export class BluetoothConfigDashboard extends LitElement {
             <div class="card-actions">
               <a href="/config/bluetooth/connection-monitor"
                 ><ha-button>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.bluetooth.connection_monitor"
                   )}
                 </ha-button></a
@@ -134,7 +134,7 @@ export class BluetoothConfigDashboard extends LitElement {
             </div>
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -149,7 +149,7 @@ export class BluetoothConfigDashboard extends LitElement {
     }
     if (this._connectionAllocationData.length === 0) {
       return html`<div>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.bluetooth.no_connection_slot_allocations"
         )}
       </div>`;
@@ -159,20 +159,20 @@ export class BluetoothConfigDashboard extends LitElement {
     const allocationsTotal = allocations.slots;
     if (allocationsTotal === 0) {
       return html`<div>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.bluetooth.no_active_connection_support"
         )}
       </div>`;
     }
     return html`
       <p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.bluetooth.connection_slot_allocations_monitor_details",
           { slots: allocationsTotal }
         )}
       </p>
       <ha-metric
-        .heading=${this.hass.localize(
+        .heading=${this.menuai.localize(
           "ui.panel.config.bluetooth.used_connection_slot_allocations"
         )}
         .value=${this._getUsedAllocations(allocationsUsed, allocationsTotal)}
@@ -188,7 +188,7 @@ export class BluetoothConfigDashboard extends LitElement {
     if (!configEntryId) {
       return;
     }
-    const configEntries = await getConfigEntries(this.hass, {
+    const configEntries = await getConfigEntries(this.menuai, {
       domain: "bluetooth",
     });
     const configEntry = configEntries.find(

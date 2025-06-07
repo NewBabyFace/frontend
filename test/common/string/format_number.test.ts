@@ -1,5 +1,5 @@
 import { assert, describe, it } from "vitest";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
 import {
   formatNumber,
@@ -145,7 +145,7 @@ describe("formatNumber", () => {
       getNumberFormatOptions({
         state: "3.0",
         attributes: { step: 1 },
-      } as unknown as HassEntity),
+      } as unknown as menuaiEntity),
       {
         maximumFractionDigits: 0,
       }
@@ -157,21 +157,21 @@ describe("formatNumber", () => {
       getNumberFormatOptions({
         state: "3.0",
         attributes: { step: 0.5 },
-      } as unknown as HassEntity),
+      } as unknown as menuaiEntity),
       undefined
     );
   });
 
   it("Does not set any Intl.NumberFormatOptions when the state value is not an integer", () => {
     assert.strictEqual(
-      getNumberFormatOptions({ state: "3.5" } as unknown as HassEntity),
+      getNumberFormatOptions({ state: "3.5" } as unknown as menuaiEntity),
       undefined
     );
   });
 
   it("Does not set any Intl.NumberFormatOptions when there is no step attribute", () => {
     assert.strictEqual(
-      getNumberFormatOptions({ state: "3.0" } as unknown as HassEntity),
+      getNumberFormatOptions({ state: "3.0" } as unknown as menuaiEntity),
       undefined
     );
   });

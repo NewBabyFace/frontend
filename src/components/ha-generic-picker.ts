@@ -4,7 +4,7 @@ import { css, html, LitElement, nothing, type CSSResultGroup } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { ifDefined } from "lit/directives/if-defined";
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-combo-box-item";
 import "./ha-icon-button";
 import "./ha-input-helper-text";
@@ -20,7 +20,7 @@ import "./ha-svg-icon";
 
 @customElement("ha-generic-picker")
 export class HaGenericPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
@@ -95,11 +95,11 @@ export class HaGenericPicker extends LitElement {
             `
           : html`
               <ha-picker-combo-box
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .autofocus=${this.autofocus}
                 .allowCustomValue=${this.allowCustomValue}
                 .label=${this.searchLabel ??
-                this.hass.localize("ui.common.search")}
+                this.menuai.localize("ui.common.search")}
                 .value=${this.value}
                 hide-clear-icon
                 @opened-changed=${this._openedChanged}

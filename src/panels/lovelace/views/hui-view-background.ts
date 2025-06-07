@@ -1,12 +1,12 @@
 import { css, LitElement, nothing } from "lit";
 import type { PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceViewBackgroundConfig } from "../../../data/lovelace/config/view";
 
 @customElement("hui-view-background")
 export class HUIViewBackground extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) background?:
     | string
@@ -55,7 +55,7 @@ export class HUIViewBackground extends LitElement {
       const alignment = background.alignment ?? "center";
       const size = background.size ?? "cover";
       const repeat = background.repeat ?? "no-repeat";
-      return `${alignment} / ${size} ${repeat} url('${this.hass.hassUrl(background.image)}')`;
+      return `${alignment} / ${size} ${repeat} url('${this.menuai.menuaiUrl(background.image)}')`;
     }
     if (typeof background === "string") {
       return background;
@@ -76,12 +76,12 @@ export class HUIViewBackground extends LitElement {
 
   protected willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);
-    if (changedProperties.has("hass") && this.hass) {
-      const oldHass = changedProperties.get("hass");
+    if (changedProperties.has("menuai") && this.menuai) {
+      const oldmenuai = changedProperties.get("menuai");
       if (
-        !oldHass ||
-        this.hass.themes !== oldHass.themes ||
-        this.hass.selectedTheme !== oldHass.selectedTheme
+        !oldmenuai ||
+        this.menuai.themes !== oldmenuai.themes ||
+        this.menuai.selectedTheme !== oldmenuai.selectedTheme
       ) {
         this._applyTheme();
         return;

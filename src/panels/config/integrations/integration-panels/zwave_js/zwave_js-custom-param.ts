@@ -6,7 +6,7 @@ import "../../../../../components/ha-select";
 import "../../../../../components/ha-button";
 import "../../../../../components/ha-spinner";
 import "../../../../../components/ha-list-item";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import {
   getZwaveNodeRawConfigParameter,
   setZwaveNodeRawConfigParameter,
@@ -15,7 +15,7 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 
 @customElement("zwave_js-custom-param")
 class ZWaveJSCustomParam extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public deviceId!: string;
 
@@ -35,7 +35,7 @@ class ZWaveJSCustomParam extends LitElement {
     return html`
       <div class="custom-config-form">
         <ha-textfield
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.parameter"
           )}
           .value=${this._customParamNumber ?? ""}
@@ -43,7 +43,7 @@ class ZWaveJSCustomParam extends LitElement {
           type="number"
         ></ha-textfield>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.size"
           )}
           .value=${String(this._valueSize)}
@@ -54,7 +54,7 @@ class ZWaveJSCustomParam extends LitElement {
           <ha-list-item value="4">4</ha-list-item>
         </ha-select>
         <ha-textfield
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.value"
           )}
           .value=${this._value ?? ""}
@@ -62,29 +62,29 @@ class ZWaveJSCustomParam extends LitElement {
           type="number"
         ></ha-textfield>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.format"
           )}
           .value=${String(this._valueFormat)}
           @selected=${this._customValueFormatChanged}
         >
           <ha-list-item value="0"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.signed"
             )}</ha-list-item
           >
           <ha-list-item value="1"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.unsigned"
             )}</ha-list-item
           >
           <ha-list-item value="2"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.enumerated"
             )}</ha-list-item
           >
           <ha-list-item value="3"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.zwave_js.node_config.bitfield"
             )}</ha-list-item
           >
@@ -93,12 +93,12 @@ class ZWaveJSCustomParam extends LitElement {
       <div class="custom-config-buttons">
         ${this._isLoading ? html`<ha-spinner></ha-spinner>` : nothing}
         <ha-button @click=${this._getCustomConfigValue}>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.get_value"
           )}
         </ha-button>
         <ha-button @click=${this._setCustomConfigValue}>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.set_value"
           )}
         </ha-button>
@@ -145,10 +145,10 @@ class ZWaveJSCustomParam extends LitElement {
 
   private async _getCustomConfigValue() {
     if (this._customParamNumber === undefined) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.error_required",
         {
-          entity: this.hass.localize(
+          entity: this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.parameter"
           ),
         }
@@ -159,7 +159,7 @@ class ZWaveJSCustomParam extends LitElement {
     this._isLoading = true;
     try {
       const value = await getZwaveNodeRawConfigParameter(
-        this.hass,
+        this.menuai,
         this.deviceId,
         this._customParamNumber
       );
@@ -177,10 +177,10 @@ class ZWaveJSCustomParam extends LitElement {
 
   private async _setCustomConfigValue() {
     if (this._customParamNumber === undefined) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.error_required",
         {
-          entity: this.hass.localize(
+          entity: this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.parameter"
           ),
         }
@@ -188,10 +188,10 @@ class ZWaveJSCustomParam extends LitElement {
       return;
     }
     if (this._value === undefined) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.node_config.error_required",
         {
-          entity: this.hass.localize(
+          entity: this.menuai.localize(
             "ui.panel.config.zwave_js.node_config.value"
           ),
         }
@@ -202,7 +202,7 @@ class ZWaveJSCustomParam extends LitElement {
     this._isLoading = true;
     try {
       await setZwaveNodeRawConfigParameter(
-        this.hass,
+        this.menuai,
         this.deviceId,
         this._customParamNumber,
         this._value,
@@ -266,7 +266,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "zwave_js-custom-param": ZWaveJSCustomParam;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "new-value": {
       property: number;
       value: number;

@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import {
   mdiArrowCollapseHorizontal,
   mdiArrowDown,
@@ -13,7 +13,7 @@ import {
 
 describe("computeOpenIcon", () => {
   it("returns mdiArrowExpandHorizontal for awning, door, gate, and curtain", () => {
-    const stateObj = { attributes: { device_class: "awning" } } as HassEntity;
+    const stateObj = { attributes: { device_class: "awning" } } as menuaiEntity;
     expect(computeOpenIcon(stateObj)).toBe(mdiArrowExpandHorizontal);
 
     stateObj.attributes.device_class = "door";
@@ -27,14 +27,14 @@ describe("computeOpenIcon", () => {
   });
 
   it("returns mdiArrowUp for other device classes", () => {
-    const stateObj = { attributes: { device_class: "window" } } as HassEntity;
+    const stateObj = { attributes: { device_class: "window" } } as menuaiEntity;
     expect(computeOpenIcon(stateObj)).toBe(mdiArrowUp);
   });
 });
 
 describe("computeCloseIcon", () => {
   it("returns mdiArrowCollapseHorizontal for awning, door, gate, and curtain", () => {
-    const stateObj = { attributes: { device_class: "awning" } } as HassEntity;
+    const stateObj = { attributes: { device_class: "awning" } } as menuaiEntity;
     expect(computeCloseIcon(stateObj)).toBe(mdiArrowCollapseHorizontal);
 
     stateObj.attributes.device_class = "door";
@@ -48,7 +48,7 @@ describe("computeCloseIcon", () => {
   });
 
   it("returns mdiArrowDown for other device classes", () => {
-    const stateObj = { attributes: { device_class: "window" } } as HassEntity;
+    const stateObj = { attributes: { device_class: "window" } } as menuaiEntity;
     expect(computeCloseIcon(stateObj)).toBe(mdiArrowDown);
   });
 });

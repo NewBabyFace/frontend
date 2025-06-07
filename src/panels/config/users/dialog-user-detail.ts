@@ -22,13 +22,13 @@ import {
   showPromptDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showAdminChangePasswordDialog } from "./show-dialog-admin-change-password";
 import type { UserDetailDialogParams } from "./show-dialog-user-detail";
 
 @customElement("dialog-user-detail")
 class DialogUserDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _name!: string;
 
@@ -59,21 +59,21 @@ class DialogUserDetail extends LitElement {
       return nothing;
     }
     const user = this._params.entry;
-    const badges = computeUserBadges(this.hass, user, true);
+    const badges = computeUserBadges(this.menuai, user, true);
     return html`
       <ha-dialog
         open
         @closed=${this._close}
         scrimClickAction
         escapeKeyAction
-        .heading=${createCloseHeading(this.hass, user.name)}
+        .heading=${createCloseHeading(this.menuai, user.name)}
       >
         <div>
           ${this._error
             ? html`<div class="error">${this._error}</div>`
             : nothing}
           <div class="secondary">
-            ${this.hass.localize("ui.panel.config.users.editor.id")}:
+            ${this.menuai.localize("ui.panel.config.users.editor.id")}:
             ${user.id}<br />
           </div>
           ${badges.length === 0
@@ -97,23 +97,23 @@ class DialogUserDetail extends LitElement {
                     dialogInitialFocus
                     .value=${this._name}
                     @input=${this._nameChanged}
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.config.users.editor.name"
                     )}
                   ></ha-textfield>
                   <ha-settings-row>
                     <span slot="heading">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.users.editor.username"
                       )}
                     </span>
                     <span slot="description">${user.username}</span>
-                    ${this.hass.user?.is_owner
+                    ${this.menuai.user?.is_owner
                       ? html`
                           <ha-icon-button
                             .path=${mdiPencil}
                             @click=${this._changeUsername}
-                            .label=${this.hass.localize(
+                            .label=${this.menuai.localize(
                               "ui.panel.config.users.editor.change_username"
                             )}
                           >
@@ -123,21 +123,21 @@ class DialogUserDetail extends LitElement {
                   </ha-settings-row>
                 `
               : nothing}
-            ${!user.system_generated && this.hass.user?.is_owner
+            ${!user.system_generated && this.menuai.user?.is_owner
               ? html`
                   <ha-settings-row>
                     <span slot="heading">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.users.editor.password"
                       )}
                     </span>
                     <span slot="description">************</span>
-                    ${this.hass.user?.is_owner
+                    ${this.menuai.user?.is_owner
                       ? html`
                           <ha-icon-button
                             .path=${mdiPencil}
                             @click=${this._changePassword}
-                            .label=${this.hass.localize(
+                            .label=${this.menuai.localize(
                               "ui.panel.config.users.editor.change_password"
                             )}
                           >
@@ -150,10 +150,10 @@ class DialogUserDetail extends LitElement {
 
             <ha-settings-row>
               <span slot="heading">
-                ${this.hass.localize("ui.panel.config.users.editor.active")}
+                ${this.menuai.localize("ui.panel.config.users.editor.active")}
               </span>
               <span slot="description">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.users.editor.active_description"
                 )}
               </span>
@@ -166,12 +166,12 @@ class DialogUserDetail extends LitElement {
             </ha-settings-row>
             <ha-settings-row>
               <span slot="heading">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.users.editor.local_access_only"
                 )}
               </span>
               <span slot="description">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.users.editor.local_access_only_description"
                 )}
               </span>
@@ -184,10 +184,10 @@ class DialogUserDetail extends LitElement {
             </ha-settings-row>
             <ha-settings-row>
               <span slot="heading">
-                ${this.hass.localize("ui.panel.config.users.editor.admin")}
+                ${this.menuai.localize("ui.panel.config.users.editor.admin")}
               </span>
               <span slot="description">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.users.editor.admin_description"
                 )}
               </span>
@@ -201,7 +201,7 @@ class DialogUserDetail extends LitElement {
             ${!this._isAdmin && !user.system_generated
               ? html`
                   <ha-alert alert-type="info">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.users.users_privileges_note"
                     )}
                   </ha-alert>
@@ -211,7 +211,7 @@ class DialogUserDetail extends LitElement {
           ${user.system_generated
             ? html`
                 <ha-alert alert-type="info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.users.editor.system_generated_read_only_users"
                   )}
                 </ha-alert>
@@ -227,7 +227,7 @@ class DialogUserDetail extends LitElement {
             user.system_generated ||
             user.is_owner}
           >
-            ${this.hass!.localize("ui.panel.config.users.editor.delete_user")}
+            ${this.menuai!.localize("ui.panel.config.users.editor.delete_user")}
           </ha-button>
         </div>
 
@@ -238,7 +238,7 @@ class DialogUserDetail extends LitElement {
             this._submitting ||
             user.system_generated}
           >
-            ${this.hass!.localize("ui.panel.config.users.editor.update_user")}
+            ${this.menuai!.localize("ui.panel.config.users.editor.update_user")}
           </ha-button>
         </div>
       </ha-dialog>
@@ -294,22 +294,22 @@ class DialogUserDetail extends LitElement {
 
   private async _changeUsername() {
     const credential = this._params?.entry.credentials.find(
-      (cred) => cred.type === "homeassistant"
+      (cred) => cred.type === "menuai"
     );
     if (!credential) {
       showAlertDialog(this, {
-        title: "No Home Assistant credentials found.",
+        title: "No MenuAI credentials found.",
       });
       return;
     }
     const newUsername = await showPromptDialog(this, {
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.config.users.change_username.new_username"
       ),
-      confirmText: this.hass.localize(
+      confirmText: this.menuai.localize(
         "ui.panel.config.users.change_username.change"
       ),
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.users.change_username.caption"
       ),
       defaultValue: this._params!.entry.username!,
@@ -317,7 +317,7 @@ class DialogUserDetail extends LitElement {
     if (newUsername) {
       try {
         await adminChangeUsername(
-          this.hass,
+          this.menuai,
           this._params!.entry.id,
           newUsername
         );
@@ -327,13 +327,13 @@ class DialogUserDetail extends LitElement {
         };
         this._params.replaceEntry(this._params.entry);
         showAlertDialog(this, {
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.users.change_username.username_changed"
           ),
         });
       } catch (err: any) {
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.users.change_username.failed"
           ),
           text: err.message,
@@ -344,11 +344,11 @@ class DialogUserDetail extends LitElement {
 
   private async _changePassword() {
     const credential = this._params?.entry.credentials.find(
-      (cred) => cred.type === "homeassistant"
+      (cred) => cred.type === "menuai"
     );
     if (!credential) {
       showAlertDialog(this, {
-        title: "No Home Assistant credentials found.",
+        title: "No MenuAI credentials found.",
       });
       return;
     }

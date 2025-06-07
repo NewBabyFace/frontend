@@ -12,7 +12,7 @@ import {
   loadDataEntryFlowDialog,
   showFlowDialog,
 } from "../../../dialogs/config-flow/show-dialog-data-entry-flow";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./dialog-repairs-issue-subtitle";
 
 const mergePlaceholders = (issue: RepairsIssue, step: DataEntryFlowStep) =>
@@ -20,11 +20,11 @@ const mergePlaceholders = (issue: RepairsIssue, step: DataEntryFlowStep) =>
     ? { ...issue.translation_placeholders, ...step.description_placeholders }
     : step.description_placeholders || issue.translation_placeholders;
 
-const renderIssueDescription = (hass: HomeAssistant, issue: RepairsIssue) =>
+const renderIssueDescription = (menuai: menuai, issue: RepairsIssue) =>
   issue.breaks_in_ha_version
     ? html`
         <ha-alert alert-type="warning">
-          ${hass.localize("ui.panel.config.repairs.dialog.breaks_in_version", {
+          ${menuai.localize("ui.panel.config.repairs.dialog.breaks_in_version", {
             version: issue.breaks_in_ha_version,
           })} </ha-alert
         ><br />
@@ -48,47 +48,47 @@ export const showRepairsFlowDialog = (
     {
       flowType: "repair_flow",
       showDevices: false,
-      createFlow: async (hass, handler) => {
+      createFlow: async (menuai, handler) => {
         const [step] = await Promise.all([
-          createRepairsFlow(hass, handler, issue.issue_id),
-          hass.loadBackendTranslation("issues", issue.domain),
-          hass.loadBackendTranslation("selector", issue.domain),
+          createRepairsFlow(menuai, handler, issue.issue_id),
+          menuai.loadBackendTranslation("issues", issue.domain),
+          menuai.loadBackendTranslation("selector", issue.domain),
         ]);
         return step;
       },
-      fetchFlow: async (hass, flowId) => {
+      fetchFlow: async (menuai, flowId) => {
         const [step] = await Promise.all([
-          fetchRepairsFlow(hass, flowId),
-          hass.loadBackendTranslation("issues", issue.domain),
-          hass.loadBackendTranslation("selector", issue.domain),
+          fetchRepairsFlow(menuai, flowId),
+          menuai.loadBackendTranslation("issues", issue.domain),
+          menuai.loadBackendTranslation("selector", issue.domain),
         ]);
         return step;
       },
       handleFlowStep: handleRepairsFlowStep,
       deleteFlow: deleteRepairsFlow,
 
-      renderAbortHeader(hass) {
-        return hass.localize("ui.dialogs.repair_flow.form.header");
+      renderAbortHeader(menuai) {
+        return menuai.localize("ui.dialogs.repair_flow.form.header");
       },
 
-      renderAbortSubheader(hass) {
+      renderAbortSubheader(menuai) {
         return html`
           <dialog-repairs-issue-subtitle
-            .hass=${hass}
+            .menuai=${menuai}
             .issue=${issue}
           ></dialog-repairs-issue-subtitle>
         `;
       },
 
-      renderAbortDescription(hass, step) {
-        const description = hass.localize(
+      renderAbortDescription(menuai, step) {
+        const description = menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.abort.${step.reason}`,
           mergePlaceholders(issue, step)
         );
 
-        return html`${renderIssueDescription(hass, issue)}
+        return html`${renderIssueDescription(menuai, issue)}
         ${description
           ? html`
               <ha-markdown
@@ -100,34 +100,34 @@ export const showRepairsFlowDialog = (
           : step.reason}`;
       },
 
-      renderShowFormStepHeader(hass, step) {
+      renderShowFormStepHeader(menuai, step) {
         return (
-          hass.localize(
+          menuai.localize(
             `component.${issue.domain}.issues.${
               issue.translation_key || issue.issue_id
             }.fix_flow.step.${step.step_id}.title`,
             mergePlaceholders(issue, step)
-          ) || hass.localize("ui.dialogs.repair_flow.form.header")
+          ) || menuai.localize("ui.dialogs.repair_flow.form.header")
         );
       },
 
-      renderShowFormStepSubheader(hass) {
+      renderShowFormStepSubheader(menuai) {
         return html`
           <dialog-repairs-issue-subtitle
-            .hass=${hass}
+            .menuai=${menuai}
             .issue=${issue}
           ></dialog-repairs-issue-subtitle>
         `;
       },
 
-      renderShowFormStepDescription(hass, step) {
-        const description = hass.localize(
+      renderShowFormStepDescription(menuai, step) {
+        const description = menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.step.${step.step_id}.description`,
           mergePlaceholders(issue, step)
         );
-        return html`${renderIssueDescription(hass, issue)}
+        return html`${renderIssueDescription(menuai, issue)}
         ${description
           ? html`
               <ha-markdown
@@ -139,8 +139,8 @@ export const showRepairsFlowDialog = (
           : nothing}`;
       },
 
-      renderShowFormStepFieldLabel(hass, step, field, options) {
-        return hass.localize(
+      renderShowFormStepFieldLabel(menuai, step, field, options) {
+        return menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.step.${step.step_id}.${options?.prefix ? `section.${options.prefix[0]}.` : ""}data.${field.name}`,
@@ -148,21 +148,21 @@ export const showRepairsFlowDialog = (
         );
       },
 
-      renderShowFormStepFieldHelper(hass, step, field, options) {
-        const description = hass.localize(
+      renderShowFormStepFieldHelper(menuai, step, field, options) {
+        const description = menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.step.${step.step_id}.${options?.prefix ? `section.${options.prefix[0]}.` : ""}data_description.${field.name}`,
           mergePlaceholders(issue, step)
         );
-        return html`${renderIssueDescription(hass, issue)}
+        return html`${renderIssueDescription(menuai, issue)}
         ${description
           ? html`<ha-markdown breaks .content=${description}></ha-markdown>`
           : nothing}`;
       },
 
-      renderShowFormStepFieldError(hass, step, error) {
-        return hass.localize(
+      renderShowFormStepFieldError(menuai, step, error) {
+        return menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.error.${error}`,
@@ -170,18 +170,18 @@ export const showRepairsFlowDialog = (
         );
       },
 
-      renderShowFormStepFieldLocalizeValue(hass, _step, key) {
-        return hass.localize(`component.${issue.domain}.selector.${key}`);
+      renderShowFormStepFieldLocalizeValue(menuai, _step, key) {
+        return menuai.localize(`component.${issue.domain}.selector.${key}`);
       },
 
-      renderShowFormStepSubmitButton(hass, step) {
+      renderShowFormStepSubmitButton(menuai, step) {
         return (
-          hass.localize(
+          menuai.localize(
             `component.${issue.domain}.issues.${
               issue.translation_key || issue.issue_id
             }.fix_flow.step.${step.step_id}.submit`
           ) ||
-          hass.localize(
+          menuai.localize(
             `ui.panel.config.integrations.config_flow.${
               step.last_step === false ? "next" : "submit"
             }`
@@ -189,48 +189,48 @@ export const showRepairsFlowDialog = (
         );
       },
 
-      renderExternalStepHeader(_hass, _step) {
+      renderExternalStepHeader(_menuai, _step) {
         return "";
       },
 
-      renderExternalStepDescription(_hass, _step) {
+      renderExternalStepDescription(_menuai, _step) {
         return "";
       },
 
-      renderCreateEntryDescription(hass, _step) {
+      renderCreateEntryDescription(menuai, _step) {
         return html`
-          <p>${hass.localize("ui.dialogs.repair_flow.success.description")}</p>
+          <p>${menuai.localize("ui.dialogs.repair_flow.success.description")}</p>
         `;
       },
 
-      renderShowFormProgressHeader(hass, step) {
+      renderShowFormProgressHeader(menuai, step) {
         return (
-          hass.localize(
+          menuai.localize(
             `component.${issue.domain}.issues.step.${
               issue.translation_key || issue.issue_id
             }.fix_flow.${step.step_id}.title`,
             mergePlaceholders(issue, step)
-          ) || hass.localize(`component.${issue.domain}.title`)
+          ) || menuai.localize(`component.${issue.domain}.title`)
         );
       },
 
-      renderShowFormProgressSubheader(hass) {
+      renderShowFormProgressSubheader(menuai) {
         return html`
           <dialog-repairs-issue-subtitle
-            .hass=${hass}
+            .menuai=${menuai}
             .issue=${issue}
           ></dialog-repairs-issue-subtitle>
         `;
       },
 
-      renderShowFormProgressDescription(hass, step) {
-        const description = hass.localize(
+      renderShowFormProgressDescription(menuai, step) {
+        const description = menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.progress.${step.progress_action}`,
           mergePlaceholders(issue, step)
         );
-        return html`${renderIssueDescription(hass, issue)}${description
+        return html`${renderIssueDescription(menuai, issue)}${description
           ? html`
               <ha-markdown
                 allow-svg
@@ -241,34 +241,34 @@ export const showRepairsFlowDialog = (
           : nothing}`;
       },
 
-      renderMenuHeader(hass, step) {
+      renderMenuHeader(menuai, step) {
         return (
-          hass.localize(
+          menuai.localize(
             `component.${issue.domain}.issues.${
               issue.translation_key || issue.issue_id
             }.fix_flow.step.${step.step_id}.title`,
             mergePlaceholders(issue, step)
-          ) || hass.localize(`component.${issue.domain}.title`)
+          ) || menuai.localize(`component.${issue.domain}.title`)
         );
       },
 
-      renderMenuSubheader(hass) {
+      renderMenuSubheader(menuai) {
         return html`
           <dialog-repairs-issue-subtitle
-            .hass=${hass}
+            .menuai=${menuai}
             .issue=${issue}
           ></dialog-repairs-issue-subtitle>
         `;
       },
 
-      renderMenuDescription(hass, step) {
-        const description = hass.localize(
+      renderMenuDescription(menuai, step) {
+        const description = menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.step.${step.step_id}.description`,
           mergePlaceholders(issue, step)
         );
-        return html`${renderIssueDescription(hass, issue)}
+        return html`${renderIssueDescription(menuai, issue)}
         ${description
           ? html`
               <ha-markdown
@@ -280,8 +280,8 @@ export const showRepairsFlowDialog = (
           : nothing}`;
       },
 
-      renderMenuOption(hass, step, option) {
-        return hass.localize(
+      renderMenuOption(menuai, step, option) {
+        return menuai.localize(
           `component.${issue.domain}.issues.${
             issue.translation_key || issue.issue_id
           }.fix_flow.step.${step.step_id}.menu_options.${option}`,
@@ -289,16 +289,16 @@ export const showRepairsFlowDialog = (
         );
       },
 
-      renderLoadingDescription(hass, reason) {
+      renderLoadingDescription(menuai, reason) {
         return (
-          hass.localize(
+          menuai.localize(
             `component.${issue.domain}.issues.${
               issue.translation_key || issue.issue_id
             }.fix_flow.loading`
           ) ||
           (reason === "loading_flow" || reason === "loading_step"
-            ? hass.localize(`ui.dialogs.repair_flow.loading.${reason}`, {
-                integration: domainToName(hass.localize, issue.domain),
+            ? menuai.localize(`ui.dialogs.repair_flow.loading.${reason}`, {
+                integration: domainToName(menuai.localize, issue.domain),
               })
             : "")
         );

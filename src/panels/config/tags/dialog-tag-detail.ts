@@ -9,9 +9,9 @@ import "../../../components/ha-qr-code";
 import "../../../components/ha-switch";
 import "../../../components/ha-textfield";
 import type { Tag, UpdateTagParams } from "../../../data/tag";
-import type { HassDialog } from "../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { TagDetailDialogParams } from "./show-dialog-tag-detail";
 
 const TAG_BASE = "https://www.home-assistant.io/tag/";
@@ -19,9 +19,9 @@ const TAG_BASE = "https://www.home-assistant.io/tag/";
 @customElement("dialog-tag-detail")
 class DialogTagDetail
   extends LitElement
-  implements HassDialog<TagDetailDialogParams>
+  implements menuaiDialog<TagDetailDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _id?: string;
 
@@ -62,10 +62,10 @@ class DialogTagDetail
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._params.entry
             ? this._params.entry.name || this._params.entry.id
-            : this.hass!.localize("ui.panel.config.tag.detail.new_tag")
+            : this.menuai!.localize("ui.panel.config.tag.detail.new_tag")
         )}
       >
         <div>
@@ -74,7 +74,7 @@ class DialogTagDetail
             : ""}
           <div class="form">
             ${this._params.entry
-              ? html`${this.hass!.localize(
+              ? html`${this.menuai!.localize(
                   "ui.panel.config.tag.detail.tag_id"
                 )}:
                 ${this._params.entry.id}`
@@ -84,8 +84,8 @@ class DialogTagDetail
               .value=${this._name}
               .configValue=${"name"}
               @input=${this._valueChanged}
-              .label=${this.hass!.localize("ui.panel.config.tag.detail.name")}
-              .validationMessage=${this.hass!.localize(
+              .label=${this.menuai!.localize("ui.panel.config.tag.detail.name")}
+              .validationMessage=${this.menuai!.localize(
                 "ui.panel.config.tag.detail.required_error_msg"
               )}
               required
@@ -95,10 +95,10 @@ class DialogTagDetail
                   .value=${this._id || ""}
                   .configValue=${"id"}
                   @input=${this._valueChanged}
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.config.tag.detail.tag_id"
                   )}
-                  .placeholder=${this.hass!.localize(
+                  .placeholder=${this.menuai!.localize(
                     "ui.panel.config.tag.detail.tag_id_placeholder"
                   )}
                 ></ha-textfield>`
@@ -108,12 +108,12 @@ class DialogTagDetail
             ? html`
                 <div>
                   <p>
-                    ${this.hass!.localize("ui.panel.config.tag.detail.usage", {
+                    ${this.menuai!.localize("ui.panel.config.tag.detail.usage", {
                       companion_link: html`<a
                         href="https://companion.home-assistant.io/"
                         target="_blank"
                         rel="noreferrer"
-                        >${this.hass!.localize(
+                        >${this.menuai!.localize(
                           "ui.panel.config.tag.detail.companion_apps"
                         )}</a
                       >`,
@@ -140,7 +140,7 @@ class DialogTagDetail
                 @click=${this._deleteEntry}
                 .disabled=${this._submitting}
               >
-                ${this.hass!.localize("ui.panel.config.tag.detail.delete")}
+                ${this.menuai!.localize("ui.panel.config.tag.detail.delete")}
               </mwc-button>
             `
           : nothing}
@@ -150,8 +150,8 @@ class DialogTagDetail
           .disabled=${this._submitting || !this._name}
         >
           ${this._params.entry
-            ? this.hass!.localize("ui.panel.config.tag.detail.update")
-            : this.hass!.localize("ui.panel.config.tag.detail.create")}
+            ? this.menuai!.localize("ui.panel.config.tag.detail.update")
+            : this.menuai!.localize("ui.panel.config.tag.detail.create")}
         </mwc-button>
         ${this._params.openWrite && !this._params.entry
           ? html`<mwc-button
@@ -159,7 +159,7 @@ class DialogTagDetail
               @click=${this._updateWriteEntry}
               .disabled=${this._submitting || !this._name}
             >
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.config.tag.detail.create_and_write"
               )}
             </mwc-button>`

@@ -45,23 +45,23 @@ import { getSignedPath } from "../../../data/auth";
 
 import { isComponentLoaded } from "../../../common/config/is_component_loaded";
 import { atLeastVersion } from "../../../common/config/version";
-import { fireEvent, type HASSDomEvent } from "../../../common/dom/fire_event";
+import { fireEvent, type menuaiDomEvent } from "../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../common/translations/localize";
 import { debounce } from "../../../common/util/debounce";
 import type { HaMdMenu } from "../../../components/ha-md-menu";
 import type { ConnectionStatus } from "../../../data/connection-status";
 import { fetchErrorLog, getErrorLogDownloadUrl } from "../../../data/error_log";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
 import {
-  fetchHassioBoots,
-  fetchHassioLogs,
-  fetchHassioLogsFollow,
-  fetchHassioLogsFollowSkip,
-  fetchHassioLogsLegacy,
-  getHassioLogDownloadLinesUrl,
-  getHassioLogDownloadUrl,
-} from "../../../data/hassio/supervisor";
-import type { HomeAssistant } from "../../../types";
+  fetchmenuaiioBoots,
+  fetchmenuaiioLogs,
+  fetchmenuaiioLogsFollow,
+  fetchmenuaiioLogsFollowSkip,
+  fetchmenuaiioLogsLegacy,
+  getmenuaiioLogDownloadLinesUrl,
+  getmenuaiioLogDownloadUrl,
+} from "../../../data/menuaiio/supervisor";
+import type { menuai } from "../../../types";
 import {
   downloadFileSupported,
   fileDownload,
@@ -72,7 +72,7 @@ const NUMBER_OF_LINES = 100;
 
 @customElement("error-log-card")
 class ErrorLogCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public localizeFunc?: LocalizeFunc<any>;
 
@@ -140,12 +140,12 @@ class ErrorLogCard extends LitElement {
     const streaming =
       this._streamSupported &&
       this.provider &&
-      isComponentLoaded(this.hass, "hassio") &&
+      isComponentLoaded(this.menuai, "menuaiio") &&
       this._loadingState !== "loading";
 
     const hasBoots = this._streamSupported && Array.isArray(this._boots);
 
-    const localize = this.localizeFunc || this.hass.localize;
+    const localize = this.localizeFunc || this.menuai.localize;
     return html`
       <div class="error-log-intro">
         ${this._error
@@ -258,7 +258,7 @@ class ErrorLogCard extends LitElement {
                               slot="graphic"
                               .path=${mdiFolderTextOutline}
                             ></ha-svg-icon>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.logs.show_condensed_logs"
                             )}
                           </ha-list-item>`
@@ -338,9 +338,9 @@ class ErrorLogCard extends LitElement {
   protected willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
     if (!this.hasUpdated) {
-      this._downloadSupported = downloadFileSupported(this.hass);
+      this._downloadSupported = downloadFileSupported(this.menuai);
       this._streamSupported =
-        !__SUPERVISOR__ || atLeastVersion(this.hass.config.version, 2024, 11);
+        !__SUPERVISOR__ || atLeastVersion(this.menuai.config.version, 2024, 11);
 
       // just needs to be loaded once, because only the host endpoints provide boots information
       this._loadBoots();
@@ -350,7 +350,7 @@ class ErrorLogCard extends LitElement {
         this._handleConnectionStatus
       );
 
-      this.hass.loadFragmentTranslation("config");
+      this.menuai.loadFragmentTranslation("config");
     }
 
     if (changedProps.has("provider")) {
@@ -415,13 +415,13 @@ class ErrorLogCard extends LitElement {
       const timeString = new Date().toISOString().replace(/:/g, "-");
       const downloadUrl =
         this.provider && this.provider !== "core"
-          ? getHassioLogDownloadUrl(this.provider)
+          ? getmenuaiioLogDownloadUrl(this.provider)
           : getErrorLogDownloadUrl;
       const logFileName =
         this.provider && this.provider !== "core"
           ? `${this.provider}_${timeString}.log`
           : `home-assistant_${timeString}.log`;
-      const signedUrl = await getSignedPath(this.hass, downloadUrl);
+      const signedUrl = await getSignedPath(this.menuai, downloadUrl);
       fileDownload(signedUrl.path, logFileName);
     }
   }
@@ -439,7 +439,7 @@ class ErrorLogCard extends LitElement {
 
     const streamLogs =
       this._streamSupported &&
-      isComponentLoaded(this.hass, "hassio") &&
+      isComponentLoaded(this.menuai, "menuaiio") &&
       this.provider;
 
     try {
@@ -453,8 +453,8 @@ class ErrorLogCard extends LitElement {
 
         if (!retry) {
           // check if there are any logs at all
-          const testResponse = await fetchHassioLogs(
-            this.hass,
+          const testResponse = await fetchmenuaiioLogs(
+            this.menuai,
             this.provider!,
             `entries=:-1:`,
             this._boot
@@ -468,8 +468,8 @@ class ErrorLogCard extends LitElement {
         let response: Response;
 
         if (retry && this._firstCursor) {
-          response = await fetchHassioLogsFollowSkip(
-            this.hass,
+          response = await fetchmenuaiioLogsFollowSkip(
+            this.menuai,
             this.provider!,
             this._logStreamAborter.signal,
             this._firstCursor,
@@ -478,8 +478,8 @@ class ErrorLogCard extends LitElement {
             this._boot
           );
         } else {
-          response = await fetchHassioLogsFollow(
-            this.hass,
+          response = await fetchmenuaiioLogsFollow(
+            this.menuai,
             this.provider!,
             this._logStreamAborter.signal,
             NUMBER_OF_LINES,
@@ -541,12 +541,12 @@ class ErrorLogCard extends LitElement {
             }
 
             if (!this._downloadSupported) {
-              const downloadUrl = getHassioLogDownloadLinesUrl(
+              const downloadUrl = getmenuaiioLogDownloadLinesUrl(
                 this.provider!,
                 this._numberOfLines,
                 this._boot
               );
-              getSignedPath(this.hass, downloadUrl).then((signedUrl) => {
+              getSignedPath(this.menuai, downloadUrl).then((signedUrl) => {
                 this._logsFileLink = signedUrl.path;
               });
             }
@@ -559,10 +559,10 @@ class ErrorLogCard extends LitElement {
         // fallback to old method
         this._streamSupported = false;
         let logs = "";
-        if (isComponentLoaded(this.hass, "hassio") && this.provider) {
-          logs = await fetchHassioLogsLegacy(this.hass, this.provider);
+        if (isComponentLoaded(this.menuai, "menuaiio") && this.provider) {
+          logs = await fetchmenuaiioLogsLegacy(this.menuai, this.provider);
         } else {
-          logs = await fetchErrorLog(this.hass);
+          logs = await fetchErrorLog(this.menuai);
         }
 
         if (logs) {
@@ -582,7 +582,7 @@ class ErrorLogCard extends LitElement {
         return;
       }
 
-      this._error = (this.localizeFunc || this.hass.localize)(
+      this._error = (this.localizeFunc || this.menuai.localize)(
         "ui.panel.config.logs.failed_get_logs",
         {
           provider: this.provider,
@@ -615,7 +615,7 @@ class ErrorLogCard extends LitElement {
     }
   }
 
-  private _handleConnectionStatus = (ev: HASSDomEvent<ConnectionStatus>) => {
+  private _handleConnectionStatus = (ev: menuaiDomEvent<ConnectionStatus>) => {
     if (ev.detail === "disconnected" && this._logStreamAborter) {
       this._logStreamAborter.abort();
       this._loadingState = "loading";
@@ -639,8 +639,8 @@ class ErrorLogCard extends LitElement {
     const scrollPositionFromBottom =
       this._logElement.scrollHeight - this._logElement.scrollTop;
     this._loadingPrevState = "loading";
-    const response = await fetchHassioLogs(
-      this.hass,
+    const response = await fetchmenuaiioLogs(
+      this.menuai,
       this.provider,
       `entries=${this._firstCursor}:-100:100`,
       this._boot
@@ -694,9 +694,9 @@ class ErrorLogCard extends LitElement {
   };
 
   private async _loadBoots() {
-    if (this._streamSupported && isComponentLoaded(this.hass, "hassio")) {
+    if (this._streamSupported && isComponentLoaded(this.menuai, "menuaiio")) {
       try {
-        const { data } = await fetchHassioBoots(this.hass);
+        const { data } = await fetchmenuaiioBoots(this.menuai);
         const boots = Object.keys(data.boots)
           .map(Number)
           .sort((a, b) => b - a);

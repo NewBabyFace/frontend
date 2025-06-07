@@ -21,11 +21,11 @@ import {
   localizeExtraFieldsComputeHelperCallback,
 } from "../../../../../data/device_automation";
 import type { EntityRegistryEntry } from "../../../../../data/entity_registry";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 @customElement("ha-automation-trigger-device")
 export class HaDeviceTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Object }) public trigger!: DeviceTrigger;
 
@@ -70,13 +70,13 @@ export class HaDeviceTrigger extends LitElement {
     }
     if (
       this.trigger.device_id &&
-      !(this.trigger.device_id in this.hass.devices)
+      !(this.trigger.device_id in this.menuai.devices)
     ) {
       fireEvent(
         this,
         "ui-mode-not-available",
         Error(
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.edit_unknown_device"
           )
         )
@@ -93,9 +93,9 @@ export class HaDeviceTrigger extends LitElement {
       <ha-device-picker
         .value=${deviceId}
         @value-changed=${this._devicePicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.device.label"
         )}
       ></ha-device-picker>
@@ -103,25 +103,25 @@ export class HaDeviceTrigger extends LitElement {
         .value=${this.trigger}
         .deviceId=${deviceId}
         @value-changed=${this._deviceTriggerPicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.device.trigger"
         )}
       ></ha-device-trigger-picker>
       ${this._capabilities?.extra_fields
         ? html`
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .data=${this._extraFieldsData(this.trigger, this._capabilities)}
               .schema=${this._capabilities.extra_fields}
               .disabled=${this.disabled}
               .computeLabel=${localizeExtraFieldsComputeLabelCallback(
-                this.hass,
+                this.menuai,
                 this.trigger
               )}
               .computeHelper=${localizeExtraFieldsComputeHelperCallback(
-                this.hass,
+                this.menuai,
                 this.trigger
               )}
               @value-changed=${this._extraFieldsChanged}
@@ -132,7 +132,7 @@ export class HaDeviceTrigger extends LitElement {
   }
 
   protected firstUpdated() {
-    this.hass.loadBackendTranslation("device_automation");
+    this.menuai.loadBackendTranslation("device_automation");
     if (!this._capabilities) {
       this._getCapabilities();
     }
@@ -158,7 +158,7 @@ export class HaDeviceTrigger extends LitElement {
     const trigger = this.trigger;
 
     this._capabilities = trigger.domain
-      ? await fetchDeviceTriggerCapabilities(this.hass, trigger)
+      ? await fetchDeviceTriggerCapabilities(this.menuai, trigger)
       : undefined;
 
     if (this._capabilities) {

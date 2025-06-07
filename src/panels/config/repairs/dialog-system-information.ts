@@ -13,10 +13,10 @@ import "../../../components/ha-card";
 import "../../../components/ha-spinner";
 import { createCloseHeading } from "../../../components/ha-dialog";
 import "../../../components/ha-metric";
-import type { HassioStats } from "../../../data/hassio/common";
-import { fetchHassioStats } from "../../../data/hassio/common";
-import type { HassioResolution } from "../../../data/hassio/resolution";
-import { fetchHassioResolution } from "../../../data/hassio/resolution";
+import type { menuaiioStats } from "../../../data/menuaiio/common";
+import { fetchmenuaiioStats } from "../../../data/menuaiio/common";
+import type { menuaiioResolution } from "../../../data/menuaiio/resolution";
+import { fetchmenuaiioResolution } from "../../../data/menuaiio/resolution";
 import { domainToName } from "../../../data/integration";
 import type {
   SystemCheckValueObject,
@@ -25,15 +25,15 @@ import type {
 import { subscribeSystemHealthInfo } from "../../../data/system_health";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { showToast } from "../../../util/toast";
 
 const sortKeys = (a: string, b: string) => {
-  if (a === "homeassistant") {
+  if (a === "menuai") {
     return -1;
   }
-  if (b === "homeassistant") {
+  if (b === "menuai") {
     return 1;
   }
   if (a < b) {
@@ -52,25 +52,25 @@ export const UNHEALTHY_REASON_URL = {
 
 @customElement("dialog-system-information")
 class DialogSystemInformation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _systemInfo?: SystemHealthInfo;
 
-  @state() private _resolutionInfo?: HassioResolution;
+  @state() private _resolutionInfo?: menuaiioResolution;
 
-  @state() private _supervisorStats?: HassioStats;
+  @state() private _supervisorStats?: menuaiioStats;
 
-  @state() private _coreStats?: HassioStats;
+  @state() private _coreStats?: menuaiioStats;
 
   @state() private _opened = false;
 
   private _systemHealthSubscription?: Promise<UnsubscribeFunc>;
 
-  private _hassIOSubscription?: UnsubscribeFunc;
+  private _menuaiIOSubscription?: UnsubscribeFunc;
 
   public showDialog(): void {
     this._opened = true;
-    this.hass!.loadBackendTranslation("system_health");
+    this.menuai!.loadBackendTranslation("system_health");
     this._subscribe();
   }
 
@@ -81,9 +81,9 @@ class DialogSystemInformation extends LitElement {
   }
 
   private _subscribe(): void {
-    if (isComponentLoaded(this.hass, "system_health")) {
+    if (isComponentLoaded(this.menuai, "system_health")) {
       this._systemHealthSubscription = subscribeSystemHealthInfo(
-        this.hass,
+        this.menuai,
         (info) => {
           if (!info) {
             this._systemHealthSubscription = undefined;
@@ -94,20 +94,20 @@ class DialogSystemInformation extends LitElement {
       );
     }
 
-    if (isComponentLoaded(this.hass, "hassio")) {
-      this._hassIOSubscription = subscribePollingCollection(
-        this.hass,
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
+      this._menuaiIOSubscription = subscribePollingCollection(
+        this.menuai,
         async () => {
-          this._supervisorStats = await fetchHassioStats(
-            this.hass,
+          this._supervisorStats = await fetchmenuaiioStats(
+            this.menuai,
             "supervisor"
           );
-          this._coreStats = await fetchHassioStats(this.hass, "core");
+          this._coreStats = await fetchmenuaiioStats(this.menuai, "core");
         },
         10000
       );
 
-      fetchHassioResolution(this.hass).then((data) => {
+      fetchmenuaiioResolution(this.menuai).then((data) => {
         this._resolutionInfo = data;
       });
     }
@@ -116,8 +116,8 @@ class DialogSystemInformation extends LitElement {
   private _unsubscribe() {
     this._systemHealthSubscription?.then((unsubFunc) => unsubFunc());
     this._systemHealthSubscription = undefined;
-    this._hassIOSubscription?.();
-    this._hassIOSubscription = undefined;
+    this._menuaiIOSubscription?.();
+    this._menuaiIOSubscription = undefined;
 
     this._systemInfo = undefined;
     this._resolutionInfo = undefined;
@@ -137,18 +137,18 @@ class DialogSystemInformation extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.repairs.system_information")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.repairs.system_information")
         )}
       >
         <div>
           ${this._resolutionInfo
             ? html`${this._resolutionInfo.unhealthy.length
                 ? html`<ha-alert alert-type="error">
-                    ${this.hass.localize("ui.dialogs.unhealthy.title")}
+                    ${this.menuai.localize("ui.dialogs.unhealthy.title")}
                     <mwc-button
                       slot="action"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.common.learn_more"
                       )}
                       @click=${this._unhealthyDialog}
@@ -158,10 +158,10 @@ class DialogSystemInformation extends LitElement {
                 : ""}
               ${this._resolutionInfo.unsupported.length
                 ? html`<ha-alert alert-type="warning">
-                    ${this.hass.localize("ui.dialogs.unsupported.title")}
+                    ${this.menuai.localize("ui.dialogs.unsupported.title")}
                     <mwc-button
                       slot="action"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.common.learn_more"
                       )}
                       @click=${this._unsupportedDialog}
@@ -180,18 +180,18 @@ class DialogSystemInformation extends LitElement {
                   ${this._coreStats
                     ? html`
                         <h3>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.system_health.core_stats"
                           )}
                         </h3>
                         <ha-metric
-                          .heading=${this.hass.localize(
+                          .heading=${this.menuai.localize(
                             "ui.panel.config.system_health.cpu_usage"
                           )}
                           .value=${this._coreStats.cpu_percent}
                         ></ha-metric>
                         <ha-metric
-                          .heading=${this.hass.localize(
+                          .heading=${this.menuai.localize(
                             "ui.panel.config.system_health.ram_usage"
                           )}
                           .value=${this._coreStats.memory_percent}
@@ -201,18 +201,18 @@ class DialogSystemInformation extends LitElement {
                   ${this._supervisorStats
                     ? html`
                         <h3>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.system_health.supervisor_stats"
                           )}
                         </h3>
                         <ha-metric
-                          .heading=${this.hass.localize(
+                          .heading=${this.menuai.localize(
                             "ui.panel.config.system_health.cpu_usage"
                           )}
                           .value=${this._supervisorStats.cpu_percent}
                         ></ha-metric>
                         <ha-metric
-                          .heading=${this.hass.localize(
+                          .heading=${this.menuai.localize(
                             "ui.panel.config.system_health.ram_usage"
                           )}
                           .value=${this._supervisorStats.memory_percent}
@@ -224,7 +224,7 @@ class DialogSystemInformation extends LitElement {
         </div>
         <mwc-button
           slot="primaryAction"
-          .label=${this.hass.localize("ui.panel.config.repairs.copy")}
+          .label=${this.menuai.localize("ui.panel.config.repairs.copy")}
           @click=${this._copyInfo}
         ></mwc-button>
       </ha-dialog>
@@ -233,8 +233,8 @@ class DialogSystemInformation extends LitElement {
 
   private async _unsupportedDialog(): Promise<void> {
     await showAlertDialog(this, {
-      title: this.hass.localize("ui.dialogs.unsupported.title"),
-      text: html`${this.hass.localize("ui.dialogs.unsupported.description")}
+      title: this.menuai.localize("ui.dialogs.unsupported.title"),
+      text: html`${this.menuai.localize("ui.dialogs.unsupported.description")}
         <br /><br />
         <ul>
           ${this._resolutionInfo!.unsupported.map(
@@ -242,14 +242,14 @@ class DialogSystemInformation extends LitElement {
               <li>
                 <a
                   href=${documentationUrl(
-                    this.hass,
+                    this.menuai,
                     UNSUPPORTED_REASON_URL[reason] ||
                       `/more-info/unsupported/${reason}`
                   )}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.dialogs.unsupported.reason.${reason}`
                   ) || reason}
                 </a>
@@ -262,8 +262,8 @@ class DialogSystemInformation extends LitElement {
 
   private async _unhealthyDialog(): Promise<void> {
     await showAlertDialog(this, {
-      title: this.hass.localize("ui.dialogs.unhealthy.title"),
-      text: html`${this.hass.localize("ui.dialogs.unhealthy.description")}
+      title: this.menuai.localize("ui.dialogs.unhealthy.title"),
+      text: html`${this.menuai.localize("ui.dialogs.unhealthy.description")}
         <br /><br />
         <ul>
           ${this._resolutionInfo!.unhealthy.map(
@@ -271,14 +271,14 @@ class DialogSystemInformation extends LitElement {
               <li>
                 <a
                   href=${documentationUrl(
-                    this.hass,
+                    this.menuai,
                     UNHEALTHY_REASON_URL[reason] ||
                       `/more-info/unhealthy/${reason}`
                   )}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.dialogs.unhealthy.reason.${reason}`
                   ) || reason}
                 </a>
@@ -326,7 +326,7 @@ class DialogSystemInformation extends LitElement {
                         target="_blank"
                         rel="noreferrer noopener"
                       >
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.info.system_health.more_info"
                         )}
                       </a>
@@ -335,8 +335,8 @@ class DialogSystemInformation extends LitElement {
             } else if (info.type === "date") {
               value = formatDateTime(
                 new Date(info.value),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               );
             }
           } else {
@@ -346,7 +346,7 @@ class DialogSystemInformation extends LitElement {
           keys.push(html`
             <tr>
               <td>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `component.${domain}.system_health.info.${key}`
                 ) || key}
               </td>
@@ -354,16 +354,16 @@ class DialogSystemInformation extends LitElement {
             </tr>
           `);
         }
-        if (domain !== "homeassistant") {
+        if (domain !== "menuai") {
           sections.push(html`
             <div class="card-header">
-              <h3>${domainToName(this.hass.localize, domain)}</h3>
+              <h3>${domainToName(this.menuai.localize, domain)}</h3>
               ${!domainInfo.manage_url
                 ? ""
                 : html`
                     <a class="manage" href=${domainInfo.manage_url}>
                       <mwc-button>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.info.system_health.manage"
                         )}
                       </mwc-button>
@@ -391,9 +391,9 @@ class DialogSystemInformation extends LitElement {
       let first = true;
       const parts = [
         `${
-          domain !== "homeassistant"
+          domain !== "menuai"
             ? `<details><summary>${domainToName(
-                this.hass.localize,
+                this.menuai.localize,
                 domain
               )}</summary>\n`
             : ""
@@ -413,8 +413,8 @@ class DialogSystemInformation extends LitElement {
           } else if (info.type === "date") {
             value = formatDateTime(
               new Date(info.value),
-              this.hass.locale,
-              this.hass.config
+              this.menuai.locale,
+              this.menuai.config
             );
           }
         } else {
@@ -428,11 +428,11 @@ class DialogSystemInformation extends LitElement {
         }
       }
 
-      if (domain === "homeassistant") {
+      if (domain === "menuai") {
         haContent = parts.join("\n");
       } else {
         domainParts.push(parts.join("\n"));
-        if (domain !== "homeassistant") {
+        if (domain !== "menuai") {
           domainParts.push("</details>");
         }
       }
@@ -443,7 +443,7 @@ class DialogSystemInformation extends LitElement {
     );
 
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 

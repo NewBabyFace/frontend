@@ -8,7 +8,7 @@ import {
   mdiToggleSwitchOff,
   mdiWaterAlert,
 } from "@mdi/js";
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues, TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -39,7 +39,7 @@ import type { EntityRegistryEntry } from "../../../data/entity_registry";
 import { subscribeEntityRegistry } from "../../../data/entity_registry";
 import { forwardHaptic } from "../../../data/haptics";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/hui-image";
 import "../components/hui-warning";
 import type {
@@ -85,13 +85,13 @@ export class HuiAreaCard
   }
 
   public static async getStubConfig(
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<AreaCardConfig> {
-    const areas = await subscribeOne(hass.connection, subscribeAreaRegistry);
+    const areas = await subscribeOne(menuai.connection, subscribeAreaRegistry);
     return { type: "area", area: areas[0]?.area_id || "" };
   }
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public layout?: string;
 
@@ -116,7 +116,7 @@ export class HuiAreaCard
       devicesInArea: Set<string>,
       registryEntities: EntityRegistryEntry[],
       deviceClasses: Record<string, string[]>,
-      states: HomeAssistant["states"]
+      states: menuai["states"]
     ) => {
       const entitiesInArea = registryEntities
         .filter(
@@ -129,7 +129,7 @@ export class HuiAreaCard
         )
         .map((entry) => entry.entity_id);
 
-      const entitiesByDomain: Record<string, HassEntity[]> = {};
+      const entitiesByDomain: Record<string, menuaiEntity[]> = {};
 
       for (const entity of entitiesInArea) {
         const domain = computeDomain(entity);
@@ -141,7 +141,7 @@ export class HuiAreaCard
         ) {
           continue;
         }
-        const stateObj: HassEntity | undefined = states[entity];
+        const stateObj: menuaiEntity | undefined = states[entity];
 
         if (!stateObj) {
           continue;
@@ -166,13 +166,13 @@ export class HuiAreaCard
     }
   );
 
-  private _isOn(domain: string, deviceClass?: string): HassEntity | undefined {
+  private _isOn(domain: string, deviceClass?: string): menuaiEntity | undefined {
     const entities = this._entitiesByDomain(
       this._config!.area,
       this._devicesInArea(this._config!.area, this._devices!),
       this._entities!,
       this._deviceClasses,
-      this.hass.states
+      this.menuai.states
     )[domain];
     if (!entities) {
       return undefined;
@@ -195,7 +195,7 @@ export class HuiAreaCard
       this._devicesInArea(this._config!.area, this._devices!),
       this._entities!,
       this._deviceClasses,
-      this.hass.states
+      this.menuai.states
     )[domain].filter((entity) =>
       deviceClass ? entity.attributes.device_class === deviceClass : true
     );
@@ -220,9 +220,9 @@ export class HuiAreaCard
       (total, entity) => total + Number(entity.state),
       0
     );
-    return `${formatNumber(sum / values.length, this.hass!.locale, {
+    return `${formatNumber(sum / values.length, this.menuai!.locale, {
       maximumFractionDigits: 1,
-    })}${uom ? blankBeforeUnit(uom, this.hass!.locale) : ""}${uom || ""}`;
+    })}${uom ? blankBeforeUnit(uom, this.menuai!.locale) : ""}${uom || ""}`;
   }
 
   private _area = memoizeOne(
@@ -241,15 +241,15 @@ export class HuiAreaCard
       )
   );
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeAreaRegistry(this.hass!.connection, (areas) => {
+      subscribeAreaRegistry(this.menuai!.connection, (areas) => {
         this._areas = areas;
       }),
-      subscribeDeviceRegistry(this.hass!.connection, (devices) => {
+      subscribeDeviceRegistry(this.menuai!.connection, (devices) => {
         this._devices = devices;
       }),
-      subscribeEntityRegistry(this.hass!.connection, (entries) => {
+      subscribeEntityRegistry(this.menuai!.connection, (entries) => {
         this._entities = entries;
       }),
     ];
@@ -288,16 +288,16 @@ export class HuiAreaCard
       return true;
     }
 
-    if (!changedProps.has("hass")) {
+    if (!changedProps.has("menuai")) {
       return false;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
     if (
-      !oldHass ||
-      oldHass.themes !== this.hass!.themes ||
-      oldHass.locale !== this.hass!.locale
+      !oldmenuai ||
+      oldmenuai.themes !== this.menuai!.themes ||
+      oldmenuai.locale !== this.menuai!.locale
     ) {
       return true;
     }
@@ -315,12 +315,12 @@ export class HuiAreaCard
       this._devicesInArea(this._config.area, this._devices),
       this._entities,
       this._deviceClasses,
-      this.hass.states
+      this.menuai.states
     );
 
     for (const domainEntities of Object.values(entities)) {
       for (const stateObj of domainEntities) {
-        if (oldHass!.states[stateObj.entity_id] !== stateObj) {
+        if (oldmenuai!.states[stateObj.entity_id] !== stateObj) {
           return true;
         }
       }
@@ -344,7 +344,7 @@ export class HuiAreaCard
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this._areas ||
       !this._devices ||
       !this._entities
@@ -357,14 +357,14 @@ export class HuiAreaCard
       this._devicesInArea(this._config.area, this._devices),
       this._entities,
       this._deviceClasses,
-      this.hass.states
+      this.menuai.states
     );
     const area = this._area(this._config.area, this._areas);
 
     if (area === null) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${this.hass.localize("ui.card.area.area_not_found")}
+        <hui-warning .menuai=${this.menuai}>
+          ${this.menuai.localize("ui.card.area.area_not_found")}
         </hui-warning>
       `;
     }
@@ -386,9 +386,9 @@ export class HuiAreaCard
         }
         const areaEntity =
           areaSensorEntityId &&
-          this.hass.states[areaSensorEntityId] &&
-          !isUnavailableState(this.hass.states[areaSensorEntityId].state)
-            ? this.hass.states[areaSensorEntityId]
+          this.menuai.states[areaSensorEntityId] &&
+          !isUnavailableState(this.menuai.states[areaSensorEntityId].state)
+            ? this.menuai.states[areaSensorEntityId]
             : undefined;
         if (
           areaEntity ||
@@ -397,13 +397,13 @@ export class HuiAreaCard
           )
         ) {
           let value = areaEntity
-            ? this.hass.formatEntityState(areaEntity)
+            ? this.menuai.formatEntityState(areaEntity)
             : this._average(domain, deviceClass);
           if (!value) value = "—";
           sensors.push(html`
             <div class="sensor">
               <ha-domain-icon
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .domain=${domain}
                 .deviceClass=${deviceClass}
               ></ha-domain-icon>
@@ -437,7 +437,7 @@ export class HuiAreaCard
           ? html`
               <hui-image
                 .config=${this._config}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .image=${area.picture ? area.picture : undefined}
                 .cameraImage=${cameraEntityId}
                 .cameraView=${this._config.camera_view}
@@ -472,7 +472,7 @@ export class HuiAreaCard
                   ? html`
                       <ha-state-icon
                         class="alert"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${entity}
                       ></ha-state-icon>
                     `
@@ -515,19 +515,19 @@ export class HuiAreaCard
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as AreaCardConfig | undefined;
 
     if (
-      (changedProps.has("hass") &&
-        (!oldHass || oldHass.themes !== this.hass.themes)) ||
+      (changedProps.has("menuai") &&
+        (!oldmenuai || oldmenuai.themes !== this.menuai.themes)) ||
       (changedProps.has("_config") &&
         (!oldConfig || oldConfig.theme !== this._config.theme))
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
@@ -541,7 +541,7 @@ export class HuiAreaCard
     ev.stopPropagation();
     const domain = (ev.currentTarget as any).domain as string;
     if (TOGGLE_DOMAINS.includes(domain)) {
-      this.hass.callService(
+      this.menuai.callService(
         domain,
         this._isOn(domain) ? "turn_off" : "turn_on",
         undefined,

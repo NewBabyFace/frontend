@@ -1,17 +1,17 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { computeDomain } from "../common/entity/compute_domain";
 
-interface GroupEntityAttributes extends HassEntityAttributeBase {
+interface GroupEntityAttributes extends menuaiEntityAttributeBase {
   entity_id: string[];
   order: number;
   auto?: boolean;
   view?: boolean;
   control?: "hidden";
 }
-export interface GroupEntity extends HassEntityBase {
+export interface GroupEntity extends menuaiEntityBase {
   attributes: GroupEntityAttributes;
 }
 

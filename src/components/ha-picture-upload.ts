@@ -15,14 +15,14 @@ import {
 import { showAlertDialog } from "../dialogs/generic/show-dialog-box";
 import type { CropOptions } from "../dialogs/image-cropper-dialog/show-image-cropper-dialog";
 import { showImageCropperDialog } from "../dialogs/image-cropper-dialog/show-image-cropper-dialog";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-button";
 import "./ha-file-upload";
 import { showMediaBrowserDialog } from "./media-player/show-media-browser-dialog";
 
 @customElement("ha-picture-upload")
 export class HaPictureUpload extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property() public value: string | null = null;
 
@@ -52,14 +52,14 @@ export class HaPictureUpload extends LitElement {
       const secondary =
         this.secondary ||
         (this.selectMedia
-          ? html`${this.hass.localize(
+          ? html`${this.menuai.localize(
               "ui.components.picture-upload.secondary",
               {
                 select_media: html`<button
                   class="link"
                   @click=${this._chooseMedia}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.components.picture-upload.select_media"
                   )}
                 </button>`,
@@ -69,13 +69,13 @@ export class HaPictureUpload extends LitElement {
 
       return html`
         <ha-file-upload
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .icon=${mdiImagePlus}
           .label=${this.label ||
-          this.hass.localize("ui.components.picture-upload.label")}
+          this.menuai.localize("ui.components.picture-upload.label")}
           .secondary=${secondary}
           .supports=${this.supports ||
-          this.hass.localize("ui.components.picture-upload.supported_formats")}
+          this.menuai.localize("ui.components.picture-upload.supported_formats")}
           .uploading=${this._uploading}
           @file-picked=${this._handleFilePicked}
           @change=${this._handleFileCleared}
@@ -88,12 +88,12 @@ export class HaPictureUpload extends LitElement {
         <img
           .src=${this.value}
           alt=${this.currentImageAltText ||
-          this.hass.localize("ui.components.picture-upload.current_image_alt")}
+          this.menuai.localize("ui.components.picture-upload.current_image_alt")}
         />
         <div>
           <ha-button
             @click=${this._handleChangeClick}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.components.picture-upload.clear_picture"
             )}
           >
@@ -124,7 +124,7 @@ export class HaPictureUpload extends LitElement {
   private async _cropFile(file: File, mediaId?: string) {
     if (!["image/png", "image/jpeg", "image/gif"].includes(file.type)) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.components.picture-upload.unsupported_format"
         ),
       });
@@ -154,7 +154,7 @@ export class HaPictureUpload extends LitElement {
   private async _uploadFile(file: File) {
     if (!["image/png", "image/jpeg", "image/gif"].includes(file.type)) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.components.picture-upload.unsupported_format"
         ),
       });
@@ -162,7 +162,7 @@ export class HaPictureUpload extends LitElement {
     }
     this._uploading = true;
     try {
-      const media = await createImage(this.hass, file);
+      const media = await createImage(this.menuai, file);
       this.value = generateImageThumbnailUrl(
         media.id,
         this.size,
@@ -197,7 +197,7 @@ export class HaPictureUpload extends LitElement {
             const url = generateImageThumbnailUrl(mediaId, undefined, true);
             let data;
             try {
-              data = await getImageData(this.hass, url);
+              data = await getImageData(this.menuai, url);
             } catch (err: any) {
               showAlertDialog(this, {
                 text: err.toString(),

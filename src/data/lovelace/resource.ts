@@ -1,5 +1,5 @@
 import type { Connection } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export interface LovelaceResource {
   id: string;
@@ -18,27 +18,27 @@ export const fetchResources = (conn: Connection): Promise<LovelaceResource[]> =>
   });
 
 export const createResource = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: LovelaceResourcesMutableParams
 ) =>
-  hass.callWS<LovelaceResource>({
+  menuai.callWS<LovelaceResource>({
     type: "lovelace/resources/create",
     ...values,
   });
 
 export const updateResource = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<LovelaceResourcesMutableParams>
 ) =>
-  hass.callWS<LovelaceResource>({
+  menuai.callWS<LovelaceResource>({
     type: "lovelace/resources/update",
     resource_id: id,
     ...updates,
   });
 
-export const deleteResource = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteResource = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "lovelace/resources/delete",
     resource_id: id,
   });

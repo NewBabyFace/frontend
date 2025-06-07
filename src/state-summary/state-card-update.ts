@@ -5,11 +5,11 @@ import "../components/entity/state-info";
 import type { UpdateEntity } from "../data/update";
 import { computeUpdateStateDisplay } from "../data/update";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-update")
 export class StateCardUpdate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: UpdateEntity;
 
@@ -19,13 +19,13 @@ export class StateCardUpdate extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         >
         </state-info>
         <div class="state">
-          ${computeUpdateStateDisplay(this.stateObj, this.hass)}
+          ${computeUpdateStateDisplay(this.stateObj, this.menuai)}
         </div>
       </div>
     `;

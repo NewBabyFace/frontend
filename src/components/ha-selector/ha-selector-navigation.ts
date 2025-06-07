@@ -2,12 +2,12 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { NavigationSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-navigation-picker";
 
 @customElement("ha-selector-navigation")
 export class HaNavigationSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: NavigationSelector;
 
@@ -24,7 +24,7 @@ export class HaNavigationSelector extends LitElement {
   protected render() {
     return html`
       <ha-navigation-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .label=${this.label}
         .value=${this.value}
         .required=${this.required}

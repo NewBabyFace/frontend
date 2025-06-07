@@ -1,5 +1,5 @@
 import type { LocalizeFunc } from "../../../src/common/translations/localize";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 import {
   selectedDemoConfig,
   selectedDemoConfigIndex,
@@ -10,12 +10,12 @@ import "../custom-cards/ha-demo-card";
 import { mapEntities } from "./entities";
 
 export const mockLovelace = (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   localizePromise: Promise<LocalizeFunc>
 ) => {
-  hass.mockWS("lovelace/config", ({ url_path }) => {
+  menuai.mockWS("lovelace/config", ({ url_path }) => {
     if (url_path === "map") {
-      hass.addEntities(mapEntities());
+      menuai.addEntities(mapEntities());
       return {
         strategy: {
           type: "map",
@@ -27,8 +27,8 @@ export const mockLovelace = (
     );
   });
 
-  hass.mockWS("lovelace/config/save", () => Promise.resolve());
-  hass.mockWS("lovelace/resources", () => Promise.resolve([]));
+  menuai.mockWS("lovelace/config/save", () => Promise.resolve());
+  menuai.mockWS("lovelace/resources", () => Promise.resolve([]));
 };
 
 customElements.whenDefined("hui-root").then(() => {
@@ -42,9 +42,9 @@ customElements.whenDefined("hui-root").then(() => {
     this.addEventListener("set-demo-config", async (ev) => {
       const index = (ev as CustomEvent).detail.index;
       try {
-        await setDemoConfig(this.hass, this.lovelace!, index);
+        await setDemoConfig(this.menuai, this.lovelace!, index);
       } catch (_err: any) {
-        setDemoConfig(this.hass, this.lovelace!, selectedDemoConfigIndex);
+        setDemoConfig(this.menuai, this.lovelace!, selectedDemoConfigIndex);
         alert("Failed to switch config :-(");
       }
     });

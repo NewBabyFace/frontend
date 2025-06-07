@@ -5,7 +5,7 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { DataEntryFlowStepAbort } from "../../data/data_entry_flow";
 import { showAddApplicationCredentialDialog } from "../../panels/config/application_credentials/show-dialog-add-application-credential";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { showConfigFlowDialog } from "./show-dialog-config-flow";
 import type { DataEntryFlowDialogParams } from "./show-dialog-data-entry-flow";
 import { configFlowContentStyles } from "./styles";
@@ -14,7 +14,7 @@ import { configFlowContentStyles } from "./styles";
 class StepFlowAbort extends LitElement {
   @property({ attribute: false }) public params!: DataEntryFlowDialogParams;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public step!: DataEntryFlowStepAbort;
 
@@ -35,11 +35,11 @@ class StepFlowAbort extends LitElement {
     }
     return html`
       <div class="content">
-        ${this.params.flowConfig.renderAbortDescription(this.hass, this.step)}
+        ${this.params.flowConfig.renderAbortDescription(this.menuai, this.step)}
       </div>
       <div class="buttons">
         <mwc-button @click=${this._flowDone}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.integrations.config_flow.close"
           )}</mwc-button
         >
@@ -56,7 +56,7 @@ class StepFlowAbort extends LitElement {
         showConfigFlowDialog(this.params.dialogParentElement!, {
           dialogClosedCallback: this.params.dialogClosedCallback,
           startFlowHandler: this.handler,
-          showAdvanced: this.hass.userData?.showAdvanced,
+          showAdvanced: this.menuai.userData?.showAdvanced,
           navigateToResult: this.params.navigateToResult,
         });
       },

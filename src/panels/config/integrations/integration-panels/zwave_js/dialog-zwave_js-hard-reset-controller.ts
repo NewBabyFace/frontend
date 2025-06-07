@@ -8,7 +8,7 @@ import { createCloseHeading } from "../../../../../components/ha-dialog";
 import "../../../../../components/ha-svg-icon";
 import { hardResetController } from "../../../../../data/zwave_js";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZWaveJSHardResetControllerDialogParams } from "./show-dialog-zwave_js-hard-reset-controller";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import { navigate } from "../../../../../common/navigate";
@@ -27,7 +27,7 @@ const iconMap = {
 
 @customElement("dialog-zwave_js-hard-reset-controller")
 class DialogZWaveJSHardResetController extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _entryId?: string;
 
@@ -53,8 +53,8 @@ class DialogZWaveJSHardResetController extends LitElement {
       open
       @closed=${this.closeDialog}
       .heading=${createCloseHeading(
-        this.hass,
-        this.hass.localize(
+        this.menuai,
+        this.menuai.localize(
           `ui.panel.config.zwave_js.hard_reset_controller.${
             ResetStatus[this._resetStatus]
           }.title`
@@ -69,7 +69,7 @@ class DialogZWaveJSHardResetController extends LitElement {
           ></ha-svg-icon>
         </div>
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.zwave_js.hard_reset_controller.${
               ResetStatus[this._resetStatus]
             }.body`
@@ -81,10 +81,10 @@ class DialogZWaveJSHardResetController extends LitElement {
               slot="primaryAction"
               @click=${this._hardResetController}
             >
-              ${this.hass.localize("ui.common.continue")}
+              ${this.menuai.localize("ui.common.continue")}
             </mwc-button>
             <mwc-button slot="secondaryAction" @click=${this.closeDialog}>
-              ${this.hass.localize("ui.common.cancel")}
+              ${this.menuai.localize("ui.common.cancel")}
             </mwc-button>`
         : nothing}
     </ha-dialog>`;
@@ -93,16 +93,16 @@ class DialogZWaveJSHardResetController extends LitElement {
   private async _hardResetController(): Promise<void> {
     if (
       await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           `ui.panel.config.zwave_js.hard_reset_controller.confirmation`
         ),
-        dismissText: this.hass.localize("ui.common.cancel"),
-        confirmText: this.hass.localize("ui.common.continue"),
+        dismissText: this.menuai.localize("ui.common.cancel"),
+        confirmText: this.menuai.localize("ui.common.continue"),
         destructive: true,
       })
     ) {
       this._resetStatus = ResetStatus.InProgress;
-      const deviceId = await hardResetController(this.hass, this._entryId!);
+      const deviceId = await hardResetController(this.menuai, this._entryId!);
       setTimeout(() => navigate(`/config/devices/device/${deviceId}`), 0);
       this._resetStatus = ResetStatus.Done;
     }

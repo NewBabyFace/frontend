@@ -2,7 +2,7 @@ import type { CSSResultGroup, TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { LocalizeFunc } from "../common/translations/localize";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { onBoardingStyles } from "./styles";
 import { fireEvent } from "../common/dom/fire_event";
 import "../components/ha-button";
@@ -13,7 +13,7 @@ import "../components/ha-icon-button-next";
 
 @customElement("onboarding-welcome")
 class OnboardingWelcome extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public localize!: LocalizeFunc;
 
@@ -43,7 +43,7 @@ class OnboardingWelcome extends LitElement {
           <ha-icon-button-next slot="end"></ha-icon-button-next>
         </ha-md-list-item>
         <ha-md-list-item type="button" @click=${this._restoreBackupCloud}>
-          <div slot="headline">Home Assistant Cloud</div>
+          <div slot="headline">MenuAI Cloud</div>
           <div slot="supporting-text">
             ${this.localize(
               "ui.panel.page-onboarding.restore.ha-cloud.description"

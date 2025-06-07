@@ -9,7 +9,7 @@ import {
   setInputDateTimeValue,
   stateToIsoDateString,
 } from "../../../data/input_datetime";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -17,7 +17,7 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-input-datetime-entity-row")
 class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -33,16 +33,16 @@ class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -51,7 +51,7 @@ class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
 
     return html`
       <hui-generic-entity-row
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this._config}
         .hideName=${stateObj.attributes.has_date &&
         stateObj.attributes.has_time}
@@ -65,7 +65,7 @@ class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
             ? html`
                 <ha-date-input
                   .label=${stateObj.attributes.has_time ? name : undefined}
-                  .locale=${this.hass.locale}
+                  .locale=${this.menuai.locale}
                   .disabled=${isUnavailableState(stateObj.state)}
                   .value=${stateToIsoDateString(stateObj)}
                   @value-changed=${this._dateChanged}
@@ -81,7 +81,7 @@ class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
                     : stateObj.attributes.has_date
                       ? stateObj.state.split(" ")[1]
                       : stateObj.state}
-                  .locale=${this.hass.locale}
+                  .locale=${this.menuai.locale}
                   .disabled=${isUnavailableState(stateObj.state)}
                   @value-changed=${this._timeChanged}
                   @click=${this._stopEventPropagation}
@@ -98,9 +98,9 @@ class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
   }
 
   private _timeChanged(ev: CustomEvent<{ value: string }>): void {
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
     setInputDateTimeValue(
-      this.hass!,
+      this.menuai!,
       stateObj.entity_id,
       ev.detail.value,
       stateObj.attributes.has_date ? stateObj.state.split(" ")[0] : undefined
@@ -108,10 +108,10 @@ class HuiInputDatetimeEntityRow extends LitElement implements LovelaceRow {
   }
 
   private _dateChanged(ev: CustomEvent<{ value: string }>): void {
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
 
     setInputDateTimeValue(
-      this.hass!,
+      this.menuai!,
       stateObj.entity_id,
       stateObj.attributes.has_time ? stateObj.state.split(" ")[1] : undefined,
       ev.detail.value

@@ -24,11 +24,11 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
-import "../../../../layouts/hass-loading-screen";
-import "../../../../layouts/hass-subpage";
-import "../../../../layouts/hass-tabs-subpage-data-table";
+import "../../../../layouts/menuai-loading-screen";
+import "../../../../layouts/menuai-subpage";
+import "../../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../types";
+import type { menuai, Route } from "../../../../types";
 import { loadLovelaceResources } from "../../../lovelace/common/load-resources";
 import { lovelaceResourcesTabs } from "../ha-config-lovelace";
 import { showResourceDetailDialog } from "./show-dialog-lovelace-resource-detail";
@@ -36,7 +36,7 @@ import { storage } from "../../../../common/decorators/storage";
 
 @customElement("ha-config-lovelace-resources")
 export class HaConfigLovelaceRescources extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -99,7 +99,7 @@ export class HaConfigLovelaceRescources extends LitElement {
         sortable: true,
         filterable: true,
         template: (resource) => html`
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.lovelace.resources.types.${resource.type}`
           ) || resource.type}
         `,
@@ -116,7 +116,7 @@ export class HaConfigLovelaceRescources extends LitElement {
         template: (resource) =>
           html`<ha-icon-button
             @click=${this._removeResource}
-            .label=${this.hass.localize("ui.common.delete")}
+            .label=${this.menuai.localize("ui.common.delete")}
             .path=${mdiDelete}
             .resource=${resource}
           ></ha-icon-button>`,
@@ -125,17 +125,17 @@ export class HaConfigLovelaceRescources extends LitElement {
   );
 
   protected render(): TemplateResult {
-    if (!this.hass || this._resources === undefined) {
-      return html` <hass-loading-screen></hass-loading-screen> `;
+    if (!this.menuai || this._resources === undefined) {
+      return html` <menuai-loading-screen></menuai-loading-screen> `;
     }
 
-    if (this.hass.config.safe_mode) {
+    if (this.menuai.config.safe_mode) {
       return html`
-        <hass-subpage
-          .hass=${this.hass}
+        <menuai-subpage
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
           back-path="/config"
-          .header=${this.hass.localize(
+          .header=${this.menuai.localize(
             "ui.panel.config.lovelace.resources.caption"
           )}
         >
@@ -143,31 +143,31 @@ export class HaConfigLovelaceRescources extends LitElement {
             <ha-card outlined>
               <div class="card-content">
                 <h2>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.lovelace.resources.unavailable"
                   )}
                 </h2>
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.lovelace.resources.unavailable_safe_mode"
                   )}
                 </p>
               </div>
             </ha-card>
           </div>
-        </hass-subpage>
+        </menuai-subpage>
       `;
     }
 
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .tabs=${lovelaceResourcesTabs}
-        .columns=${this._columns(this.hass.language, this.hass.localize)}
+        .columns=${this._columns(this.menuai.language, this.menuai.localize)}
         .data=${this._resources}
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.lovelace.resources.picker.no_resources"
         )}
         .initialSorting=${this._activeSorting}
@@ -183,7 +183,7 @@ export class HaConfigLovelaceRescources extends LitElement {
       >
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.lovelace.resources.picker.add_resource"
           )}
           extended
@@ -191,7 +191,7 @@ export class HaConfigLovelaceRescources extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -201,13 +201,13 @@ export class HaConfigLovelaceRescources extends LitElement {
   }
 
   private async _getResources() {
-    this._resources = await fetchResources(this.hass.connection);
+    this._resources = await fetchResources(this.menuai.connection);
   }
 
   private _editResource(ev: CustomEvent) {
-    if ((this.hass.panels.lovelace?.config as any)?.mode !== "storage") {
+    if ((this.menuai.panels.lovelace?.config as any)?.mode !== "storage") {
       showAlertDialog(this, {
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.lovelace.resources.cant_edit_yaml"
         ),
       });
@@ -219,9 +219,9 @@ export class HaConfigLovelaceRescources extends LitElement {
   }
 
   private _addResource() {
-    if ((this.hass.panels.lovelace?.config as any)?.mode !== "storage") {
+    if ((this.menuai.panels.lovelace?.config as any)?.mode !== "storage") {
       showAlertDialog(this, {
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.lovelace.resources.cant_edit_yaml"
         ),
       });
@@ -234,18 +234,18 @@ export class HaConfigLovelaceRescources extends LitElement {
     showResourceDetailDialog(this, {
       resource,
       createResource: async (values) => {
-        const created = await createResource(this.hass!, values);
+        const created = await createResource(this.menuai!, values);
         this._resources = this._resources!.concat(created).sort((res1, res2) =>
-          stringCompare(res1.url, res2.url, this.hass!.locale.language)
+          stringCompare(res1.url, res2.url, this.menuai!.locale.language)
         );
-        loadLovelaceResources([created], this.hass!);
+        loadLovelaceResources([created], this.menuai!);
       },
       updateResource: async (values) => {
-        const updated = await updateResource(this.hass!, resource!.id, values);
+        const updated = await updateResource(this.menuai!, resource!.id, values);
         this._resources = this._resources!.map((res) =>
           res === resource ? updated : res
         );
-        loadLovelaceResources([updated], this.hass!);
+        loadLovelaceResources([updated], this.menuai!);
       },
     });
   }
@@ -255,15 +255,15 @@ export class HaConfigLovelaceRescources extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.config.lovelace.resources.confirm_delete_title"
         ),
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.lovelace.resources.confirm_delete_text",
           { url: resource.url }
         ),
-        dismissText: this.hass!.localize("ui.common.cancel"),
-        confirmText: this.hass!.localize("ui.common.delete"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
+        confirmText: this.menuai!.localize("ui.common.delete"),
         destructive: true,
       }))
     ) {
@@ -271,17 +271,17 @@ export class HaConfigLovelaceRescources extends LitElement {
     }
 
     try {
-      await deleteResource(this.hass!, resource.id);
+      await deleteResource(this.menuai!, resource.id);
       this._resources = this._resources!.filter(({ id }) => id !== resource.id);
       showConfirmationDialog(this, {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.config.lovelace.resources.refresh_header"
         ),
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.lovelace.resources.refresh_body"
         ),
-        confirmText: this.hass.localize("ui.common.refresh"),
-        dismissText: this.hass.localize("ui.common.not_now"),
+        confirmText: this.menuai.localize("ui.common.refresh"),
+        dismissText: this.menuai.localize("ui.common.not_now"),
         confirm: () => location.reload(),
       });
       return true;

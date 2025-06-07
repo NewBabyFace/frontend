@@ -2,7 +2,7 @@ import type { PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../../components/ha-card";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { hasConfigChanged } from "../../common/has-changed";
 import "../../components/hui-energy-period-selector";
 import type { LovelaceCard, LovelaceGridOptions } from "../../types";
@@ -13,7 +13,7 @@ export class HuiEnergyDateSelectionCard
   extends LitElement
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyCardBaseConfig;
 
@@ -36,12 +36,12 @@ export class HuiEnergyDateSelectionCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -49,7 +49,7 @@ export class HuiEnergyDateSelectionCard
       <ha-card>
         <div class="card-content">
           <hui-energy-period-selector
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .collectionKey=${this._config.collection_key}
           ></hui-energy-period-selector>
         </div>

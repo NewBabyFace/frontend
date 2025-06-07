@@ -1,8 +1,8 @@
 import { assert, describe, it } from "vitest";
-import { createHassioSession } from "../../src/data/hassio/ingress";
+import { createmenuaiioSession } from "../../src/data/menuaiio/ingress";
 
-describe("Create hassio session", () => {
-  const hass = {
+describe("Create menuaiio session", () => {
+  const menuai = {
     config: { version: "1.0.0" },
     callApi: async () => ({
       data: { session: "fhdsu73rh3io4h8f3irhjel8ousafehf8f3yh" },
@@ -15,11 +15,11 @@ describe("Create hassio session", () => {
     // @ts-ignore
     global.location = {};
     // @ts-ignore
-    await createHassioSession(hass);
+    await createmenuaiioSession(menuai);
     assert.strictEqual(
       // @ts-ignore
       global.document.cookie,
-      "ingress_session=fhdsu73rh3io4h8f3irhjel8ousafehf8f3yh;path=/api/hassio_ingress/;SameSite=Strict"
+      "ingress_session=fhdsu73rh3io4h8f3irhjel8ousafehf8f3yh;path=/api/menuaiio_ingress/;SameSite=Strict"
     );
   });
   it("Test create session with HTTPS", async () => {
@@ -28,11 +28,11 @@ describe("Create hassio session", () => {
     // @ts-ignore
     global.location = { protocol: "https:" };
     // @ts-ignore
-    await createHassioSession(hass);
+    await createmenuaiioSession(menuai);
     assert.strictEqual(
       // @ts-ignore
       global.document.cookie,
-      "ingress_session=fhdsu73rh3io4h8f3irhjel8ousafehf8f3yh;path=/api/hassio_ingress/;SameSite=Strict;Secure"
+      "ingress_session=fhdsu73rh3io4h8f3irhjel8ousafehf8f3yh;path=/api/menuaiio_ingress/;SameSite=Strict;Secure"
     );
 
     // Clean up in case they will be used in other tests
@@ -42,7 +42,7 @@ describe("Create hassio session", () => {
     global.location = {};
   });
   it("Test fail to create", async () => {
-    const createSessionPromise = createHassioSession({
+    const createSessionPromise = createmenuaiioSession({
       // @ts-ignore
       callApi: async () => {
         // noop

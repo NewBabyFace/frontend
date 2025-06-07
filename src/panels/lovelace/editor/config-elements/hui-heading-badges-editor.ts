@@ -14,11 +14,11 @@ import "../../../../components/ha-button";
 import "../../../../components/ha-icon-button";
 import "../../../../components/ha-sortable";
 import "../../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceHeadingBadgeConfig } from "../../heading-badges/types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "edit-heading-badge": { index: number };
     "heading-badges-changed": { badges: LovelaceHeadingBadgeConfig[] };
   }
@@ -26,7 +26,7 @@ declare global {
 
 @customElement("hui-heading-badges-editor")
 export class HuiHeadingBadgesEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public badges?: LovelaceHeadingBadgeConfig[];
@@ -54,7 +54,7 @@ export class HuiHeadingBadgesEditor extends LitElement {
 
     if (type === "entity") {
       const entityId = "entity" in badge ? (badge.entity as string) : undefined;
-      const stateObj = entityId ? this.hass.states[entityId] : undefined;
+      const stateObj = entityId ? this.menuai.states[entityId] : undefined;
       return (
         (stateObj && computeStateName(stateObj)) ||
         entityId ||
@@ -66,7 +66,7 @@ export class HuiHeadingBadgesEditor extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -92,7 +92,7 @@ export class HuiHeadingBadgesEditor extends LitElement {
                           <span>${label}</span>
                         </div>
                         <ha-icon-button
-                          .label=${this.hass!.localize(
+                          .label=${this.menuai!.localize(
                             `ui.panel.lovelace.editor.entities.edit`
                           )}
                           .path=${mdiPencil}
@@ -101,7 +101,7 @@ export class HuiHeadingBadgesEditor extends LitElement {
                           @click=${this._editBadge}
                         ></ha-icon-button>
                         <ha-icon-button
-                          .label=${this.hass!.localize(
+                          .label=${this.menuai!.localize(
                             `ui.panel.lovelace.editor.entities.remove`
                           )}
                           .path=${mdiDelete}
@@ -121,7 +121,7 @@ export class HuiHeadingBadgesEditor extends LitElement {
         <ha-button
           data-add-entity
           outlined
-          .label=${this.hass!.localize(`ui.panel.lovelace.editor.entities.add`)}
+          .label=${this.menuai!.localize(`ui.panel.lovelace.editor.entities.add`)}
           @click=${this._addEntity}
         >
           <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
@@ -145,12 +145,12 @@ export class HuiHeadingBadgesEditor extends LitElement {
         @input=${stopPropagation}
       >
         <ha-entity-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           id="input"
-          .placeholder=${this.hass.localize(
+          .placeholder=${this.menuai.localize(
             "ui.components.target-picker.add_entity_id"
           )}
-          .searchLabel=${this.hass.localize(
+          .searchLabel=${this.menuai.localize(
             "ui.components.target-picker.add_entity_id"
           )}
           @value-changed=${this._entityPicked}

@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { DOMAINS_TOGGLE } from "../../../common/const";
 import { computeDomain } from "../../../common/entity/compute_domain";
 import "../../../components/entity/ha-entity-toggle";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -12,17 +12,17 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-group-entity-row")
 class HuiGroupEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
-  private _computeCanToggle(hass: HomeAssistant, entityIds: string[]): boolean {
+  private _computeCanToggle(menuai: menuai, entityIds: string[]): boolean {
     return entityIds.some((entityId) => {
       const domain = computeDomain(entityId);
       if (domain === "group") {
         return this._computeCanToggle(
-          hass,
-          this.hass?.states[entityId].attributes.entity_id
+          menuai,
+          this.menuai?.states[entityId].attributes.entity_id
         );
       }
       return DOMAINS_TOGGLE.has(domain);
@@ -41,32 +41,32 @@ class HuiGroupEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
-        ${this._computeCanToggle(this.hass, stateObj.attributes.entity_id)
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
+        ${this._computeCanToggle(this.menuai, stateObj.attributes.entity_id)
           ? html`
               <ha-entity-toggle
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-entity-toggle>
             `
           : html`
               <div class="text-content">
-                ${this.hass.formatEntityState(stateObj)}
+                ${this.menuai.formatEntityState(stateObj)}
               </div>
             `}
       </hui-generic-entity-row>

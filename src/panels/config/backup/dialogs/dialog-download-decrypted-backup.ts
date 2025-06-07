@@ -17,15 +17,15 @@ import {
   canDecryptBackupOnDownload,
   getPreferredAgentForDownload,
 } from "../../../../data/backup";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { downloadBackupFile } from "../helper/download_backup";
 import type { DownloadDecryptedBackupDialogParams } from "./show-dialog-download-decrypted-backup";
 
 @customElement("ha-dialog-download-decrypted-backup")
-class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogDownloadDecryptedBackup extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -68,11 +68,11 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
           <ha-icon-button
             slot="navigationIcon"
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.download.title"
             )}
           </span>
@@ -80,19 +80,19 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
 
         <div slot="content">
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.download.description"
             )}
           </p>
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.download.download_backup_encrypted",
               {
                 download_it_encrypted: html`<button
                   class="link"
                   @click=${this._downloadEncrypted}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.dialogs.download.download_it_encrypted"
                   )}
                 </button>`,
@@ -101,7 +101,7 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
           </p>
 
           <ha-password-field
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.backup.dialogs.download.encryption_key"
             )}
             @input=${this._keyChanged}
@@ -113,11 +113,11 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
         </div>
         <div slot="actions">
           <ha-button @click=${this._cancel}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </ha-button>
 
           <ha-button @click=${this._submit}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.download.download"
             )}
           </ha-button>
@@ -136,13 +136,13 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
     }
     try {
       await canDecryptBackupOnDownload(
-        this.hass,
+        this.menuai,
         this._params!.backup.backup_id,
         this._agentId,
         this._encryptionKey
       );
       downloadBackupFile(
-        this.hass,
+        this.menuai,
         this._params!.backup.backup_id,
         this._agentId,
         this._encryptionKey
@@ -150,11 +150,11 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
       this.closeDialog();
     } catch (err: any) {
       if (err?.code === "password_incorrect") {
-        this._error = this.hass.localize(
+        this._error = this.menuai.localize(
           "ui.panel.config.backup.dialogs.download.incorrect_encryption_key"
         );
       } else if (err?.code === "decrypt_not_supported") {
-        this._error = this.hass.localize(
+        this._error = this.menuai.localize(
           "ui.panel.config.backup.dialogs.download.decryption_not_supported"
         );
       } else {
@@ -179,7 +179,7 @@ class DialogDownloadDecryptedBackup extends LitElement implements HassDialog {
 
   private async _downloadEncrypted() {
     downloadBackupFile(
-      this.hass,
+      this.menuai,
       this._params!.backup.backup_id,
       this._agentId
     );

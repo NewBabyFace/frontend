@@ -8,17 +8,17 @@ import "../components/entity/state-badge";
 import { isUnavailableState, UNAVAILABLE } from "../data/entity";
 import type { TextEntity } from "../data/text";
 import { setValue } from "../data/text";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-text")
 class StateCardText extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: TextEntity;
 
   protected render(): TemplateResult {
     return html`
-      <state-badge .hass=${this.hass} .stateObj=${this.stateObj}></state-badge>
+      <state-badge .menuai=${this.menuai} .stateObj=${this.stateObj}></state-badge>
       <ha-textfield
         .label=${computeStateName(this.stateObj)}
         .disabled=${this.stateObj.state === UNAVAILABLE}
@@ -30,7 +30,7 @@ class StateCardText extends LitElement {
         .type=${this.stateObj.attributes.mode}
         @change=${this._valueChanged}
         @click=${stopPropagation}
-        placeholder=${this.hass.localize("ui.card.text.emtpy_value")}
+        placeholder=${this.menuai.localize("ui.card.text.emtpy_value")}
       ></ha-textfield>
     `;
   }
@@ -47,7 +47,7 @@ class StateCardText extends LitElement {
     if (value === this.stateObj.state) {
       return;
     }
-    setValue(this.hass!, this.stateObj.entity_id, value);
+    setValue(this.menuai!, this.stateObj.entity_id, value);
   }
 
   static styles = css`

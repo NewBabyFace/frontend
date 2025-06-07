@@ -1,5 +1,5 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -7,18 +7,18 @@ import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-attributes";
 import "../../../components/map/ha-map";
 import { showZoneEditor } from "../../../data/zone";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-person")
 class MoreInfoPerson extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   private _entityArray = memoizeOne((entityId: string) => [entityId]);
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -26,20 +26,20 @@ class MoreInfoPerson extends LitElement {
       ${this.stateObj.attributes.latitude && this.stateObj.attributes.longitude
         ? html`
             <ha-map
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .entities=${this._entityArray(this.stateObj.entity_id)}
               auto-fit
             ></ha-map>
           `
         : ""}
       ${!__DEMO__ &&
-      this.hass.user?.is_admin &&
+      this.menuai.user?.is_admin &&
       this.stateObj.attributes.latitude &&
       this.stateObj.attributes.longitude
         ? html`
             <div class="actions">
               <mwc-button @click=${this._handleAction}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.dialogs.more_info_control.person.create_zone"
                 )}
               </mwc-button>
@@ -47,7 +47,7 @@ class MoreInfoPerson extends LitElement {
           `
         : ""}
       <ha-attributes
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         extra-filters="id,user_id,editable,device_trackers"
       ></ha-attributes>
@@ -59,7 +59,7 @@ class MoreInfoPerson extends LitElement {
       latitude: this.stateObj!.attributes.latitude,
       longitude: this.stateObj!.attributes.longitude,
     });
-    fireEvent(this, "hass-more-info", { entityId: null });
+    fireEvent(this, "menuai-more-info", { entityId: null });
   }
 
   static styles = css`

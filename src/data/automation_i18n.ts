@@ -1,4 +1,4 @@
-import type { HassConfig, HassEntity } from "home-assistant-js-websocket";
+import type { menuaiConfig, menuaiEntity } from "home-assistant-js-websocket";
 import { ensureArray } from "../common/array/ensure-array";
 import {
   formatDurationLong,
@@ -16,7 +16,7 @@ import {
   formatListWithAnds,
   formatListWithOrs,
 } from "../common/string/format-list";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { Condition, ForDict, Trigger } from "./automation";
 import type { DeviceCondition, DeviceTrigger } from "./device_automation";
 import {
@@ -51,7 +51,7 @@ const describeDuration = (
 const localizeTimeString = (
   time: string,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => {
   const chunks = time.split(":");
   if (chunks.length < 2 || chunks.length > 3) {
@@ -70,14 +70,14 @@ const localizeTimeString = (
 
 export const describeTrigger = (
   trigger: Trigger,
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryEntry[],
   ignoreAlias = false
 ): string => {
   try {
     const description = tryDescribeTrigger(
       trigger,
-      hass,
+      menuai,
       entityRegistry,
       ignoreAlias
     );
@@ -99,7 +99,7 @@ export const describeTrigger = (
 
 const tryDescribeTrigger = (
   trigger: Trigger,
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryEntry[],
   ignoreAlias = false
 ) => {
@@ -107,12 +107,12 @@ const tryDescribeTrigger = (
     const triggers = ensureArray(trigger.triggers);
 
     if (!triggers || triggers.length === 0) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.list.description.no_trigger`
       );
     }
     const count = triggers.length;
-    return hass.localize(`${triggerTranslationBaseKey}.list.description.full`, {
+    return menuai.localize(`${triggerTranslationBaseKey}.list.description.full`, {
       count: count,
     });
   }
@@ -133,30 +133,30 @@ const tryDescribeTrigger = (
       eventTypes.push(trigger.event_type);
     }
 
-    const eventTypesString = formatListWithOrs(hass.locale, eventTypes);
-    return hass.localize(
+    const eventTypesString = formatListWithOrs(menuai.locale, eventTypes);
+    return menuai.localize(
       `${triggerTranslationBaseKey}.event.description.full`,
       { eventTypes: eventTypesString }
     );
   }
 
-  // Home Assistant Trigger
-  if (trigger.trigger === "homeassistant" && trigger.event) {
-    return hass.localize(
+  // MenuAI Trigger
+  if (trigger.trigger === "menuai" && trigger.event) {
+    return menuai.localize(
       trigger.event === "start"
-        ? `${triggerTranslationBaseKey}.homeassistant.description.started`
-        : `${triggerTranslationBaseKey}.homeassistant.description.shutdown`
+        ? `${triggerTranslationBaseKey}.menuai.description.started`
+        : `${triggerTranslationBaseKey}.menuai.description.shutdown`
     );
   }
 
   // Numeric State Trigger
   if (trigger.trigger === "numeric_state" && trigger.entity_id) {
     const entities: string[] = [];
-    const states = hass.states;
+    const states = menuai.states;
 
     const stateObj = Array.isArray(trigger.entity_id)
-      ? hass.states[trigger.entity_id[0]]
-      : (hass.states[trigger.entity_id] as HassEntity | undefined);
+      ? menuai.states[trigger.entity_id[0]]
+      : (menuai.states[trigger.entity_id] as menuaiEntity | undefined);
 
     if (Array.isArray(trigger.entity_id)) {
       for (const entity of trigger.entity_id.values()) {
@@ -175,24 +175,24 @@ const tryDescribeTrigger = (
     const attribute = trigger.attribute
       ? stateObj
         ? computeAttributeNameDisplay(
-            hass.localize,
+            menuai.localize,
             stateObj,
-            hass.entities,
+            menuai.entities,
             trigger.attribute
           )
         : trigger.attribute
       : undefined;
 
     const duration = trigger.for
-      ? describeDuration(hass.locale, trigger.for)
+      ? describeDuration(menuai.locale, trigger.for)
       : undefined;
 
     if (trigger.above !== undefined && trigger.below !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.numeric_state.description.above-below`,
         {
           attribute: attribute,
-          entity: formatListWithOrs(hass.locale, entities),
+          entity: formatListWithOrs(menuai.locale, entities),
           numberOfEntities: entities.length,
           above: trigger.above,
           below: trigger.below,
@@ -201,11 +201,11 @@ const tryDescribeTrigger = (
       );
     }
     if (trigger.above !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.numeric_state.description.above`,
         {
           attribute: attribute,
-          entity: formatListWithOrs(hass.locale, entities),
+          entity: formatListWithOrs(menuai.locale, entities),
           numberOfEntities: entities.length,
           above: trigger.above,
           duration: duration,
@@ -213,11 +213,11 @@ const tryDescribeTrigger = (
       );
     }
     if (trigger.below !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.numeric_state.description.below`,
         {
           attribute: attribute,
-          entity: formatListWithOrs(hass.locale, entities),
+          entity: formatListWithOrs(menuai.locale, entities),
           numberOfEntities: entities.length,
           below: trigger.below,
           duration: duration,
@@ -229,18 +229,18 @@ const tryDescribeTrigger = (
   // State Trigger
   if (trigger.trigger === "state") {
     const entities: string[] = [];
-    const states = hass.states;
+    const states = menuai.states;
 
     let attribute = "";
     if (trigger.attribute) {
       const stateObj = Array.isArray(trigger.entity_id)
-        ? hass.states[trigger.entity_id[0]]
-        : (hass.states[trigger.entity_id] as HassEntity | undefined);
+        ? menuai.states[trigger.entity_id[0]]
+        : (menuai.states[trigger.entity_id] as menuaiEntity | undefined);
       attribute = stateObj
         ? computeAttributeNameDisplay(
-            hass.localize,
+            menuai.localize,
             stateObj,
-            hass.entities,
+            menuai.entities,
             trigger.attribute
           )
         : trigger.attribute;
@@ -255,7 +255,7 @@ const tryDescribeTrigger = (
       }
     }
 
-    const stateObj = hass.states[entityArray[0]] as HassEntity | undefined;
+    const stateObj = menuai.states[entityArray[0]] as menuaiEntity | undefined;
 
     let fromChoice = "other";
     let fromString = "";
@@ -273,19 +273,19 @@ const tryDescribeTrigger = (
           from.push(
             stateObj
               ? trigger.attribute
-                ? hass
+                ? menuai
                     .formatEntityAttributeValue(
                       stateObj,
                       trigger.attribute,
                       state
                     )
                     .toString()
-                : hass.formatEntityState(stateObj, state)
+                : menuai.formatEntityState(stateObj, state)
               : state
           );
         }
         if (from.length !== 0) {
-          fromString = formatListWithOrs(hass.locale, from);
+          fromString = formatListWithOrs(menuai.locale, from);
           fromChoice = "fromUsed";
         }
       }
@@ -307,19 +307,19 @@ const tryDescribeTrigger = (
           to.push(
             stateObj
               ? trigger.attribute
-                ? hass
+                ? menuai
                     .formatEntityAttributeValue(
                       stateObj,
                       trigger.attribute,
                       state
                     )
                     .toString()
-                : hass.formatEntityState(stateObj, state).toString()
+                : menuai.formatEntityState(stateObj, state).toString()
               : state
           );
         }
         if (to.length !== 0) {
-          toString = formatListWithOrs(hass.locale, to);
+          toString = formatListWithOrs(menuai.locale, to);
           toChoice = "toUsed";
         }
       }
@@ -335,16 +335,16 @@ const tryDescribeTrigger = (
 
     let duration = "";
     if (trigger.for) {
-      duration = describeDuration(hass.locale, trigger.for) ?? "";
+      duration = describeDuration(menuai.locale, trigger.for) ?? "";
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.state.description.full`,
       {
         hasAttribute: attribute !== "" ? "true" : "false",
         attribute: attribute,
         hasEntity: entities.length !== 0 ? "true" : "false",
-        entity: formatListWithOrs(hass.locale, entities),
+        entity: formatListWithOrs(menuai.locale, entities),
         fromChoice: fromChoice,
         fromString: fromString,
         toChoice: toChoice,
@@ -368,7 +368,7 @@ const tryDescribeTrigger = (
       }
     }
 
-    return hass.localize(
+    return menuai.localize(
       trigger.event === "sunset"
         ? `${triggerTranslationBaseKey}.sun.description.sets`
         : `${triggerTranslationBaseKey}.sun.description.rises`,
@@ -378,7 +378,7 @@ const tryDescribeTrigger = (
 
   // Tag Trigger
   if (trigger.trigger === "tag") {
-    return hass.localize(`${triggerTranslationBaseKey}.tag.description.full`);
+    return menuai.localize(`${triggerTranslationBaseKey}.tag.description.full`);
   }
 
   // Time Trigger
@@ -386,29 +386,29 @@ const tryDescribeTrigger = (
     const result = ensureArray(trigger.at).map((at) => {
       if (typeof at === "string") {
         if (isValidEntityId(at)) {
-          return `entity ${hass.states[at] ? computeStateName(hass.states[at]) : at}`;
+          return `entity ${menuai.states[at] ? computeStateName(menuai.states[at]) : at}`;
         }
-        return localizeTimeString(at, hass.locale, hass.config);
+        return localizeTimeString(at, menuai.locale, menuai.config);
       }
-      const entityStr = `entity ${hass.states[at.entity_id] ? computeStateName(hass.states[at.entity_id]) : at.entity_id}`;
+      const entityStr = `entity ${menuai.states[at.entity_id] ? computeStateName(menuai.states[at.entity_id]) : at.entity_id}`;
       const offsetStr = at.offset
         ? " " +
-          hass.localize(`${triggerTranslationBaseKey}.time.offset_by`, {
-            offset: describeDuration(hass.locale, at.offset),
+          menuai.localize(`${triggerTranslationBaseKey}.time.offset_by`, {
+            offset: describeDuration(menuai.locale, at.offset),
           })
         : "";
       return `${entityStr}${offsetStr}`;
     });
 
-    return hass.localize(`${triggerTranslationBaseKey}.time.description.full`, {
-      time: formatListWithOrs(hass.locale, result),
+    return menuai.localize(`${triggerTranslationBaseKey}.time.description.full`, {
+      time: formatListWithOrs(menuai.locale, result),
     });
   }
 
   // Time Pattern Trigger
   if (trigger.trigger === "time_pattern") {
     if (!trigger.seconds && !trigger.minutes && !trigger.hours) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.time_pattern.description.initial`
       );
     }
@@ -536,13 +536,13 @@ const tryDescribeTrigger = (
     }
 
     if (invalidParts.length !== 0) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.time_pattern.description.invalid`,
         {
           parts: formatListWithAnds(
-            hass.locale,
+            menuai.locale,
             invalidParts.map((invalidPart) =>
-              hass.localize(
+              menuai.localize(
                 `${triggerTranslationBaseKey}.time_pattern.${invalidPart}`
               )
             )
@@ -551,7 +551,7 @@ const tryDescribeTrigger = (
       );
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.time_pattern.description.full`,
       {
         secondsChoice: secondsChoice,
@@ -560,19 +560,19 @@ const tryDescribeTrigger = (
         seconds: seconds,
         minutes: minutes,
         hours: hours,
-        secondsWithOrdinal: hass.localize(
+        secondsWithOrdinal: menuai.localize(
           `${triggerTranslationBaseKey}.time_pattern.description.ordinal`,
           {
             part: seconds,
           }
         ),
-        minutesWithOrdinal: hass.localize(
+        minutesWithOrdinal: menuai.localize(
           `${triggerTranslationBaseKey}.time_pattern.description.ordinal`,
           {
             part: minutes,
           }
         ),
-        hoursWithOrdinal: hass.localize(
+        hoursWithOrdinal: menuai.localize(
           `${triggerTranslationBaseKey}.time_pattern.description.ordinal`,
           {
             part: hours,
@@ -587,7 +587,7 @@ const tryDescribeTrigger = (
     const entities: string[] = [];
     const zones: string[] = [];
 
-    const states = hass.states;
+    const states = menuai.states;
 
     if (Array.isArray(trigger.entity_id)) {
       for (const entity of trigger.entity_id.values()) {
@@ -617,10 +617,10 @@ const tryDescribeTrigger = (
       );
     }
 
-    return hass.localize(`${triggerTranslationBaseKey}.zone.description.full`, {
-      entity: formatListWithOrs(hass.locale, entities),
+    return menuai.localize(`${triggerTranslationBaseKey}.zone.description.full`, {
+      entity: formatListWithOrs(menuai.locale, entities),
       event: trigger.event.toString(),
-      zone: formatListWithOrs(hass.locale, zones),
+      zone: formatListWithOrs(menuai.locale, zones),
       numberOfZones: zones.length,
     });
   }
@@ -629,7 +629,7 @@ const tryDescribeTrigger = (
   if (trigger.trigger === "geo_location" && trigger.source && trigger.zone) {
     const sources: string[] = [];
     const zones: string[] = [];
-    const states = hass.states;
+    const states = menuai.states;
 
     if (Array.isArray(trigger.source)) {
       for (const source of trigger.source.values()) {
@@ -653,12 +653,12 @@ const tryDescribeTrigger = (
       );
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.geo_location.description.full`,
       {
-        source: formatListWithOrs(hass.locale, sources),
+        source: formatListWithOrs(menuai.locale, sources),
         event: trigger.event.toString(),
-        zone: formatListWithOrs(hass.locale, zones),
+        zone: formatListWithOrs(menuai.locale, zones),
         numberOfZones: zones.length,
       }
     );
@@ -666,17 +666,17 @@ const tryDescribeTrigger = (
 
   // MQTT Trigger
   if (trigger.trigger === "mqtt") {
-    return hass.localize(`${triggerTranslationBaseKey}.mqtt.description.full`);
+    return menuai.localize(`${triggerTranslationBaseKey}.mqtt.description.full`);
   }
 
   // Template Trigger
   if (trigger.trigger === "template") {
     let duration = "";
     if (trigger.for) {
-      duration = describeDuration(hass.locale, trigger.for) ?? "";
+      duration = describeDuration(menuai.locale, trigger.for) ?? "";
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.template.description.full`,
       { hasDuration: duration !== "" ? "true" : "false", duration: duration }
     );
@@ -684,7 +684,7 @@ const tryDescribeTrigger = (
 
   // Webhook Trigger
   if (trigger.trigger === "webhook") {
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.webhook.description.full`
     );
   }
@@ -692,7 +692,7 @@ const tryDescribeTrigger = (
   // Conversation Trigger
   if (trigger.trigger === "conversation") {
     if (!trigger.command || !trigger.command.length) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.conversation.description.empty`
       );
     }
@@ -700,14 +700,14 @@ const tryDescribeTrigger = (
     const commands = ensureArray(trigger.command);
 
     if (commands.length === 1) {
-      return hass.localize(
+      return menuai.localize(
         `${triggerTranslationBaseKey}.conversation.description.single`,
         {
           sentence: commands[0],
         }
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.conversation.description.multiple`,
       {
         sentence: commands[0],
@@ -718,7 +718,7 @@ const tryDescribeTrigger = (
 
   // Persistent Notification Trigger
   if (trigger.trigger === "persistent_notification") {
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.persistent_notification.description.full`
     );
   }
@@ -727,15 +727,15 @@ const tryDescribeTrigger = (
   if (trigger.trigger === "device" && trigger.device_id) {
     const config = trigger as DeviceTrigger;
     const localized = localizeDeviceAutomationTrigger(
-      hass,
+      menuai,
       entityRegistry,
       config
     );
     if (localized) {
       return localized;
     }
-    const stateObj = hass.states[config.entity_id as string] as
-      | HassEntity
+    const stateObj = menuai.states[config.entity_id as string] as
+      | menuaiEntity
       | undefined;
     return `${stateObj ? computeStateName(stateObj) : config.entity_id} ${
       config.type
@@ -744,8 +744,8 @@ const tryDescribeTrigger = (
 
   // Calendar Trigger
   if (trigger.trigger === "calendar") {
-    const calendarEntity = hass.states[trigger.entity_id]
-      ? computeStateName(hass.states[trigger.entity_id])
+    const calendarEntity = menuai.states[trigger.entity_id]
+      ? computeStateName(menuai.states[trigger.entity_id])
       : trigger.entity_id;
 
     let offsetChoice = "other";
@@ -760,13 +760,13 @@ const tryDescribeTrigger = (
         minutes: offset.length > 1 ? +offset[1] : 0,
         seconds: offset.length > 2 ? +offset[2] : 0,
       };
-      offset = formatDurationLong(hass.locale, duration);
+      offset = formatDurationLong(menuai.locale, duration);
       if (offset === "") {
         offsetChoice = "other";
       }
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${triggerTranslationBaseKey}.calendar.description.full`,
       {
         eventChoice: trigger.event,
@@ -779,23 +779,23 @@ const tryDescribeTrigger = (
   }
 
   return (
-    hass.localize(
+    menuai.localize(
       `ui.panel.config.automation.editor.triggers.type.${trigger.trigger}.label`
     ) ||
-    hass.localize(`ui.panel.config.automation.editor.triggers.unknown_trigger`)
+    menuai.localize(`ui.panel.config.automation.editor.triggers.unknown_trigger`)
   );
 };
 
 export const describeCondition = (
   condition: Condition,
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryEntry[],
   ignoreAlias = false
 ): string => {
   try {
     const description = tryDescribeCondition(
       condition,
-      hass,
+      menuai,
       entityRegistry,
       ignoreAlias
     );
@@ -817,12 +817,12 @@ export const describeCondition = (
 
 const tryDescribeCondition = (
   condition: Condition,
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryEntry[],
   ignoreAlias = false
 ) => {
   if (typeof condition === "string" && hasTemplate(condition)) {
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.template.description.full`
     );
   }
@@ -850,12 +850,12 @@ const tryDescribeCondition = (
     const conditions = ensureArray(condition.conditions);
 
     if (!conditions || conditions.length === 0) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.or.description.no_conditions`
       );
     }
     const count = conditions.length;
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.or.description.full`,
       {
         count: count,
@@ -867,12 +867,12 @@ const tryDescribeCondition = (
     const conditions = ensureArray(condition.conditions);
 
     if (!conditions || conditions.length === 0) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.and.description.no_conditions`
       );
     }
     const count = conditions.length;
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.and.description.full`,
       {
         count: count,
@@ -884,16 +884,16 @@ const tryDescribeCondition = (
     const conditions = ensureArray(condition.conditions);
 
     if (!conditions || conditions.length === 0) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.not.description.no_conditions`
       );
     }
     if (conditions.length === 1) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.not.description.one_condition`
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.not.description.full`,
       { count: conditions.length }
     );
@@ -902,7 +902,7 @@ const tryDescribeCondition = (
   // State Condition
   if (condition.condition === "state") {
     if (!condition.entity_id) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.state.description.no_entity`
       );
     }
@@ -910,13 +910,13 @@ const tryDescribeCondition = (
     let attribute = "";
     if (condition.attribute) {
       const stateObj = Array.isArray(condition.entity_id)
-        ? hass.states[condition.entity_id[0]]
-        : (hass.states[condition.entity_id] as HassEntity | undefined);
+        ? menuai.states[condition.entity_id[0]]
+        : (menuai.states[condition.entity_id] as menuaiEntity | undefined);
       attribute = stateObj
         ? computeAttributeNameDisplay(
-            hass.localize,
+            menuai.localize,
             stateObj,
-            hass.entities,
+            menuai.entities,
             condition.attribute
           )
         : condition.attribute;
@@ -925,37 +925,37 @@ const tryDescribeCondition = (
     const entities: string[] = [];
     if (Array.isArray(condition.entity_id)) {
       for (const entity of condition.entity_id.values()) {
-        if (hass.states[entity]) {
-          entities.push(computeStateName(hass.states[entity]) || entity);
+        if (menuai.states[entity]) {
+          entities.push(computeStateName(menuai.states[entity]) || entity);
         }
       }
     } else if (condition.entity_id) {
       entities.push(
-        hass.states[condition.entity_id]
-          ? computeStateName(hass.states[condition.entity_id])
+        menuai.states[condition.entity_id]
+          ? computeStateName(menuai.states[condition.entity_id])
           : condition.entity_id
       );
     }
 
     const states: string[] = [];
-    const stateObj = hass.states[
+    const stateObj = menuai.states[
       Array.isArray(condition.entity_id)
         ? condition.entity_id[0]
         : condition.entity_id
-    ] as HassEntity | undefined;
+    ] as menuaiEntity | undefined;
     if (Array.isArray(condition.state)) {
       for (const state of condition.state.values()) {
         states.push(
           stateObj
             ? condition.attribute
-              ? hass
+              ? menuai
                   .formatEntityAttributeValue(
                     stateObj,
                     condition.attribute,
                     state
                   )
                   .toString()
-              : hass.formatEntityState(stateObj, state)
+              : menuai.formatEntityState(stateObj, state)
             : state
         );
       }
@@ -963,24 +963,24 @@ const tryDescribeCondition = (
       states.push(
         stateObj
           ? condition.attribute
-            ? hass
+            ? menuai
                 .formatEntityAttributeValue(
                   stateObj,
                   condition.attribute,
                   condition.state
                 )
                 .toString()
-            : hass.formatEntityState(stateObj, condition.state.toString())
+            : menuai.formatEntityState(stateObj, condition.state.toString())
           : condition.state.toString()
       );
     }
 
     let duration = "";
     if (condition.for) {
-      duration = describeDuration(hass.locale, condition.for) || "";
+      duration = describeDuration(menuai.locale, condition.for) || "";
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.state.description.full`,
       {
         hasAttribute: attribute !== "" ? "true" : "false",
@@ -988,10 +988,10 @@ const tryDescribeCondition = (
         numberOfEntities: entities.length,
         entities:
           condition.match === "any"
-            ? formatListWithOrs(hass.locale, entities)
-            : formatListWithAnds(hass.locale, entities),
+            ? formatListWithOrs(menuai.locale, entities)
+            : formatListWithAnds(menuai.locale, entities),
         numberOfStates: states.length,
-        states: formatListWithOrs(hass.locale, states),
+        states: formatListWithOrs(menuai.locale, states),
         hasDuration: duration !== "" ? "true" : "false",
         duration: duration,
       }
@@ -1001,27 +1001,27 @@ const tryDescribeCondition = (
   // Numeric State Condition
   if (condition.condition === "numeric_state" && condition.entity_id) {
     const entity_ids = ensureArray(condition.entity_id);
-    const stateObj = hass.states[entity_ids[0]] as HassEntity | undefined;
+    const stateObj = menuai.states[entity_ids[0]] as menuaiEntity | undefined;
     const entity = formatListWithAnds(
-      hass.locale,
+      menuai.locale,
       entity_ids.map((id) =>
-        hass.states[id] ? computeStateName(hass.states[id]) : id || ""
+        menuai.states[id] ? computeStateName(menuai.states[id]) : id || ""
       )
     );
 
     const attribute = condition.attribute
       ? stateObj
         ? computeAttributeNameDisplay(
-            hass.localize,
+            menuai.localize,
             stateObj,
-            hass.entities,
+            menuai.entities,
             condition.attribute
           )
         : condition.attribute
       : undefined;
 
     if (condition.above !== undefined && condition.below !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.numeric_state.description.above-below`,
         {
           attribute,
@@ -1033,7 +1033,7 @@ const tryDescribeCondition = (
       );
     }
     if (condition.above !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.numeric_state.description.above`,
         {
           attribute,
@@ -1044,7 +1044,7 @@ const tryDescribeCondition = (
       );
     }
     if (condition.below !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.numeric_state.description.below`,
         {
           attribute,
@@ -1067,27 +1067,27 @@ const tryDescribeCondition = (
           ? condition.before
           : condition.before.includes(".")
             ? `entity ${
-                hass.states[condition.before]
-                  ? computeStateName(hass.states[condition.before])
+                menuai.states[condition.before]
+                  ? computeStateName(menuai.states[condition.before])
                   : condition.before
               }`
-            : localizeTimeString(condition.before, hass.locale, hass.config);
+            : localizeTimeString(condition.before, menuai.locale, menuai.config);
 
       const after =
         typeof condition.after !== "string"
           ? condition.after
           : condition.after.includes(".")
             ? `entity ${
-                hass.states[condition.after]
-                  ? computeStateName(hass.states[condition.after])
+                menuai.states[condition.after]
+                  ? computeStateName(menuai.states[condition.after])
                   : condition.after
               }`
-            : localizeTimeString(condition.after, hass.locale, hass.config);
+            : localizeTimeString(condition.after, menuai.locale, menuai.config);
 
       let localizedDays: string[] = [];
       if (validWeekdays) {
         localizedDays = weekdaysArray.map((d) =>
-          hass.localize(
+          menuai.localize(
             `ui.panel.config.automation.editor.conditions.type.time.weekdays.${d}`
           )
         );
@@ -1102,7 +1102,7 @@ const tryDescribeCondition = (
         hasTime = "before";
       }
 
-      return hass.localize(
+      return menuai.localize(
         `${conditionsTranslationBaseKey}.time.description.full`,
         {
           hasTime: hasTime,
@@ -1110,7 +1110,7 @@ const tryDescribeCondition = (
           hasDay: validWeekdays ? "true" : "false",
           time_before: before,
           time_after: after,
-          day: formatListWithOrs(hass.locale, localizedDays),
+          day: formatListWithOrs(menuai.locale, localizedDays),
         }
       );
     }
@@ -1140,7 +1140,7 @@ const tryDescribeCondition = (
       }
     }
 
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.sun.description.full`,
       {
         afterChoice: condition.after ?? "other",
@@ -1158,7 +1158,7 @@ const tryDescribeCondition = (
     const entities: string[] = [];
     const zones: string[] = [];
 
-    const states = hass.states;
+    const states = menuai.states;
 
     if (Array.isArray(condition.entity_id)) {
       for (const entity of condition.entity_id.values()) {
@@ -1188,9 +1188,9 @@ const tryDescribeCondition = (
       );
     }
 
-    const entitiesString = formatListWithOrs(hass.locale, entities);
-    const zonesString = formatListWithOrs(hass.locale, zones);
-    return hass.localize(
+    const entitiesString = formatListWithOrs(menuai.locale, entities);
+    const zonesString = formatListWithOrs(menuai.locale, zones);
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.zone.description.full`,
       {
         entity: entitiesString,
@@ -1204,15 +1204,15 @@ const tryDescribeCondition = (
   if (condition.condition === "device" && condition.device_id) {
     const config = condition as DeviceCondition;
     const localized = localizeDeviceAutomationCondition(
-      hass,
+      menuai,
       entityRegistry,
       config
     );
     if (localized) {
       return localized;
     }
-    const stateObj = hass.states[config.entity_id as string] as
-      | HassEntity
+    const stateObj = menuai.states[config.entity_id as string] as
+      | menuaiEntity
       | undefined;
     return `${stateObj ? computeStateName(stateObj) : config.entity_id} ${
       config.type
@@ -1220,17 +1220,17 @@ const tryDescribeCondition = (
   }
 
   if (condition.condition === "template") {
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.template.description.full`
     );
   }
 
   if (condition.condition === "trigger" && condition.id != null) {
-    return hass.localize(
+    return menuai.localize(
       `${conditionsTranslationBaseKey}.trigger.description.full`,
       {
         id: formatListWithOrs(
-          hass.locale,
+          menuai.locale,
           ensureArray(condition.id).map((id) => id.toString())
         ),
       }
@@ -1238,10 +1238,10 @@ const tryDescribeCondition = (
   }
 
   return (
-    hass.localize(
+    menuai.localize(
       `ui.panel.config.automation.editor.conditions.type.${condition.condition}.label`
     ) ||
-    hass.localize(
+    menuai.localize(
       `ui.panel.config.automation.editor.conditions.unknown_condition`
     )
   );

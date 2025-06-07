@@ -4,11 +4,11 @@ import "../../../src/components/ha-card";
 import "../../../src/dialogs/more-info/more-info-content";
 import "../../../src/state-summary/state-card-content";
 import "../ha-demo-options";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
 @customElement("demo-more-info")
 class DemoMoreInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -16,19 +16,19 @@ class DemoMoreInfo extends LitElement {
   public showConfig = false;
 
   render() {
-    const state = this._getState(this.entityId, this.hass.states);
+    const state = this._getState(this.entityId, this.menuai.states);
     return html`
       <div class="root">
         <div id="card">
           <ha-card>
             <state-card-content
               .stateObj=${state}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               in-dialog
             ></state-card-content>
 
             <more-info-content
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${state}
             ></more-info-content>
           </ha-card>

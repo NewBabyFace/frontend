@@ -1,8 +1,8 @@
 import { consume } from "@lit/context";
 import type {
-  HassConfig,
-  HassEntities,
-  HassEntity,
+  menuaiConfig,
+  menuaiEntities,
+  menuaiEntity,
 } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
@@ -38,7 +38,7 @@ import type { EntityRegistryDisplayEntry } from "../../../data/entity_registry";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
 import type { FrontendLocaleData } from "../../../data/translation";
 import type { Themes } from "../../../data/ws-themes";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { findEntities } from "../common/find-entities";
 import { hasAction } from "../common/has-action";
@@ -63,13 +63,13 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): ButtonCardConfig {
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -82,19 +82,19 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
     };
   }
 
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _config?: ButtonCardConfig;
 
   @state()
   @consume<any>({ context: statesContext, subscribe: true })
   @transform({
-    transformer: function (this: HuiButtonCard, value: HassEntities) {
+    transformer: function (this: HuiButtonCard, value: menuaiEntities) {
       return this._config?.entity ? value[this._config?.entity] : undefined;
     },
     watch: ["_config"],
   })
-  private _stateObj?: HassEntity;
+  private _stateObj?: menuaiEntity;
 
   @state()
   @consume({ context: themesContext, subscribe: true })
@@ -110,11 +110,11 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
 
   @state()
   @consume({ context: configContext, subscribe: true })
-  _hassConfig!: HassConfig;
+  _menuaiConfig!: menuaiConfig;
 
   @state()
   @consume<any>({ context: entitiesContext, subscribe: true })
-  @transform<HomeAssistant["entities"], EntityRegistryDisplayEntry>({
+  @transform<menuai["entities"], EntityRegistryDisplayEntry>({
     transformer: function (this: HuiButtonCard, value) {
       return this._config?.entity ? value[this._config?.entity] : undefined;
     },
@@ -122,7 +122,7 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
   })
   _entity?: EntityRegistryDisplayEntry;
 
-  private _getStateColor(stateObj: HassEntity, config: ButtonCardConfig) {
+  private _getStateColor(stateObj: menuaiEntity, config: ButtonCardConfig) {
     const domain = stateObj ? computeStateDomain(stateObj) : undefined;
     return config && (config.state_color ?? domain === "light");
   }
@@ -179,8 +179,8 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
 
     if (this._config.entity && !stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -218,7 +218,7 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
                 )}
                 data-state=${ifDefined(stateObj?.state)}
                 .icon=${this._config.icon}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
                 style=${styleMap({
                   filter: colored ? stateColorBrightness(stateObj) : undefined,
@@ -234,7 +234,7 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
           : nothing}
         ${this._config.show_state && stateObj
           ? html`<span class="state">
-              ${this.hass.formatEntityState(stateObj)}
+              ${this.menuai.formatEntityState(stateObj)}
             </span>`
           : nothing}
       </ha-card>
@@ -250,7 +250,7 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
       return;
     }
     const oldThemes = changedProps.get("_themes") as
-      | HomeAssistant["themes"]
+      | menuai["themes"]
       | undefined;
     const oldConfig = changedProps.get("_config") as
       | ButtonCardConfig
@@ -334,7 +334,7 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
     ];
   }
 
-  private _computeColor(stateObj: HassEntity): string | undefined {
+  private _computeColor(stateObj: menuaiEntity): string | undefined {
     if (stateObj.attributes.rgb_color) {
       return `rgb(${stateObj.attributes.rgb_color.join(",")})`;
     }
@@ -353,7 +353,7 @@ export class HuiButtonCard extends LitElement implements LovelaceCard {
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    fireEvent(this, "hass-action", {
+    fireEvent(this, "menuai-action", {
       config: this._config!,
       action: ev.detail.action,
     });

@@ -38,10 +38,10 @@ import {
   showQuickBar,
 } from "../../../dialogs/quick-bar/show-dialog-quick-bar";
 import { showRestartDialog } from "../../../dialogs/restart/show-dialog-restart";
-import type { PageNavigation } from "../../../layouts/hass-tabs-subpage";
+import type { PageNavigation } from "../../../layouts/menuai-tabs-subpage";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { isMobileClient } from "../../../util/is_mobile";
 import "../ha-config-section";
@@ -51,53 +51,53 @@ import "./ha-config-navigation";
 import "./ha-config-updates";
 import { showShortcutsDialog } from "../../../dialogs/shortcuts/show-shortcuts-dialog";
 
-const randomTip = (openFn: any, hass: HomeAssistant, narrow: boolean) => {
+const randomTip = (openFn: any, menuai: menuai, narrow: boolean) => {
   const weighted: string[] = [];
   let tips = [
     {
-      content: hass.localize("ui.panel.config.tips.join", {
+      content: menuai.localize("ui.panel.config.tips.join", {
         forums: html`<a
           href="https://community.home-assistant.io"
           target="_blank"
           rel="noreferrer"
-          >${hass.localize("ui.panel.config.tips.join_forums")}</a
+          >${menuai.localize("ui.panel.config.tips.join_forums")}</a
         >`,
         twitter: html`<a
-          href=${documentationUrl(hass, `/twitter`)}
+          href=${documentationUrl(menuai, `/twitter`)}
           target="_blank"
           rel="noreferrer"
-          >${hass.localize("ui.panel.config.tips.join_x")}</a
+          >${menuai.localize("ui.panel.config.tips.join_x")}</a
         >`,
         mastodon: html`<a
-          href=${documentationUrl(hass, `/mastodon`)}
+          href=${documentationUrl(menuai, `/mastodon`)}
           target="_blank"
           rel="noreferrer"
-          >${hass.localize("ui.panel.config.tips.join_mastodon")}</a
+          >${menuai.localize("ui.panel.config.tips.join_mastodon")}</a
         >`,
         bluesky: html`<a
-          href=${documentationUrl(hass, `/bluesky`)}
+          href=${documentationUrl(menuai, `/bluesky`)}
           target="_blank"
           rel="noreferrer"
-          >${hass.localize("ui.panel.config.tips.join_bluesky")}</a
+          >${menuai.localize("ui.panel.config.tips.join_bluesky")}</a
         >`,
         discord: html`<a
-          href=${documentationUrl(hass, `/join-chat`)}
+          href=${documentationUrl(menuai, `/join-chat`)}
           target="_blank"
           rel="noreferrer"
-          >${hass.localize("ui.panel.config.tips.join_chat")}</a
+          >${menuai.localize("ui.panel.config.tips.join_chat")}</a
         >`,
         blog: html`<a
-          href=${documentationUrl(hass, `/blog`)}
+          href=${documentationUrl(menuai, `/blog`)}
           target="_blank"
           rel="noreferrer"
-          >${hass.localize("ui.panel.config.tips.join_blog")}</a
+          >${menuai.localize("ui.panel.config.tips.join_blog")}</a
         >`,
         newsletter: html`<span class="keep-together"
           ><a
             href="https://newsletter.openhomefoundation.org/"
             target="_blank"
             rel="noreferrer"
-            >${hass.localize("ui.panel.config.tips.join_newsletter")}</a
+            >${menuai.localize("ui.panel.config.tips.join_newsletter")}</a
           >
         </span>`,
       }),
@@ -106,26 +106,26 @@ const randomTip = (openFn: any, hass: HomeAssistant, narrow: boolean) => {
     },
   ];
 
-  if (hass?.enableShortcuts && !isMobileClient) {
+  if (menuai?.enableShortcuts && !isMobileClient) {
     const localizeParam = {
       keyboard_shortcut: html`<a href="#" @click=${openFn}
-        >${hass.localize("ui.tips.keyboard_shortcut")}</a
+        >${menuai.localize("ui.tips.keyboard_shortcut")}</a
       >`,
     };
 
     tips.push(
       {
-        content: hass.localize("ui.tips.key_c_tip", localizeParam),
+        content: menuai.localize("ui.tips.key_c_tip", localizeParam),
         weight: 1,
         narrow: false,
       },
       {
-        content: hass.localize("ui.tips.key_m_tip", localizeParam),
+        content: menuai.localize("ui.tips.key_m_tip", localizeParam),
         weight: 1,
         narrow: false,
       },
       {
-        content: hass.localize("ui.tips.key_a_tip", localizeParam),
+        content: menuai.localize("ui.tips.key_a_tip", localizeParam),
         weight: 1,
         narrow: false,
       }
@@ -147,7 +147,7 @@ const randomTip = (openFn: any, hass: HomeAssistant, narrow: boolean) => {
 
 @customElement("ha-config-dashboard")
 class HaConfigDashboard extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -170,7 +170,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
       pages.push({
         component: "cloud",
         path: "/config/cloud",
-        name: "Home Assistant Cloud",
+        name: "MenuAI Cloud",
         info: cloudStatus,
         iconPath: mdiCloudLock,
         iconColor: "#3B808E",
@@ -180,9 +180,9 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
     return [...pages, ...configSections.dashboard];
   });
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeRepairsIssueRegistry(this.hass.connection!, (repairs) => {
+      subscribeRepairsIssueRegistry(this.menuai.connection!, (repairs) => {
         const repairsIssues = repairs.issues.filter((issue) => !issue.ignored);
 
         this._repairsIssues = {
@@ -196,7 +196,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
         for (const issue of this._repairsIssues.issues) {
           integrations.add(issue.domain);
         }
-        this.hass.loadBackendTranslation("issues", [...integrations]);
+        this.menuai.loadBackendTranslation("issues", [...integrations]);
       }),
     ];
   }
@@ -204,8 +204,8 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
   protected render(): TemplateResult {
     const { updates: canInstallUpdates, total: totalUpdates } =
       this._filterUpdateEntitiesWithInstall(
-        this.hass.states,
-        this.hass.entities
+        this.menuai.states,
+        this.menuai.entities
       );
 
     const { issues: repairsIssues, total: totalRepairIssues } =
@@ -215,32 +215,32 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
       <ha-top-app-bar-fixed>
         <ha-menu-button
           slot="navigationIcon"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
         ></ha-menu-button>
-        <div slot="title">${this.hass.localize("panel.config")}</div>
+        <div slot="title">${this.menuai.localize("panel.config")}</div>
 
         <ha-icon-button
           slot="actionItems"
-          .label=${this.hass.localize("ui.dialogs.quick-bar.title")}
+          .label=${this.menuai.localize("ui.dialogs.quick-bar.title")}
           .path=${mdiMagnify}
           @click=${this._showQuickBar}
         ></ha-icon-button>
         <ha-button-menu slot="actionItems" @action=${this._handleMenuAction}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
           <ha-list-item graphic="icon">
-            ${this.hass.localize("ui.panel.config.updates.check_updates")}
+            ${this.menuai.localize("ui.panel.config.updates.check_updates")}
             <ha-svg-icon slot="graphic" .path=${mdiRefresh}></ha-svg-icon>
           </ha-list-item>
 
           <ha-list-item graphic="icon">
-            ${this.hass.localize(
-              "ui.panel.config.system_dashboard.restart_homeassistant"
+            ${this.menuai.localize(
+              "ui.panel.config.system_dashboard.restart_menuai"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiPower}></ha-svg-icon>
           </ha-list-item>
@@ -256,7 +256,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
                 ${repairsIssues.length
                   ? html`
                       <ha-config-repairs
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .narrow=${this.narrow}
                         .total=${totalRepairIssues}
                         .repairsIssues=${repairsIssues}
@@ -265,7 +265,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
                         ? html`
                             <ha-assist-chip
                               href="/config/repairs"
-                              .label=${this.hass.localize(
+                              .label=${this.menuai.localize(
                                 "ui.panel.config.repairs.more_repairs",
                                 {
                                   count:
@@ -284,7 +284,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
                 ${canInstallUpdates.length
                   ? html`
                       <ha-config-updates
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .narrow=${this.narrow}
                         .total=${totalUpdates}
                         .updateEntities=${canInstallUpdates}
@@ -293,7 +293,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
                         ? html`
                             <ha-assist-chip
                               href="/config/updates"
-                              label=${this.hass.localize(
+                              label=${this.menuai.localize(
                                 "ui.panel.config.updates.more_updates",
                                 {
                                   count:
@@ -311,16 +311,16 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
 
           <ha-card outlined>
             <ha-config-navigation
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               .showAdvanced=${this.showAdvanced}
               .pages=${this._pages(
                 this.cloudStatus,
-                isComponentLoaded(this.hass, "cloud")
+                isComponentLoaded(this.menuai, "cloud")
               )}
             ></ha-config-navigation>
           </ha-card>
-          <ha-tip .hass=${this.hass}>${this._tip}</ha-tip>
+          <ha-tip .menuai=${this.menuai}>${this._tip}</ha-tip>
         </ha-config-section>
       </ha-top-app-bar-fixed>
     `;
@@ -329,8 +329,8 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
   protected override updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
 
-    if (!this._tip && changedProps.has("hass")) {
-      this._tip = randomTip(this._openShortcutDialog, this.hass, this.narrow);
+    if (!this._tip && changedProps.has("menuai")) {
+      this._tip = randomTip(this._openShortcutDialog, this.menuai, this.narrow);
     }
   }
 
@@ -342,8 +342,8 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
 
   private _filterUpdateEntitiesWithInstall = memoizeOne(
     (
-      entities: HomeAssistant["states"],
-      entityRegistry: HomeAssistant["entities"]
+      entities: menuai["states"],
+      entityRegistry: menuai["entities"]
     ): { updates: UpdateEntity[]; total: number } => {
       const updates = filterUpdateEntitiesWithInstall(entities).filter(
         (entity) => !entityRegistry[entity.entity_id]?.hidden
@@ -359,14 +359,14 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
   private _showQuickBar(): void {
     const params = {
       keyboard_shortcut: html`<a href="#" @click=${this._openShortcutDialog}
-        >${this.hass.localize("ui.tips.keyboard_shortcut")}</a
+        >${this.menuai.localize("ui.tips.keyboard_shortcut")}</a
       >`,
     };
 
     showQuickBar(this, {
       mode: QuickBarMode.Command,
-      hint: this.hass.enableShortcuts
-        ? this.hass.localize("ui.dialogs.quick-bar.key_c_tip", params)
+      hint: this.menuai.enableShortcuts
+        ? this.menuai.localize("ui.dialogs.quick-bar.key_c_tip", params)
         : undefined,
     });
   }
@@ -374,7 +374,7 @@ class HaConfigDashboard extends SubscribeMixin(LitElement) {
   private async _handleMenuAction(ev: CustomEvent<ActionDetail>) {
     switch (ev.detail.index) {
       case 0:
-        checkForEntityUpdates(this, this.hass);
+        checkForEntityUpdates(this, this.menuai);
         break;
       case 1:
         showRestartDialog(this);

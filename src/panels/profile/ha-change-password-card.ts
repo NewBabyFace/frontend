@@ -7,7 +7,7 @@ import "../../components/ha-spinner";
 import "../../components/ha-textfield";
 import "../../components/ha-password-field";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../../components/ha-alert";
 import {
   showAlertDialog,
@@ -18,7 +18,7 @@ import { changePassword, deleteAllRefreshTokens } from "../../data/auth";
 
 @customElement("ha-change-password-card")
 class HaChangePasswordCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _loading = false;
 
@@ -37,7 +37,7 @@ class HaChangePasswordCard extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-card
-        .header=${this.hass.localize("ui.panel.profile.change_password.header")}
+        .header=${this.menuai.localize("ui.panel.profile.change_password.header")}
       >
         <div class="card-content">
           ${this._errorMsg
@@ -50,7 +50,7 @@ class HaChangePasswordCard extends LitElement {
           <ha-password-field
             id="currentPassword"
             name="currentPassword"
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.profile.change_password.current_password"
             )}
             autocomplete="current-password"
@@ -62,7 +62,7 @@ class HaChangePasswordCard extends LitElement {
 
           ${this._currentPassword
             ? html`<ha-password-field
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.profile.change_password.new_password"
                   )}
                   name="password"
@@ -74,7 +74,7 @@ class HaChangePasswordCard extends LitElement {
                   autoValidate
                 ></ha-password-field>
                 <ha-password-field
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.profile.change_password.confirm_new_password"
                   )}
                   name="passwordConfirm"
@@ -96,7 +96,7 @@ class HaChangePasswordCard extends LitElement {
             : html`<mwc-button
                 @click=${this._changePassword}
                 .disabled=${!this._passwordConfirm}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.profile.change_password.submit"
                 )}</mwc-button
               >`}
@@ -134,14 +134,14 @@ class HaChangePasswordCard extends LitElement {
     }
 
     if (this._password !== this._passwordConfirm) {
-      this._errorMsg = this.hass.localize(
+      this._errorMsg = this.menuai.localize(
         "ui.panel.profile.change_password.error_new_mismatch"
       );
       return;
     }
 
     if (this._currentPassword === this._password) {
-      this._errorMsg = this.hass.localize(
+      this._errorMsg = this.menuai.localize(
         "ui.panel.profile.change_password.error_new_is_old"
       );
       return;
@@ -151,7 +151,7 @@ class HaChangePasswordCard extends LitElement {
     this._errorMsg = undefined;
 
     try {
-      await changePassword(this.hass, this._currentPassword, this._password);
+      await changePassword(this.menuai, this._currentPassword, this._password);
     } catch (err: any) {
       this._errorMsg = err.message;
       return;
@@ -159,29 +159,29 @@ class HaChangePasswordCard extends LitElement {
       this._loading = false;
     }
 
-    this._statusMsg = this.hass.localize(
+    this._statusMsg = this.menuai.localize(
       "ui.panel.profile.change_password.success"
     );
 
     if (
       this.refreshTokens &&
       (await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.change_password.logout_all_sessions"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.profile.change_password.logout_all_sessions_text"
         ),
-        dismissText: this.hass.localize("ui.common.no"),
-        confirmText: this.hass.localize("ui.common.yes"),
+        dismissText: this.menuai.localize("ui.common.no"),
+        confirmText: this.menuai.localize("ui.common.yes"),
         destructive: true,
       }))
     ) {
       try {
-        await deleteAllRefreshTokens(this.hass);
+        await deleteAllRefreshTokens(this.menuai);
       } catch (err: any) {
         await showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.profile.change_password.delete_failed"
           ),
           text: err.message,

@@ -5,30 +5,30 @@ import {
   mdiViewDashboard,
 } from "@mdi/js";
 import { atLeastVersion } from "../../src/common/config/version";
-import type { PageNavigation } from "../../src/layouts/hass-tabs-subpage";
-import type { HomeAssistant } from "../../src/types";
+import type { PageNavigation } from "../../src/layouts/menuai-tabs-subpage";
+import type { menuai } from "../../src/types";
 
-export const supervisorTabs = (hass: HomeAssistant): PageNavigation[] =>
-  atLeastVersion(hass.config.version, 2022, 5)
+export const supervisorTabs = (menuai: menuai): PageNavigation[] =>
+  atLeastVersion(menuai.config.version, 2022, 5)
     ? []
     : [
         {
-          translationKey: atLeastVersion(hass.config.version, 2021, 12)
+          translationKey: atLeastVersion(menuai.config.version, 2021, 12)
             ? "panel.addons"
             : "panel.dashboard",
-          path: `/hassio/dashboard`,
-          iconPath: atLeastVersion(hass.config.version, 2021, 12)
+          path: `/menuaiio/dashboard`,
+          iconPath: atLeastVersion(menuai.config.version, 2021, 12)
             ? mdiPuzzle
             : mdiViewDashboard,
         },
         {
           translationKey: "panel.backups",
-          path: `/hassio/backups`,
+          path: `/menuaiio/backups`,
           iconPath: mdiBackupRestore,
         },
         {
           translationKey: "panel.system",
-          path: `/hassio/system`,
+          path: `/menuaiio/system`,
           iconPath: mdiCogs,
         },
       ];

@@ -7,13 +7,13 @@ import {
   FALLBACK_DOMAIN_ICONS,
   serviceIcon,
 } from "../data/icons";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon";
 import "./ha-svg-icon";
 
 @customElement("ha-service-icon")
 export class HaServiceIcon extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public service?: string;
 
@@ -28,11 +28,11 @@ export class HaServiceIcon extends LitElement {
       return nothing;
     }
 
-    if (!this.hass) {
+    if (!this.menuai) {
       return this._renderFallback();
     }
 
-    const icon = serviceIcon(this.hass, this.service).then((icn) => {
+    const icon = serviceIcon(this.menuai, this.service).then((icn) => {
       if (icn) {
         return html`<ha-icon .icon=${icn}></ha-icon>`;
       }

@@ -1,9 +1,9 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeDomain } from "../../common/entity/compute_domain";
 import type { ExtEntityRegistryEntry } from "../../data/entity_registry";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   computeShowHistoryComponent,
   computeShowLogBookComponent,
@@ -19,7 +19,7 @@ import { getSensorNumericDeviceClasses } from "../../data/sensor";
 
 @customElement("ha-more-info-info")
 export class MoreInfoInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -30,7 +30,7 @@ export class MoreInfoInfo extends LitElement {
   @state() private _sensorNumericDeviceClasses?: string[] = [];
 
   private async _loadNumericDeviceClasses() {
-    const deviceClasses = await getSensorNumericDeviceClasses(this.hass);
+    const deviceClasses = await getSensorNumericDeviceClasses(this.menuai);
     this._sensorNumericDeviceClasses = deviceClasses.numeric_device_classes;
   }
 
@@ -41,8 +41,8 @@ export class MoreInfoInfo extends LitElement {
 
   protected render() {
     const entityId = this.entityId;
-    const stateObj = this.hass.states[entityId] as HassEntity | undefined;
-    const entityRegObj = this.hass.entities[entityId];
+    const stateObj = this.menuai.states[entityId] as menuaiEntity | undefined;
+    const entityRegObj = this.menuai.entities[entityId];
     const domain = computeDomain(entityId);
     const isNewMoreInfo = stateObj && computeShowNewMoreInfo(stateObj);
     const isFullHeight =
@@ -53,17 +53,17 @@ export class MoreInfoInfo extends LitElement {
         ${!stateObj
           ? html`<ha-alert alert-type="warning">
               ${this.entry?.disabled_by
-                ? this.hass.localize(
+                ? this.menuai.localize(
                     "ui.dialogs.entity_registry.editor.entity_disabled"
                   )
-                : this.hass.localize(
+                : this.menuai.localize(
                     "ui.dialogs.entity_registry.editor.unavailable"
                   )}
             </ha-alert>`
           : nothing}
         ${stateObj?.attributes.restored && entityRegObj
           ? html`<ha-alert alert-type="warning">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.dialogs.more_info_control.restored.no_longer_provided",
                 {
                   integration: entityRegObj.platform,
@@ -78,31 +78,31 @@ export class MoreInfoInfo extends LitElement {
                 <state-card-content
                   in-dialog
                   .stateObj=${stateObj}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                 ></state-card-content>
               `}
           ${DOMAINS_WITH_MORE_INFO.includes(domain) ||
-          !computeShowHistoryComponent(this.hass, entityId)
+          !computeShowHistoryComponent(this.menuai, entityId)
             ? ""
             : html`<ha-more-info-history
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .entityId=${this.entityId}
               ></ha-more-info-history>`}
           ${DOMAINS_WITH_MORE_INFO.includes(domain) ||
           !computeShowLogBookComponent(
-            this.hass,
+            this.menuai,
             entityId,
             this._sensorNumericDeviceClasses
           )
             ? ""
             : html`<ha-more-info-logbook
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .entityId=${this.entityId}
               ></ha-more-info-logbook>`}
           <more-info-content
             ?full-height=${isFullHeight}
             .stateObj=${stateObj}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .entry=${this.entry}
             .editMode=${this.editMode}
           ></more-info-content>

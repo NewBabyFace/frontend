@@ -20,7 +20,7 @@ import {
 import { useAmPm } from "../common/datetime/use_am_pm";
 import { fireEvent } from "../common/dom/fire_event";
 import { TimeZone } from "../data/translation";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./date-range-picker";
 import "./ha-icon-button";
 import "./ha-icon-button-next";
@@ -32,7 +32,7 @@ import "./ha-textarea";
 export type DateRangePickerRanges = Record<string, [Date, Date]>;
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "preset-selected": { index: number };
   }
 }
@@ -50,7 +50,7 @@ const EXTENDED_RANGE_KEYS: DateRange[] = [
 
 @customElement("ha-date-range-picker")
 export class HaDateRangePicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public startDate!: Date;
 
@@ -90,8 +90,8 @@ export class HaDateRangePicker extends LitElement {
   protected willUpdate(changedProps: PropertyValues) {
     if (
       (!this.hasUpdated && this.ranges === undefined) ||
-      (changedProps.has("hass") &&
-        this.hass?.localize !== changedProps.get("hass")?.localize)
+      (changedProps.has("menuai") &&
+        this.menuai?.localize !== changedProps.get("menuai")?.localize)
     ) {
       const rangeKeys = this.extendedPresets
         ? [...RANGE_KEYS, ...EXTENDED_RANGE_KEYS]
@@ -100,17 +100,17 @@ export class HaDateRangePicker extends LitElement {
       this._ranges = {};
       rangeKeys.forEach((key) => {
         this._ranges![
-          this.hass.localize(`ui.components.date-range-picker.ranges.${key}`)
-        ] = calcDateRange(this.hass, key);
+          this.menuai.localize(`ui.components.date-range-picker.ranges.${key}`)
+        ] = calcDateRange(this.menuai, key);
       });
     }
   }
 
   protected updated(changedProps: PropertyValues) {
-    if (changedProps.has("hass")) {
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-      if (!oldHass || oldHass.locale !== this.hass.locale) {
-        this._hour24format = !useAmPm(this.hass.locale);
+    if (changedProps.has("menuai")) {
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+      if (!oldmenuai || oldmenuai.locale !== this.menuai.locale) {
+        this._hour24format = !useAmPm(this.menuai.locale);
       }
     }
   }
@@ -128,8 +128,8 @@ export class HaDateRangePicker extends LitElement {
         opening-direction=${ifDefined(
           this.openingDirection || this._calcedOpeningDirection
         )}
-        first-day=${firstWeekdayIndex(this.hass.locale)}
-        language=${this.hass.locale.language}
+        first-day=${firstWeekdayIndex(this.menuai.locale)}
+        language=${this.menuai.locale.language}
         @change=${this._handleChange}
       >
         <div slot="input" class="date-range-inputs" @click=${this._handleClick}>
@@ -139,31 +139,31 @@ export class HaDateRangePicker extends LitElement {
                   .value=${(isThisYear(this.startDate)
                     ? formatShortDateTime(
                         this.startDate,
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       )
                     : formatShortDateTimeWithYear(
                         this.startDate,
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       )) +
                   (window.innerWidth >= 459 ? " - " : " - \n") +
                   (isThisYear(this.endDate)
                     ? formatShortDateTime(
                         this.endDate,
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       )
                     : formatShortDateTimeWithYear(
                         this.endDate,
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       ))}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.components.date-range-picker.start_date"
                   ) +
                   " - " +
-                  this.hass.localize(
+                  this.menuai.localize(
                     "ui.components.date-range-picker.end_date"
                   )}
                   .disabled=${this.disabled}
@@ -171,17 +171,17 @@ export class HaDateRangePicker extends LitElement {
                   readonly
                 ></ha-textarea>
                 <ha-icon-button-prev
-                  .label=${this.hass.localize("ui.common.previous")}
+                  .label=${this.menuai.localize("ui.common.previous")}
                   @click=${this._handlePrev}
                 >
                 </ha-icon-button-prev>
                 <ha-icon-button-next
-                  .label=${this.hass.localize("ui.common.next")}
+                  .label=${this.menuai.localize("ui.common.next")}
                   @click=${this._handleNext}
                 >
                 </ha-icon-button-next>`
             : html`<ha-icon-button
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.components.date-range-picker.select_date_range"
                 )}
                 .path=${mdiCalendar}
@@ -198,10 +198,10 @@ export class HaDateRangePicker extends LitElement {
           : nothing}
         <div slot="footer" class="date-range-footer">
           <mwc-button @click=${this._cancelDateRange}
-            >${this.hass.localize("ui.common.cancel")}</mwc-button
+            >${this.menuai.localize("ui.common.cancel")}</mwc-button
           >
           <mwc-button @click=${this._applyDateRange}
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.components.date-range-picker.select"
             )}</mwc-button
           >
@@ -226,8 +226,8 @@ export class HaDateRangePicker extends LitElement {
       this.startDate,
       this.endDate,
       forward,
-      this.hass.locale,
-      this.hass.config
+      this.menuai.locale,
+      this.menuai.config
     );
     this.startDate = start;
     this.endDate = end;
@@ -255,16 +255,16 @@ export class HaDateRangePicker extends LitElement {
   }
 
   private _applyDateRange() {
-    if (this.hass.locale.time_zone === TimeZone.server) {
+    if (this.menuai.locale.time_zone === TimeZone.server) {
       const dateRangePicker = this._dateRangePicker;
 
       const startDate = fromZonedTime(
         dateRangePicker.start,
-        this.hass.config.time_zone
+        this.menuai.config.time_zone
       );
       const endDate = fromZonedTime(
         dateRangePicker.end,
-        this.hass.config.time_zone
+        this.menuai.config.time_zone
       );
 
       dateRangePicker.clickRange([startDate, endDate]);
@@ -274,8 +274,8 @@ export class HaDateRangePicker extends LitElement {
   }
 
   private _formatDate(date: Date): string {
-    if (this.hass.locale.time_zone === TimeZone.server) {
-      return toZonedTime(date, this.hass.config.time_zone).toISOString();
+    if (this.menuai.locale.time_zone === TimeZone.server) {
+      return toZonedTime(date, this.menuai.config.time_zone).toISOString();
     }
     return date.toISOString();
   }

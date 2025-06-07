@@ -49,7 +49,7 @@ import {
 import type { ResolvedMediaSource } from "../../data/media_source";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
 import { SubscribeMixin } from "../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../lovelace/components/hui-marquee";
 import {
   BrowserMediaPlayer,
@@ -57,14 +57,14 @@ import {
 } from "./browser-media-player";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "player-picked": { entityId: string };
   }
 }
 
 @customElement("ha-bar-media-player")
 export class BarMediaPlayer extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -136,7 +136,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
     this._tearDownBrowserPlayer();
     try {
       this._browserPlayer = new BrowserMediaPlayer(
-        this.hass,
+        this.menuai,
         item,
         resolved,
         this._browserPlayerVolume,
@@ -145,7 +145,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
     } catch (err: any) {
       if (err.message === ERR_UNSUPPORTED_MEDIA) {
         showAlertDialog(this, {
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.components.media-browser.media_not_supported"
           ),
         });
@@ -225,14 +225,14 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
         @click=${this._openMoreInfo}
       >
         ${mediaArt
-          ? html`<img alt="" src=${this.hass.hassUrl(mediaArt)} />`
+          ? html`<img alt="" src=${this.menuai.menuaiUrl(mediaArt)} />`
           : ""}
         <div class="media-info">
           <hui-marquee
             .text=${mediaTitleClean ||
             mediaDescription ||
             (stateObj.state !== "playing" && stateObj.state !== "on"
-              ? this.hass.localize(`ui.card.media_player.nothing_playing`)
+              ? this.menuai.localize(`ui.card.media_player.nothing_playing`)
               : "")}
             .active=${this._marqueeActive}
             @mouseover=${this._marqueeMouseOver}
@@ -257,7 +257,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
                   : controls.map(
                       (control) => html`
                         <ha-icon-button
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             `ui.card.media_player.${control.action}`
                           )}
                           .path=${control.icon}
@@ -348,7 +348,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
               ?selected=${isBrowser}
               @click=${this._selectPlayer}
             >
-              ${this.hass.localize("ui.components.media-browser.web-browser")}
+              ${this.menuai.localize("ui.components.media-browser.web-browser")}
             </ha-list-item>
             ${this._mediaPlayerEntities.map(
               (source) => html`
@@ -375,12 +375,12 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
     }
     if (stateObj) {
       return html`
-        <ha-state-icon .hass=${this.hass} .stateObj=${stateObj}></ha-state-icon>
+        <ha-state-icon .menuai=${this.menuai} .stateObj=${stateObj}></ha-state-icon>
       `;
     }
     return html`
       <ha-domain-icon
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .domain=${computeDomain(this.entityId)}
       ></ha-domain-icon>
     `;
@@ -391,14 +391,14 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
     if (changedProps.has("entityId")) {
       this._tearDownBrowserPlayer();
     }
-    if (!changedProps.has("hass") || this.entityId === BROWSER_PLAYER) {
+    if (!changedProps.has("menuai") || this.entityId === BROWSER_PLAYER) {
       return;
     }
     // Reset new media expected if media player state changes
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     if (
-      !oldHass ||
-      oldHass.states[this.entityId] !== this.hass.states[this.entityId]
+      !oldmenuai ||
+      oldmenuai.states[this.entityId] !== this.menuai.states[this.entityId]
     ) {
       this._newMediaExpected = false;
     }
@@ -412,8 +412,8 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
         return;
       }
     } else {
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-      if (oldHass && oldHass.states[this.entityId] === this._stateObj) {
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+      if (oldmenuai && oldmenuai.states[this.entityId] === this._stateObj) {
         return;
       }
     }
@@ -446,7 +446,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
         ? this._browserPlayer.toStateObj()
         : BrowserMediaPlayer.idleStateObj();
     }
-    return this.hass!.states[this.entityId] as MediaPlayerEntity | undefined;
+    return this.menuai!.states[this.entityId] as MediaPlayerEntity | undefined;
   }
 
   private _tearDownBrowserPlayer() {
@@ -460,11 +460,11 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
     if (this.entityId === BROWSER_PLAYER) {
       return;
     }
-    fireEvent(this, "hass-more-info", { entityId: this.entityId });
+    fireEvent(this, "menuai-more-info", { entityId: this.entityId });
   }
 
   private get _showProgressBar() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return false;
     }
 
@@ -479,11 +479,11 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
   }
 
   private get _mediaPlayerEntities() {
-    return Object.values(this.hass!.states).filter(
+    return Object.values(this.menuai!.states).filter(
       (entity) =>
         computeStateDomain(entity) === "media_player" &&
         supportsFeature(entity, MediaPlayerEntityFeature.BROWSE_MEDIA) &&
-        !this.hass.entities[entity.entity_id]?.hidden
+        !this.menuai.entities[entity.entity_id]?.hidden
     );
   }
 
@@ -514,7 +514,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
 
     if (!this._browserPlayer) {
       handleMediaControlClick(
-        this.hass!,
+        this.menuai!,
         this._stateObj!,
         (e.currentTarget as HTMLElement).getAttribute("action")!
       );
@@ -551,7 +551,7 @@ export class BarMediaPlayer extends SubscribeMixin(LitElement) {
       this._browserPlayerVolume = value;
       this._browserPlayer.setVolume(value);
     } else {
-      await setMediaPlayerVolume(this.hass, this.entityId, value);
+      await setMediaPlayerVolume(this.menuai, this.entityId, value);
     }
   }
 

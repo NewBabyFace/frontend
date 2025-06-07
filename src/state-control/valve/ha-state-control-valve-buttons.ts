@@ -16,7 +16,7 @@ import {
   canOpen,
   canStop,
 } from "../../data/valve";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 type ValveButton = "open" | "close" | "stop" | "none";
 
@@ -36,27 +36,27 @@ export const getValveButtons = memoizeOne(
 
 @customElement("ha-state-control-valve-buttons")
 export class HaStateControlValveButtons extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: ValveEntity;
 
   private _onOpenTap(ev): void {
     ev.stopPropagation();
-    this.hass!.callService("valve", "open_valve", {
+    this.menuai!.callService("valve", "open_valve", {
       entity_id: this.stateObj!.entity_id,
     });
   }
 
   private _onCloseTap(ev): void {
     ev.stopPropagation();
-    this.hass!.callService("valve", "close_valve", {
+    this.menuai!.callService("valve", "close_valve", {
       entity_id: this.stateObj!.entity_id,
     });
   }
 
   private _onStopTap(ev): void {
     ev.stopPropagation();
-    this.hass!.callService("valve", "stop_valve", {
+    this.menuai!.callService("valve", "stop_valve", {
       entity_id: this.stateObj!.entity_id,
     });
   }
@@ -65,7 +65,7 @@ export class HaStateControlValveButtons extends LitElement {
     if (button === "open") {
       return html`
         <ha-control-button
-          .label=${this.hass.localize("ui.card.valve.open_valve")}
+          .label=${this.menuai.localize("ui.card.valve.open_valve")}
           @click=${this._onOpenTap}
           .disabled=${!canOpen(this.stateObj)}
           data-button="open"
@@ -77,7 +77,7 @@ export class HaStateControlValveButtons extends LitElement {
     if (button === "close") {
       return html`
         <ha-control-button
-          .label=${this.hass.localize("ui.card.valve.close_valve")}
+          .label=${this.menuai.localize("ui.card.valve.close_valve")}
           @click=${this._onCloseTap}
           .disabled=${!canClose(this.stateObj)}
           data-button="close"
@@ -89,7 +89,7 @@ export class HaStateControlValveButtons extends LitElement {
     if (button === "stop") {
       return html`
         <ha-control-button
-          .label=${this.hass.localize("ui.card.valve.stop_valve")}
+          .label=${this.menuai.localize("ui.card.valve.stop_valve")}
           @click=${this._onStopTap}
           .disabled=${!canStop(this.stateObj)}
           data-button="stop"

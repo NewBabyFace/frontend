@@ -2,7 +2,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { BackgroundSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-picture-upload";
 import "../ha-alert";
 import type { HaPictureUpload } from "../ha-picture-upload";
@@ -10,7 +10,7 @@ import { URL_PREFIX } from "../../data/image_upload";
 
 @customElement("ha-selector-background")
 export class HaBackgroundSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: any;
 
@@ -38,17 +38,17 @@ export class HaBackgroundSelector extends LitElement {
               <div class="value">
                 <img
                   src=${this.value}
-                  alt=${this.hass.localize(
+                  alt=${this.menuai.localize(
                     "ui.components.picture-upload.current_image_alt"
                   )}
                 />
               </div>
               <ha-alert alert-type="info">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.components.selectors.background.yaml_info`
                 )}
                 <ha-button slot="action" @click=${this._clearValue}>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.components.picture-upload.clear_picture`
                   )}
                 </ha-button>
@@ -56,7 +56,7 @@ export class HaBackgroundSelector extends LitElement {
             `
           : html`
               <ha-picture-upload
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this.value?.startsWith(URL_PREFIX) ? this.value : null}
                 .original=${!!this.selector.background?.original}
                 .cropOptions=${this.selector.background?.crop}

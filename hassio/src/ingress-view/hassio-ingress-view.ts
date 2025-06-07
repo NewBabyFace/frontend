@@ -7,28 +7,28 @@ import { navigate } from "../../../src/common/navigate";
 import { extractSearchParam } from "../../../src/common/url/search-params";
 import { nextRender } from "../../../src/common/util/render-status";
 import "../../../src/components/ha-icon-button";
-import type { HassioAddonDetails } from "../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../src/data/menuaiio/addon";
 import {
-  fetchHassioAddonInfo,
-  startHassioAddon,
-} from "../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
+  fetchmenuaiioAddonInfo,
+  startmenuaiioAddon,
+} from "../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
 import {
-  createHassioSession,
-  validateHassioSession,
-} from "../../../src/data/hassio/ingress";
+  createmenuaiioSession,
+  validatemenuaiioSession,
+} from "../../../src/data/menuaiio/ingress";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../src/dialogs/generic/show-dialog-box";
-import "../../../src/layouts/hass-loading-screen";
-import "../../../src/layouts/hass-subpage";
-import type { HomeAssistant, Route } from "../../../src/types";
+import "../../../src/layouts/menuai-loading-screen";
+import "../../../src/layouts/menuai-subpage";
+import type { menuai, Route } from "../../../src/types";
 
-@customElement("hassio-ingress-view")
-class HassioIngressView extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-ingress-view")
+class menuaiioIngressView extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -38,7 +38,7 @@ class HassioIngressView extends LitElement {
 
   @property({ type: Boolean }) public narrow = false;
 
-  @state() private _addon?: HassioAddonDetails;
+  @state() private _addon?: menuaiioAddonDetails;
 
   @state() private _loadingMessage?: string;
 
@@ -61,9 +61,9 @@ class HassioIngressView extends LitElement {
 
   protected render(): TemplateResult {
     if (!this._addon) {
-      return html`<hass-loading-screen
+      return html`<menuai-loading-screen
         .message=${this._loadingMessage}
-      ></hass-loading-screen>`;
+      ></menuai-loading-screen>`;
     }
 
     const iframe = html`<iframe
@@ -74,19 +74,19 @@ class HassioIngressView extends LitElement {
     </iframe>`;
 
     if (!this.ingressPanel) {
-      return html`<hass-subpage
-        .hass=${this.hass}
+      return html`<menuai-subpage
+        .menuai=${this.menuai}
         .header=${this._addon.name}
         .narrow=${this.narrow}
       >
         ${iframe}
-      </hass-subpage>`;
+      </menuai-subpage>`;
     }
 
-    return html`${this.narrow || this.hass.dockedSidebar === "always_hidden"
+    return html`${this.narrow || this.menuai.dockedSidebar === "always_hidden"
       ? html`<div class="header">
             <ha-icon-button
-              .label=${this.hass.localize("ui.sidebar.sidebar_toggle")}
+              .label=${this.menuai.localize("ui.sidebar.sidebar_toggle")}
               .path=${mdiMenu}
               @click=${this._toggleMenu}
             ></ha-icon-button>
@@ -99,17 +99,17 @@ class HassioIngressView extends LitElement {
   protected async firstUpdated(): Promise<void> {
     if (this.route.path === "") {
       const requestedAddon = extractSearchParam("addon");
-      let addonInfo: HassioAddonDetails;
+      let addonInfo: menuaiioAddonDetails;
       if (requestedAddon) {
         try {
-          addonInfo = await fetchHassioAddonInfo(this.hass, requestedAddon);
+          addonInfo = await fetchmenuaiioAddonInfo(this.menuai, requestedAddon);
         } catch (err: any) {
           await showAlertDialog(this, {
             text: extractApiErrorMessage(err),
             title: requestedAddon,
           });
           await nextRender();
-          navigate("/hassio/store", { replace: true });
+          navigate("/menuaiio/store", { replace: true });
           return;
         }
         if (!addonInfo.version) {
@@ -118,16 +118,16 @@ class HassioIngressView extends LitElement {
             title: addonInfo.name,
           });
           await nextRender();
-          navigate(`/hassio/addon/${addonInfo.slug}/info`, { replace: true });
+          navigate(`/menuaiio/addon/${addonInfo.slug}/info`, { replace: true });
         } else if (!addonInfo.ingress) {
           await showAlertDialog(this, {
             text: this.supervisor.localize("my.error_addon_no_ingress"),
             title: addonInfo.name,
           });
           await nextRender();
-          navigate(`/hassio/addon/${addonInfo.slug}/info`, { replace: true });
+          navigate(`/menuaiio/addon/${addonInfo.slug}/info`, { replace: true });
         } else {
-          navigate(`/hassio/ingress/${addonInfo.slug}`, { replace: true });
+          navigate(`/menuaiio/ingress/${addonInfo.slug}`, { replace: true });
         }
       }
     }
@@ -152,12 +152,12 @@ class HassioIngressView extends LitElement {
   }
 
   private async _fetchData(addonSlug: string) {
-    const createSessionPromise = createHassioSession(this.hass);
+    const createSessionPromise = createmenuaiioSession(this.menuai);
 
-    let addon: HassioAddonDetails;
+    let addon: menuaiioAddonDetails;
 
     try {
-      addon = await fetchHassioAddonInfo(this.hass, addonSlug);
+      addon = await fetchmenuaiioAddonInfo(this.menuai, addonSlug);
     } catch (_err: any) {
       await this.updateComplete;
       await showAlertDialog(this, {
@@ -167,7 +167,7 @@ class HassioIngressView extends LitElement {
         title: "Supervisor",
       });
       await nextRender();
-      navigate("/hassio/store", { replace: true });
+      navigate("/menuaiio/store", { replace: true });
       return;
     }
 
@@ -180,7 +180,7 @@ class HassioIngressView extends LitElement {
         title: addon.name,
       });
       await nextRender();
-      navigate(`/hassio/addon/${addon.slug}/info`, { replace: true });
+      navigate(`/menuaiio/addon/${addon.slug}/info`, { replace: true });
       return;
     }
 
@@ -213,7 +213,7 @@ class HassioIngressView extends LitElement {
           this._loadingMessage =
             this.supervisor.localize("ingress.addon_starting") ||
             "The add-on is starting, this can take some time...";
-          await startHassioAddon(this.hass, addonSlug);
+          await startmenuaiioAddon(this.menuai, addonSlug);
           fireEvent(this, "supervisor-collection-refresh", {
             collection: "addon",
           });
@@ -227,12 +227,12 @@ class HassioIngressView extends LitElement {
             title: addon.name,
           });
           await nextRender();
-          navigate(`/hassio/addon/${addon.slug}/logs`, { replace: true });
+          navigate(`/menuaiio/addon/${addon.slug}/logs`, { replace: true });
           return;
         }
       } else {
         await nextRender();
-        navigate(`/hassio/addon/${addon.slug}/info`, { replace: true });
+        navigate(`/menuaiio/addon/${addon.slug}/info`, { replace: true });
         return;
       }
     }
@@ -284,9 +284,9 @@ class HassioIngressView extends LitElement {
     }
     this._sessionKeepAlive = window.setInterval(async () => {
       try {
-        await validateHassioSession(this.hass, session);
+        await validatemenuaiioSession(this.menuai, session);
       } catch (_err: any) {
-        session = await createHassioSession(this.hass);
+        session = await createmenuaiioSession(this.menuai);
       }
     }, 60000);
 
@@ -322,7 +322,7 @@ class HassioIngressView extends LitElement {
   }
 
   private _toggleMenu(): void {
-    fireEvent(this, "hass-toggle-menu");
+    fireEvent(this, "menuai-toggle-menu");
   }
 
   static styles = css`
@@ -362,7 +362,7 @@ class HassioIngressView extends LitElement {
       pointer-events: auto;
     }
 
-    hass-subpage {
+    menuai-subpage {
       --app-header-background-color: var(--sidebar-background-color);
       --app-header-text-color: var(--sidebar-text-color);
       --app-header-border-bottom: 1px solid var(--divider-color);
@@ -372,6 +372,6 @@ class HassioIngressView extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-ingress-view": HassioIngressView;
+    "menuaiio-ingress-view": menuaiioIngressView;
   }
 }

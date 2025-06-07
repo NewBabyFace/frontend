@@ -1,5 +1,5 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { isSafari } from "./is_safari";
 
-export const isIosApp = (hass: HomeAssistant): boolean =>
-  !!hass.auth.external && isSafari;
+export const isIosApp = (menuai: menuai): boolean =>
+  !!menuai.auth.external && isSafari;

@@ -6,17 +6,17 @@ import "../../components/ha-relative-time";
 import "../../components/ha-tooltip";
 import "../../components/ha-button";
 import type { PersistentNotification } from "../../data/persistent_notification";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./notification-item-template";
 
 @customElement("persistent-notification-item")
 export class HuiPersistentNotificationItem extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public notification?: PersistentNotification;
 
   protected render() {
-    if (!this.hass || !this.notification) {
+    if (!this.menuai || !this.notification) {
       return nothing;
     }
 
@@ -29,11 +29,11 @@ export class HuiPersistentNotificationItem extends LitElement {
         <div class="time">
           <span>
             <ha-tooltip
-              .content=${this._computeTooltip(this.hass, this.notification)}
+              .content=${this._computeTooltip(this.menuai, this.notification)}
               placement="bottom"
             >
               <ha-relative-time
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .datetime=${this.notification.created_at}
                 capitalize
               ></ha-relative-time>
@@ -42,7 +42,7 @@ export class HuiPersistentNotificationItem extends LitElement {
         </div>
 
         <ha-button slot="actions" @click=${this._handleDismiss}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.card.persistent_notification.dismiss"
           )}</ha-button
         >
@@ -69,21 +69,21 @@ export class HuiPersistentNotificationItem extends LitElement {
   `;
 
   private _handleDismiss(): void {
-    this.hass!.callService("persistent_notification", "dismiss", {
+    this.menuai!.callService("persistent_notification", "dismiss", {
       notification_id: this.notification!.notification_id,
     });
   }
 
   private _computeTooltip(
-    hass: HomeAssistant,
+    menuai: menuai,
     notification: PersistentNotification
   ): string | undefined {
-    if (!hass || !notification) {
+    if (!menuai || !notification) {
       return undefined;
     }
 
     const d = new Date(notification.created_at!);
-    return formatDateTime(d, hass.locale, hass.config);
+    return formatDateTime(d, menuai.locale, menuai.config);
   }
 }
 

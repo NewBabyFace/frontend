@@ -6,12 +6,12 @@ import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-card";
 import { createCloseHeading } from "../../../components/ha-dialog";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./integrations-startup-time";
 
 @customElement("dialog-integration-startup")
 class DialogIntegrationStartup extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -34,13 +34,13 @@ class DialogIntegrationStartup extends LitElement {
         open
         hideActions
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.repairs.integration_startup_time")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.repairs.integration_startup_time")
         )}
         @closed=${this.closeDialog}
       >
         <integrations-startup-time
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           narrow
         ></integrations-startup-time>
       </ha-dialog>

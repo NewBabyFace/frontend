@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { computeStateName } from "../common/entity/compute_state_name";
 import { entityIcon } from "../data/icons";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-items-display-editor";
 import type { DisplayItem, DisplayValue } from "./ha-items-display-editor";
 
@@ -15,7 +15,7 @@ export interface EntitiesDisplayValue {
 
 @customElement("ha-entities-display-editor")
 export class HaEntitiesDisplayEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -33,13 +33,13 @@ export class HaEntitiesDisplayEditor extends LitElement {
 
   protected render(): TemplateResult {
     const entities = this.entitiesIds
-      .map((entityId) => this.hass.states[entityId])
+      .map((entityId) => this.menuai.states[entityId])
       .filter(Boolean);
 
     const items: DisplayItem[] = entities.map((entity) => ({
       value: entity.entity_id,
       label: computeStateName(entity),
-      icon: entityIcon(this.hass, entity),
+      icon: entityIcon(this.menuai, entity),
     }));
 
     const value: DisplayValue = {
@@ -49,7 +49,7 @@ export class HaEntitiesDisplayEditor extends LitElement {
 
     return html`
       <ha-items-display-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .items=${items}
         .value=${value}
         @value-changed=${this._itemDisplayChanged}

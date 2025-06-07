@@ -18,25 +18,25 @@ import {
   subscribeBackupEvents,
 } from "../../../data/backup_manager";
 import type { CloudStatus } from "../../../data/cloud";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showToast } from "../../../util/toast";
 import "./ha-config-backup-backups";
 import "./ha-config-backup-overview";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "ha-refresh-backup-info": undefined;
     "ha-refresh-backup-config": undefined;
   }
 }
 
 @customElement("ha-config-backup")
-class HaConfigBackup extends SubscribeMixin(HassRouterPage) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigBackup extends SubscribeMixin(menuaiRouterPage) {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatus;
 
@@ -87,16 +87,16 @@ class HaConfigBackup extends SubscribeMixin(HassRouterPage) {
   }
 
   private async _fetchBackupInfo() {
-    this._info = await fetchBackupInfo(this.hass);
+    this._info = await fetchBackupInfo(this.menuai);
   }
 
   private async _fetchBackupConfig() {
-    const { config } = await fetchBackupConfig(this.hass);
+    const { config } = await fetchBackupConfig(this.menuai);
     this._config = config;
   }
 
   private async _fetchBackupAgents() {
-    const { agents } = await fetchBackupAgentsInfo(this.hass);
+    const { agents } = await fetchBackupAgentsInfo(this.menuai);
     this._agents = agents.sort((a, b) => compareAgents(a.agent_id, b.agent_id));
   }
 
@@ -128,7 +128,7 @@ class HaConfigBackup extends SubscribeMixin(HassRouterPage) {
   };
 
   protected updatePageEl(pageEl, changedProps: PropertyValues) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.route = this.routeTail;
     pageEl.narrow = this.narrow;
     pageEl.cloudStatus = this.cloudStatus;
@@ -151,9 +151,9 @@ class HaConfigBackup extends SubscribeMixin(HassRouterPage) {
     }
   }
 
-  public hassSubscribe(): Promise<UnsubscribeFunc>[] {
+  public menuaiSubscribe(): Promise<UnsubscribeFunc>[] {
     return [
-      subscribeBackupEvents(this.hass!, (event) => {
+      subscribeBackupEvents(this.menuai!, (event) => {
         const curState = this._manager.manager_state;
 
         this._manager = event;

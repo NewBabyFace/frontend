@@ -19,7 +19,7 @@ import type { SchemaUnion } from "../../../../components/ha-form/types";
 import { UNAVAILABLE } from "../../../../data/entity";
 import type { ForecastType, WeatherEntity } from "../../../../data/weather";
 import { WeatherEntityFeature } from "../../../../data/weather";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { WeatherForecastCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { actionConfigStruct } from "../structs/action-struct";
@@ -47,7 +47,7 @@ export class HuiWeatherForecastCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: WeatherForecastCardConfig;
 
@@ -88,8 +88,8 @@ export class HuiWeatherForecastCardEditor
   }
 
   private get _stateObj(): WeatherEntity | undefined {
-    if (this.hass && this._config) {
-      return this.hass.states[this._config.entity] as WeatherEntity;
+    if (this.menuai && this._config) {
+      return this.menuai.states[this._config.entity] as WeatherEntity;
     }
     return undefined;
   }
@@ -277,12 +277,12 @@ export class HuiWeatherForecastCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this._forecastSupported("legacy"),
       this._forecastSupported("daily"),
       this._forecastSupported("hourly"),
@@ -304,7 +304,7 @@ export class HuiWeatherForecastCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -335,31 +335,31 @@ export class HuiWeatherForecastCardEditor
   ) => {
     switch (schema.name) {
       case "entity":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.entity"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.required"
         )})`;
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       case "forecast_type":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.weather-forecast.forecast_type"
         );
       case "forecast_slots":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.weather-forecast.forecast_slots"
         );
       case "forecast":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.weather-forecast.weather_to_show"
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

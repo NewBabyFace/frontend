@@ -1,11 +1,11 @@
 import type { PropertyValues } from "lit";
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import { makeDialogManager, showDialog } from "../dialogs/make-dialog-manager";
 import type { Constructor } from "../types";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 interface RegisterDialogParams {
-  dialogShowEvent: keyof HASSDomEvents;
+  dialogShowEvent: keyof menuaiDomEvents;
   dialogTag: keyof HTMLElementTagNameMap;
   dialogImport: () => Promise<unknown>;
   addHistory?: boolean;
@@ -13,16 +13,16 @@ interface RegisterDialogParams {
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "register-dialog": RegisterDialogParams;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "register-dialog": HASSDomEvent<RegisterDialogParams>;
+    "register-dialog": menuaiDomEvent<RegisterDialogParams>;
   }
 }
 
-export const dialogManagerMixin = <T extends Constructor<HassBaseEl>>(
+export const dialogManagerMixin = <T extends Constructor<menuaiBaseEl>>(
   superClass: T
 ) =>
   class extends superClass {
@@ -46,7 +46,7 @@ export const dialogManagerMixin = <T extends Constructor<HassBaseEl>>(
           this,
           this.shadowRoot!,
           dialogTag,
-          (showEv as HASSDomEvent<unknown>).detail,
+          (showEv as menuaiDomEvent<unknown>).detail,
           dialogImport,
           addHistory
         );

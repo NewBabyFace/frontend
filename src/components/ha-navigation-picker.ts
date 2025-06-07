@@ -6,7 +6,7 @@ import { fireEvent } from "../common/dom/fire_event";
 import { titleCase } from "../common/string/title-case";
 import { fetchConfig } from "../data/lovelace/config/types";
 import type { LovelaceViewRawConfig } from "../data/lovelace/config/view";
-import type { HomeAssistant, PanelInfo, ValueChangedEvent } from "../types";
+import type { menuai, PanelInfo, ValueChangedEvent } from "../types";
 import "./ha-combo-box";
 import type { HaComboBox } from "./ha-combo-box";
 import "./ha-combo-box-item";
@@ -40,20 +40,20 @@ const createViewNavigationItem = (
   title: view.title ?? (view.path ? titleCase(view.path) : `${index}`),
 });
 
-const createPanelNavigationItem = (hass: HomeAssistant, panel: PanelInfo) => ({
+const createPanelNavigationItem = (menuai: menuai, panel: PanelInfo) => ({
   path: `/${panel.url_path}`,
   icon: panel.icon ?? "mdi:view-dashboard",
   title:
-    panel.url_path === hass.defaultPanel
-      ? hass.localize("panel.states")
-      : hass.localize(`panel.${panel.title}`) ||
+    panel.url_path === menuai.defaultPanel
+      ? menuai.localize("panel.states")
+      : menuai.localize(`panel.${panel.title}`) ||
         panel.title ||
         (panel.url_path ? titleCase(panel.url_path) : ""),
 });
 
 @customElement("ha-navigation-picker")
 export class HaNavigationPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public label?: string;
 
@@ -76,7 +76,7 @@ export class HaNavigationPicker extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-combo-box
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         item-value-path="path"
         item-label-path="path"
         .value=${this._value}
@@ -105,7 +105,7 @@ export class HaNavigationPicker extends LitElement {
   private async _loadNavigationItems() {
     this.navigationItemsLoaded = true;
 
-    const panels = Object.entries(this.hass!.panels).map(([id, panel]) => ({
+    const panels = Object.entries(this.menuai!.panels).map(([id, panel]) => ({
       id,
       ...panel,
     }));
@@ -116,7 +116,7 @@ export class HaNavigationPicker extends LitElement {
     const viewConfigs = await Promise.all(
       lovelacePanels.map((panel) =>
         fetchConfig(
-          this.hass!.connection,
+          this.menuai!.connection,
           // path should be null to fetch default lovelace panel
           panel.url_path === "lovelace" ? null : panel.url_path,
           true
@@ -131,7 +131,7 @@ export class HaNavigationPicker extends LitElement {
     this.navigationItems = [];
 
     for (const panel of panels) {
-      this.navigationItems.push(createPanelNavigationItem(this.hass!, panel));
+      this.navigationItems.push(createPanelNavigationItem(this.menuai!, panel));
 
       const config = panelViewConfig.get(panel.id);
 

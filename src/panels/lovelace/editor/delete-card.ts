@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { Lovelace } from "../types";
 import { deleteCard } from "./config-util";
 import type { LovelaceCardPath } from "./lovelace-path";
@@ -9,7 +9,7 @@ export interface DeleteCardParams {
 }
 
 export async function performDeleteCard(
-  hass: HomeAssistant,
+  menuai: menuai,
   lovelace: Lovelace,
   params: DeleteCardParams
 ): Promise<void> {
@@ -28,15 +28,15 @@ export async function performDeleteCard(
     };
 
     lovelace.showToast({
-      message: hass.localize("ui.common.successfully_deleted"),
+      message: menuai.localize("ui.common.successfully_deleted"),
       duration: 8000,
-      action: { action, text: hass.localize("ui.common.undo") },
+      action: { action, text: menuai.localize("ui.common.undo") },
     });
   } catch (err: any) {
     // eslint-disable-next-line no-console
     console.error(err);
     lovelace.showToast({
-      message: hass.localize("ui.common.deleting_failed"),
+      message: menuai.localize("ui.common.deleting_failed"),
     });
   }
 }

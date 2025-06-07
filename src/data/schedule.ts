@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const weekdays = [
   "sunday",
@@ -28,31 +28,31 @@ export interface ScheduleMutableParams {
   icon: string;
 }
 
-export const fetchSchedule = (hass: HomeAssistant) =>
-  hass.callWS<Schedule[]>({ type: "schedule/list" });
+export const fetchSchedule = (menuai: menuai) =>
+  menuai.callWS<Schedule[]>({ type: "schedule/list" });
 
 export const createSchedule = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: ScheduleMutableParams
 ) =>
-  hass.callWS<Schedule>({
+  menuai.callWS<Schedule>({
     type: "schedule/create",
     ...values,
   });
 
 export const updateSchedule = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<ScheduleMutableParams>
 ) =>
-  hass.callWS<Schedule>({
+  menuai.callWS<Schedule>({
     type: "schedule/update",
     schedule_id: id,
     ...updates,
   });
 
-export const deleteSchedule = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteSchedule = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "schedule/delete",
     schedule_id: id,
   });

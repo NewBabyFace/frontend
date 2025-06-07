@@ -8,10 +8,10 @@ import {
   QuickBarMode,
   showQuickBar,
 } from "../dialogs/quick-bar/show-dialog-quick-bar";
-import type { Constructor, HomeAssistant } from "../types";
+import type { Constructor, menuai } from "../types";
 import { storeState } from "../util/ha-pref-storage";
 import { showToast } from "../util/toast";
-import type { HassElement } from "./hass-element";
+import type { menuaiElement } from "./menuai-element";
 import { extractSearchParamsObject } from "../common/url/search-params";
 import { showVoiceCommandDialog } from "../dialogs/voice-command-dialog/show-ha-voice-command-dialog";
 import { canOverrideAlphanumericInput } from "../common/dom/can-override-input";
@@ -19,24 +19,24 @@ import { showShortcutsDialog } from "../dialogs/shortcuts/show-shortcuts-dialog"
 import type { Redirects } from "../panels/my/ha-panel-my";
 
 declare global {
-  interface HASSDomEvents {
-    "hass-quick-bar": QuickBarParams;
-    "hass-quick-bar-trigger": KeyboardEvent;
-    "hass-enable-shortcuts": HomeAssistant["enableShortcuts"];
+  interface menuaiDomEvents {
+    "menuai-quick-bar": QuickBarParams;
+    "menuai-quick-bar-trigger": KeyboardEvent;
+    "menuai-enable-shortcuts": menuai["enableShortcuts"];
   }
 }
 
-export default <T extends Constructor<HassElement>>(superClass: T) =>
+export default <T extends Constructor<menuaiElement>>(superClass: T) =>
   class extends superClass {
     protected firstUpdated(changedProps: PropertyValues) {
       super.firstUpdated(changedProps);
 
-      this.addEventListener("hass-enable-shortcuts", (ev) => {
-        this._updateHass({ enableShortcuts: ev.detail });
-        storeState(this.hass!);
+      this.addEventListener("menuai-enable-shortcuts", (ev) => {
+        this._updatemenuai({ enableShortcuts: ev.detail });
+        storeState(this.menuai!);
       });
 
-      mainWindow.addEventListener("hass-quick-bar-trigger", (ev) => {
+      mainWindow.addEventListener("menuai-quick-bar-trigger", (ev) => {
         switch (ev.detail.key) {
           case "e":
             this._showQuickBar(ev.detail);
@@ -81,14 +81,14 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
     }
 
     private _conversation = memoizeOne((_components) =>
-      isComponentLoaded(this.hass!, "conversation")
+      isComponentLoaded(this.menuai!, "conversation")
     );
 
     private _showVoiceCommandDialog(e: KeyboardEvent) {
       if (
-        !this.hass?.enableShortcuts ||
+        !this.menuai?.enableShortcuts ||
         !canOverrideAlphanumericInput(e.composedPath()) ||
-        !this._conversation(this.hass.config.components)
+        !this._conversation(this.menuai.config.components)
       ) {
         return;
       }
@@ -98,7 +98,7 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
       }
       e.preventDefault();
 
-      showVoiceCommandDialog(this, this.hass!, { pipeline_id: "last_used" });
+      showVoiceCommandDialog(this, this.menuai!, { pipeline_id: "last_used" });
     }
 
     private _showQuickBar(
@@ -132,7 +132,7 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
 
     private async _createMyLink(e: KeyboardEvent) {
       if (
-        !this.hass?.enableShortcuts ||
+        !this.menuai?.enableShortcuts ||
         !canOverrideAlphanumericInput(e.composedPath())
       ) {
         return;
@@ -148,9 +148,9 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
 
       let redirects: Redirects;
 
-      if (targetPath.startsWith("/hassio")) {
+      if (targetPath.startsWith("/menuaiio")) {
         const myPanelSupervisor = await import(
-          "../../hassio/src/hassio-my-redirect"
+          "../../menuaiio/src/menuaiio-my-redirect"
         );
         redirects = myPanelSupervisor.REDIRECTS;
       } else {
@@ -174,7 +174,7 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
         }
         if (redirect.redirect === "/config/integrations/integration") {
           myParams.append("domain", targetPath.split("/")[4]);
-        } else if (redirect.redirect === "/hassio/addon") {
+        } else if (redirect.redirect === "/menuaiio/addon") {
           myParams.append("addon", targetPath.split("/")[3]);
         }
         window.open(
@@ -184,7 +184,7 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
         return;
       }
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.notification_toast.no_matching_link_found",
           {
             path: targetPath,
@@ -195,8 +195,8 @@ export default <T extends Constructor<HassElement>>(superClass: T) =>
 
     private _canShowQuickBar(e: KeyboardEvent) {
       return (
-        this.hass?.user?.is_admin &&
-        this.hass.enableShortcuts &&
+        this.menuai?.user?.is_admin &&
+        this.menuai.enableShortcuts &&
         canOverrideAlphanumericInput(e.composedPath())
       );
     }

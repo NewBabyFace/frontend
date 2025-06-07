@@ -7,12 +7,12 @@ import {
   mdiShieldOff,
 } from "@mdi/js";
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { supportsFeature } from "../common/entity/supports-feature";
 import { showEnterCodeDialog } from "../dialogs/enter-code/show-enter-code-dialog";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { getExtendedEntityRegistryEntry } from "./entity_registry";
 
 export const FORMAT_TEXT = "text";
@@ -27,18 +27,18 @@ export const enum AlarmControlPanelEntityFeature {
   ARM_VACATION = 32,
 }
 
-interface AlarmControlPanelEntityAttributes extends HassEntityAttributeBase {
+interface AlarmControlPanelEntityAttributes extends menuaiEntityAttributeBase {
   code_format?: "text" | "number";
   changed_by?: string | null;
   code_arm_required?: boolean;
 }
 
-export interface AlarmControlPanelEntity extends HassEntityBase {
+export interface AlarmControlPanelEntity extends menuaiEntityBase {
   attributes: AlarmControlPanelEntityAttributes;
 }
 
 export const callAlarmAction = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity: string,
   action:
     | "arm_away"
@@ -49,7 +49,7 @@ export const callAlarmAction = (
     | "disarm",
   code?: string
 ) => {
-  hass!.callService("alarm_control_panel", `alarm_${action}`, {
+  menuai!.callService("alarm_control_panel", `alarm_${action}`, {
     entity_id: entity,
     code,
   });
@@ -108,7 +108,7 @@ export const supportedAlarmModes = (stateObj: AlarmControlPanelEntity) =>
 
 export const setProtectedAlarmControlPanelMode = async (
   element: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   stateObj: AlarmControlPanelEntity,
   mode: AlarmMode
 ) => {
@@ -123,7 +123,7 @@ export const setProtectedAlarmControlPanelMode = async (
     (mode === "disarmed" && stateObj.attributes.code_format)
   ) {
     const entry = await getExtendedEntityRegistryEntry(
-      hass,
+      menuai,
       stateObj.entity_id
     ).catch(() => undefined);
     const defaultCode = entry?.options?.alarm_control_panel?.default_code;
@@ -133,10 +133,10 @@ export const setProtectedAlarmControlPanelMode = async (
 
       const response = await showEnterCodeDialog(element, {
         codeFormat: stateObj.attributes.code_format,
-        title: hass.localize(
+        title: menuai.localize(
           `ui.card.alarm_control_panel.${disarm ? "disarm" : "arm"}`
         ),
-        submitText: hass.localize(
+        submitText: menuai.localize(
           `ui.card.alarm_control_panel.${disarm ? "disarm" : "arm"}`
         ),
       });
@@ -147,7 +147,7 @@ export const setProtectedAlarmControlPanelMode = async (
     }
   }
 
-  await hass.callService("alarm_control_panel", service, {
+  await menuai.callService("alarm_control_panel", service, {
     entity_id: stateObj.entity_id,
     code,
   });

@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import { assert, describe, it, beforeEach, expect } from "vitest";
 import {
   computeStateDisplay,
@@ -632,7 +632,7 @@ describe("computeStateDisplayFromEntityAttributes with numeric device classes", 
         language: "en",
       } as FrontendLocaleData,
       [],
-      {} as HassConfig,
+      {} as menuaiConfig,
       {
         display_precision: 2,
       } as EntityRegistryDisplayEntry,
@@ -653,7 +653,7 @@ describe("computeStateDisplayFromEntityAttributes with numeric device classes", 
         language: "en",
       } as FrontendLocaleData,
       [],
-      {} as HassConfig,
+      {} as menuaiConfig,
       undefined,
       "number.test",
       {
@@ -673,7 +673,7 @@ describe("computeStateDisplayFromEntityAttributes with numeric device classes", 
         language: "en",
       } as FrontendLocaleData,
       [],
-      {} as HassConfig,
+      {} as menuaiConfig,
       undefined,
       "number.test",
       {
@@ -695,7 +695,7 @@ describe("computeStateDisplayFromEntityAttributes datetime device calss", () => 
         language: "en",
       } as FrontendLocaleData,
       [],
-      {} as HassConfig,
+      {} as menuaiConfig,
       undefined,
       "button.test",
       {},

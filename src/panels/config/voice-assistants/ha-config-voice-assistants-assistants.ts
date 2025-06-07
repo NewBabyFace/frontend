@@ -4,9 +4,9 @@ import { isComponentLoaded } from "../../../common/config/is_component_loaded";
 import type { CloudStatus } from "../../../data/cloud";
 import type { ExposeEntitySettings } from "../../../data/expose";
 
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-tabs-subpage";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-tabs-subpage";
+import type { menuai, Route } from "../../../types";
 import "./assist-pref";
 import "./cloud-alexa-pref";
 import "./cloud-discover";
@@ -15,7 +15,7 @@ import { voiceAssistantTabs } from "./ha-config-voice-assistants";
 
 @customElement("ha-config-voice-assistants-assistants")
 export class HaConfigVoiceAssistantsAssistants extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatus;
 
@@ -31,23 +31,23 @@ export class HaConfigVoiceAssistantsAssistants extends LitElement {
   @property({ attribute: false }) public route!: Route;
 
   protected render() {
-    if (!this.hass) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+    if (!this.menuai) {
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${voiceAssistantTabs}
       >
         <div class="content">
-          ${isComponentLoaded(this.hass, "assist_pipeline")
+          ${isComponentLoaded(this.menuai, "assist_pipeline")
             ? html`
                 <assist-pref
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .cloudStatus=${this.cloudStatus}
                   .exposedEntities=${this.exposedEntities}
                 ></assist-pref>
@@ -56,19 +56,19 @@ export class HaConfigVoiceAssistantsAssistants extends LitElement {
           ${this.cloudStatus?.logged_in
             ? html`
                 <cloud-alexa-pref
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .exposedEntities=${this.exposedEntities}
                   .cloudStatus=${this.cloudStatus}
                 ></cloud-alexa-pref>
                 <cloud-google-pref
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .exposedEntities=${this.exposedEntities}
                   .cloudStatus=${this.cloudStatus}
                 ></cloud-google-pref>
               `
-            : html`<cloud-discover .hass=${this.hass}></cloud-discover>`}
+            : html`<cloud-discover .menuai=${this.menuai}></cloud-discover>`}
         </div>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 

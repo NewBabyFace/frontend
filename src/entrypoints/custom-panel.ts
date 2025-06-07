@@ -84,7 +84,7 @@ function initialize(
             fireEvent(window.parent.customPanel, ev.type, ev.detail);
           }
         };
-        panelEl!.addEventListener("hass-toggle-menu", forwardEvent);
+        panelEl!.addEventListener("menuai-toggle-menu", forwardEvent);
         window.addEventListener("location-changed", (ev: any) => {
           if (window.parent.customPanel) {
             window.parent.customPanel.navigate(
@@ -100,14 +100,14 @@ function initialize(
         // eslint-disable-next-line
         console.error(err, panel);
         let errorScreen;
-        if (panel.url_path === "hassio") {
+        if (panel.url_path === "menuaiio") {
           import("../layouts/supervisor-error-screen");
           errorScreen = document.createElement(
             "supervisor-error-screen"
           ) as any;
         } else {
-          import("../layouts/hass-error-screen");
-          errorScreen = document.createElement("hass-error-screen") as any;
+          import("../layouts/menuai-error-screen");
+          errorScreen = document.createElement("menuai-error-screen") as any;
           errorScreen.error = `Unable to load the panel source: ${err}.`;
         }
 
@@ -115,7 +115,7 @@ function initialize(
         errorStyle.innerHTML = (baseEntrypointStyles as CSSResult).cssText;
         document.body.appendChild(errorStyle);
 
-        errorScreen.hass = properties.hass;
+        errorScreen.menuai = properties.menuai;
         document.body.appendChild(errorScreen);
       }
     );

@@ -15,7 +15,7 @@ export default defineConfig({
         "src/data/**/*",
         "src/common/**/*",
         "src/external_app/**/*",
-        "src/hassio/**/*",
+        "src/menuaiio/**/*",
         "src/panels/**/*",
         "src/util/**/*",
       ],

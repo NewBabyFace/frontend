@@ -1,17 +1,17 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
 
-export interface HassioMarkdownDialogParams {
+export interface menuaiioMarkdownDialogParams {
   title: string;
   content: string;
 }
 
-export const showHassioMarkdownDialog = (
+export const showmenuaiioMarkdownDialog = (
   element: HTMLElement,
-  dialogParams: HassioMarkdownDialogParams
+  dialogParams: menuaiioMarkdownDialogParams
 ): void => {
   fireEvent(element, "show-dialog", {
-    dialogTag: "dialog-hassio-markdown",
-    dialogImport: () => import("./dialog-hassio-markdown"),
+    dialogTag: "dialog-menuaiio-markdown",
+    dialogImport: () => import("./dialog-menuaiio-markdown"),
     dialogParams,
   });
 };

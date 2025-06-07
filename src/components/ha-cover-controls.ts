@@ -6,12 +6,12 @@ import { computeCloseIcon, computeOpenIcon } from "../common/entity/cover_icon";
 import { supportsFeature } from "../common/entity/supports-feature";
 import type { CoverEntity } from "../data/cover";
 import { canClose, canOpen, canStop, CoverEntityFeature } from "../data/cover";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 
 @customElement("ha-cover-controls")
 class HaCoverControls extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: CoverEntity;
 
@@ -26,7 +26,7 @@ class HaCoverControls extends LitElement {
           class=${classMap({
             hidden: !supportsFeature(this.stateObj, CoverEntityFeature.OPEN),
           })}
-          .label=${this.hass.localize("ui.card.cover.open_cover")}
+          .label=${this.menuai.localize("ui.card.cover.open_cover")}
           @click=${this._onOpenTap}
           .disabled=${!canOpen(this.stateObj)}
           .path=${computeOpenIcon(this.stateObj)}
@@ -36,7 +36,7 @@ class HaCoverControls extends LitElement {
           class=${classMap({
             hidden: !supportsFeature(this.stateObj, CoverEntityFeature.STOP),
           })}
-          .label=${this.hass.localize("ui.card.cover.stop_cover")}
+          .label=${this.menuai.localize("ui.card.cover.stop_cover")}
           .path=${mdiStop}
           @click=${this._onStopTap}
           .disabled=${!canStop(this.stateObj)}
@@ -45,7 +45,7 @@ class HaCoverControls extends LitElement {
           class=${classMap({
             hidden: !supportsFeature(this.stateObj, CoverEntityFeature.CLOSE),
           })}
-          .label=${this.hass.localize("ui.card.cover.close_cover")}
+          .label=${this.menuai.localize("ui.card.cover.close_cover")}
           @click=${this._onCloseTap}
           .disabled=${!canClose(this.stateObj)}
           .path=${computeCloseIcon(this.stateObj)}
@@ -57,21 +57,21 @@ class HaCoverControls extends LitElement {
 
   private _onOpenTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("cover", "open_cover", {
+    this.menuai.callService("cover", "open_cover", {
       entity_id: this.stateObj.entity_id,
     });
   }
 
   private _onCloseTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("cover", "close_cover", {
+    this.menuai.callService("cover", "close_cover", {
       entity_id: this.stateObj.entity_id,
     });
   }
 
   private _onStopTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("cover", "stop_cover", {
+    this.menuai.callService("cover", "stop_cover", {
       entity_id: this.stateObj.entity_id,
     });
   }

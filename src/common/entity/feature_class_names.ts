@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { supportsFeature } from "./supports-feature";
 
 export type FeatureClassNames<T extends number = number> = Partial<
@@ -7,7 +7,7 @@ export type FeatureClassNames<T extends number = number> = Partial<
 
 // Expects classNames to be an object mapping feature-bit -> className
 export const featureClassNames = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   classNames: FeatureClassNames
 ) => {
   if (!stateObj || !stateObj.attributes.supported_features) {

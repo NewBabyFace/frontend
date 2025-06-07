@@ -28,7 +28,7 @@ import {
 } from "../../../../src/data/lovelace";
 import { isStrategyDashboard } from "../../../../src/data/lovelace/config/types";
 import type { LovelaceViewConfig } from "../../../../src/data/lovelace/config/view";
-import "../../../../src/layouts/hass-loading-screen";
+import "../../../../src/layouts/menuai-loading-screen";
 import { generateDefaultViewConfig } from "../../../../src/panels/lovelace/common/generate-lovelace-config";
 import "./hc-layout";
 
@@ -46,7 +46,7 @@ class HcCast extends LitElement {
 
   protected render(): TemplateResult {
     if (this.lovelaceViews === undefined) {
-      return html`<hass-loading-screen no-toolbar></hass-loading-screen>`;
+      return html`<menuai-loading-screen no-toolbar></menuai-loading-screen>`;
     }
 
     const error =
@@ -192,7 +192,7 @@ class HcCast extends LitElement {
   private async _handlePickView(ev: CustomEvent<ActionDetail>) {
     const path = this.lovelaceViews![ev.detail.index].path ?? ev.detail.index;
     await ensureConnectedCastSession(this.castManager!, this.auth!);
-    castSendShowLovelaceView(this.castManager, this.auth.data.hassUrl, path);
+    castSendShowLovelaceView(this.castManager, this.auth.data.menuaiUrl, path);
   }
 
   private async _handleLogout() {

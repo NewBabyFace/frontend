@@ -4,18 +4,18 @@ import { fireEvent } from "../../../../../../common/dom/fire_event";
 import "../../../../../../components/ha-icon-next";
 import "../../../../../../components/ha-md-list-item";
 import "../../../../../../components/ha-md-list";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 
 @customElement("matter-add-device-main")
 class MatterAddDeviceMain extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   render() {
     return html`
       <div class="content">
         <p class="text">
-          ${this.hass.localize(`ui.dialogs.matter-add-device.main.question`)}
+          ${this.menuai.localize(`ui.dialogs.matter-add-device.main.question`)}
         </p>
       </div>
       <ha-md-list>
@@ -27,12 +27,12 @@ class MatterAddDeviceMain extends LitElement {
           @keydown=${this._onItemClick}
         >
           <span slot="headline">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.main.answer_new`
             )}
           </span>
           <span slot="supporting-text">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.main.answer_new_description`
             )}
           </span>
@@ -46,12 +46,12 @@ class MatterAddDeviceMain extends LitElement {
           @keydown=${this._onItemClick}
         >
           <span slot="headline">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.main.answer_existing`
             )}
           </span>
           <span slot="supporting-text">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.main.answer_existing_description`
             )}
           </span>

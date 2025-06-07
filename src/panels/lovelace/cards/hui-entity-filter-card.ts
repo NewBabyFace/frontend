@@ -3,7 +3,7 @@ import { ReactiveElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../common/dom/fire_event";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeCardSize } from "../common/compute-card-size";
 import { evaluateStateFilter } from "../common/evaluate-filter";
 import { findEntities } from "../common/find-entities";
@@ -24,13 +24,13 @@ export class HuiEntityFilterCard
   implements LovelaceCard
 {
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): EntityFilterCardConfig {
     const maxEntities = 3;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -44,7 +44,7 @@ export class HuiEntityFilterCard
         ? [
             {
               condition: "state",
-              state: hass.states[foundEntities[0]].state,
+              state: menuai.states[foundEntities[0]].state,
             },
           ]
         : [],
@@ -52,7 +52,7 @@ export class HuiEntityFilterCard
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public layout?: string;
 
@@ -139,7 +139,7 @@ export class HuiEntityFilterCard
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (this._element) {
-      this._element.hass = this.hass;
+      this._element.menuai = this.menuai;
       this._element.preview = this.preview;
       this._element.layout = this.layout;
     }
@@ -147,9 +147,9 @@ export class HuiEntityFilterCard
     if (changedProps.has("_config")) {
       return true;
     }
-    if (changedProps.has("hass")) {
+    if (changedProps.has("menuai")) {
       return this._haveEntitiesChanged(
-        changedProps.get("hass") as HomeAssistant | null
+        changedProps.get("menuai") as menuai | null
       );
     }
     return false;
@@ -158,7 +158,7 @@ export class HuiEntityFilterCard
   protected update(changedProps: PropertyValues) {
     super.update(changedProps);
     if (
-      !this.hass ||
+      !this.menuai ||
       !this._config ||
       !this._configEntities ||
       !this._element
@@ -167,7 +167,7 @@ export class HuiEntityFilterCard
     }
 
     const entitiesList = this._configEntities.filter((entityConf) => {
-      const stateObj = this.hass!.states[entityConf.entity];
+      const stateObj = this.menuai!.states[entityConf.entity];
       if (!stateObj) return false;
 
       const conditions = entityConf.conditions ?? this._config!.conditions;
@@ -175,7 +175,7 @@ export class HuiEntityFilterCard
         const conditionWithEntity = conditions.map((condition) =>
           addEntityToCondition(condition, entityConf.entity)
         );
-        return checkConditionsMet(conditionWithEntity, this.hass!);
+        return checkConditionsMet(conditionWithEntity, this.menuai!);
       }
 
       const filters = entityConf.state_filter ?? this._config!.state_filter;
@@ -228,8 +228,8 @@ export class HuiEntityFilterCard
     }
   }
 
-  private _haveEntitiesChanged(oldHass: HomeAssistant | null): boolean {
-    if (!this.hass || !oldHass) {
+  private _haveEntitiesChanged(oldmenuai: menuai | null): boolean {
+    if (!this.menuai || !oldmenuai) {
       return true;
     }
 
@@ -237,18 +237,18 @@ export class HuiEntityFilterCard
       return true;
     }
 
-    if (this.hass.localize !== oldHass.localize) {
+    if (this.menuai.localize !== oldmenuai.localize) {
       return true;
     }
 
     for (const config of this._configEntities) {
-      if (this.hass.states[config.entity] !== oldHass.states[config.entity]) {
+      if (this.menuai.states[config.entity] !== oldmenuai.states[config.entity]) {
         return true;
       }
       if (config.conditions) {
         const entityIds = extractConditionEntityIds(config.conditions);
         for (const entityId of entityIds) {
-          if (this.hass.states[entityId] !== oldHass.states[entityId]) {
+          if (this.menuai.states[entityId] !== oldmenuai.states[entityId]) {
             return true;
           }
         }
@@ -258,7 +258,7 @@ export class HuiEntityFilterCard
     if (this._config?.conditions) {
       const entityIds = extractConditionEntityIds(this._config?.conditions);
       for (const entityId of entityIds) {
-        if (this.hass.states[entityId] !== oldHass.states[entityId]) {
+        if (this.menuai.states[entityId] !== oldmenuai.states[entityId]) {
           return true;
         }
       }
@@ -269,7 +269,7 @@ export class HuiEntityFilterCard
 
   private _createCardElement(cardConfig: LovelaceCardConfig) {
     const element = document.createElement("hui-card");
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.preview = this.preview;
     element.config = cardConfig;
     element.load();

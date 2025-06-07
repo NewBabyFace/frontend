@@ -5,13 +5,13 @@ import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LovelaceCardConfig } from "../../../../data/lovelace/config/card";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../cards/hui-card";
 import type { DeleteCardDialogParams } from "./show-delete-card-dialog";
 
 @customElement("hui-dialog-delete-card")
 export class HuiDialogDeleteCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DeleteCardDialogParams;
 
@@ -40,14 +40,14 @@ export class HuiDialogDeleteCard extends LitElement {
       <ha-dialog
         open
         @closed=${this.closeDialog}
-        .heading=${this.hass.localize("ui.panel.lovelace.cards.confirm_delete")}
+        .heading=${this.menuai.localize("ui.panel.lovelace.cards.confirm_delete")}
       >
         <div>
           ${this._cardConfig
             ? html`
                 <div class="element-preview">
                   <hui-card
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .config=${this._cardConfig}
                     preview
                   ></hui-card>
@@ -60,10 +60,10 @@ export class HuiDialogDeleteCard extends LitElement {
           @click=${this.closeDialog}
           dialogInitialFocus
         >
-          ${this.hass!.localize("ui.common.cancel")}
+          ${this.menuai!.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button slot="primaryAction" class="warning" @click=${this._delete}>
-          ${this.hass!.localize("ui.common.delete")}
+          ${this.menuai!.localize("ui.common.delete")}
         </mwc-button>
       </ha-dialog>
     `;

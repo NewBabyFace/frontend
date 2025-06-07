@@ -1,5 +1,5 @@
 import { mdiHomeImportOutline, mdiPause, mdiPlay } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeDomain } from "../../../common/entity/compute_domain";
@@ -10,7 +10,7 @@ import "../../../components/ha-svg-icon";
 import { UNAVAILABLE } from "../../../data/entity";
 import type { LawnMowerEntity } from "../../../data/lawn_mower";
 import { LawnMowerEntityFeature, canDock } from "../../../data/lawn_mower";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -39,7 +39,7 @@ export const LAWN_MOWER_COMMANDS_FEATURES: Record<
 };
 
 export const supportsLawnMowerCommand = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   command: LawnMowerCommand
 ): boolean =>
   LAWN_MOWER_COMMANDS_FEATURES[command].some((feature) =>
@@ -76,11 +76,11 @@ export const LAWN_MOWER_COMMANDS_BUTTONS: Record<
 };
 
 export const supportsLawnMowerCommandCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -95,27 +95,27 @@ class HuiLawnMowerCommandCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: LawnMowerCommandsCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as
+    return this.menuai.states[this.context.entity_id!] as
       | LawnMowerEntity
       | undefined;
   }
 
   static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     context: LovelaceCardFeatureContext
   ): LawnMowerCommandsCardFeatureConfig {
     const stateObj = context.entity_id
-      ? hass.states[context.entity_id]
+      ? menuai.states[context.entity_id]
       : undefined;
     return {
       type: "lawn-mower-commands",
@@ -146,7 +146,7 @@ class HuiLawnMowerCommandCardFeature
   private _onCommandTap(ev): void {
     ev.stopPropagation();
     const entry = (ev.target! as any).entry as LawnMowerButton;
-    this.hass!.callService("lawn_mower", entry.serviceName, {
+    this.menuai!.callService("lawn_mower", entry.serviceName, {
       entity_id: this._stateObj!.entity_id,
     });
   }
@@ -154,10 +154,10 @@ class HuiLawnMowerCommandCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsLawnMowerCommandCardFeature(this.hass, this.context)
+      !supportsLawnMowerCommandCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -175,7 +175,7 @@ class HuiLawnMowerCommandCardFeature
           return html`
             <ha-control-button
               .entry=${button}
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 // @ts-ignore
                 `ui.dialogs.more_info_control.lawn_mower.${button.translationKey}`
               )}

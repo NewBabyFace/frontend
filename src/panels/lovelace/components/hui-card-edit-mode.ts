@@ -17,13 +17,13 @@ import "../../../components/ha-icon-button";
 import "../../../components/ha-list-item";
 import "../../../components/ha-svg-icon";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardPath } from "../editor/lovelace-path";
 import type { Lovelace } from "../types";
 
 @customElement("hui-card-edit-mode")
 export class HuiCardEditMode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace!: Lovelace;
 
@@ -135,7 +135,7 @@ export class HuiCardEditMode extends LitElement {
                   .action=${"edit"}
                 >
                   <ha-svg-icon slot="graphic" .path=${mdiPencil}></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.editor.edit_card.edit"
                   )}
                 </ha-list-item>
@@ -152,7 +152,7 @@ export class HuiCardEditMode extends LitElement {
                     slot="graphic"
                     .path=${mdiPlusCircleMultipleOutline}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.editor.edit_card.duplicate"
                   )}
                 </ha-list-item>
@@ -169,7 +169,7 @@ export class HuiCardEditMode extends LitElement {
                     slot="graphic"
                     .path=${mdiContentCopy}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.editor.edit_card.copy"
                   )}
                 </ha-list-item>
@@ -182,7 +182,7 @@ export class HuiCardEditMode extends LitElement {
                     slot="graphic"
                     .path=${mdiContentCut}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.lovelace.editor.edit_card.cut"
                   )}
                 </ha-list-item>
@@ -196,7 +196,7 @@ export class HuiCardEditMode extends LitElement {
             @click=${this._handleAction}
             .action=${"delete"}
           >
-            ${this.hass.localize("ui.panel.lovelace.editor.edit_card.delete")}
+            ${this.menuai.localize("ui.panel.lovelace.editor.edit_card.delete")}
             <ha-svg-icon
               class="warning"
               slot="graphic"

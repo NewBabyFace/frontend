@@ -20,7 +20,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   DEFAULT_CONFIG,
   DISPLAY_TYPES,
@@ -59,7 +59,7 @@ export class HuiEntityBadgeEditor
   extends LitElement
   implements LovelaceBadgeEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityBadgeConfig;
 
@@ -206,11 +206,11 @@ export class HuiEntityBadgeEditor
   });
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const schema = this._schema(this.hass!.localize);
+    const schema = this._schema(this.menuai!.localize);
 
     const data = {
       ...this._config,
@@ -219,7 +219,7 @@ export class HuiEntityBadgeEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -231,7 +231,7 @@ export class HuiEntityBadgeEditor
 
   private _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -259,11 +259,11 @@ export class HuiEntityBadgeEditor
       case "state_content":
       case "show_entity_picture":
       case "displayed_elements":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.badge.entity.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }
@@ -274,7 +274,7 @@ export class HuiEntityBadgeEditor
   ) => {
     switch (schema.name) {
       case "color":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.badge.entity.${schema.name}_helper`
         );
       default:

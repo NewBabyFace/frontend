@@ -4,7 +4,7 @@ import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   NumericInputCardFeatureConfig,
   LovelaceCardFeatureContext,
@@ -17,7 +17,7 @@ export class HuiNumericInputCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -49,7 +49,7 @@ export class HuiNumericInputCardFeatureEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -58,11 +58,11 @@ export class HuiNumericInputCardFeatureEditor
       ...this._config,
     };
 
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -78,7 +78,7 @@ export class HuiNumericInputCardFeatureEditor
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.features.types.numeric-input.${schema.name}`
     );
 }

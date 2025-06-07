@@ -1,5 +1,5 @@
 #!/bin/bash
-# Helper to start Home Assistant Core inside the devcontainer
+# Helper to start MenuAI Core inside the devcontainer
 
 # Stop on errors
 set -e
@@ -37,37 +37,37 @@ while getopts "hr:s" opt; do
 done
 
 if [ -n "$ref" ]; then
-  echo "Installing Home Assistant core at ${ref}..."
+  echo "Installing MenuAI core at ${ref}..."
   python3 -m pip install --user --upgrade --src "$HOME/src" \
-  --editable "git+${coreURL}@${ref}#egg=homeassistant"
-  (cd ~/src/homeassistant && exec python3 -m script.translations develop --all)
+  --editable "git+${coreURL}@${ref}#egg=menuai"
+  (cd ~/src/menuai && exec python3 -m script.translations develop --all)
 fi
 
 if [ ! -d "${WD}/config" ]; then
   echo "Creating default configuration."
   mkdir -p "${WD}/config";
-  hass --script ensure_config -c config
+  menuai --script ensure_config -c config
   echo "demo:
 
 logger:
   default: info
   logs:
-    homeassistant.components.frontend: debug
+    menuai.components.frontend: debug
 " >> "${WD}/config/configuration.yaml"
 
-  if [ -n "${HASSIO}" ]; then
+  if [ -n "${menuaiIO}" ]; then
   echo "
 # frontend:
 #   development_repo: ${WD}
 
-hassio:
+menuaiio:
   development_repo: ${WD}" >> "${WD}/config/configuration.yaml"
   else
   echo "
 frontend:
   development_repo: ${WD}
 
-# hassio:
+# menuaiio:
 #   development_repo: ${WD}" >> "${WD}/config/configuration.yaml"
   fi
 
@@ -81,4 +81,4 @@ http:
   fi
 fi
 
-hass -c "${WD}/config"
+menuai -c "${WD}/config"

@@ -6,12 +6,12 @@ import "./ha-icon-button";
 import "./ha-svg-icon";
 import "./ha-textfield";
 import type { HaTextField } from "./ha-textfield";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { fireEvent } from "../common/dom/fire_event";
 
 @customElement("search-input")
 class SearchInput extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public filter?: string;
 
@@ -34,7 +34,7 @@ class SearchInput extends LitElement {
     return html`
       <ha-textfield
         .autofocus=${this.autofocus}
-        .label=${this.label || this.hass.localize("ui.common.search")}
+        .label=${this.label || this.menuai.localize("ui.common.search")}
         .value=${this.filter || ""}
         icon
         .iconTrailing=${this.filter || this.suffix}
@@ -52,7 +52,7 @@ class SearchInput extends LitElement {
           html`
             <ha-icon-button
               @click=${this._clearSearch}
-              .label=${this.hass.localize("ui.common.clear")}
+              .label=${this.menuai.localize("ui.common.clear")}
               .path=${mdiClose}
               class="clear-button"
             ></ha-icon-button>

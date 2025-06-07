@@ -3,12 +3,12 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import { caseInsensitiveStringCompare } from "../../common/string/compare";
 import type { ButtonToggleSelector, SelectOption } from "../../data/selector";
-import type { HomeAssistant, ToggleButton } from "../../types";
+import type { menuai, ToggleButton } from "../../types";
 import "../ha-button-toggle-group";
 
 @customElement("ha-selector-button_toggle")
 export class HaButtonToggleSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: ButtonToggleSelector;
 
@@ -51,7 +51,7 @@ export class HaButtonToggleSelector extends LitElement {
         caseInsensitiveStringCompare(
           a.label,
           b.label,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
     }

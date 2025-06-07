@@ -59,7 +59,7 @@ export class HuiBadgeElementEditor extends HuiTypedElementEditor<LovelaceBadgeCo
       case "visibility":
         content = html`
           <hui-badge-visibility-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .config=${this.value}
             @value-changed=${this._configChanged}
           ></hui-badge-visibility-editor>
@@ -71,7 +71,7 @@ export class HuiBadgeElementEditor extends HuiTypedElementEditor<LovelaceBadgeCo
         ${tabs.map(
           (tab) => html`
             <sl-tab slot="nav" .panel=${tab} .active=${this._currTab === tab}>
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.edit_badge.tab_${tab}`
               )}
             </sl-tab>

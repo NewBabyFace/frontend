@@ -7,7 +7,7 @@ import { repeat } from "lit/directives/repeat";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../common/dom/fire_event";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-button";
 import { createCloseHeading } from "../ha-dialog";
 import "../ha-list";
@@ -21,7 +21,7 @@ import type { DataTableSettingsDialogParams } from "./show-dialog-data-table-set
 
 @customElement("dialog-data-table-settings")
 export class DialogDataTableSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DataTableSettingsDialogParams;
 
@@ -82,7 +82,7 @@ export class DialogDataTableSettings extends LitElement {
       return nothing;
     }
 
-    const localize = this._params.localizeFunc || this.hass.localize;
+    const localize = this._params.localizeFunc || this.menuai.localize;
 
     const columns = this._sortedColumns(
       this._params.columns,
@@ -95,7 +95,7 @@ export class DialogDataTableSettings extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           localize("ui.components.data-table.settings.header")
         )}
       >
@@ -140,7 +140,7 @@ export class DialogDataTableSettings extends LitElement {
                     .hidden=${!isVisible}
                     .path=${isVisible ? mdiEye : mdiEyeOff}
                     slot="meta"
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       `ui.components.data-table.settings.${isVisible ? "hide" : "show"}`,
                       { title: typeof col.title === "string" ? col.title : "" }
                     )}

@@ -12,7 +12,7 @@ import "../../../components/ha-card";
 import "../../../components/ha-icon-button";
 import type { HumidifierEntity } from "../../../data/humidifier";
 import "../../../state-control/humidifier/ha-state-control-humidifier-humidity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../card-features/hui-card-features";
 import type { LovelaceCardFeatureContext } from "../card-features/types";
 import { findEntities } from "../common/find-entities";
@@ -41,14 +41,14 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): HumidifierCardConfig {
     const includeDomains = ["humidifier"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -66,7 +66,7 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: HumidifierCardConfig;
 
@@ -88,7 +88,7 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
   }
 
   private _handleMoreInfo() {
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: this._config!.entity,
     });
   }
@@ -98,37 +98,37 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
 
     if (
       !this._config ||
-      !this.hass ||
-      (!changedProps.has("hass") && !changedProps.has("_config"))
+      !this.menuai ||
+      (!changedProps.has("menuai") && !changedProps.has("_config"))
     ) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | HumidifierCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
-    const stateObj = this.hass.states[this._config.entity] as HumidifierEntity;
+    const stateObj = this.menuai.states[this._config.entity] as HumidifierEntity;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -152,13 +152,13 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
             prevent-interaction-on-scroll
             .showCurrentAsPrimary=${this._config.show_current_as_primary}
             show-secondary
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .stateObj=${stateObj}
           ></ha-state-control-humidifier-humidity>
         </div>
         <ha-icon-button
           class="more-info"
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.panel.lovelace.cards.show_more_info"
           )}
           .path=${mdiDotsVertical}
@@ -170,7 +170,7 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
               style=${styleMap({
                 "--feature-color": color,
               })}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .context=${this._featureContext}
               .features=${this._config.features}
             ></hui-card-features>`

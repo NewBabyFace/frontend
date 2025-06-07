@@ -7,7 +7,7 @@ import {
 import type { CSSResultGroup } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import { stopPropagation } from "../../../../../common/dom/stop_propagation";
 import "../../../../../components/ha-button";
@@ -18,7 +18,7 @@ import "../../../../../components/ha-icon-button";
 import "../../../../../components/ha-list-item";
 import type { LovelaceStrategyConfig } from "../../../../../data/lovelace/config/strategy";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { showSaveSuccessToast } from "../../../../../util/toast-saved-success";
 import { cleanLegacyStrategyConfig } from "../../../strategies/legacy-strategy";
 import type { ConfigChangedEvent } from "../../hui-element-editor";
@@ -29,7 +29,7 @@ import type { DashboardStrategyEditorDialogParams } from "./show-dialog-dashboar
 
 @customElement("dialog-dashboard-strategy-editor")
 class DialogDashboardStrategyEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DashboardStrategyEditorDialogParams;
 
@@ -58,13 +58,13 @@ class DialogDashboardStrategyEditor extends LitElement {
     fireEvent(this, "dialog-closed", { dialog: this.localName });
   }
 
-  private _handleConfigChanged(ev: HASSDomEvent<ConfigChangedEvent>) {
+  private _handleConfigChanged(ev: menuaiDomEvent<ConfigChangedEvent>) {
     ev.stopPropagation();
     this._guiModeAvailable = ev.detail.guiModeAvailable;
     this._strategyConfig = ev.detail.config as LovelaceStrategyConfig;
   }
 
-  private _handleGUIModeChanged(ev: HASSDomEvent<GUIModeChangedEvent>): void {
+  private _handleGUIModeChanged(ev: menuaiDomEvent<GUIModeChangedEvent>): void {
     ev.stopPropagation();
     this._GUImode = ev.detail.guiMode;
     this._guiModeAvailable = ev.detail.guiModeAvailable;
@@ -79,7 +79,7 @@ class DialogDashboardStrategyEditor extends LitElement {
       ...this._params!.config,
       strategy: this._strategyConfig!,
     });
-    showSaveSuccessToast(this, this.hass);
+    showSaveSuccessToast(this, this.menuai);
     this.closeDialog();
   }
 
@@ -123,7 +123,7 @@ class DialogDashboardStrategyEditor extends LitElement {
 
     const config = cleanLegacyStrategyConfig(this._strategyConfig);
 
-    const title = this.hass.localize(
+    const title = this.menuai.localize(
       "ui.panel.lovelace.editor.strategy-editor.header"
     );
 
@@ -140,7 +140,7 @@ class DialogDashboardStrategyEditor extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" .title=${title}>${title}</span>
@@ -154,14 +154,14 @@ class DialogDashboardStrategyEditor extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item
               graphic="icon"
               .disabled=${!this._guiModeAvailable && !this._GUImode}
             >
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.edit_view.edit_${!this._GUImode ? "ui" : "yaml"}`
               )}
               <ha-svg-icon
@@ -170,7 +170,7 @@ class DialogDashboardStrategyEditor extends LitElement {
               ></ha-svg-icon>
             </ha-list-item>
             <ha-list-item graphic="icon">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.lovelace.editor.strategy-editor.take_control"
               )}
               <ha-svg-icon
@@ -182,7 +182,7 @@ class DialogDashboardStrategyEditor extends LitElement {
         </ha-dialog-header>
         <div class="content">
           <hui-dashboard-strategy-element-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .lovelace=${this._params.config}
             .value=${config}
             @config-changed=${this._handleConfigChanged}
@@ -192,13 +192,13 @@ class DialogDashboardStrategyEditor extends LitElement {
         </div>
 
         <ha-button class="danger" @click=${this._delete} slot="secondaryAction">
-          ${this.hass!.localize("ui.common.delete")}
+          ${this.menuai!.localize("ui.common.delete")}
         </ha-button>
         <ha-button @click=${this._cancel} slot="primaryAction">
-          ${this.hass!.localize("ui.common.cancel")}
+          ${this.menuai!.localize("ui.common.cancel")}
         </ha-button>
         <ha-button @click=${this._save} slot="primaryAction">
-          ${this.hass!.localize("ui.common.save")}
+          ${this.menuai!.localize("ui.common.save")}
         </ha-button>
       </ha-dialog>
     `;

@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { ensureArray } from "../../common/array/ensure-array";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { StringSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-icon-button";
 import "../ha-multi-textfield";
 import "../ha-textarea";
@@ -12,7 +12,7 @@ import "../ha-textfield";
 
 @customElement("ha-selector-text")
 export class HaTextSelector extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public value?: any;
 
@@ -43,7 +43,7 @@ export class HaTextSelector extends LitElement {
     if (this.selector.text?.multiple) {
       return html`
         <ha-multi-textfield
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${ensureArray(this.value ?? [])}
           .disabled=${this.disabled}
           .label=${this.label}
@@ -95,7 +95,7 @@ export class HaTextSelector extends LitElement {
       ></ha-textfield>
       ${this.selector.text?.type === "password"
         ? html`<ha-icon-button
-            .label=${this.hass?.localize(
+            .label=${this.menuai?.localize(
               this._unmaskedPassword
                 ? "ui.components.selectors.text.hide_password"
                 : "ui.components.selectors.text.show_password"

@@ -3,19 +3,19 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { atLeastVersion } from "../../../src/common/config/version";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
-import "../../../src/layouts/hass-tabs-subpage";
+import "../../../src/layouts/menuai-tabs-subpage";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../src/types";
-import { supervisorTabs } from "../hassio-tabs";
-import { hassioStyle } from "../resources/hassio-style";
-import "./hassio-core-info";
-import "./hassio-host-info";
-import "./hassio-supervisor-info";
-import "./hassio-supervisor-log";
+import type { menuai, Route } from "../../../src/types";
+import { supervisorTabs } from "../menuaiio-tabs";
+import { menuaiioStyle } from "../resources/menuaiio-style";
+import "./menuaiio-core-info";
+import "./menuaiio-host-info";
+import "./menuaiio-supervisor-info";
+import "./menuaiio-supervisor-log";
 
-@customElement("hassio-system")
-class HassioSystem extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-system")
+class menuaiioSystem extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -25,45 +25,45 @@ class HassioSystem extends LitElement {
 
   protected render(): TemplateResult | undefined {
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .localizeFunc=${this.supervisor.localize}
         .narrow=${this.narrow}
         .route=${this.route}
-        .tabs=${supervisorTabs(this.hass)}
-        .mainPage=${!atLeastVersion(this.hass.config.version, 2021, 12)}
+        .tabs=${supervisorTabs(this.menuai)}
+        .mainPage=${!atLeastVersion(this.menuai.config.version, 2021, 12)}
         back-path="/config"
         supervisor
       >
         <span slot="header"> ${this.supervisor.localize("panel.system")} </span>
         <div class="content">
           <div class="card-group">
-            <hassio-core-info
-              .hass=${this.hass}
+            <menuaiio-core-info
+              .menuai=${this.menuai}
               .supervisor=${this.supervisor}
-            ></hassio-core-info>
-            <hassio-supervisor-info
-              .hass=${this.hass}
+            ></menuaiio-core-info>
+            <menuaiio-supervisor-info
+              .menuai=${this.menuai}
               .supervisor=${this.supervisor}
-            ></hassio-supervisor-info>
-            <hassio-host-info
-              .hass=${this.hass}
+            ></menuaiio-supervisor-info>
+            <menuaiio-host-info
+              .menuai=${this.menuai}
               .supervisor=${this.supervisor}
-            ></hassio-host-info>
+            ></menuaiio-host-info>
           </div>
-          <hassio-supervisor-log
-            .hass=${this.hass}
+          <menuaiio-supervisor-log
+            .menuai=${this.menuai}
             .supervisor=${this.supervisor}
-          ></hassio-supervisor-log>
+          ></menuaiio-supervisor-log>
         </div>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         .content {
           margin: 8px;
@@ -78,7 +78,7 @@ class HassioSystem extends LitElement {
           padding-inline-end: initial;
           margin-bottom: 8px;
         }
-        hassio-supervisor-log {
+        menuaiio-supervisor-log {
           width: 100%;
         }
       `,
@@ -88,6 +88,6 @@ class HassioSystem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-system": HassioSystem;
+    "menuaiio-system": menuaiioSystem;
   }
 }

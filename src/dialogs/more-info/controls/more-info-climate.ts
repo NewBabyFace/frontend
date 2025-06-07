@@ -26,14 +26,14 @@ import {
 import { UNAVAILABLE } from "../../../data/entity";
 import "../../../state-control/climate/ha-state-control-climate-humidity";
 import "../../../state-control/climate/ha-state-control-climate-temperature";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-control-select-container";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
 type MainControl = "temperature" | "humidity";
 
 class MoreInfoClimate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: ClimateEntity;
 
@@ -87,13 +87,13 @@ class MoreInfoClimate extends LitElement {
           ? html`
               <div>
                 <p class="label">
-                  ${this.hass.formatEntityAttributeName(
+                  ${this.menuai.formatEntityAttributeName(
                     this.stateObj,
                     "current_temperature"
                   )}
                 </p>
                 <p class="value">
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "current_temperature"
                   )}
@@ -105,13 +105,13 @@ class MoreInfoClimate extends LitElement {
           ? html`
               <div>
                 <p class="label">
-                  ${this.hass.formatEntityAttributeName(
+                  ${this.menuai.formatEntityAttributeName(
                     this.stateObj,
                     "current_humidity"
                   )}
                 </p>
                 <p class="value">
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "current_humidity"
                   )}
@@ -124,7 +124,7 @@ class MoreInfoClimate extends LitElement {
         ${this._mainControl === "temperature"
           ? html`
               <ha-state-control-climate-temperature
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${this.stateObj}
               ></ha-state-control-climate-temperature>
             `
@@ -132,7 +132,7 @@ class MoreInfoClimate extends LitElement {
         ${this._mainControl === "humidity"
           ? html`
               <ha-state-control-climate-humidity
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${this.stateObj}
               ></ha-state-control-climate-humidity>
             `
@@ -143,7 +143,7 @@ class MoreInfoClimate extends LitElement {
                 <ha-icon-button-toggle
                   .selected=${this._mainControl === "temperature"}
                   .disabled=${this.stateObj!.state === UNAVAILABLE}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.dialogs.more_info_control.climate.temperature"
                   )}
                   .control=${"temperature"}
@@ -154,7 +154,7 @@ class MoreInfoClimate extends LitElement {
                 <ha-icon-button-toggle
                   .selected=${this._mainControl === "humidity"}
                   .disabled=${this.stateObj!.state === UNAVAILABLE}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.dialogs.more_info_control.climate.humidity"
                   )}
                   .control=${"humidity"}
@@ -168,7 +168,7 @@ class MoreInfoClimate extends LitElement {
       </div>
       <ha-more-info-control-select-container>
         <ha-control-select-menu
-          .label=${this.hass.localize("ui.card.climate.mode")}
+          .label=${this.menuai.localize("ui.card.climate.mode")}
           .value=${stateObj.state}
           .disabled=${this.stateObj.state === UNAVAILABLE}
           fixedMenuPosition
@@ -192,7 +192,7 @@ class MoreInfoClimate extends LitElement {
                     slot="graphic"
                     .path=${climateHvacModeIcon(mode)}
                   ></ha-svg-icon>
-                  ${this.hass.formatEntityState(stateObj, mode)}
+                  ${this.menuai.formatEntityState(stateObj, mode)}
                 </ha-list-item>
               `
             )}
@@ -200,7 +200,7 @@ class MoreInfoClimate extends LitElement {
         ${supportPresetMode && stateObj.attributes.preset_modes
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   stateObj,
                   "preset_mode"
                 )}
@@ -215,7 +215,7 @@ class MoreInfoClimate extends LitElement {
                   ? html`
                       <ha-attribute-icon
                         slot="icon"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="preset_mode"
                         .attributeValue=${stateObj.attributes.preset_mode}
@@ -232,12 +232,12 @@ class MoreInfoClimate extends LitElement {
                     <ha-list-item .value=${mode} graphic="icon">
                       <ha-attribute-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="preset_mode"
                         .attributeValue=${mode}
                       ></ha-attribute-icon>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj,
                         "preset_mode",
                         mode
@@ -251,7 +251,7 @@ class MoreInfoClimate extends LitElement {
         ${supportFanMode && stateObj.attributes.fan_modes
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   stateObj,
                   "fan_mode"
                 )}
@@ -266,7 +266,7 @@ class MoreInfoClimate extends LitElement {
                   ? html`
                       <ha-attribute-icon
                         slot="icon"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="fan_mode"
                         .attributeValue=${stateObj.attributes.fan_mode}
@@ -280,12 +280,12 @@ class MoreInfoClimate extends LitElement {
                     <ha-list-item .value=${mode} graphic="icon">
                       <ha-attribute-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="fan_mode"
                         .attributeValue=${mode}
                       ></ha-attribute-icon>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj,
                         "fan_mode",
                         mode
@@ -299,7 +299,7 @@ class MoreInfoClimate extends LitElement {
         ${supportSwingMode && stateObj.attributes.swing_modes
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   stateObj,
                   "swing_mode"
                 )}
@@ -314,7 +314,7 @@ class MoreInfoClimate extends LitElement {
                   ? html`
                       <ha-attribute-icon
                         slot="icon"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="swing_mode"
                         .attributeValue=${stateObj.attributes.swing_mode}
@@ -331,12 +331,12 @@ class MoreInfoClimate extends LitElement {
                     <ha-list-item .value=${mode} graphic="icon">
                       <ha-attribute-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="swing_mode"
                         .attributeValue=${mode}
                       ></ha-attribute-icon>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj,
                         "swing_mode",
                         mode
@@ -351,7 +351,7 @@ class MoreInfoClimate extends LitElement {
         stateObj.attributes.swing_horizontal_modes
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   stateObj,
                   "swing_horizontal_mode"
                 )}
@@ -366,7 +366,7 @@ class MoreInfoClimate extends LitElement {
                   ? html`
                       <ha-attribute-icon
                         slot="icon"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="swing_horizontal_mode"
                         .attributeValue=${stateObj.attributes
@@ -384,12 +384,12 @@ class MoreInfoClimate extends LitElement {
                     <ha-list-item .value=${mode} graphic="icon">
                       <ha-attribute-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="swing_horizontal_mode"
                         .attributeValue=${mode}
                       ></ha-attribute-icon>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj,
                         "swing_horizontal_mode",
                         mode
@@ -474,7 +474,7 @@ class MoreInfoClimate extends LitElement {
     data.entity_id = this.stateObj!.entity_id;
     const curState = this.stateObj;
 
-    await this.hass.callService("climate", service, data);
+    await this.menuai.callService("climate", service, data);
 
     // We reset stateObj to re-sync the inputs with the state. It will be out
     // of sync if our service call did not result in the entity to be turned

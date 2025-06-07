@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant, Route } from "../../../../types";
+import type { menuai, Route } from "../../../../types";
 import "./assist-pipeline-debug";
 import "./assist-pipeline-run-debug";
 
 @customElement("assist-debug")
 export class AssistDebug extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -16,13 +16,13 @@ export class AssistDebug extends LitElement {
     const pipelineId = this.route.path.substring(1);
     if (pipelineId) {
       return html`<assist-pipeline-debug
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .pipelineId=${pipelineId}
       ></assist-pipeline-debug>`;
     }
     return html`<assist-pipeline-run-debug
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .narrow=${this.narrow}
     ></assist-pipeline-run-debug>`;
   }

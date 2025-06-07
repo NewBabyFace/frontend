@@ -1,14 +1,14 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "./common";
-import { hassioApiResultExtractor } from "./common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "./common";
+import { menuaiioApiResultExtractor } from "./common";
 
-export interface HassioHardwareAudioDevice {
+export interface menuaiioHardwareAudioDevice {
   device?: string | null;
   name: string;
 }
 
-interface HassioHardwareAudioList {
+interface menuaiioHardwareAudioList {
   audio: {
     input: Record<string, string>;
     output: Record<string, string>;
@@ -24,44 +24,44 @@ interface HardwareDevice {
   sysfs: string;
 }
 
-export interface HassioHardwareInfo {
+export interface menuaiioHardwareInfo {
   devices: HardwareDevice[];
 }
 
-export const fetchHassioHardwareAudio = async (
-  hass: HomeAssistant
-): Promise<HassioHardwareAudioList> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiioHardwareAudio = async (
+  menuai: menuai
+): Promise<menuaiioHardwareAudioList> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/hardware/audio`,
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioHardwareAudioList>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioHardwareAudioList>>(
       "GET",
-      "hassio/hardware/audio"
+      "menuaiio/hardware/audio"
     )
   );
 };
 
-export const fetchHassioHardwareInfo = async (
-  hass: HomeAssistant
-): Promise<HassioHardwareInfo> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiioHardwareInfo = async (
+  menuai: menuai
+): Promise<menuaiioHardwareInfo> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/hardware/info`,
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioHardwareInfo>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioHardwareInfo>>(
       "GET",
-      "hassio/hardware/info"
+      "menuaiio/hardware/info"
     )
   );
 };

@@ -14,12 +14,12 @@ import {
   rebuildZwaveNodeRoutes,
 } from "../../../../../data/zwave_js";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZWaveJSRebuildNodeRoutesDialogParams } from "./show-dialog-zwave_js-rebuild-node-routes";
 
 @customElement("dialog-zwave_js-rebuild-node-routes")
 class DialogZWaveJSRebuildNodeRoutes extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device?: DeviceRegistryEntry;
 
@@ -50,8 +50,8 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             "ui.panel.config.zwave_js.rebuild_node_routes.title"
           )
         )}
@@ -65,11 +65,11 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.rebuild_node_routes.introduction",
                       {
                         device: html`<em>
-                          ${computeDeviceNameDisplay(this.device, this.hass!)}
+                          ${computeDeviceNameDisplay(this.device, this.menuai!)}
                         </em>`,
                       }
                     )}
@@ -78,7 +78,7 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
               </div>
               <p>
                 <em>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.rebuild_node_routes.traffic_warning"
                   )}
                 </em>
@@ -87,7 +87,7 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 slot="primaryAction"
                 @click=${this._startRebuildingRoutes}
               >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.rebuild_node_routes.start_rebuilding_routes"
                 )}
               </mwc-button>
@@ -99,11 +99,11 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 <ha-spinner></ha-spinner>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.rebuild_node_routes.in_progress",
                       {
                         device: html`<em>
-                          ${computeDeviceNameDisplay(this.device, this.hass!)}
+                          ${computeDeviceNameDisplay(this.device, this.menuai!)}
                         </em>`,
                       }
                     )}
@@ -111,7 +111,7 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : ``}
@@ -124,13 +124,13 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.rebuild_node_routes.rebuilding_routes_failed",
                       {
                         device: html`<em
                           >${computeDeviceNameDisplay(
                             this.device,
-                            this.hass!
+                            this.menuai!
                           )}</em
                         >`,
                       }
@@ -140,7 +140,7 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                     ${this._error
                       ? html` <em>${this._error}</em> `
                       : `
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.rebuild_node_routes.rebuilding_routes_failed_check_logs"
                   )}
                   `}
@@ -148,7 +148,7 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : ``}
@@ -161,11 +161,11 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.rebuild_node_routes.rebuilding_routes_complete",
                       {
                         device: html`<em>
-                          ${computeDeviceNameDisplay(this.device, this.hass!)}
+                          ${computeDeviceNameDisplay(this.device, this.menuai!)}
                         </em>`,
                       }
                     )}
@@ -173,7 +173,7 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : ``}
@@ -186,14 +186,14 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.rebuild_node_routes.routes_rebuild_in_progress"
                     )}
                   </p>
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : ``}
@@ -202,10 +202,10 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
   }
 
   private async _fetchData(): Promise<void> {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
-    const network: ZWaveJSNetwork = await fetchZwaveNetworkStatus(this.hass!, {
+    const network: ZWaveJSNetwork = await fetchZwaveNetworkStatus(this.menuai!, {
       device_id: this.device!.id,
     });
     if (network.controller.is_rebuilding_routes) {
@@ -214,12 +214,12 @@ class DialogZWaveJSRebuildNodeRoutes extends LitElement {
   }
 
   private async _startRebuildingRoutes(): Promise<void> {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._status = "started";
     try {
-      this._status = (await rebuildZwaveNodeRoutes(this.hass, this.device!.id))
+      this._status = (await rebuildZwaveNodeRoutes(this.menuai, this.device!.id))
         ? "finished"
         : "failed";
     } catch (err: any) {

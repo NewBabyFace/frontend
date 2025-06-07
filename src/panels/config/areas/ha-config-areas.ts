@@ -1,13 +1,13 @@
 import { customElement, property } from "lit/decorators";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 import "./ha-config-area-page";
 import "./ha-config-areas-dashboard";
 
 @customElement("ha-config-areas")
-class HaConfigAreas extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigAreas extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -29,7 +29,7 @@ class HaConfigAreas extends HassRouterPage {
   };
 
   protected updatePageEl(pageEl) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
 
     if (this._currentPage === "area") {
       pageEl.areaId = this.routeTail.path.substr(1);

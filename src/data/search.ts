@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface RelatedResult {
   area?: string[];
@@ -36,11 +36,11 @@ export type ItemType =
   | "script_blueprint";
 
 export const findRelated = (
-  hass: HomeAssistant,
+  menuai: menuai,
   itemType: ItemType,
   itemId: string
 ): Promise<RelatedResult> =>
-  hass.callWS({
+  menuai.callWS({
     type: "search/related",
     item_type: itemType,
     item_id: itemId,

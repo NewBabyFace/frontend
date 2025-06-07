@@ -21,7 +21,7 @@ import { listenMediaQuery } from "../../common/dom/media_query";
 import { themesContext } from "../../data/context";
 import type { Themes } from "../../data/ws-themes";
 import type { ECOption } from "../../resources/echarts";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { isMac } from "../../util/is_mac";
 import "../ha-icon-button";
 import { formatTimeLabel } from "./axis-label";
@@ -38,7 +38,7 @@ const DOUBLE_TAP_TIME = 300;
 export class HaChartBase extends LitElement {
   public chart?: EChartsType;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data: ECOption["series"] = [];
 
@@ -200,7 +200,7 @@ export class HaChartBase extends LitElement {
                 class="zoom-reset"
                 .path=${mdiRestart}
                 @click=${this._handleZoomReset}
-                title=${this.hass.localize(
+                title=${this.menuai.localize(
                   "ui.components.history_charts.zoom_reset"
                 )}
               ></ha-icon-button>`
@@ -282,10 +282,10 @@ export class HaChartBase extends LitElement {
                 @click=${this._toggleExpandedLegend}
                 filled
                 label=${this.expandLegend
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.components.history_charts.collapse_legend"
                     )
-                  : `${this.hass.localize(
+                  : `${this.menuai.localize(
                       "ui.components.history_charts.expand_legend"
                     )} (${items.length - overflowLimit})`}
               >
@@ -303,8 +303,8 @@ export class HaChartBase extends LitElement {
   private _formatTimeLabel = (value: number | Date) =>
     formatTimeLabel(
       value,
-      this.hass.locale,
-      this.hass.config,
+      this.menuai.locale,
+      this.menuai.config,
       this._minutesDifference * this._zoomRatio
     );
 
@@ -864,7 +864,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-chart-base": HaChartBase;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "dataset-hidden": { name: string };
     "dataset-unhidden": { name: string };
     "chart-click": ECElementEvent;

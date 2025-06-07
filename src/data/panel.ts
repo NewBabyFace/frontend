@@ -1,5 +1,5 @@
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant, PanelInfo } from "../types";
+import type { menuai, PanelInfo } from "../types";
 
 /** Panel to show when no panel is picked. */
 export const DEFAULT_PANEL = "lovelace";
@@ -14,13 +14,13 @@ export const setDefaultPanel = (
   element: HTMLElement,
   urlPath: string
 ): void => {
-  fireEvent(element, "hass-default-panel", { defaultPanel: urlPath });
+  fireEvent(element, "menuai-default-panel", { defaultPanel: urlPath });
 };
 
-export const getDefaultPanel = (hass: HomeAssistant): PanelInfo =>
-  hass.panels[hass.defaultPanel]
-    ? hass.panels[hass.defaultPanel]
-    : hass.panels[DEFAULT_PANEL];
+export const getDefaultPanel = (menuai: menuai): PanelInfo =>
+  menuai.panels[menuai.defaultPanel]
+    ? menuai.panels[menuai.defaultPanel]
+    : menuai.panels[DEFAULT_PANEL];
 
 export const getPanelNameTranslationKey = (panel: PanelInfo) => {
   if (panel.url_path === "lovelace") {
@@ -35,23 +35,23 @@ export const getPanelNameTranslationKey = (panel: PanelInfo) => {
 };
 
 export const getPanelTitle = (
-  hass: HomeAssistant,
+  menuai: menuai,
   panel: PanelInfo
 ): string | undefined => {
   const translationKey = getPanelNameTranslationKey(panel);
 
-  return hass.localize(translationKey) || panel.title || undefined;
+  return menuai.localize(translationKey) || panel.title || undefined;
 };
 
 export const getPanelTitleFromUrlPath = (
-  hass: HomeAssistant,
+  menuai: menuai,
   urlPath: string
 ): string | undefined => {
-  if (!hass.panels) {
+  if (!menuai.panels) {
     return undefined;
   }
 
-  const panel = Object.values(hass.panels).find(
+  const panel = Object.values(menuai.panels).find(
     (p: PanelInfo): boolean => p.url_path === urlPath
   );
 
@@ -59,16 +59,16 @@ export const getPanelTitleFromUrlPath = (
     return undefined;
   }
 
-  return getPanelTitle(hass, panel);
+  return getPanelTitle(menuai, panel);
 };
 
 export const getPanelIcon = (panel: PanelInfo): string | null => {
   if (!panel.icon) {
     switch (panel.component_name) {
       case "profile":
-        return "hass:account";
+        return "menuai:account";
       case "lovelace":
-        return "hass:view-dashboard";
+        return "menuai:view-dashboard";
     }
   }
 

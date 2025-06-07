@@ -5,20 +5,20 @@ import { customElement, property } from "lit/decorators";
 import { atLeastVersion } from "../../../src/common/config/version";
 import { fireEvent } from "../../../src/common/dom/fire_event";
 import "../../../src/components/ha-fab";
-import { reloadHassioAddons } from "../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
+import { reloadmenuaiioAddons } from "../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import { showAlertDialog } from "../../../src/dialogs/generic/show-dialog-box";
-import "../../../src/layouts/hass-subpage";
-import "../../../src/layouts/hass-tabs-subpage";
+import "../../../src/layouts/menuai-subpage";
+import "../../../src/layouts/menuai-tabs-subpage";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../src/types";
-import { supervisorTabs } from "../hassio-tabs";
-import "./hassio-addons";
+import type { menuai, Route } from "../../../src/types";
+import { supervisorTabs } from "../menuaiio-tabs";
+import "./menuaiio-addons";
 
-@customElement("hassio-dashboard")
-class HassioDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-dashboard")
+class menuaiioDashboard extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -27,15 +27,15 @@ class HassioDashboard extends LitElement {
   @property({ attribute: false }) public route!: Route;
 
   firstUpdated() {
-    if (!atLeastVersion(this.hass.config.version, 2022, 5)) {
-      import("./hassio-update");
+    if (!atLeastVersion(this.menuai.config.version, 2022, 5)) {
+      import("./menuaiio-update");
     }
   }
 
   protected render(): TemplateResult {
-    if (atLeastVersion(this.hass.config.version, 2022, 5)) {
-      return html`<hass-subpage
-        .hass=${this.hass}
+    if (atLeastVersion(this.menuai.config.version, 2022, 5)) {
+      return html`<menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         back-path="/config"
@@ -47,12 +47,12 @@ class HassioDashboard extends LitElement {
           .path=${mdiRefresh}
           .label=${this.supervisor.localize("store.check_updates")}
         ></ha-icon-button>
-        <hassio-addons
-          .hass=${this.hass}
+        <menuaiio-addons
+          .menuai=${this.menuai}
           .supervisor=${this.supervisor}
           .narrow=${this.narrow}
-        ></hassio-addons>
-        <a href="/hassio/store">
+        ></menuaiio-addons>
+        <a href="/menuaiio/store">
           <ha-fab
             .label=${this.supervisor.localize("panel.store")}
             extended
@@ -63,57 +63,57 @@ class HassioDashboard extends LitElement {
               .path=${mdiStorePlus}
             ></ha-svg-icon></ha-fab
         ></a>
-      </hass-subpage>`;
+      </menuai-subpage>`;
     }
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .localizeFunc=${this.supervisor.localize}
         .narrow=${this.narrow}
         .route=${this.route}
-        .tabs=${supervisorTabs(this.hass)}
-        .mainPage=${!atLeastVersion(this.hass.config.version, 2021, 12)}
+        .tabs=${supervisorTabs(this.menuai)}
+        .mainPage=${!atLeastVersion(this.menuai.config.version, 2021, 12)}
         back-path="/config"
         supervisor
         has-fab
       >
         <span slot="header">
           ${this.supervisor.localize(
-            atLeastVersion(this.hass.config.version, 2021, 12)
+            atLeastVersion(this.menuai.config.version, 2021, 12)
               ? "panel.addons"
               : "panel.dashboard"
           )}
         </span>
         <div class="content">
-          ${!atLeastVersion(this.hass.config.version, 2021, 12)
+          ${!atLeastVersion(this.menuai.config.version, 2021, 12)
             ? html`
-                <hassio-update
-                  .hass=${this.hass}
+                <menuaiio-update
+                  .menuai=${this.menuai}
                   .supervisor=${this.supervisor}
-                ></hassio-update>
+                ></menuaiio-update>
               `
             : ""}
-          <hassio-addons
-            .hass=${this.hass}
+          <menuaiio-addons
+            .menuai=${this.menuai}
             .supervisor=${this.supervisor}
-          ></hassio-addons>
+          ></menuaiio-addons>
         </div>
 
-        <a href="/hassio/store" slot="fab">
+        <a href="/menuaiio/store" slot="fab">
           <ha-fab .label=${this.supervisor.localize("panel.store")} extended>
             <ha-svg-icon
               slot="icon"
               .path=${mdiStorePlus}
             ></ha-svg-icon> </ha-fab
         ></a>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   private async _handleCheckUpdates() {
     try {
-      await reloadHassioAddons(this.hass);
+      await reloadmenuaiioAddons(this.menuai);
     } catch (err) {
       showAlertDialog(this, {
         text: extractApiErrorMessage(err),
@@ -145,6 +145,6 @@ class HassioDashboard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-dashboard": HassioDashboard;
+    "menuaiio-dashboard": menuaiioDashboard;
   }
 }

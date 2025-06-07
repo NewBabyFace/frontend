@@ -17,7 +17,7 @@ import {
   DEVICE_CLASSES,
 } from "../../cards/hui-area-card";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { AreaCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -46,7 +46,7 @@ export class HuiAreaCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: AreaCardConfig;
 
@@ -136,17 +136,17 @@ export class HuiAreaCardEditor
     domain: "sensor" | "binary_sensor",
     numericDeviceClasses?: string[] | undefined
   ): string[] {
-    const entities = Object.values(this.hass!.entities).filter(
+    const entities = Object.values(this.menuai!.entities).filter(
       (e) =>
         computeDomain(e.entity_id) === domain &&
         !e.entity_category &&
         !e.hidden &&
         (e.area_id === area ||
-          (e.device_id && this.hass!.devices[e.device_id]?.area_id === area))
+          (e.device_id && this.menuai!.devices[e.device_id]?.area_id === area))
     );
 
     const classes = entities
-      .map((e) => this.hass!.states[e.entity_id]?.attributes.device_class || "")
+      .map((e) => this.menuai!.states[e.entity_id]?.attributes.device_class || "")
       .filter(
         (c) =>
           c &&
@@ -177,13 +177,13 @@ export class HuiAreaCardEditor
       (deviceClass) => ({
         value: deviceClass,
         label:
-          this.hass!.localize(
+          this.menuai!.localize(
             `component.${domain}.entity_component.${deviceClass}.name`
           ) || deviceClass,
       })
     );
     options.sort((a, b) =>
-      caseInsensitiveStringCompare(a.label, b.label, this.hass!.locale.language)
+      caseInsensitiveStringCompare(a.label, b.label, this.menuai!.locale.language)
     );
 
     return options;
@@ -195,15 +195,15 @@ export class HuiAreaCardEditor
   }
 
   protected async updated() {
-    if (this.hass && !this._numericDeviceClasses) {
+    if (this.menuai && !this._numericDeviceClasses) {
       const { numeric_device_classes: sensorNumericDeviceClasses } =
-        await getSensorNumericDeviceClasses(this.hass);
+        await getSensorNumericDeviceClasses(this.menuai);
       this._numericDeviceClasses = sensorNumericDeviceClasses;
     }
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -224,7 +224,7 @@ export class HuiAreaCardEditor
     );
 
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this._config.show_camera || false,
       binarySelectOptions,
       sensorSelectOptions
@@ -239,7 +239,7 @@ export class HuiAreaCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -261,27 +261,27 @@ export class HuiAreaCardEditor
   ) => {
     switch (schema.name) {
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       case "area":
-        return this.hass!.localize("ui.panel.lovelace.editor.card.area.name");
+        return this.menuai!.localize("ui.panel.lovelace.editor.card.area.name");
       case "navigation_path":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.action-editor.navigation_path"
         );
       case "aspect_ratio":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.aspect_ratio"
         );
       case "camera_view":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.camera_view"
         );
     }
-    return this.hass!.localize(
+    return this.menuai!.localize(
       `ui.panel.lovelace.editor.card.area.${schema.name}`
     );
   };

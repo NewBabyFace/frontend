@@ -9,12 +9,12 @@ import {
   uploadLocalMedia,
 } from "../../data/media_source";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-spinner";
 import "../ha-svg-icon";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     uploading: unknown;
     "media-refresh": unknown;
   }
@@ -22,7 +22,7 @@ declare global {
 
 @customElement("ha-media-upload-button")
 class MediaUploadButton extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) currentItem?: MediaPlayerItem;
 
@@ -38,13 +38,13 @@ class MediaUploadButton extends LitElement {
     return html`
       <mwc-button
         .label=${this._uploading > 0
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.components.media-browser.file_management.uploading",
               {
                 count: this._uploading,
               }
             )
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.components.media-browser.file_management.add_media"
             )}
         .disabled=${this._uploading > 0}
@@ -84,10 +84,10 @@ class MediaUploadButton extends LitElement {
 
           try {
             // eslint-disable-next-line no-await-in-loop
-            await uploadLocalMedia(this.hass, target, files[i]);
+            await uploadLocalMedia(this.menuai, target, files[i]);
           } catch (err: any) {
             showAlertDialog(this, {
-              text: this.hass.localize(
+              text: this.menuai.localize(
                 "ui.components.media-browser.file_management.upload_failed",
                 {
                   reason: err.message || err,

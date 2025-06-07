@@ -18,7 +18,7 @@ import {
   getCloudTtsLanguages,
 } from "../../../../data/cloud/tts";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showTryTtsDialog } from "./show-dialog-cloud-tts-try";
 
 export const getCloudTtsSupportedVoices = (
@@ -42,7 +42,7 @@ export const getCloudTtsSupportedVoices = (
 
 @customElement("cloud-tts-pref")
 export class CloudTTSPref extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatusLoggedIn;
 
@@ -62,10 +62,10 @@ export class CloudTTSPref extends LitElement {
     return html`
       <ha-card
         outlined
-        header=${this.hass.localize("ui.panel.config.cloud.account.tts.title")}
+        header=${this.menuai.localize("ui.panel.config.cloud.account.tts.title")}
       >
         <div class="card-content">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.cloud.account.tts.description",
             {
               service: '"tts.cloud_say"',
@@ -74,8 +74,8 @@ export class CloudTTSPref extends LitElement {
           <br /><br />
           <div class="row">
             <ha-language-picker
-              .hass=${this.hass}
-              .label=${this.hass.localize(
+              .menuai=${this.menuai}
+              .label=${this.menuai.localize(
                 "ui.panel.config.cloud.account.tts.default_language"
               )}
               .disabled=${this.savingPreferences}
@@ -86,7 +86,7 @@ export class CloudTTSPref extends LitElement {
             </ha-language-picker>
 
             <ha-select
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.cloud.account.tts.default_voice"
               )}
               .disabled=${this.savingPreferences}
@@ -104,7 +104,7 @@ export class CloudTTSPref extends LitElement {
         </div>
         <div class="card-actions">
           <mwc-button @click=${this._openTryDialog}>
-            ${this.hass.localize("ui.panel.config.cloud.account.tts.try")}
+            ${this.menuai.localize("ui.panel.config.cloud.account.tts.try")}
           </mwc-button>
         </div>
       </ha-card>
@@ -124,7 +124,7 @@ export class CloudTTSPref extends LitElement {
   protected willUpdate(changedProps) {
     super.willUpdate(changedProps);
     if (!this.hasUpdated) {
-      getCloudTTSInfo(this.hass).then((info) => {
+      getCloudTTSInfo(this.menuai).then((info) => {
         this.ttsInfo = info;
       });
     }
@@ -157,7 +157,7 @@ export class CloudTTSPref extends LitElement {
       : voices[0].voiceId;
 
     try {
-      await updateCloudPref(this.hass, {
+      await updateCloudPref(this.menuai, {
         tts_default_voice: [language, newVoice],
       });
       fireEvent(this, "ha-refresh-cloud-status");
@@ -181,7 +181,7 @@ export class CloudTTSPref extends LitElement {
     const voice = ev.target.value;
 
     try {
-      await updateCloudPref(this.hass, {
+      await updateCloudPref(this.menuai, {
         tts_default_voice: [language, voice],
       });
       fireEvent(this, "ha-refresh-cloud-status");

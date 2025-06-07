@@ -7,14 +7,14 @@ import { mockAreaRegistry } from "../../../../demo/src/stubs/area_registry";
 import { mockConfigEntries } from "../../../../demo/src/stubs/config_entries";
 import { mockDeviceRegistry } from "../../../../demo/src/stubs/device_registry";
 import { mockEntityRegistry } from "../../../../demo/src/stubs/entity_registry";
-import { mockHassioSupervisor } from "../../../../demo/src/stubs/hassio_supervisor";
+import { mockmenuaiioSupervisor } from "../../../../demo/src/stubs/menuaiio_supervisor";
 import { computeInitialHaFormData } from "../../../../src/components/ha-form/compute-initial-ha-form-data";
 import "../../../../src/components/ha-form/ha-form";
 import type { HaFormSchema } from "../../../../src/components/ha-form/types";
 import type { AreaRegistryEntry } from "../../../../src/data/area_registry";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { menuai } from "../../../../src/types";
 import "../../components/demo-black-white-row";
 import type { DeviceRegistryEntry } from "../../../../src/data/device_registry";
 
@@ -468,7 +468,7 @@ const SCHEMAS: {
 
 @customElement("demo-components-ha-form")
 class DemoHaForm extends LitElement {
-  @state() private hass!: HomeAssistant;
+  @state() private menuai!: menuai;
 
   private data = SCHEMAS.map(
     ({ schema, data }) => data || computeInitialHaFormData(schema)
@@ -478,15 +478,15 @@ class DemoHaForm extends LitElement {
 
   constructor() {
     super();
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    hass.addEntities(ENTITIES);
-    mockEntityRegistry(hass);
-    mockDeviceRegistry(hass, DEVICES);
-    mockConfigEntries(hass);
-    mockAreaRegistry(hass, AREAS);
-    mockHassioSupervisor(hass);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    menuai.addEntities(ENTITIES);
+    mockEntityRegistry(menuai);
+    mockDeviceRegistry(menuai, DEVICES);
+    mockConfigEntries(menuai);
+    mockAreaRegistry(menuai, AREAS);
+    mockmenuaiioSupervisor(menuai);
   }
 
   protected render(): TemplateResult {
@@ -505,7 +505,7 @@ class DemoHaForm extends LitElement {
               (slot) => html`
                 <ha-form
                   slot=${slot}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .data=${this.data[idx]}
                   .schema=${info.schema}
                   .error=${info.error}

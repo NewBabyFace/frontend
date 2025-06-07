@@ -1,25 +1,25 @@
-import type { HASSDomEvent, ValidHassDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent, ValidmenuaiDomEvent } from "../common/dom/fire_event";
 import { mainWindow } from "../common/dom/get_main_window";
-import type { ProvideHassElement } from "../mixins/provide-hass-lit-mixin";
+import type { ProvidemenuaiElement } from "../mixins/provide-menuai-lit-mixin";
 import { ancestorsWithProperty } from "../common/dom/ancestors-with-property";
 import { deepActiveElement } from "../common/dom/deep-active-element";
 import { nextRender } from "../common/util/render-status";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "show-dialog": ShowDialogParams<unknown>;
     "close-dialog": undefined;
     "dialog-closed": DialogClosedParams;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "show-dialog": HASSDomEvent<ShowDialogParams<unknown>>;
-    "dialog-closed": HASSDomEvent<DialogClosedParams>;
+    "show-dialog": menuaiDomEvent<ShowDialogParams<unknown>>;
+    "dialog-closed": menuaiDomEvent<DialogClosedParams>;
   }
 }
 
-export interface HassDialog<T = HASSDomEvents[ValidHassDomEvent]>
+export interface menuaiDialog<T = menuaiDomEvents[ValidmenuaiDomEvent]>
   extends HTMLElement {
   showDialog(params: T);
   closeDialog?: () => boolean;
@@ -37,7 +37,7 @@ export interface DialogClosedParams {
 }
 
 export interface DialogState {
-  element: HTMLElement & ProvideHassElement;
+  element: HTMLElement & ProvidemenuaiElement;
   root: ShadowRoot | HTMLElement;
   dialogTag: string;
   dialogParams: unknown;
@@ -46,7 +46,7 @@ export interface DialogState {
 }
 
 interface LoadedDialogInfo {
-  element: Promise<HassDialog>;
+  element: Promise<menuaiDialog>;
   closedFocusTargets?: Set<Element>;
 }
 
@@ -57,7 +57,7 @@ const OPEN_DIALOG_STACK: DialogState[] = [];
 export const FOCUS_TARGET = Symbol.for("HA focus target");
 
 export const showDialog = async (
-  element: HTMLElement & ProvideHassElement,
+  element: HTMLElement & ProvidemenuaiElement,
   root: ShadowRoot | HTMLElement,
   dialogTag: string,
   dialogParams: unknown,
@@ -76,8 +76,8 @@ export const showDialog = async (
     }
     LOADED[dialogTag] = {
       element: dialogImport().then(() => {
-        const dialogEl = document.createElement(dialogTag) as HassDialog;
-        element.provideHass(dialogEl);
+        const dialogEl = document.createElement(dialogTag) as menuaiDialog;
+        element.providemenuai(dialogEl);
         dialogEl.addEventListener("dialog-closed", _handleClosed);
         dialogEl.addEventListener("dialog-closed", _handleClosedFocus);
         return dialogEl;
@@ -188,7 +188,7 @@ export const closeAllDialogs = async () => {
   return true;
 };
 
-const _handleClosed = (ev: HASSDomEvent<DialogClosedParams>) => {
+const _handleClosed = (ev: menuaiDomEvent<DialogClosedParams>) => {
   // If not closed by navigating back, remove the open state from history
   const dialogIndex = OPEN_DIALOG_STACK.findIndex(
     (state) => state.dialogTag === ev.detail.dialog
@@ -211,12 +211,12 @@ const _handleClosed = (ev: HASSDomEvent<DialogClosedParams>) => {
 };
 
 export const makeDialogManager = (
-  element: HTMLElement & ProvideHassElement,
+  element: HTMLElement & ProvidemenuaiElement,
   root: ShadowRoot | HTMLElement
 ) => {
   element.addEventListener(
     "show-dialog",
-    (e: HASSDomEvent<ShowDialogParams<unknown>>) => {
+    (e: menuaiDomEvent<ShowDialogParams<unknown>>) => {
       const { dialogTag, dialogImport, dialogParams, addHistory } = e.detail;
       showDialog(
         element,
@@ -230,7 +230,7 @@ export const makeDialogManager = (
   );
 };
 
-const _handleClosedFocus = async (ev: HASSDomEvent<DialogClosedParams>) => {
+const _handleClosedFocus = async (ev: menuaiDomEvent<DialogClosedParams>) => {
   if (!LOADED[ev.detail.dialog]) return;
   const closedFocusTargets = LOADED[ev.detail.dialog].closedFocusTargets;
   delete LOADED[ev.detail.dialog].closedFocusTargets;

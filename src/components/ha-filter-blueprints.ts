@@ -9,7 +9,7 @@ import { fetchBlueprints } from "../data/blueprint";
 import type { RelatedResult } from "../data/search";
 import { findRelated } from "../data/search";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-expansion-panel";
 import "./ha-icon-button";
@@ -17,7 +17,7 @@ import "./ha-list";
 
 @customElement("ha-filter-blueprints")
 export class HaFilterBlueprints extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -50,7 +50,7 @@ export class HaFilterBlueprints extends LitElement {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize("ui.panel.config.blueprint.caption")}
+          ${this.menuai.localize("ui.panel.config.blueprint.caption")}
           ${this.value?.length
             ? html`<div class="badge">${this.value?.length}</div>
                 <ha-icon-button
@@ -87,7 +87,7 @@ export class HaFilterBlueprints extends LitElement {
     if (!this.type) {
       return;
     }
-    this._blueprints = await fetchBlueprints(this.hass, this.type);
+    this._blueprints = await fetchBlueprints(this.menuai, this.type);
   }
 
   protected updated(changed) {
@@ -149,7 +149,7 @@ export class HaFilterBlueprints extends LitElement {
     for (const blueprintId of this.value) {
       if (this.type) {
         relatedPromises.push(
-          findRelated(this.hass, `${this.type}_blueprint`, blueprintId)
+          findRelated(this.menuai, `${this.type}_blueprint`, blueprintId)
         );
       }
     }

@@ -43,20 +43,20 @@ import {
   mdiWeatherPartlyCloudy,
   mdiWhiteBalanceSunny,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { isComponentLoaded } from "../common/config/is_component_loaded";
 import { atLeastVersion } from "../common/config/version";
 import { computeDomain } from "../common/entity/compute_domain";
 import { computeObjectId } from "../common/entity/compute_object_id";
 import { computeStateDomain } from "../common/entity/compute_state_domain";
 import { stateIcon } from "../common/entity/state_icon";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type {
   EntityRegistryDisplayEntry,
   EntityRegistryEntry,
 } from "./entity_registry";
 
-import { mdiHomeAssistant } from "../resources/home-assistant-logo-svg";
+import { mdimenuai } from "../resources/home-assistant-logo-svg";
 
 /** Icon to use when no icon specified for service. */
 export const DEFAULT_SERVICE_ICON = mdiRoomService;
@@ -76,11 +76,11 @@ export const FALLBACK_DOMAIN_ICONS = {
   counter: mdiCounter,
   date: mdiCalendar,
   datetime: mdiCalendarClock,
-  demo: mdiHomeAssistant,
+  demo: mdimenuai,
   device_tracker: mdiAccount,
   google_assistant: mdiGoogleAssistant,
   group: mdiGoogleCirclesCommunities,
-  homeassistant: mdiHomeAssistant,
+  menuai: mdimenuai,
   homekit: mdiHomeAutomation,
   image_processing: mdiImageFilterFrames,
   image: mdiImage,
@@ -188,19 +188,19 @@ interface CategoryType {
   services: ServiceIcons;
 }
 
-export const getHassIcons = async <T extends IconCategory>(
-  hass: HomeAssistant,
+export const getmenuaiIcons = async <T extends IconCategory>(
+  menuai: menuai,
   category: T,
   integration?: string
 ) =>
-  hass.callWS<IconResources<CategoryType[T]>>({
+  menuai.callWS<IconResources<CategoryType[T]>>({
     type: "frontend/get_icons",
     category,
     integration,
   });
 
 export const getPlatformIcons = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   integration: string,
   force = false
 ): Promise<PlatformIcons | undefined> => {
@@ -208,12 +208,12 @@ export const getPlatformIcons = async (
     return resources.entity[integration];
   }
   if (
-    !isComponentLoaded(hass, integration) ||
-    !atLeastVersion(hass.connection.haVersion, 2024, 2)
+    !isComponentLoaded(menuai, integration) ||
+    !atLeastVersion(menuai.connection.haVersion, 2024, 2)
   ) {
     return undefined;
   }
-  const result = getHassIcons(hass, "entity", integration).then(
+  const result = getmenuaiIcons(menuai, "entity", integration).then(
     (res) => res?.resources[integration]
   );
   resources.entity[integration] = result;
@@ -221,14 +221,14 @@ export const getPlatformIcons = async (
 };
 
 export const getComponentIcons = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: string,
   force = false
 ): Promise<ComponentIcons | undefined> => {
   // For Cast, old instances can connect to it.
   if (
     __BACKWARDS_COMPAT__ &&
-    !atLeastVersion(hass.connection.haVersion, 2024, 2)
+    !atLeastVersion(menuai.connection.haVersion, 2024, 2)
   ) {
     return import("../fake_data/entity_component_icons")
       .then((mod) => mod.ENTITY_COMPONENT_ICONS)
@@ -243,19 +243,19 @@ export const getComponentIcons = async (
     return resources.entity_component.resources.then((res) => res[domain]);
   }
 
-  if (!isComponentLoaded(hass, domain)) {
+  if (!isComponentLoaded(menuai, domain)) {
     return undefined;
   }
-  resources.entity_component.domains = [...hass.config.components];
-  resources.entity_component.resources = getHassIcons(
-    hass,
+  resources.entity_component.domains = [...menuai.config.components];
+  resources.entity_component.resources = getmenuaiIcons(
+    menuai,
     "entity_component"
   ).then((result) => result.resources);
   return resources.entity_component.resources.then((res) => res[domain]);
 };
 
 export const getServiceIcons = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain?: string,
   force = false
 ): Promise<ServiceIcons | Record<string, ServiceIcons> | undefined> => {
@@ -263,7 +263,7 @@ export const getServiceIcons = async (
     if (!force && resources.services.all) {
       return resources.services.all;
     }
-    resources.services.all = getHassIcons(hass, "services", domain).then(
+    resources.services.all = getmenuaiIcons(menuai, "services", domain).then(
       (res) => {
         resources.services.domains = res.resources;
         return res?.resources;
@@ -280,10 +280,10 @@ export const getServiceIcons = async (
       return resources.services.domains[domain];
     }
   }
-  if (!isComponentLoaded(hass, domain)) {
+  if (!isComponentLoaded(menuai, domain)) {
     return undefined;
   }
-  const result = getHassIcons(hass, "services", domain);
+  const result = getmenuaiIcons(menuai, "services", domain);
   resources.services.domains[domain] = result.then(
     (res) => res?.resources[domain]
   );
@@ -359,11 +359,11 @@ const getIconFromTranslations = (
 };
 
 export const entityIcon = async (
-  hass: HomeAssistant,
-  stateObj: HassEntity,
+  menuai: menuai,
+  stateObj: menuaiEntity,
   state?: string
 ) => {
-  const entry = hass.entities?.[stateObj.entity_id] as
+  const entry = menuai.entities?.[stateObj.entity_id] as
     | EntityRegistryDisplayEntry
     | undefined;
   if (entry?.icon) {
@@ -371,25 +371,25 @@ export const entityIcon = async (
   }
   const domain = computeStateDomain(stateObj);
 
-  return getEntityIcon(hass, domain, stateObj, state, entry);
+  return getEntityIcon(menuai, domain, stateObj, state, entry);
 };
 
 export const entryIcon = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry: EntityRegistryEntry | EntityRegistryDisplayEntry
 ) => {
   if (entry.icon) {
     return entry.icon;
   }
-  const stateObj = hass.states[entry.entity_id] as HassEntity | undefined;
+  const stateObj = menuai.states[entry.entity_id] as menuaiEntity | undefined;
   const domain = computeDomain(entry.entity_id);
-  return getEntityIcon(hass, domain, stateObj, undefined, entry);
+  return getEntityIcon(menuai, domain, stateObj, undefined, entry);
 };
 
 const getEntityIcon = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: string,
-  stateObj?: HassEntity,
+  stateObj?: menuaiEntity,
   stateValue?: string,
   entry?: EntityRegistryEntry | EntityRegistryDisplayEntry
 ) => {
@@ -400,7 +400,7 @@ const getEntityIcon = async (
 
   let icon: string | undefined;
   if (translation_key && platform) {
-    const platformIcons = await getPlatformIcons(hass, platform);
+    const platformIcons = await getPlatformIcons(menuai, platform);
     if (platformIcons) {
       const translations = platformIcons[domain]?.[translation_key];
 
@@ -413,7 +413,7 @@ const getEntityIcon = async (
   }
 
   if (!icon) {
-    const entityComponentIcons = await getComponentIcons(hass, domain);
+    const entityComponentIcons = await getComponentIcons(menuai, domain);
     if (entityComponentIcons) {
       const translations =
         (device_class && entityComponentIcons[device_class]) ||
@@ -426,15 +426,15 @@ const getEntityIcon = async (
 };
 
 export const attributeIcon = async (
-  hass: HomeAssistant,
-  state: HassEntity,
+  menuai: menuai,
+  state: menuaiEntity,
   attribute: string,
   attributeValue?: string
 ) => {
   let icon: string | undefined;
   const domain = computeStateDomain(state);
   const deviceClass = state.attributes.device_class;
-  const entity = hass.entities?.[state.entity_id] as
+  const entity = menuai.entities?.[state.entity_id] as
     | EntityRegistryDisplayEntry
     | undefined;
   const platform = entity?.platform;
@@ -444,7 +444,7 @@ export const attributeIcon = async (
     (state.attributes[attribute] as string | number | undefined);
 
   if (translation_key && platform) {
-    const platformIcons = await getPlatformIcons(hass, platform);
+    const platformIcons = await getPlatformIcons(menuai, platform);
     if (platformIcons) {
       icon = getIconFromTranslations(
         value,
@@ -453,7 +453,7 @@ export const attributeIcon = async (
     }
   }
   if (!icon) {
-    const entityComponentIcons = await getComponentIcons(hass, domain);
+    const entityComponentIcons = await getComponentIcons(menuai, domain);
     if (entityComponentIcons) {
       const translations =
         (deviceClass &&
@@ -467,31 +467,31 @@ export const attributeIcon = async (
 };
 
 export const serviceIcon = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   service: string
 ): Promise<string | undefined> => {
   let icon: string | undefined;
   const domain = computeDomain(service);
   const serviceName = computeObjectId(service);
-  const serviceIcons = await getServiceIcons(hass, domain);
+  const serviceIcons = await getServiceIcons(menuai, domain);
   if (serviceIcons) {
     const srvceIcon = serviceIcons[serviceName] as ServiceIcons[string];
     icon = srvceIcon?.service;
   }
   if (!icon) {
-    icon = await domainIcon(hass, domain);
+    icon = await domainIcon(menuai, domain);
   }
   return icon;
 };
 
 export const serviceSectionIcon = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   service: string,
   section: string
 ): Promise<string | undefined> => {
   const domain = computeDomain(service);
   const serviceName = computeObjectId(service);
-  const serviceIcons = await getServiceIcons(hass, domain);
+  const serviceIcons = await getServiceIcons(menuai, domain);
   if (serviceIcons) {
     const srvceIcon = serviceIcons[serviceName] as ServiceIcons[string];
     return srvceIcon?.sections?.[section];
@@ -500,11 +500,11 @@ export const serviceSectionIcon = async (
 };
 
 export const domainIcon = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: string,
   deviceClass?: string
 ): Promise<string | undefined> => {
-  const entityComponentIcons = await getComponentIcons(hass, domain);
+  const entityComponentIcons = await getComponentIcons(menuai, domain);
   if (entityComponentIcons) {
     const translations =
       (deviceClass && entityComponentIcons[deviceClass]) ||

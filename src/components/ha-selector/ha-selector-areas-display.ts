@@ -1,12 +1,12 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { AreasDisplaySelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-areas-display-editor";
 
 @customElement("ha-selector-areas_display")
 export class HaAreasDisplaySelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: AreasDisplaySelector;
 
@@ -23,7 +23,7 @@ export class HaAreasDisplaySelector extends LitElement {
   protected render() {
     return html`
       <ha-areas-display-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .label=${this.label}
         .helper=${this.helper}

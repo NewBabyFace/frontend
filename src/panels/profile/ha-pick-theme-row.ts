@@ -15,7 +15,7 @@ import {
   DefaultAccentColor,
   DefaultPrimaryColor,
 } from "../../resources/theme/color.globals";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 
 const USE_DEFAULT_THEME = "__USE_DEFAULT_THEME__";
@@ -23,7 +23,7 @@ const HOME_ASSISTANT_THEME = "default";
 
 @customElement("ha-pick-theme-row")
 export class HaPickThemeRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -31,49 +31,49 @@ export class HaPickThemeRow extends LitElement {
 
   protected render(): TemplateResult {
     const hasThemes =
-      this.hass.themes.themes && Object.keys(this.hass.themes.themes).length;
+      this.menuai.themes.themes && Object.keys(this.menuai.themes.themes).length;
 
-    const curThemeIsUseDefault = this.hass.selectedTheme?.theme === "";
-    const curTheme = this.hass.selectedTheme?.theme
-      ? this.hass.selectedTheme?.theme
-      : this.hass.themes.darkMode
-        ? this.hass.themes.default_dark_theme || this.hass.themes.default_theme
-        : this.hass.themes.default_theme;
+    const curThemeIsUseDefault = this.menuai.selectedTheme?.theme === "";
+    const curTheme = this.menuai.selectedTheme?.theme
+      ? this.menuai.selectedTheme?.theme
+      : this.menuai.themes.darkMode
+        ? this.menuai.themes.default_dark_theme || this.menuai.themes.default_theme
+        : this.menuai.themes.default_theme;
 
-    const themeSettings = this.hass.selectedTheme;
+    const themeSettings = this.menuai.selectedTheme;
 
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading"
-          >${this.hass.localize("ui.panel.profile.themes.header")}</span
+          >${this.menuai.localize("ui.panel.profile.themes.header")}</span
         >
         <span slot="description">
           ${!hasThemes
-            ? this.hass.localize("ui.panel.profile.themes.error_no_theme")
+            ? this.menuai.localize("ui.panel.profile.themes.error_no_theme")
             : ""}
           <a
             href=${documentationUrl(
-              this.hass,
+              this.menuai,
               "/integrations/frontend/#defining-themes"
             )}
             target="_blank"
             rel="noreferrer"
           >
-            ${this.hass.localize("ui.panel.profile.themes.link_promo")}
+            ${this.menuai.localize("ui.panel.profile.themes.link_promo")}
           </a>
         </span>
         <ha-select
-          .label=${this.hass.localize("ui.panel.profile.themes.dropdown_label")}
+          .label=${this.menuai.localize("ui.panel.profile.themes.dropdown_label")}
           .disabled=${!hasThemes}
-          .value=${this.hass.selectedTheme?.theme || USE_DEFAULT_THEME}
+          .value=${this.menuai.selectedTheme?.theme || USE_DEFAULT_THEME}
           @selected=${this._handleThemeSelection}
           naturalMenuWidth
         >
           <ha-list-item .value=${USE_DEFAULT_THEME}>
-            ${this.hass.localize("ui.panel.profile.themes.use_default")}
+            ${this.menuai.localize("ui.panel.profile.themes.use_default")}
           </ha-list-item>
           <ha-list-item .value=${HOME_ASSISTANT_THEME}>
-            Home Assistant
+            MenuAI
           </ha-list-item>
           ${this._themeNames.map(
             (theme) => html`
@@ -84,12 +84,12 @@ export class HaPickThemeRow extends LitElement {
       </ha-settings-row>
       ${curTheme === HOME_ASSISTANT_THEME ||
       (curThemeIsUseDefault &&
-        this.hass.themes.default_dark_theme &&
-        this.hass.themes.default_theme) ||
+        this.menuai.themes.default_dark_theme &&
+        this.menuai.themes.default_theme) ||
       this._supportsModeSelection(curTheme)
         ? html` <div class="inputs">
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.profile.themes.dark_mode.auto"
               )}
             >
@@ -101,7 +101,7 @@ export class HaPickThemeRow extends LitElement {
               ></ha-radio>
             </ha-formfield>
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.profile.themes.dark_mode.light"
               )}
             >
@@ -114,7 +114,7 @@ export class HaPickThemeRow extends LitElement {
               </ha-radio>
             </ha-formfield>
             <ha-formfield
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.profile.themes.dark_mode.dark"
               )}
             >
@@ -131,7 +131,7 @@ export class HaPickThemeRow extends LitElement {
                   <ha-textfield
                     .value=${themeSettings?.primaryColor || DefaultPrimaryColor}
                     type="color"
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.profile.themes.primary_color"
                     )}
                     .name=${"primaryColor"}
@@ -140,7 +140,7 @@ export class HaPickThemeRow extends LitElement {
                   <ha-textfield
                     .value=${themeSettings?.accentColor || DefaultAccentColor}
                     type="color"
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.profile.themes.accent_color"
                     )}
                     .name=${"accentColor"}
@@ -148,7 +148,7 @@ export class HaPickThemeRow extends LitElement {
                   ></ha-textfield>
                   ${themeSettings?.primaryColor || themeSettings?.accentColor
                     ? html` <mwc-button @click=${this._resetColors}>
-                        ${this.hass.localize("ui.panel.profile.themes.reset")}
+                        ${this.menuai.localize("ui.panel.profile.themes.reset")}
                       </mwc-button>`
                     : ""}
                 </div>`
@@ -159,13 +159,13 @@ export class HaPickThemeRow extends LitElement {
   }
 
   public willUpdate(changedProperties: PropertyValues) {
-    const oldHass = changedProperties.get("hass") as undefined | HomeAssistant;
+    const oldmenuai = changedProperties.get("menuai") as undefined | menuai;
     const themesChanged =
-      changedProperties.has("hass") &&
-      (!oldHass || oldHass.themes.themes !== this.hass.themes.themes);
+      changedProperties.has("menuai") &&
+      (!oldmenuai || oldmenuai.themes.themes !== this.menuai.themes.themes);
 
     if (themesChanged) {
-      this._themeNames = Object.keys(this.hass.themes.themes).sort();
+      this._themeNames = Object.keys(this.menuai.themes.themes).sort();
     }
   }
 
@@ -182,10 +182,10 @@ export class HaPickThemeRow extends LitElement {
   }
 
   private _supportsModeSelection(themeName: string): boolean {
-    if (!(themeName in this.hass.themes.themes)) {
+    if (!(themeName in this.menuai.themes.themes)) {
       return false; // User's theme no longer exists
     }
-    return "modes" in this.hass.themes.themes[themeName];
+    return "modes" in this.menuai.themes.themes[themeName];
   }
 
   private _handleDarkMode(ev: CustomEvent) {
@@ -203,12 +203,12 @@ export class HaPickThemeRow extends LitElement {
 
   private _handleThemeSelection(ev) {
     const theme = ev.target.value;
-    if (theme === this.hass.selectedTheme?.theme) {
+    if (theme === this.menuai.selectedTheme?.theme) {
       return;
     }
 
     if (theme === USE_DEFAULT_THEME) {
-      if (this.hass.selectedTheme?.theme) {
+      if (this.menuai.selectedTheme?.theme) {
         fireEvent(this, "settheme", {
           theme: "",
           primaryColor: undefined,

@@ -1,5 +1,5 @@
 import { mdiAlert } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -17,7 +17,7 @@ import {
 import { isUnavailableState, UNAVAILABLE, UNKNOWN } from "../../data/entity";
 import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
 import { timerTimeRemaining } from "../../data/timer";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-label-badge";
 import "../ha-state-icon";
 
@@ -45,9 +45,9 @@ const getTruncatedKey = (domainKey: string, stateKey: string) => {
 
 @customElement("ha-state-label-badge")
 export class HaStateLabelBadge extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
-  @property({ attribute: false }) public state?: HassEntity;
+  @property({ attribute: false }) public state?: menuaiEntity;
 
   @property() public name?: string;
 
@@ -82,8 +82,8 @@ export class HaStateLabelBadge extends LitElement {
       return html`
         <ha-label-badge
           class="warning"
-          label=${this.hass!.localize("state_badge.default.error")}
-          description=${this.hass!.localize(
+          label=${this.menuai!.localize("state_badge.default.error")}
+          description=${this.menuai!.localize(
             "state_badge.default.entity_not_found"
           )}
         >
@@ -99,7 +99,7 @@ export class HaStateLabelBadge extends LitElement {
     // 4. Icon determined via entity state
     // 5. Value string as fallback
     const domain = computeStateDomain(entityState);
-    const entry = this.hass?.entities[entityState.entity_id];
+    const entry = this.menuai?.entities[entityState.entity_id];
 
     const showIcon =
       this.icon || this._computeShowIcon(domain, entityState, entry);
@@ -135,7 +135,7 @@ export class HaStateLabelBadge extends LitElement {
           ? html`<ha-state-icon
               .icon=${this.icon}
               .stateObj=${entityState}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-state-icon>`
           : ""}
         ${value && !image && !showIcon
@@ -157,7 +157,7 @@ export class HaStateLabelBadge extends LitElement {
 
   private _computeValue(
     domain: string,
-    entityState: HassEntity,
+    entityState: menuaiEntity,
     entry?: EntityRegistryDisplayEntry
   ) {
     switch (domain) {
@@ -182,16 +182,16 @@ export class HaStateLabelBadge extends LitElement {
           : isNumericState(entityState)
             ? formatNumber(
                 entityState.state,
-                this.hass!.locale,
+                this.menuai!.locale,
                 getNumberFormatOptions(entityState, entry)
               )
-            : this.hass!.formatEntityState(entityState);
+            : this.menuai!.formatEntityState(entityState);
     }
   }
 
   private _computeShowIcon(
     domain: string,
-    entityState: HassEntity,
+    entityState: menuaiEntity,
     entry?: EntityRegistryDisplayEntry
   ): boolean {
     if (entityState.state === UNAVAILABLE) {
@@ -216,16 +216,16 @@ export class HaStateLabelBadge extends LitElement {
 
   private _computeLabel(
     domain: string,
-    entityState: HassEntity,
+    entityState: menuaiEntity,
     _timerTimeRemaining = 0
   ) {
     // For unavailable states or certain domains, use a special translation that is truncated to fit within the badge label
     if (isUnavailableState(entityState.state)) {
-      return this.hass!.localize(`state_badge.default.${entityState.state}`);
+      return this.menuai!.localize(`state_badge.default.${entityState.state}`);
     }
     const domainStateKey = getTruncatedKey(domain, entityState.state);
     if (domainStateKey) {
-      return this.hass!.localize(`state_badge.${domainStateKey}`);
+      return this.menuai!.localize(`state_badge.${domainStateKey}`);
     }
     // Person and device tracker state can be zone name
     if (domain === "person" || domain === "device_tracker") {

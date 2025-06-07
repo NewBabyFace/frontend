@@ -8,15 +8,15 @@ import "../../../../components/ha-card";
 import "../../../../components/ha-textfield";
 import type { HaTextField } from "../../../../components/ha-textfield";
 import { cloudRegister, cloudResendVerification } from "../../../../data/cloud";
-import "../../../../layouts/hass-subpage";
+import "../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../ha-config-section";
 import "../../../../components/ha-password-field";
 
 @customElement("cloud-register")
 export class CloudRegister extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -36,64 +36,64 @@ export class CloudRegister extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.cloud.register.title")}
+        .header=${this.menuai.localize("ui.panel.config.cloud.register.title")}
       >
         <div class="content">
           <ha-config-section .isWide=${this.isWide}>
             <span slot="header"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.cloud.register.headline"
               )}</span
             >
             <div slot="introduction">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.register.information"
                 )}
               </p>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.register.information2"
                 )}
               </p>
               <ul>
                 <li>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.register.feature_remote_control"
                   )}
                 </li>
                 <li>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.register.feature_google_home"
                   )}
                 </li>
                 <li>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.register.feature_amazon_alexa"
                   )}
                 </li>
                 <li>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.register.feature_webhook_apps"
                   )}
                 </li>
               </ul>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.register.information3"
                 )}
                 <a href="https://www.nabucasa.com" target="_blank"
                   >Nabu&nbsp;Casa,&nbsp;Inc</a
                 >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.register.information3a"
                 )}
               </p>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.register.information4"
                 )}
               </p>
@@ -104,7 +104,7 @@ export class CloudRegister extends LitElement {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.cloud.register.link_terms_conditions"
                     )}
                   </a>
@@ -115,7 +115,7 @@ export class CloudRegister extends LitElement {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.cloud.register.link_privacy_policy"
                     )}
                   </a>
@@ -124,7 +124,7 @@ export class CloudRegister extends LitElement {
             </div>
             <ha-card
               outlined
-              .header=${this.hass.localize(
+              .header=${this.menuai.localize(
                 "ui.panel.config.cloud.register.create_account"
               )}
               ><div class="card-content register-form">
@@ -135,7 +135,7 @@ export class CloudRegister extends LitElement {
                   autofocus
                   id="email"
                   name="email"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.cloud.register.email_address"
                   )}
                   type="email"
@@ -143,14 +143,14 @@ export class CloudRegister extends LitElement {
                   required
                   .value=${this.email ?? ""}
                   @keydown=${this._keyDown}
-                  validationMessage=${this.hass.localize(
+                  validationMessage=${this.menuai.localize(
                     "ui.panel.config.cloud.register.email_error_msg"
                   )}
                 ></ha-textfield>
                 <ha-password-field
                   id="password"
                   name="password"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.cloud.register.password"
                   )}
                   .value=${this._password}
@@ -158,7 +158,7 @@ export class CloudRegister extends LitElement {
                   minlength="8"
                   required
                   @keydown=${this._keyDown}
-                  validationMessage=${this.hass.localize(
+                  validationMessage=${this.menuai.localize(
                     "ui.panel.config.cloud.register.password_error_msg"
                   )}
                 ></ha-password-field>
@@ -167,7 +167,7 @@ export class CloudRegister extends LitElement {
                 <ha-progress-button
                   @click=${this._handleRegister}
                   .progress=${this._requestInProgress}
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.cloud.register.start_trial"
                   )}</ha-progress-button
                 >
@@ -176,7 +176,7 @@ export class CloudRegister extends LitElement {
                   .disabled=${this._requestInProgress}
                   @click=${this._handleResendVerifyEmail}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.register.resend_confirm_email"
                   )}
                 </button>
@@ -184,7 +184,7 @@ export class CloudRegister extends LitElement {
             </ha-card>
           </ha-config-section>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -215,7 +215,7 @@ export class CloudRegister extends LitElement {
     this._requestInProgress = true;
 
     try {
-      await cloudRegister(this.hass, email, password);
+      await cloudRegister(this.menuai, email, password);
       this._verificationEmailSent(email);
     } catch (err: any) {
       this._password = "";
@@ -239,7 +239,7 @@ export class CloudRegister extends LitElement {
 
     const doResend = async (username: string) => {
       try {
-        await cloudResendVerification(this.hass, username);
+        await cloudResendVerification(this.menuai, username);
         this._verificationEmailSent(username);
       } catch (err: any) {
         const errCode = err && err.body && err.body.code;
@@ -262,7 +262,7 @@ export class CloudRegister extends LitElement {
     this._password = "";
     fireEvent(this, "cloud-email-changed", { value: email });
     fireEvent(this, "cloud-done", {
-      flashMessage: this.hass.localize(
+      flashMessage: this.menuai.localize(
         "ui.panel.config.cloud.register.account_created"
       ),
     });
@@ -303,7 +303,7 @@ declare global {
     "cloud-register": CloudRegister;
   }
 
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "cloud-done": { flashMessage: string };
   }
 }

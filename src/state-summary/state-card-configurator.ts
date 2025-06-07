@@ -1,17 +1,17 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import "../components/entity/state-info";
 import { customElement, property } from "lit/decorators";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { haStyle } from "../resources/styles";
 
 @customElement("state-card-configurator")
 class StateCardConfigurator extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -19,13 +19,13 @@ class StateCardConfigurator extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         ></state-info>
         ${this.inDialog
           ? html`<mwc-button
-              >${this.hass.formatEntityState(this.stateObj)}</mwc-button
+              >${this.menuai.formatEntityState(this.stateObj)}</mwc-button
             >`
           : nothing}
       </div>

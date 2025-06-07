@@ -7,7 +7,7 @@ import { computeDomain } from "../../common/entity/compute_domain";
 import "../../components/ha-icon-button-prev";
 import type { PersistentNotification } from "../../data/persistent_notification";
 import { subscribeNotifications } from "../../data/persistent_notification";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./notification-item";
 import "../../components/ha-header-bar";
 import "../../components/ha-drawer";
@@ -16,7 +16,7 @@ import { computeRTLDirection } from "../../common/util/compute_rtl";
 
 @customElement("notification-drawer")
 export class HuiNotificationDrawer extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _notifications: PersistentNotification[] = [];
 
@@ -38,7 +38,7 @@ export class HuiNotificationDrawer extends LitElement {
 
   showDialog({ narrow }) {
     this._unsubNotifications = subscribeNotifications(
-      this.hass.connection,
+      this.menuai.connection,
       (notifications) => {
         if (this._notifications.length && !notifications.length) {
           this.closeDialog();
@@ -70,9 +70,9 @@ export class HuiNotificationDrawer extends LitElement {
     if (!this._open) {
       return nothing;
     }
-    const configuratorEntities = Object.keys(this.hass.states)
+    const configuratorEntities = Object.keys(this.menuai.states)
       .filter((entityId) => computeDomain(entityId) === "configurator")
-      .map((entityId) => this.hass.states[entityId]);
+      .map((entityId) => this.menuai.states[entityId]);
 
     // @ts-ignore
     const notifications = this._notifications.concat(configuratorEntities);
@@ -95,17 +95,17 @@ export class HuiNotificationDrawer extends LitElement {
         type="modal"
         open
         @MDCDrawer:closed=${this._dialogClosed}
-        .direction=${computeRTLDirection(this.hass)}
+        .direction=${computeRTLDirection(this.menuai)}
       >
         <ha-header-bar>
           <div slot="title">
-            ${this.hass.localize("ui.notification_drawer.title")}
+            ${this.menuai.localize("ui.notification_drawer.title")}
           </div>
           <ha-icon-button-prev
             slot="actionItems"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.notification_drawer.close")}
+            .label=${this.menuai.localize("ui.notification_drawer.close")}
           >
           </ha-icon-button-prev>
         </ha-header-bar>
@@ -115,7 +115,7 @@ export class HuiNotificationDrawer extends LitElement {
                 (notification) =>
                   html`<div class="notification">
                     <notification-item
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .notification=${notification}
                     ></notification-item>
                   </div>`
@@ -123,14 +123,14 @@ export class HuiNotificationDrawer extends LitElement {
               ${this._notifications.length > 1
                 ? html`<div class="notification-actions">
                     <mwc-button raised @click=${this._dismissAll}>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.notification_drawer.dismiss_all"
                       )}
                     </mwc-button>
                   </div>`
                 : ""}`
             : html` <div class="empty">
-                ${this.hass.localize("ui.notification_drawer.empty")}
+                ${this.menuai.localize("ui.notification_drawer.empty")}
                 <div></div>
               </div>`}
         </div>
@@ -144,7 +144,7 @@ export class HuiNotificationDrawer extends LitElement {
   }
 
   private _dismissAll() {
-    this.hass.callService("persistent_notification", "dismiss_all");
+    this.menuai.callService("persistent_notification", "dismiss_all");
     this.closeDialog();
   }
 

@@ -25,7 +25,7 @@ import {
   weatherAttrIcons,
   weatherSVGStyles,
 } from "../../../data/weather";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { findEntities } from "../common/find-entities";
 import { handleAction } from "../common/handle-action";
@@ -48,14 +48,14 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): WeatherForecastCardConfig {
     const includeDomains = ["weather"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -65,7 +65,7 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
     return { type: "weather-forecast", entity: foundEntities[0] || "" };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: WeatherForecastCardConfig;
 
@@ -115,17 +115,17 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
     this._unsubscribeForecastEvents();
     if (
       !this.isConnected ||
-      !this.hass ||
+      !this.menuai ||
       !this._config ||
       !this._needForecastSubscription() ||
-      !isComponentLoaded(this.hass, "weather") ||
-      !this.hass.states[this._config!.entity]
+      !isComponentLoaded(this.menuai, "weather") ||
+      !this.menuai.states[this._config!.entity]
     ) {
       return;
     }
 
     this._subscribed = subscribeForecast(
-      this.hass!,
+      this.menuai!,
       this._config!.entity,
       this._config!.forecast_type as "daily" | "hourly" | "twice_daily",
       (event) => {
@@ -143,7 +143,7 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hasUpdated && this._config && this.hass) {
+    if (this.hasUpdated && this._config && this.menuai) {
       this._subscribeForecastEvents();
     }
   }
@@ -182,13 +182,13 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
     return (
       hasConfigOrEntityChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -196,32 +196,32 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
       this._subscribeForecastEvents();
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | WeatherForecastCardConfig
       | undefined;
 
     if (
-      (changedProps.has("hass") && !oldHass) ||
+      (changedProps.has("menuai") && !oldmenuai) ||
       (changedProps.has("_config") && !oldConfig) ||
-      (changedProps.has("hass") && oldHass!.themes !== this.hass.themes) ||
+      (changedProps.has("menuai") && oldmenuai!.themes !== this.menuai.themes) ||
       (changedProps.has("_config") && oldConfig!.theme !== this._config.theme)
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity] as WeatherEntity;
+    const stateObj = this.menuai.states[this._config.entity] as WeatherEntity;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -229,7 +229,7 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
     if (stateObj.state === UNAVAILABLE) {
       return html`
         <ha-card class="unavailable" @click=${this._handleAction}>
-          ${this.hass.localize("ui.panel.lovelace.warning.entity_unavailable", {
+          ${this.menuai.localize("ui.panel.lovelace.warning.entity_unavailable", {
             entity: `${computeStateName(stateObj)} (${this._config.entity})`,
           })}
         </ha-card>
@@ -287,14 +287,14 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                     <ha-state-icon
                       class="weather-icon"
                       .stateObj=${stateObj}
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                     ></ha-state-icon>
                   `}
                 </div>
                 <div class="info">
                   <div class="name-state">
                     <div class="state">
-                      ${this.hass.formatEntityState(stateObj)}
+                      ${this.menuai.formatEntityState(stateObj)}
                     </div>
                     <div class="name" .title=${name}>${name}</div>
                   </div>
@@ -305,10 +305,10 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                         ? html`
                             ${formatNumber(
                               stateObj.attributes.temperature,
-                              this.hass.locale
+                              this.menuai.locale
                             )}&nbsp;<span
                               >${getWeatherUnit(
-                                this.hass.config,
+                                this.menuai.config,
                                 stateObj,
                                 "temperature"
                               )}</span
@@ -329,26 +329,26 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                                     ]}
                                   ></ha-svg-icon>
                                 `
-                              : this.hass!.localize(
+                              : this.menuai!.localize(
                                   `ui.card.weather.attributes.${this._config.secondary_info_attribute}`
                                 )}
                             ${this._config.secondary_info_attribute ===
                             "wind_speed"
                               ? getWind(
-                                  this.hass,
+                                  this.menuai,
                                   stateObj,
                                   stateObj.attributes.wind_speed,
                                   stateObj.attributes.wind_bearing
                                 )
                               : html`
-                                  ${this.hass.formatEntityAttributeValue(
+                                  ${this.menuai.formatEntityAttributeValue(
                                     stateObj,
                                     this._config.secondary_info_attribute
                                   )}
                                 `}
                           `
                         : getSecondaryWeatherAttribute(
-                            this.hass,
+                            this.menuai,
                             stateObj,
                             forecast!
                           )}
@@ -371,15 +371,15 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                               ? html`
                                   ${formatDateWeekdayShort(
                                     new Date(item.datetime),
-                                    this.hass!.locale,
-                                    this.hass!.config
+                                    this.menuai!.locale,
+                                    this.menuai!.config
                                   )}
                                   <div class="daynight">
                                     ${item.is_daytime !== false
-                                      ? this.hass!.localize(
+                                      ? this.menuai!.localize(
                                           "ui.card.weather.day"
                                         )
-                                      : this.hass!.localize(
+                                      : this.menuai!.localize(
                                           "ui.card.weather.night"
                                         )}<br />
                                   </div>
@@ -388,15 +388,15 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                                 ? html`
                                     ${formatTime(
                                       new Date(item.datetime),
-                                      this.hass!.locale,
-                                      this.hass!.config
+                                      this.menuai!.locale,
+                                      this.menuai!.config
                                     )}
                                   `
                                 : html`
                                     ${formatDateWeekdayShort(
                                       new Date(item.datetime),
-                                      this.hass!.locale,
-                                      this.hass!.config
+                                      this.menuai!.locale,
+                                      this.menuai!.config
                                     )}
                                   `}
                           </div>
@@ -418,7 +418,7 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                             ${this._showValue(item.temperature)
                               ? html`${formatNumber(
                                   item.temperature,
-                                  this.hass!.locale
+                                  this.menuai!.locale
                                 )}°`
                               : "—"}
                           </div>
@@ -426,7 +426,7 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
                             ${this._showValue(item.templow)
                               ? html`${formatNumber(
                                   item.templow!,
-                                  this.hass!.locale
+                                  this.menuai!.locale
                                 )}°`
                               : hourly
                                 ? ""
@@ -444,7 +444,7 @@ class HuiWeatherForecastCard extends LitElement implements LovelaceCard {
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   private _showValue(item?: any): boolean {

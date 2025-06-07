@@ -16,7 +16,7 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import type { StateCondition } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { forDictStruct } from "../../structs";
 import type { ConditionElement } from "../ha-automation-condition-row";
 
@@ -81,7 +81,7 @@ const SCHEMA = [
 
 @customElement("ha-automation-condition-state")
 export class HaStateCondition extends LitElement implements ConditionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: StateCondition;
 
@@ -109,7 +109,7 @@ export class HaStateCondition extends LitElement implements ConditionElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${SCHEMA}
         .disabled=${this.disabled}
@@ -143,17 +143,17 @@ export class HaStateCondition extends LitElement implements ConditionElement {
   ): string => {
     switch (schema.name) {
       case "entity_id":
-        return this.hass.localize("ui.components.entity.entity-picker.entity");
+        return this.menuai.localize("ui.components.entity.entity-picker.entity");
       case "attribute":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.components.entity.entity-attribute-picker.attribute"
         );
       case "for":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.automation.editor.triggers.type.state.for`
         );
       default:
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.automation.editor.conditions.type.state.${schema.name}`
         );
     }

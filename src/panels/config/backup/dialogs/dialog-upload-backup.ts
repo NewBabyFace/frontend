@@ -5,7 +5,7 @@ import { customElement, property, query, state } from "lit/decorators";
 import { isComponentLoaded } from "../../../../common/config/is_component_loaded";
 import {
   fireEvent,
-  type HASSDomEvent,
+  type menuaiDomEvent,
 } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-alert";
 import "../../../../components/ha-dialog-header";
@@ -16,24 +16,24 @@ import "../../../../components/ha-md-dialog";
 import type { HaMdDialog } from "../../../../components/ha-md-dialog";
 import {
   CORE_LOCAL_AGENT,
-  HASSIO_LOCAL_AGENT,
+  menuaiIO_LOCAL_AGENT,
   SUPPORTED_UPLOAD_FORMAT,
   uploadBackup,
   INITIAL_UPLOAD_FORM_DATA,
   type BackupUploadFileFormData,
 } from "../../../../data/backup";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showAlertDialog } from "../../../lovelace/custom-card-helpers";
 import type { UploadBackupDialogParams } from "./show-dialog-upload-backup";
 
 @customElement("ha-dialog-upload-backup")
 export class DialogUploadBackup
   extends LitElement
-  implements HassDialog<UploadBackupDialogParams>
+  implements menuaiDialog<UploadBackupDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: UploadBackupDialogParams;
 
@@ -82,14 +82,14 @@ export class DialogUploadBackup
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             @click=${this.closeDialog}
             .disabled=${this._uploading}
           ></ha-icon-button>
 
           <span slot="title">
-            ${this.hass.localize("ui.panel.config.backup.dialogs.upload.title")}
+            ${this.menuai.localize("ui.panel.config.backup.dialogs.upload.title")}
           </span>
         </ha-dialog-header>
         <div slot="content">
@@ -97,15 +97,15 @@ export class DialogUploadBackup
             ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
             : nothing}
           <ha-file-upload
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .uploading=${this._uploading}
             .icon=${mdiFolderUpload}
             .accept=${SUPPORTED_UPLOAD_FORMAT}
-            .localize=${this.hass.localize}
-            .label=${this.hass.localize(
+            .localize=${this.menuai.localize}
+            .label=${this.menuai.localize(
               "ui.panel.config.backup.dialogs.upload.input_label"
             )}
-            .supports=${this.hass.localize(
+            .supports=${this.menuai.localize(
               "ui.panel.config.backup.dialogs.upload.supports_tar"
             )}
             @file-picked=${this._filePicked}
@@ -114,13 +114,13 @@ export class DialogUploadBackup
         </div>
         <div slot="actions">
           <ha-button @click=${this.closeDialog} .disabled=${this._uploading}
-            >${this.hass.localize("ui.common.cancel")}</ha-button
+            >${this.menuai.localize("ui.common.cancel")}</ha-button
           >
           <ha-button
             @click=${this._upload}
             .disabled=${!this._formValid() || this._uploading}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.upload.action"
             )}
           </ha-button>
@@ -129,7 +129,7 @@ export class DialogUploadBackup
     `;
   }
 
-  private _filePicked(ev: HASSDomEvent<{ files: File[] }>) {
+  private _filePicked(ev: menuaiDomEvent<{ files: File[] }>) {
     this._error = undefined;
     const file = ev.detail.files[0];
 
@@ -148,24 +148,24 @@ export class DialogUploadBackup
     const { file } = this._formData!;
     if (!file || file.type !== SUPPORTED_UPLOAD_FORMAT) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.backup.dialogs.upload.unsupported.title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.backup.dialogs.upload.unsupported.text"
         ),
-        confirmText: this.hass.localize("ui.common.ok"),
+        confirmText: this.menuai.localize("ui.common.ok"),
       });
       return;
     }
 
-    const agentIds = isComponentLoaded(this.hass!, "hassio")
-      ? [HASSIO_LOCAL_AGENT]
+    const agentIds = isComponentLoaded(this.menuai!, "menuaiio")
+      ? [menuaiIO_LOCAL_AGENT]
       : [CORE_LOCAL_AGENT];
 
     this._uploading = true;
     try {
-      await uploadBackup(this.hass, file, agentIds);
+      await uploadBackup(this.menuai, file, agentIds);
       this._params!.submit?.();
       this.closeDialog();
     } catch (err: any) {

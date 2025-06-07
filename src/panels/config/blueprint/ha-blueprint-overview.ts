@@ -11,7 +11,7 @@ import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { fireEvent } from "../../../common/dom/fire_event";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import { navigate } from "../../../common/navigate";
@@ -44,9 +44,9 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import type { LocalizeFunc } from "../../../common/translations/localize";
 import { documentationUrl } from "../../../util/documentation-url";
 import { showToast } from "../../../util/toast";
@@ -78,7 +78,7 @@ const createNewFunctions = {
 
 @customElement("ha-blueprint-overview")
 class HaBlueprintOverview extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -196,7 +196,7 @@ class HaBlueprintOverview extends LitElement {
       },
       actions: {
         title: "",
-        label: this.hass.localize("ui.panel.config.generic.headers.actions"),
+        label: this.menuai.localize("ui.panel.config.generic.headers.actions"),
         type: "overflow-menu",
         showNarrow: true,
         moveable: false,
@@ -209,19 +209,19 @@ class HaBlueprintOverview extends LitElement {
               ></ha-svg-icon>`
             : html`
                 <ha-icon-overflow-menu
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   narrow
                   .items=${[
                     {
                       path: mdiPlus,
-                      label: this.hass.localize(
+                      label: this.menuai.localize(
                         `ui.panel.config.blueprint.overview.create_${blueprint.type}`
                       ),
                       action: () => this._createNew(blueprint),
                     },
                     {
                       path: mdiEye,
-                      label: this.hass.localize(
+                      label: this.menuai.localize(
                         `ui.panel.config.blueprint.overview.view_${blueprint.domain}`
                       ),
                       action: () => this._showUsed(blueprint),
@@ -229,7 +229,7 @@ class HaBlueprintOverview extends LitElement {
                     {
                       path: mdiShareVariant,
                       disabled: !blueprint.source_url,
-                      label: this.hass.localize(
+                      label: this.menuai.localize(
                         blueprint.source_url
                           ? "ui.panel.config.blueprint.overview.share_blueprint"
                           : "ui.panel.config.blueprint.overview.share_blueprint_no_url"
@@ -239,7 +239,7 @@ class HaBlueprintOverview extends LitElement {
                     {
                       path: mdiDownload,
                       disabled: !blueprint.source_url,
-                      label: this.hass.localize(
+                      label: this.menuai.localize(
                         blueprint.source_url
                           ? "ui.panel.config.blueprint.overview.re_import_blueprint"
                           : "ui.panel.config.blueprint.overview.re_import_blueprint_no_url"
@@ -250,7 +250,7 @@ class HaBlueprintOverview extends LitElement {
                       divider: true,
                     },
                     {
-                      label: this.hass.localize(
+                      label: this.menuai.localize(
                         "ui.panel.config.blueprint.overview.delete_blueprint"
                       ),
                       path: mdiDelete,
@@ -278,16 +278,16 @@ class HaBlueprintOverview extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${configSections.automations}
-        .columns=${this._columns(this.hass.localize)}
-        .data=${this._processedBlueprints(this.blueprints, this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
+        .data=${this._processedBlueprints(this.blueprints, this.menuai.localize)}
         id="fullpath"
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.blueprint.overview.no_blueprints"
         )}
         has-fab
@@ -304,7 +304,7 @@ class HaBlueprintOverview extends LitElement {
             rel="noreferrer noopener"
           >
             <ha-button
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.blueprint.overview.discover_more"
               )}</ha-button
             >
@@ -324,13 +324,13 @@ class HaBlueprintOverview extends LitElement {
       >
         <ha-icon-button
           slot="toolbar-icon"
-          .label=${this.hass.localize("ui.common.help")}
+          .label=${this.menuai.localize("ui.common.help")}
           .path=${mdiHelpCircle}
           @click=${this._showHelp}
         ></ha-icon-button>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.blueprint.overview.add_blueprint"
           )}
           extended
@@ -338,25 +338,25 @@ class HaBlueprintOverview extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiDownload}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
   private _showHelp() {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.panel.config.blueprint.caption"),
+      title: this.menuai.localize("ui.panel.config.blueprint.caption"),
       text: html`
-        ${this.hass.localize("ui.panel.config.blueprint.overview.introduction")}
+        ${this.menuai.localize("ui.panel.config.blueprint.overview.introduction")}
         <p>
           <a
             href=${documentationUrl(
-              this.hass,
+              this.menuai,
               "/docs/automation/using_blueprints/"
             )}
             target="_blank"
             rel="noreferrer"
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.blueprint.overview.learn_more"
             )}
           </a>
@@ -380,14 +380,14 @@ class HaBlueprintOverview extends LitElement {
     fireEvent(this, "reload-blueprints");
   }
 
-  private _handleRowClicked(ev: HASSDomEvent<RowClickedEvent>) {
+  private _handleRowClicked(ev: menuaiDomEvent<RowClickedEvent>) {
     const blueprint = this._processedBlueprints(
       this.blueprints,
-      this.hass.localize
+      this.menuai.localize
     ).find((b) => b.fullpath === ev.detail.id)!;
     if (blueprint.error) {
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.blueprint.overview.error", {
+        title: this.menuai.localize("ui.panel.config.blueprint.overview.error", {
           path: blueprint.path,
         }),
         text: blueprint.name,
@@ -420,15 +420,15 @@ class HaBlueprintOverview extends LitElement {
 
   private _reImport = async (blueprint: BlueprintMetaDataPath) => {
     const result = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.blueprint.overview.re_import_confirm_title"
       ),
       text: html`
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.blueprint.overview.re_import_confirm_text"
         )}
       `,
-      confirmText: this.hass.localize(
+      confirmText: this.menuai.localize(
         "ui.panel.config.blueprint.overview.re_import_confirm_action"
       ),
       warning: true,
@@ -440,10 +440,10 @@ class HaBlueprintOverview extends LitElement {
 
     let importResult: BlueprintImportResult;
     try {
-      importResult = await importBlueprint(this.hass, blueprint.source_url!);
+      importResult = await importBlueprint(this.menuai, blueprint.source_url!);
     } catch (err) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.panel.config.blueprint.overview.re_import_error_source_not_found"
         ),
       });
@@ -452,7 +452,7 @@ class HaBlueprintOverview extends LitElement {
 
     try {
       await saveBlueprint(
-        this.hass,
+        this.menuai,
         blueprint.domain,
         blueprint.path,
         importResult!.raw_data,
@@ -461,7 +461,7 @@ class HaBlueprintOverview extends LitElement {
       );
     } catch (err: any) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.panel.config.blueprint.overview.re_import_error_save",
           { error: err.message }
         ),
@@ -472,7 +472,7 @@ class HaBlueprintOverview extends LitElement {
     fireEvent(this, "reload-blueprints");
 
     showToast(this, {
-      message: this.hass.localize(
+      message: this.menuai.localize(
         "ui.panel.config.blueprint.overview.re_import_success",
         { name: importResult!.blueprint.metadata.name }
       ),
@@ -481,26 +481,26 @@ class HaBlueprintOverview extends LitElement {
 
   private _delete = async (blueprint: BlueprintMetaDataPath) => {
     const related = await findRelated(
-      this.hass,
+      this.menuai,
       `${blueprint.domain}_blueprint`,
       blueprint.path
     );
     if (related.automation?.length || related.script?.length) {
-      const type = this.hass.localize(
+      const type = this.menuai.localize(
         `ui.panel.config.blueprint.overview.types_plural.${blueprint.domain}`
       );
       const result = await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.blueprint.overview.blueprint_in_use_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.blueprint.overview.blueprint_in_use_text",
           {
             type,
             list: html`<ul>
               ${[...(related.automation || []), ...(related.script || [])].map(
                 (item) => {
-                  const automationState = this.hass.states[item];
+                  const automationState = this.menuai.states[item];
                   return html`<li>
                     ${automationState
                       ? `${computeStateName(automationState)} (${item})`
@@ -511,7 +511,7 @@ class HaBlueprintOverview extends LitElement {
             </ul>`,
           }
         ),
-        confirmText: this.hass!.localize(
+        confirmText: this.menuai!.localize(
           "ui.panel.config.blueprint.overview.blueprint_in_use_view",
           { type }
         ),
@@ -527,21 +527,21 @@ class HaBlueprintOverview extends LitElement {
     }
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.blueprint.overview.confirm_delete_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.blueprint.overview.confirm_delete_text",
           { name: blueprint.name }
         ),
-        confirmText: this.hass!.localize("ui.common.delete"),
-        dismissText: this.hass!.localize("ui.common.cancel"),
+        confirmText: this.menuai!.localize("ui.common.delete"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
         destructive: true,
       }))
     ) {
       return;
     }
-    await deleteBlueprint(this.hass, blueprint.domain, blueprint.path);
+    await deleteBlueprint(this.menuai, blueprint.domain, blueprint.path);
     fireEvent(this, "reload-blueprints");
   };
 

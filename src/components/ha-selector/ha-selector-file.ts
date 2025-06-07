@@ -6,12 +6,12 @@ import { fireEvent } from "../../common/dom/fire_event";
 import { removeFile, uploadFile } from "../../data/file_upload";
 import type { FileSelector } from "../../data/selector";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-file-upload";
 
 @customElement("ha-selector-file")
 export class HaFileSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: FileSelector;
 
@@ -32,7 +32,7 @@ export class HaFileSelector extends LitElement {
   protected render() {
     return html`
       <ha-file-upload
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .accept=${this.selector.file?.accept}
         .icon=${mdiFile}
         .label=${this.label}
@@ -42,7 +42,7 @@ export class HaFileSelector extends LitElement {
         .uploading=${this._busy}
         .value=${this.value
           ? this._filename?.name ||
-            this.hass.localize("ui.components.selectors.file.unknown_file")
+            this.menuai.localize("ui.components.selectors.file.unknown_file")
           : undefined}
         @file-picked=${this._uploadFile}
         @change=${this._removeFile}
@@ -67,12 +67,12 @@ export class HaFileSelector extends LitElement {
     const file = ev.detail.files![0];
 
     try {
-      const fileId = await uploadFile(this.hass, file);
+      const fileId = await uploadFile(this.menuai, file);
       this._filename = { fileId, name: file.name };
       fireEvent(this, "value-changed", { value: fileId });
     } catch (err: any) {
       showAlertDialog(this, {
-        text: this.hass.localize("ui.components.selectors.file.upload_failed", {
+        text: this.menuai.localize("ui.components.selectors.file.upload_failed", {
           reason: err.message || err,
         }),
       });
@@ -84,7 +84,7 @@ export class HaFileSelector extends LitElement {
   private _removeFile = async () => {
     this._busy = true;
     try {
-      await removeFile(this.hass, this.value!);
+      await removeFile(this.menuai, this.value!);
     } catch (_err) {
       // Not ideal if removal fails, but will be cleaned up later
     } finally {

@@ -2,7 +2,7 @@ import { customElement, property, state } from "lit/decorators";
 import { html, LitElement, type PropertyValues } from "lit";
 import memoizeOne from "memoize-one";
 
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import type { LocalizeFunc } from "../../../../../../common/translations/localize";
 import type { HaFormSchema } from "../../../../../../components/ha-form/types";
 import { fireEvent } from "../../../../../../common/dom/fire_event";
@@ -13,7 +13,7 @@ import "../../../../../../components/ha-form/ha-form";
 
 @customElement("zwave-js-add-node-configure-device")
 export class ZWaveJsAddNodeConfigureDevice extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "device-name" }) public deviceName = "";
 
@@ -41,8 +41,8 @@ export class ZWaveJsAddNodeConfigureDevice extends LitElement {
   render() {
     return html`
       <ha-form
-        .hass=${this.hass}
-        .schema=${this._getSchema(this.hass.localize, this.longRangeSupported)}
+        .menuai=${this.menuai}
+        .schema=${this._getSchema(this.menuai.localize, this.longRangeSupported)}
         .data=${this._options!}
         @value-changed=${this._setOptions}
         .computeLabel=${this._computeLabel}
@@ -118,17 +118,17 @@ export class ZWaveJsAddNodeConfigureDevice extends LitElement {
 
   private _computeLabel = (schema: HaFormSchema): string | undefined => {
     if (schema.name === "network_type") {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.zwave_js.add_node.configure_device.choose_network_type"
       );
     }
     if (schema.name === "name") {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.zwave_js.add_node.configure_device.device_name"
       );
     }
     if (schema.name === "area") {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.zwave_js.add_node.configure_device.device_area"
       );
     }

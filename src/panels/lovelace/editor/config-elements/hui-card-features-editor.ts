@@ -16,7 +16,7 @@ import {
   isCustomType,
   stripCustomPrefix,
 } from "../../../../data/lovelace_custom_cards";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { supportsAlarmModesCardFeature } from "../../card-features/hui-alarm-modes-card-feature";
 import { supportsClimateFanModesCardFeature } from "../../card-features/hui-climate-fan-modes-card-feature";
 import { supportsClimateHvacModesCardFeature } from "../../card-features/hui-climate-hvac-modes-card-feature";
@@ -55,7 +55,7 @@ import { getCardFeatureElementClass } from "../../create-element/create-card-fea
 export type FeatureType = LovelaceCardFeatureConfig["type"];
 
 type SupportsFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => boolean;
 
@@ -158,7 +158,7 @@ customCardFeatures.forEach((feature) => {
 });
 
 export const getSupportedFeaturesType = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext,
   featuresTypes?: string[]
 ) => {
@@ -171,11 +171,11 @@ export const getSupportedFeaturesType = (
   );
   return filteredFeaturesTypes
     .concat(customFeaturesTypes)
-    .filter((type) => supportsFeaturesType(hass, context, type));
+    .filter((type) => supportsFeaturesType(menuai, context, type));
 };
 
 export const supportsFeaturesType = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext,
   type: string
 ) => {
@@ -188,12 +188,12 @@ export const supportsFeaturesType = (
     }
     try {
       if (customFeatureEntry.isSupported) {
-        return customFeatureEntry.isSupported(hass, context);
+        return customFeatureEntry.isSupported(menuai, context);
       }
       // Fallback to the old supported method
       if (customFeatureEntry.supported) {
         const stateObj = context.entity_id
-          ? hass.states[context.entity_id]
+          ? menuai.states[context.entity_id]
           : undefined;
         if (!stateObj) return false;
         return customFeatureEntry.supported(stateObj);
@@ -205,11 +205,11 @@ export const supportsFeaturesType = (
   }
 
   const supportsFeature = SUPPORTS_FEATURE_TYPES[type];
-  return !supportsFeature || supportsFeature(hass, context);
+  return !supportsFeature || supportsFeature(menuai, context);
 };
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "features-changed": {
       features: LovelaceCardFeatureConfig[];
     };
@@ -218,7 +218,7 @@ declare global {
 
 @customElement("hui-card-features-editor")
 export class HuiCardFeaturesEditor extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -234,14 +234,14 @@ export class HuiCardFeaturesEditor extends LitElement {
   private _featuresKeys = new WeakMap<LovelaceCardFeatureConfig, string>();
 
   private _supportsFeatureType(type: string): boolean {
-    if (!this.hass || !this.context) return false;
-    return supportsFeaturesType(this.hass, this.context, type);
+    if (!this.menuai || !this.context) return false;
+    return supportsFeaturesType(this.menuai, this.context, type);
   }
 
   private _getSupportedFeaturesType() {
-    if (!this.hass || !this.context) return [];
+    if (!this.menuai || !this.context) return [];
     return getSupportedFeaturesType(
-      this.hass,
+      this.menuai,
       this.context,
       this.featuresTypes
     );
@@ -264,7 +264,7 @@ export class HuiCardFeaturesEditor extends LitElement {
       return customFeatureEntry?.name || type;
     }
     return (
-      this.hass!.localize(
+      this.menuai!.localize(
         `ui.panel.lovelace.editor.features.types.${type}.label`
       ) || type
     );
@@ -279,7 +279,7 @@ export class HuiCardFeaturesEditor extends LitElement {
   }
 
   protected render() {
-    if (!this.features || !this.hass) {
+    if (!this.features || !this.menuai) {
       return nothing;
     }
 
@@ -294,7 +294,7 @@ export class HuiCardFeaturesEditor extends LitElement {
       ${supportedFeaturesType.length === 0 && this.features.length === 0
         ? html`
             <ha-alert type="info">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.lovelace.editor.features.no_compatible_available"
               )}
             </ha-alert>
@@ -320,7 +320,7 @@ export class HuiCardFeaturesEditor extends LitElement {
                       ${this.context && !supported
                         ? html`
                             <span class="secondary">
-                              ${this.hass!.localize(
+                              ${this.menuai!.localize(
                                 "ui.panel.lovelace.editor.features.not_compatible"
                               )}
                             </span>
@@ -331,7 +331,7 @@ export class HuiCardFeaturesEditor extends LitElement {
                   ${editable
                     ? html`
                         <ha-icon-button
-                          .label=${this.hass!.localize(
+                          .label=${this.menuai!.localize(
                             `ui.panel.lovelace.editor.features.edit`
                           )}
                           .path=${mdiPencil}
@@ -343,7 +343,7 @@ export class HuiCardFeaturesEditor extends LitElement {
                       `
                     : nothing}
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       `ui.panel.lovelace.editor.features.remove`
                     )}
                     .path=${mdiDelete}
@@ -367,7 +367,7 @@ export class HuiCardFeaturesEditor extends LitElement {
               <ha-button
                 slot="trigger"
                 outlined
-                .label=${this.hass!.localize(
+                .label=${this.menuai!.localize(
                   `ui.panel.lovelace.editor.features.add`
                 )}
               >
@@ -409,12 +409,12 @@ export class HuiCardFeaturesEditor extends LitElement {
     let newFeature: LovelaceCardFeatureConfig;
     if (elClass && elClass.getStubConfig) {
       try {
-        newFeature = await elClass.getStubConfig(this.hass!, this.context!);
+        newFeature = await elClass.getStubConfig(this.menuai!, this.context!);
       } catch (_err) {
         const stateObj = this.context!.entity_id
-          ? this.hass!.states[this.context!.entity_id]
+          ? this.menuai!.states[this.context!.entity_id]
           : undefined;
-        newFeature = await elClass.getStubConfig(this.hass!, stateObj);
+        newFeature = await elClass.getStubConfig(this.menuai!, stateObj);
       }
     } else {
       newFeature = { type: value } as LovelaceCardFeatureConfig;

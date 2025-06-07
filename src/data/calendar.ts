@@ -1,7 +1,7 @@
 import { getColorByIndex } from "../common/color/colors";
 import { computeDomain } from "../common/entity/compute_domain";
 import { computeStateName } from "../common/entity/compute_state_name";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { isUnavailableState } from "./entity";
 
 export interface Calendar {
@@ -54,7 +54,7 @@ export const enum CalendarEntityFeature {
 }
 
 export const fetchCalendarEvents = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   start: Date,
   end: Date,
   calendars: Calendar[]
@@ -69,7 +69,7 @@ export const fetchCalendarEvents = async (
 
   calendars.forEach((cal) => {
     promises.push(
-      hass.callApi<CalendarEvent[]>(
+      menuai.callApi<CalendarEvent[]>(
         "GET",
         `calendars/${cal.entity_id}${params}`
       )
@@ -134,41 +134,41 @@ const getCalendarDate = (dateObj: any): string | undefined => {
   return undefined;
 };
 
-export const getCalendars = (hass: HomeAssistant): Calendar[] =>
-  Object.keys(hass.states)
+export const getCalendars = (menuai: menuai): Calendar[] =>
+  Object.keys(menuai.states)
     .filter(
       (eid) =>
         computeDomain(eid) === "calendar" &&
-        !isUnavailableState(hass.states[eid].state) &&
-        hass.entities[eid]?.hidden !== true
+        !isUnavailableState(menuai.states[eid].state) &&
+        menuai.entities[eid]?.hidden !== true
     )
     .sort()
     .map((eid, idx) => ({
-      ...hass.states[eid],
-      name: computeStateName(hass.states[eid]),
+      ...menuai.states[eid],
+      name: computeStateName(menuai.states[eid]),
       backgroundColor: getColorByIndex(idx),
     }));
 
 export const createCalendarEvent = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   event: CalendarEventMutableParams
 ) =>
-  hass.callWS<undefined>({
+  menuai.callWS<undefined>({
     type: "calendar/event/create",
     entity_id: entityId,
     event: event,
   });
 
 export const updateCalendarEvent = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   uid: string,
   event: CalendarEventMutableParams,
   recurrence_id?: string,
   recurrence_range?: RecurrenceRange
 ) =>
-  hass.callWS<undefined>({
+  menuai.callWS<undefined>({
     type: "calendar/event/update",
     entity_id: entityId,
     uid,
@@ -178,13 +178,13 @@ export const updateCalendarEvent = (
   });
 
 export const deleteCalendarEvent = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   uid: string,
   recurrence_id?: string,
   recurrence_range?: RecurrenceRange
 ) =>
-  hass.callWS<undefined>({
+  menuai.callWS<undefined>({
     type: "calendar/event/delete",
     entity_id: entityId,
     uid,

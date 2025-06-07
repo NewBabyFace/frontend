@@ -16,7 +16,7 @@ import {
   STREAM_TYPE_WEB_RTC,
   type StreamType,
 } from "../data/camera";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-hls-player";
 import "./ha-web-rtc-player";
 
@@ -29,7 +29,7 @@ interface Stream {
 
 @customElement("ha-camera-stream")
 export class HaCameraStream extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public stateObj?: CameraEntity;
 
@@ -121,7 +121,7 @@ export class HaCameraStream extends LitElement {
         .allowExoPlayer=${this.allowExoPlayer}
         .muted=${this.muted}
         .controls=${this.controls}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityid=${this.stateObj.entity_id}
         .posterUrl=${this._posterUrl}
         @streams=${this._handleHlsStreams}
@@ -137,7 +137,7 @@ export class HaCameraStream extends LitElement {
         playsinline
         .muted=${this.muted}
         .controls=${this.controls}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityid=${this.stateObj.entity_id}
         .posterUrl=${this._posterUrl}
         @streams=${this._handleWebRtcStreams}
@@ -159,7 +159,7 @@ export class HaCameraStream extends LitElement {
       return;
     }
     this._capabilities = await fetchCameraCapabilities(
-      this.hass!,
+      this.menuai!,
       this.stateObj!.entity_id
     );
   }
@@ -167,7 +167,7 @@ export class HaCameraStream extends LitElement {
   private async _getPosterUrl(): Promise<void> {
     try {
       this._posterUrl = await fetchThumbnailUrlWithCache(
-        this.hass!,
+        this.menuai!,
         this.stateObj!.entity_id,
         this.clientWidth,
         this.clientHeight
@@ -292,7 +292,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-camera-stream": HaCameraStream;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     load: undefined;
     streams: {
       hasAudio: boolean;

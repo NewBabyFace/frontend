@@ -7,7 +7,7 @@ import { fireEvent } from "../../../common/dom/fire_event";
 import { computeRTL } from "../../../common/util/compute_rtl";
 import type { LovelaceViewElement } from "../../../data/lovelace";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiCard } from "../cards/hui-card";
 import type { HuiCardOptions } from "../components/hui-card-options";
 import type { HuiWarning } from "../components/hui-warning";
@@ -16,7 +16,7 @@ import type { Lovelace } from "../types";
 let editCodeLoaded = false;
 
 export class PanelView extends LitElement implements LovelaceViewElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -63,8 +63,8 @@ export class PanelView extends LitElement implements LovelaceViewElement {
   protected render(): TemplateResult {
     return html`
       ${this.cards!.length > 1
-        ? html`<hui-warning .hass=${this.hass}>
-            ${this.hass!.localize(
+        ? html`<hui-warning .menuai=${this.menuai}>
+            ${this.menuai!.localize(
               "ui.panel.lovelace.editor.view.panel_mode.warning_multiple_cards"
             )}
           </hui-warning>`
@@ -73,13 +73,13 @@ export class PanelView extends LitElement implements LovelaceViewElement {
       ${this.lovelace?.editMode && this.cards.length === 0
         ? html`
             <ha-fab
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.lovelace.editor.edit_card.add"
               )}
               extended
               @click=${this._addCard}
               class=${classMap({
-                rtl: computeRTL(this.hass!),
+                rtl: computeRTL(this.menuai!),
               })}
             >
               <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
@@ -109,7 +109,7 @@ export class PanelView extends LitElement implements LovelaceViewElement {
     }
 
     const wrapper = document.createElement("hui-card-options");
-    wrapper.hass = this.hass;
+    wrapper.menuai = this.menuai;
     wrapper.lovelace = this.lovelace;
     wrapper.path = [this.index!, 0];
     wrapper.hidePosition = true;

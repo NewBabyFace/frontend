@@ -2,7 +2,7 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import type { LogicalCondition } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../ha-automation-condition";
 import type { ConditionElement } from "../ha-automation-condition-row";
 
@@ -11,7 +11,7 @@ export abstract class HaLogicalCondition
   extends LitElement
   implements ConditionElement
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: LogicalCondition;
 
@@ -22,7 +22,7 @@ export abstract class HaLogicalCondition
       <ha-automation-condition
         .conditions=${this.condition.conditions || []}
         @value-changed=${this._valueChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
       ></ha-automation-condition>
     `;

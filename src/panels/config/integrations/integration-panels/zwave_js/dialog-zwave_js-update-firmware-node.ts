@@ -36,7 +36,7 @@ import {
   showConfirmationDialog,
 } from "../../../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZWaveJSUpdateFirmwareNodeDialogParams } from "./show-dialog-zwave_js-update-firmware-node";
 
 const firmwareTargetSchema: HaFormSchema[] = [
@@ -49,7 +49,7 @@ const firmwareTargetSchema: HaFormSchema[] = [
 
 @customElement("dialog-zwave_js-update-firmware-node")
 class DialogZWaveJSUpdateFirmwareNode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device?: DeviceRegistryEntry;
 
@@ -78,7 +78,7 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
   private _deviceName?: string;
 
   public showDialog(params: ZWaveJSUpdateFirmwareNodeDialogParams): void {
-    this._deviceName = computeDeviceNameDisplay(params.device, this.hass!);
+    this._deviceName = computeDeviceNameDisplay(params.device, this.menuai!);
     this.device = params.device;
     this._fetchData();
     this._subscribeNodeStatus();
@@ -108,10 +108,10 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
     }
 
     const beginFirmwareUpdateHTML = html`<ha-file-upload
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .uploading=${this._uploading}
         .icon=${mdiFileUpload}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.zwave_js.update_firmware.upload_firmware"
         )}
         .value=${this._firmwareFile}
@@ -120,12 +120,12 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
       ${this._nodeStatus.is_controller_node
         ? nothing
         : html`<p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.update_firmware.firmware_target_intro"
               )}
             </p>
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .data=${{ firmware_target: this._firmwareTarget }}
               .schema=${firmwareTargetSchema}
               @value-changed=${this._firmwareTargetChanged}
@@ -135,7 +135,7 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
         @click=${this._beginFirmwareUpdate}
         .disabled=${this._firmwareFile === undefined}
       >
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.zwave_js.update_firmware.begin_update"
         )}
       </mwc-button>`;
@@ -154,7 +154,7 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
       ? nothing
       : html`
           <mwc-button slot="primaryAction" @click=${this._abortFirmwareUpdate}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.update_firmware.abort"
             )}
           </mwc-button>
@@ -165,15 +165,15 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.zwave_js.update_firmware.title")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.zwave_js.update_firmware.title")
         )}
       >
         ${!this._updateProgressMessage && !this._updateFinishedMessage
           ? !this._updateInProgress
             ? html`
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.zwave_js.update_firmware.introduction${localizationKeySuffix}`,
                     {
                       device: html`<strong>${this._deviceName}</strong>`,
@@ -185,13 +185,13 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
             : html`
                 <p>
                   ${this._nodeStatus.status === NodeStatus.Asleep
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         "ui.panel.config.zwave_js.update_firmware.queued",
                         {
                           device: html`<strong>${this._deviceName}</strong>`,
                         }
                       )
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         "ui.panel.config.zwave_js.update_firmware.awake",
                         {
                           device: html`<strong>${this._deviceName}</strong>`,
@@ -200,13 +200,13 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
                 </p>
                 <p>
                   ${this._nodeStatus.status === NodeStatus.Asleep
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         "ui.panel.config.zwave_js.update_firmware.close_queued",
                         {
                           device: html`<strong>${this._deviceName}</strong>`,
                         }
                       )
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         "ui.panel.config.zwave_js.update_firmware.close",
                         {
                           device: html`<strong>${this._deviceName}</strong>`,
@@ -218,7 +218,7 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
           : this._updateProgressMessage && !this._updateFinishedMessage
             ? html`
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.update_firmware.in_progress",
                     {
                       device: html`<strong>${this._deviceName}</strong>`,
@@ -235,7 +235,7 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
                   this._updateProgressMessage.total_fragments}
                 ></mwc-linear-progress>
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.update_firmware.close",
                     {
                       device: html`<strong>${this._deviceName}</strong>`,
@@ -254,11 +254,11 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
                   ></ha-svg-icon>
                   <div class="status">
                     <p>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         `ui.panel.config.zwave_js.update_firmware.finished_status.${status}`,
                         {
                           device: html`<strong>${this._deviceName}</strong>`,
-                          message: this.hass.localize(
+                          message: this.menuai.localize(
                             `ui.panel.config.zwave_js.update_firmware.finished_status.${
                               this._nodeStatus.is_controller_node
                                 ? ControllerFirmwareUpdateStatus[
@@ -276,12 +276,12 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
                 </div>
                 ${this._updateFinishedMessage!.success
                   ? html`<p>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         `ui.panel.config.zwave_js.update_firmware.finished_status.done${localizationKeySuffix}`
                       )}
                     </p>`
                   : html`<p>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.zwave_js.update_firmware.finished_status.try_again"
                         )}
                       </p>
@@ -293,8 +293,8 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
 
   private async _fetchData(): Promise<void> {
     [this._nodeStatus, this._updateInProgress] = await Promise.all([
-      fetchZwaveNodeStatus(this.hass, this.device!.id),
-      fetchZwaveIsNodeFirmwareUpdateInProgress(this.hass, this.device!.id),
+      fetchZwaveNodeStatus(this.menuai, this.device!.id),
+      fetchZwaveIsNodeFirmwareUpdateInProgress(this.menuai, this.device!.id),
     ]);
     if (this._updateInProgress) {
       this._subscribeNodeFirmwareUpdate();
@@ -307,7 +307,7 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
     try {
       this._subscribeNodeFirmwareUpdate();
       await uploadFirmwareAndBeginUpdate(
-        this.hass,
+        this.menuai,
         this.device!.id,
         this._firmwareFile!,
         this._firmwareTarget
@@ -318,11 +318,11 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
       this._unsubscribeNodeFirmwareUpdate();
       this._uploading = false;
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.zwave_js.update_firmware.upload_failed"
         ),
         text: err.message,
-        confirmText: this.hass!.localize("ui.common.close"),
+        confirmText: this.menuai!.localize("ui.common.close"),
       });
     }
   }
@@ -330,26 +330,26 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
   private async _abortFirmwareUpdate(): Promise<void> {
     if (
       await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.zwave_js.update_firmware.confirm_abort",
           {
             device: html`<strong>${this._deviceName}</strong>`,
           }
         ),
-        dismissText: this.hass!.localize("ui.common.no"),
-        confirmText: this.hass!.localize("ui.common.yes"),
+        dismissText: this.menuai!.localize("ui.common.no"),
+        confirmText: this.menuai!.localize("ui.common.yes"),
       })
     ) {
       this._unsubscribeNodeFirmwareUpdate();
       try {
-        await abortZwaveNodeFirmwareUpdate(this.hass, this.device!.id);
+        await abortZwaveNodeFirmwareUpdate(this.menuai, this.device!.id);
       } catch (err: any) {
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.zwave_js.update_firmware.abort_failed"
           ),
           text: err.message,
-          confirmText: this.hass!.localize("ui.common.close"),
+          confirmText: this.menuai!.localize("ui.common.close"),
         });
       }
       this._firmwareFile = undefined;
@@ -360,11 +360,11 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
   }
 
   private _subscribeNodeStatus(): void {
-    if (!this.hass || !this.device || this._subscribedNodeStatus) {
+    if (!this.menuai || !this.device || this._subscribedNodeStatus) {
       return;
     }
     this._subscribedNodeStatus = subscribeZwaveNodeStatus(
-      this.hass,
+      this.menuai,
       this.device.id,
       (message: ZWaveJSNodeStatusUpdatedMessage) => {
         this._nodeStatus!.status = message.status;
@@ -381,11 +381,11 @@ class DialogZWaveJSUpdateFirmwareNode extends LitElement {
   }
 
   private _subscribeNodeFirmwareUpdate(): void {
-    if (!this.hass || !this.device || this._subscribedNodeFirmwareUpdate) {
+    if (!this.menuai || !this.device || this._subscribedNodeFirmwareUpdate) {
       return;
     }
     this._subscribedNodeFirmwareUpdate = subscribeZwaveNodeFirmwareUpdate(
-      this.hass,
+      this.menuai,
       this.device.id,
       (
         message:

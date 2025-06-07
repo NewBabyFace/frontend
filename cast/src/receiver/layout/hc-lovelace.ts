@@ -6,7 +6,7 @@ import { getPanelTitleFromUrlPath } from "../../../../src/data/panel";
 import type { Lovelace } from "../../../../src/panels/lovelace/types";
 import "../../../../src/panels/lovelace/views/hui-view";
 import "../../../../src/panels/lovelace/views/hui-view-container";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import "./hc-launch-screen";
 import "../../../../src/panels/lovelace/views/hui-view-background";
 
@@ -15,7 +15,7 @@ import "../../../../src/panels/lovelace/views/hui-view-background";
 
 @customElement("hc-lovelace")
 class HcLovelace extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public lovelaceConfig!: LovelaceConfig;
@@ -29,7 +29,7 @@ class HcLovelace extends LitElement {
     if (index === undefined) {
       return html`
         <hc-launch-screen
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .error=${`Unable to find a view with path ${this.viewPath}`}
         ></hc-launch-screen>
       `;
@@ -41,7 +41,7 @@ class HcLovelace extends LitElement {
       urlPath: this.urlPath,
       enableFullEditMode: () => undefined,
       mode: "storage",
-      locale: this.hass.locale,
+      locale: this.menuai.locale,
       saveConfig: async () => undefined,
       deleteConfig: async () => undefined,
       setEditMode: () => undefined,
@@ -52,11 +52,11 @@ class HcLovelace extends LitElement {
     const background = viewConfig.background || this.lovelaceConfig.background;
 
     return html`
-      <hui-view-container .hass=${this.hass} .theme=${viewConfig.theme}>
-        <hui-view-background .hass=${this.hass} .background=${background}>
+      <hui-view-container .menuai=${this.menuai} .theme=${viewConfig.theme}>
+        <hui-view-background .menuai=${this.menuai} .background=${background}>
         </hui-view-background>
         <hui-view
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .lovelace=${lovelace}
           .index=${index}
         ></hui-view>
@@ -72,7 +72,7 @@ class HcLovelace extends LitElement {
 
       if (index !== undefined) {
         const title = getPanelTitleFromUrlPath(
-          this.hass,
+          this.menuai,
           this.urlPath || "lovelace"
         );
 
@@ -133,7 +133,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "hc-lovelace": HcLovelace;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "cast-view-changed": CastViewChanged;
   }
 }

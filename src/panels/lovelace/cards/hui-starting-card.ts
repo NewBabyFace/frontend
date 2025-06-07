@@ -7,12 +7,12 @@ import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-card";
 import "../../../components/ha-spinner";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCard } from "../types";
 
 @customElement("hui-starting-card")
 export class HuiStartingCard extends LitElement implements LovelaceCard {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   public getCardSize(): number {
     return 2;
@@ -23,24 +23,24 @@ export class HuiStartingCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
-    if (!changedProperties.has("hass") || !this.hass!.config) {
+    if (!changedProperties.has("menuai") || !this.menuai!.config) {
       return;
     }
 
-    if (this.hass!.config.state !== STATE_NOT_RUNNING) {
+    if (this.menuai!.config.state !== STATE_NOT_RUNNING) {
       fireEvent(this, "config-refresh");
     }
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     return html`
       <div class="content">
         <ha-spinner></ha-spinner>
-        ${this.hass.localize("ui.panel.lovelace.cards.starting.description")}
+        ${this.menuai.localize("ui.panel.lovelace.cards.starting.description")}
       </div>
     `;
   }

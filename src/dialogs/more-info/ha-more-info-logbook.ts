@@ -6,12 +6,12 @@ import memoizeOne from "memoize-one";
 import { isComponentLoaded } from "../../common/config/is_component_loaded";
 import { createSearchParam } from "../../common/url/search-params";
 import "../../panels/logbook/ha-logbook";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { haStyle } from "../../resources/styles";
 
 @customElement("ha-more-info-logbook")
 export class MoreInfoLogbook extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -22,10 +22,10 @@ export class MoreInfoLogbook extends LitElement {
   private _entityIdAsList = memoizeOne((entityId: string) => [entityId]);
 
   protected render() {
-    if (!isComponentLoaded(this.hass, "logbook") || !this.entityId) {
+    if (!isComponentLoaded(this.menuai, "logbook") || !this.entityId) {
       return nothing;
     }
-    const stateObj = this.hass.states[this.entityId];
+    const stateObj = this.menuai.states[this.entityId];
 
     if (!stateObj) {
       return nothing;
@@ -33,13 +33,13 @@ export class MoreInfoLogbook extends LitElement {
 
     return html`
       <div class="header">
-        <h2>${this.hass.localize("ui.dialogs.more_info_control.logbook")}</h2>
+        <h2>${this.menuai.localize("ui.dialogs.more_info_control.logbook")}</h2>
         <a href=${this._showMoreHref}
-          >${this.hass.localize("ui.dialogs.more_info_control.show_more")}</a
+          >${this.menuai.localize("ui.dialogs.more_info_control.show_more")}</a
         >
       </div>
       <ha-logbook
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .time=${this._time}
         .entityIds=${this._entityIdAsList(this.entityId)}
         narrow

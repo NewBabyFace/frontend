@@ -5,7 +5,7 @@ import { any, assert, literal, object, optional, string } from "superstruct";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { StateLabelElementConfig } from "../../../elements/types";
 import type { LovelacePictureElementEditor } from "../../../types";
 import { actionConfigStruct } from "../../structs/action-struct";
@@ -82,7 +82,7 @@ export class HuiStateLabelElementEditor
   extends LitElement
   implements LovelacePictureElementEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StateLabelElementConfig;
 
@@ -92,13 +92,13 @@ export class HuiStateLabelElementEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -112,10 +112,10 @@ export class HuiStateLabelElementEditor
   }
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     ) ||
-    this.hass!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
+    this.menuai!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
     schema.name;
 }
 

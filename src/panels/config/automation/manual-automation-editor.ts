@@ -1,6 +1,6 @@
 import "@material/mwc-button/mwc-button";
 import { mdiHelpCircle } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -33,7 +33,7 @@ import {
 } from "../../../data/automation";
 import { getActionType, type Action } from "../../../data/script";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import "./action/ha-automation-action";
 import "./condition/ha-automation-condition";
@@ -69,7 +69,7 @@ const automationConfigStruct = union([
 
 @customElement("manual-automation-editor")
 export class HaManualAutomationEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -79,7 +79,7 @@ export class HaManualAutomationEditor extends LitElement {
 
   @property({ attribute: false }) public config!: ManualAutomationConfig;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property({ attribute: false }) public dirty = false;
 
@@ -127,11 +127,11 @@ export class HaManualAutomationEditor extends LitElement {
       ${this.stateObj?.state === "off"
         ? html`
             <ha-alert alert-type="info">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.disabled"
               )}
               <mwc-button slot="action" @click=${this._enable}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.enable"
                 )}
               </mwc-button>
@@ -147,18 +147,18 @@ export class HaManualAutomationEditor extends LitElement {
         : nothing}
       <div class="header">
         <h2 id="triggers-heading" class="name">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.editor.triggers.header"
           )}
         </h2>
         <a
-          href=${documentationUrl(this.hass, "/docs/automation/trigger/")}
+          href=${documentationUrl(this.menuai, "/docs/automation/trigger/")}
           target="_blank"
           rel="noreferrer"
         >
           <ha-icon-button
             .path=${mdiHelpCircle}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.automation.editor.triggers.learn_more"
             )}
           ></ha-icon-button>
@@ -166,7 +166,7 @@ export class HaManualAutomationEditor extends LitElement {
       </div>
       ${!ensureArray(this.config.triggers)?.length
         ? html`<p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.editor.triggers.description"
             )}
           </p>`
@@ -179,27 +179,27 @@ export class HaManualAutomationEditor extends LitElement {
         .highlightedTriggers=${this._pastedConfig?.triggers || []}
         .path=${["triggers"]}
         @value-changed=${this._triggerChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
       ></ha-automation-trigger>
 
       <div class="header">
         <h2 id="conditions-heading" class="name">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.editor.conditions.header"
           )}
           <span class="small"
-            >(${this.hass.localize("ui.common.optional")})</span
+            >(${this.menuai.localize("ui.common.optional")})</span
           >
         </h2>
         <a
-          href=${documentationUrl(this.hass, "/docs/automation/condition/")}
+          href=${documentationUrl(this.menuai, "/docs/automation/condition/")}
           target="_blank"
           rel="noreferrer"
         >
           <ha-icon-button
             .path=${mdiHelpCircle}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.automation.editor.conditions.learn_more"
             )}
           ></ha-icon-button>
@@ -207,9 +207,9 @@ export class HaManualAutomationEditor extends LitElement {
       </div>
       ${!ensureArray(this.config.conditions)?.length
         ? html`<p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.editor.conditions.description",
-              { user: this.hass.user?.name || "Alice" }
+              { user: this.menuai.user?.name || "Alice" }
             )}
           </p>`
         : nothing}
@@ -221,25 +221,25 @@ export class HaManualAutomationEditor extends LitElement {
         .highlightedConditions=${this._pastedConfig?.conditions || []}
         .path=${["conditions"]}
         @value-changed=${this._conditionChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
       ></ha-automation-condition>
 
       <div class="header">
         <h2 id="actions-heading" class="name">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.editor.actions.header"
           )}
         </h2>
         <div>
           <a
-            href=${documentationUrl(this.hass, "/docs/automation/action/")}
+            href=${documentationUrl(this.menuai, "/docs/automation/action/")}
             target="_blank"
             rel="noreferrer"
           >
             <ha-icon-button
               .path=${mdiHelpCircle}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.learn_more"
               )}
             ></ha-icon-button>
@@ -248,7 +248,7 @@ export class HaManualAutomationEditor extends LitElement {
       </div>
       ${!ensureArray(this.config.actions)?.length
         ? html`<p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.editor.actions.description"
             )}
           </p>`
@@ -261,7 +261,7 @@ export class HaManualAutomationEditor extends LitElement {
         .highlightedActions=${this._pastedConfig?.actions || []}
         .path=${["actions"]}
         @value-changed=${this._actionChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .disabled=${this.disabled}
       ></ha-automation-action>
@@ -296,10 +296,10 @@ export class HaManualAutomationEditor extends LitElement {
   }
 
   private async _enable(): Promise<void> {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
-    await this.hass.callService("automation", "turn_on", {
+    await this.menuai.callService("automation", "turn_on", {
       entity_id: this.stateObj.entity_id,
     });
   }
@@ -319,7 +319,7 @@ export class HaManualAutomationEditor extends LitElement {
       loaded = load(paste);
     } catch (_err: any) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.panel.config.automation.editor.paste_invalid_yaml"
         ),
         duration: 4000,
@@ -393,7 +393,7 @@ export class HaManualAutomationEditor extends LitElement {
       assert(normalized, automationConfigStruct);
     } catch (_err: any) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.panel.config.automation.editor.paste_invalid_config"
         ),
         duration: 4000,
@@ -480,12 +480,12 @@ export class HaManualAutomationEditor extends LitElement {
 
   private _showPastedToastWithUndo() {
     showToast(this, {
-      message: this.hass.localize(
+      message: this.menuai.localize(
         "ui.panel.config.automation.editor.paste_toast_message"
       ),
       duration: 4000,
       action: {
-        text: this.hass.localize("ui.common.undo"),
+        text: this.menuai.localize("ui.common.undo"),
         action: () => {
           fireEvent(this, "value-changed", {
             value: {

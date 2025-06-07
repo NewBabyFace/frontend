@@ -1,23 +1,23 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "./common";
-import { hassioApiResultExtractor } from "./common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "./common";
+import { menuaiioApiResultExtractor } from "./common";
 
 export const friendlyFolderName = {
   ssl: "SSL",
-  homeassistant: "Configuration",
+  menuai: "Configuration",
   "addons/local": "Local add-ons",
   media: "Media",
   share: "Share",
 };
 
 interface BackupContent {
-  homeassistant: boolean;
+  menuai: boolean;
   folders: string[];
   addons: string[];
 }
 
-export interface HassioBackup {
+export interface menuaiioBackup {
   slug: string;
   date: string;
   name: string;
@@ -28,9 +28,9 @@ export interface HassioBackup {
   content: BackupContent;
 }
 
-export interface HassioBackupDetail extends HassioBackup {
+export interface menuaiioBackupDetail extends menuaiioBackup {
   size: number;
-  homeassistant: string;
+  menuai: string;
   addons: {
     slug: "ADDON_SLUG";
     name: "NAME";
@@ -41,97 +41,97 @@ export interface HassioBackupDetail extends HassioBackup {
   folders: string[];
 }
 
-export interface HassioFullBackupCreateParams {
+export interface menuaiioFullBackupCreateParams {
   name: string;
   password?: string;
   confirm_password?: string;
   background?: boolean;
 }
-export interface HassioPartialBackupCreateParams
-  extends HassioFullBackupCreateParams {
+export interface menuaiioPartialBackupCreateParams
+  extends menuaiioFullBackupCreateParams {
   folders?: string[];
   addons?: string[];
-  homeassistant?: boolean;
+  menuai?: boolean;
 }
 
-export const fetchHassioBackups = async (
-  hass: HomeAssistant
-): Promise<HassioBackup[]> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    const data: Record<string, HassioBackup[]> = await hass.callWS({
+export const fetchmenuaiioBackups = async (
+  menuai: menuai
+): Promise<menuaiioBackup[]> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    const data: Record<string, menuaiioBackup[]> = await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }`,
       method: "get",
     });
     return data[
-      atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+      atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
     ];
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<{ snapshots: HassioBackup[] }>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<{ snapshots: menuaiioBackup[] }>>(
       "GET",
-      `hassio/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+      `menuaiio/${
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }`
     )
   ).snapshots;
 };
 
-export const fetchHassioBackupInfo = async (
-  hass: HomeAssistant,
+export const fetchmenuaiioBackupInfo = async (
+  menuai: menuai,
   backup: string
-): Promise<HassioBackupDetail> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+): Promise<menuaiioBackupDetail> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }/${backup}/info`,
       method: "get",
     });
   }
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioBackupDetail>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioBackupDetail>>(
       "GET",
-      `hassio/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+      `menuaiio/${
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }/${backup}/info`
     )
   );
 };
 
-export const reloadHassioBackups = async (hass: HomeAssistant) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+export const reloadmenuaiioBackups = async (menuai: menuai) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }/reload`,
       method: "post",
     });
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/${
-      atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+    `menuaiio/${
+      atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
     }/reload`
   );
 };
 
-export const createHassioFullBackup = async (
-  hass: HomeAssistant,
-  data: HassioFullBackupCreateParams
+export const createmenuaiioFullBackup = async (
+  menuai: menuai,
+  data: menuaiioFullBackupCreateParams
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }/new/full`,
       method: "post",
       timeout: null,
@@ -139,45 +139,45 @@ export const createHassioFullBackup = async (
     });
     return;
   }
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/${
-      atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+    `menuaiio/${
+      atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
     }/new/full`,
     data
   );
 };
 
-export const removeBackup = async (hass: HomeAssistant, slug: string) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+export const removeBackup = async (menuai: menuai, slug: string) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${
-        atLeastVersion(hass.config.version, 2021, 9)
+        atLeastVersion(menuai.config.version, 2021, 9)
           ? `backups/${slug}`
           : `snapshots/${slug}/remove`
       }`,
-      method: atLeastVersion(hass.config.version, 2021, 9) ? "delete" : "post",
+      method: atLeastVersion(menuai.config.version, 2021, 9) ? "delete" : "post",
     });
     return;
   }
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/${
-      atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+    `menuaiio/${
+      atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
     }/${slug}/remove`
   );
 };
 
-export const createHassioPartialBackup = async (
-  hass: HomeAssistant,
-  data: HassioPartialBackupCreateParams
+export const createmenuaiioPartialBackup = async (
+  menuai: menuai,
+  data: menuaiioPartialBackupCreateParams
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }/new/partial`,
       method: "post",
       timeout: null,
@@ -186,26 +186,26 @@ export const createHassioPartialBackup = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    `hassio/${
-      atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+    `menuaiio/${
+      atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
     }/new/partial`,
     data
   );
 };
 
 export const uploadBackup = async (
-  hass: HomeAssistant | undefined,
+  menuai: menuai | undefined,
   file: File
-): Promise<HassioResponse<HassioBackup>> => {
+): Promise<menuaiioResponse<menuaiioBackup>> => {
   const fd = new FormData();
   let resp;
   fd.append("file", file);
-  if (hass) {
-    resp = await hass.fetchWithAuth(
-      `/api/hassio/${
-        atLeastVersion(hass.config.version, 2021, 9) ? "backups" : "snapshots"
+  if (menuai) {
+    resp = await menuai.fetchWithAuth(
+      `/api/menuaiio/${
+        atLeastVersion(menuai.config.version, 2021, 9) ? "backups" : "snapshots"
       }/new/upload`,
       {
         method: "POST",
@@ -213,8 +213,8 @@ export const uploadBackup = async (
       }
     );
   } else {
-    // When called from onboarding we don't have hass
-    resp = await fetch(`${__HASS_URL__}/api/hassio/backups/new/upload`, {
+    // When called from onboarding we don't have menuai
+    resp = await fetch(`${__menuai_URL__}/api/menuaiio/backups/new/upload`, {
       method: "POST",
       body: fd,
     });
@@ -229,15 +229,15 @@ export const uploadBackup = async (
 };
 
 export const restoreBackup = async (
-  hass: HomeAssistant,
-  type: HassioBackupDetail["type"],
+  menuai: menuai,
+  type: menuaiioBackupDetail["type"],
   backupSlug: string,
-  backupDetails: HassioPartialBackupCreateParams | HassioFullBackupCreateParams,
+  backupDetails: menuaiioPartialBackupCreateParams | menuaiioFullBackupCreateParams,
   useBackupUrl: boolean
 ): Promise<void> => {
-  await hass.callApi<HassioResponse<{ job_id: string }>>(
+  await menuai.callApi<menuaiioResponse<{ job_id: string }>>(
     "POST",
-    `hassio/${useBackupUrl ? "backups" : "snapshots"}/${backupSlug}/restore/${type}`,
+    `menuaiio/${useBackupUrl ? "backups" : "snapshots"}/${backupSlug}/restore/${type}`,
     backupDetails
   );
 };

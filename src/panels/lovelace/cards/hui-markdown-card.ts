@@ -11,7 +11,7 @@ import "../../../components/ha-card";
 import "../../../components/ha-markdown";
 import type { RenderTemplateResult } from "../../../data/ws-templates";
 import { subscribeRenderTemplate } from "../../../data/ws-templates";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { CacheManager } from "../../../util/cache-manager";
 import type { LovelaceCard, LovelaceCardEditor } from "../types";
 import type { MarkdownCardConfig } from "./types";
@@ -33,7 +33,7 @@ export class HuiMarkdownCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public preview = false;
 
@@ -135,7 +135,7 @@ export class HuiMarkdownCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -151,25 +151,25 @@ export class HuiMarkdownCard extends LitElement implements LovelaceCard {
       this.toggleAttribute("hidden", shouldBeHidden);
       fireEvent(this, "card-visibility-changed", { value: !shouldBeHidden });
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | MarkdownCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   private async _tryConnect(): Promise<void> {
     if (
       this._unsubRenderTemplate !== undefined ||
-      !this.hass ||
+      !this.menuai ||
       !this._config
     ) {
       return;
@@ -180,7 +180,7 @@ export class HuiMarkdownCard extends LitElement implements LovelaceCard {
 
     try {
       this._unsubRenderTemplate = subscribeRenderTemplate(
-        this.hass.connection,
+        this.menuai.connection,
         (result) => {
           if ("error" in result) {
             // We show the latest error, or a warning if there are no errors
@@ -197,7 +197,7 @@ export class HuiMarkdownCard extends LitElement implements LovelaceCard {
           entity_ids: this._config.entity_id,
           variables: {
             config: this._config,
-            user: this.hass.user!.name,
+            user: this.menuai.user!.name,
           },
           strict: true,
           report_errors: this.preview,

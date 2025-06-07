@@ -16,7 +16,7 @@ import { formatDate } from "../../common/datetime/format_date";
 import { capitalizeFirstLetter } from "../../common/string/capitalize-first-letter";
 import { dayNames } from "../../common/translations/day_names";
 import { monthNames } from "../../common/translations/month_names";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export type RepeatFrequency =
   | "none"
@@ -171,12 +171,12 @@ function getWeekydaysForMonth(dtstart: Date): Weekday[] {
  * Returns the list of repeat values available for the specified date.
  */
 export function getMonthlyRepeatItems(
-  hass: HomeAssistant,
+  menuai: menuai,
   interval: number,
   dtstart: Date
 ): MonthlyRepeatItem[] {
   const getLabel = (repeatValue: string) =>
-    renderRRuleAsText(hass, `FREQ=MONTHLY;INTERVAL=${interval};${repeatValue}`);
+    renderRRuleAsText(menuai, `FREQ=MONTHLY;INTERVAL=${interval};${repeatValue}`);
 
   const result: MonthlyRepeatItem[] = [
     // The default repeat rule is on day of month e.g. 3rd day of month
@@ -233,7 +233,7 @@ export function getMonthdayRepeatFromRule(
 /**
  * A wrapper around RRule.toText that assists with translation.
  */
-export function renderRRuleAsText(hass: HomeAssistant, value: string) {
+export function renderRRuleAsText(menuai: menuai, value: string) {
   const rule = RRule.fromString(`RRULE:${value}`);
   if (!rule.isFullyConvertibleToText()) {
     return undefined;
@@ -242,13 +242,13 @@ export function renderRRuleAsText(hass: HomeAssistant, value: string) {
     rule.toText(
       (id: string | number | Weekday): string => {
         if (typeof id === "string") {
-          return hass.localize(`ui.components.calendar.event.rrule.${id}`);
+          return menuai.localize(`ui.components.calendar.event.rrule.${id}`);
         }
         return "";
       },
       {
-        dayNames: dayNames(hass.locale, hass.config),
-        monthNames: monthNames(hass.locale, hass.config),
+        dayNames: dayNames(menuai.locale, menuai.config),
+        monthNames: monthNames(menuai.locale, menuai.config),
         tokens: {},
       },
       // Format the date
@@ -263,9 +263,9 @@ export function renderRRuleAsText(hass: HomeAssistant, value: string) {
         // need to convert it back to something Date can work with. The already localized
         // months names are a must in the RRule.Language structure (an empty string[] would
         // mean we get undefined months input in this method here).
-        date.setMonth(monthNames(hass.locale, hass.config).indexOf(month));
+        date.setMonth(monthNames(menuai.locale, menuai.config).indexOf(month));
         date.setDate(day);
-        return formatDate(date, hass.locale, hass.config);
+        return formatDate(date, menuai.locale, menuai.config);
       }
     )
   );

@@ -5,13 +5,13 @@ import memoizeOne from "memoize-one";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { User } from "../../data/user";
 import { fetchUsers } from "../../data/user";
-import type { HomeAssistant, ValueChangedEvent } from "../../types";
+import type { menuai, ValueChangedEvent } from "../../types";
 import "../ha-icon-button";
 import "./ha-user-picker";
 
 @customElement("ha-users-picker")
 class HaUsersPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -36,11 +36,11 @@ class HaUsersPicker extends LitElement {
   }
 
   private async _fetchUsers() {
-    this.users = await fetchUsers(this.hass);
+    this.users = await fetchUsers(this.menuai);
   }
 
   protected render() {
-    if (!this.hass || !this.users) {
+    if (!this.menuai || !this.users) {
       return nothing;
     }
 
@@ -54,7 +54,7 @@ class HaUsersPicker extends LitElement {
               <ha-user-picker
                 .placeholder=${this.pickedUserLabel}
                 .index=${idx}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${user_id}
                 .users=${this._notSelectedUsersAndSelected(
                   user_id,
@@ -71,8 +71,8 @@ class HaUsersPicker extends LitElement {
       <div>
         <ha-user-picker
           .placeholder=${this.pickUserLabel ||
-          this.hass!.localize("ui.components.user-picker.add_user")}
-          .hass=${this.hass}
+          this.menuai!.localize("ui.components.user-picker.add_user")}
+          .menuai=${this.menuai}
           .users=${notSelectedUsers}
           .disabled=${this.disabled || !notSelectedUsers?.length}
           @value-changed=${this._addUser}

@@ -1,10 +1,10 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { EntityRegistryDisplayEntry } from "../../../../src/data/entity_registry";
 import type { DeviceRegistryEntry } from "../../../../src/data/device_registry";
 import type { AreaRegistryEntry } from "../../../../src/data/area_registry";
 import type { FloorRegistryEntry } from "../../../../src/data/floor_registry";
 
-export const mockStateObj = (partial: Partial<HassEntity>): HassEntity => ({
+export const mockStateObj = (partial: Partial<menuaiEntity>): menuaiEntity => ({
   entity_id: "",
   attributes: {},
   state: "on",

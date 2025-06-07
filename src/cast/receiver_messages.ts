@@ -3,36 +3,36 @@
 import type { Auth } from "home-assistant-js-websocket";
 import type { CastManager } from "./cast_manager";
 import { CAST_DEV } from "./const";
-import { CAST_DEV_HASS_URL } from "./dev_const";
+import { CAST_DEV_menuai_URL } from "./dev_const";
 import type { BaseCastMessage } from "./types";
 
 export interface GetStatusMessage extends BaseCastMessage {
   type: "get_status";
-  hassUrl?: string;
-  hassUUID?: string;
+  menuaiUrl?: string;
+  menuaiUUID?: string;
 }
 
 export interface ConnectMessage extends BaseCastMessage {
   type: "connect";
   refreshToken: string;
   clientId: string | null;
-  hassUrl: string;
-  hassUUID?: string;
+  menuaiUrl: string;
+  menuaiUUID?: string;
 }
 
 export interface ShowLovelaceViewMessage extends BaseCastMessage {
   type: "show_lovelace_view";
   viewPath: string | number | null;
   urlPath: string | null;
-  hassUrl: string;
-  hassUUID?: string;
+  menuaiUrl: string;
+  menuaiUUID?: string;
 }
 
 export interface ShowDemoMessage extends BaseCastMessage {
   type: "show_demo";
 }
 
-export type HassMessage =
+export type menuaiMessage =
   | ShowDemoMessage
   | GetStatusMessage
   | ConnectMessage
@@ -43,12 +43,12 @@ export const castSendAuth = (cast: CastManager, auth: Auth) =>
     type: "connect",
     refreshToken: auth.data.refresh_token,
     clientId: auth.data.clientId,
-    hassUrl: CAST_DEV ? CAST_DEV_HASS_URL : auth.data.hassUrl,
+    menuaiUrl: CAST_DEV ? CAST_DEV_menuai_URL : auth.data.menuaiUrl,
   });
 
 export const castSendShowLovelaceView = (
   cast: CastManager,
-  hassUrl: string,
+  menuaiUrl: string,
   viewPath: ShowLovelaceViewMessage["viewPath"],
   urlPath?: string | null
 ) =>
@@ -56,7 +56,7 @@ export const castSendShowLovelaceView = (
     type: "show_lovelace_view",
     viewPath,
     urlPath: urlPath || null,
-    hassUrl: CAST_DEV ? CAST_DEV_HASS_URL : hassUrl,
+    menuaiUrl: CAST_DEV ? CAST_DEV_menuai_URL : menuaiUrl,
   });
 
 export const castSendShowDemo = (cast: CastManager) =>
@@ -65,13 +65,13 @@ export const castSendShowDemo = (cast: CastManager) =>
   });
 
 export const ensureConnectedCastSession = (cast: CastManager, auth: Auth) => {
-  if (cast.castConnectedToOurHass) {
+  if (cast.castConnectedToOurmenuai) {
     return undefined;
   }
 
   return new Promise<void>((resolve) => {
     const unsub = cast.addEventListener("connection-changed", () => {
-      if (cast.castConnectedToOurHass) {
+      if (cast.castConnectedToOurmenuai) {
         unsub();
         resolve();
       }

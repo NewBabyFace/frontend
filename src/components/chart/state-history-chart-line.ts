@@ -9,7 +9,7 @@ import { getGraphColorByIndex } from "../../common/color/colors";
 import { computeRTL } from "../../common/util/compute_rtl";
 
 import type { LineChartEntity, LineChartState } from "../../data/history";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { MIN_TIME_BETWEEN_UPDATES } from "./ha-chart-base";
 import type { ECOption } from "../../resources/echarts";
 import { formatDateTimeWithSeconds } from "../../common/datetime/format_date_time";
@@ -28,7 +28,7 @@ const safeParseFloat = (value) => {
 };
 
 export class StateHistoryChartLine extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data: LineChartEntity[] = [];
 
@@ -87,7 +87,7 @@ export class StateHistoryChartLine extends LitElement {
   protected render() {
     return html`
       <ha-chart-base
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._chartData}
         .options=${this._chartOptions}
         .height=${this.height}
@@ -104,8 +104,8 @@ export class StateHistoryChartLine extends LitElement {
     const title =
       formatDateTimeWithSeconds(
         new Date(time),
-        this.hass.locale,
-        this.hass.config
+        this.menuai.locale,
+        this.menuai.config
       ) + "<br>";
     const datapoints: Record<string, any>[] = [];
     this._chartData.forEach((dataset, index) => {
@@ -141,7 +141,7 @@ export class StateHistoryChartLine extends LitElement {
       });
     });
     const unit = this.unit
-      ? `${blankBeforeUnit(this.unit, this.hass.locale)}${this.unit}`
+      ? `${blankBeforeUnit(this.unit, this.menuai.locale)}${this.unit}`
       : "";
 
     return (
@@ -149,14 +149,14 @@ export class StateHistoryChartLine extends LitElement {
       datapoints
         .map((param) => {
           const entityId = this._entityIds[param.seriesIndex];
-          const stateObj = this.hass.states[entityId];
-          const entry = this.hass.entities[entityId];
+          const stateObj = this.menuai.states[entityId];
+          const entry = this.menuai.entities[entityId];
           const stateValue = String(param.value[1]);
           let value = stateObj
-            ? this.hass.formatEntityState(stateObj, stateValue)
+            ? this.menuai.formatEntityState(stateObj, stateValue)
             : `${formatNumber(
                 stateValue,
-                this.hass.locale,
+                this.menuai.locale,
                 getNumberFormatOptions(undefined, entry)
               )}${unit}`;
           const dataIndex = this._datasetToDataIndex[param.seriesIndex];
@@ -166,10 +166,10 @@ export class StateHistoryChartLine extends LitElement {
             const source =
               data.states.length === 0 ||
               param.value[0] < data.states[0].last_changed
-                ? `${this.hass.localize(
+                ? `${this.menuai.localize(
                     "ui.components.history_charts.source_stats"
                   )}`
-                : `${this.hass.localize(
+                : `${this.menuai.localize(
                     "ui.components.history_charts.source_history"
                   )}`;
             value += source;
@@ -219,7 +219,7 @@ export class StateHistoryChartLine extends LitElement {
       changedProps.has("_visualMap") ||
       changedProps.has("_yWidth")
     ) {
-      const rtl = computeRTL(this.hass);
+      const rtl = computeRTL(this.menuai);
       let minYAxis: number | ((values: { min: number }) => number) | undefined =
         this.minYAxis;
       let maxYAxis: number | ((values: { max: number }) => number) | undefined =
@@ -404,10 +404,10 @@ export class StateHistoryChartLine extends LitElement {
         addDataSet(
           states.entity_id + "-current_temperature",
           this.showNames
-            ? this.hass.localize("ui.card.climate.current_temperature", {
+            ? this.menuai.localize("ui.card.climate.current_temperature", {
                 name: name,
               })
-            : this.hass.localize(
+            : this.menuai.localize(
                 "component.climate.entity_component._.state_attributes.current_temperature.name"
               )
         );
@@ -415,8 +415,8 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-heating",
             this.showNames
-              ? this.hass.localize("ui.card.climate.heating", { name: name })
-              : this.hass.localize(
+              ? this.menuai.localize("ui.card.climate.heating", { name: name })
+              : this.menuai.localize(
                   "component.climate.entity_component._.state_attributes.hvac_action.state.heating"
                 ),
             computedStyles.getPropertyValue("--state-climate-heat-color"),
@@ -429,8 +429,8 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-cooling",
             this.showNames
-              ? this.hass.localize("ui.card.climate.cooling", { name: name })
-              : this.hass.localize(
+              ? this.menuai.localize("ui.card.climate.cooling", { name: name })
+              : this.menuai.localize(
                   "component.climate.entity_component._.state_attributes.hvac_action.state.cooling"
                 ),
             computedStyles.getPropertyValue("--state-climate-cool-color"),
@@ -444,22 +444,22 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-target_temperature_mode",
             this.showNames
-              ? this.hass.localize("ui.card.climate.target_temperature_mode", {
+              ? this.menuai.localize("ui.card.climate.target_temperature_mode", {
                   name: name,
-                  mode: this.hass.localize("ui.card.climate.high"),
+                  mode: this.menuai.localize("ui.card.climate.high"),
                 })
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.climate.entity_component._.state_attributes.target_temp_high.name"
                 )
           );
           addDataSet(
             states.entity_id + "-target_temperature_mode_low",
             this.showNames
-              ? this.hass.localize("ui.card.climate.target_temperature_mode", {
+              ? this.menuai.localize("ui.card.climate.target_temperature_mode", {
                   name: name,
-                  mode: this.hass.localize("ui.card.climate.low"),
+                  mode: this.menuai.localize("ui.card.climate.low"),
                 })
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.climate.entity_component._.state_attributes.target_temp_low.name"
                 )
           );
@@ -467,13 +467,13 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-target_temperature",
             this.showNames
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.card.climate.target_temperature_entity",
                   {
                     name: name,
                   }
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.climate.entity_component._.state_attributes.temperature.name"
                 )
           );
@@ -530,10 +530,10 @@ export class StateHistoryChartLine extends LitElement {
         addDataSet(
           states.entity_id + "-target_humidity",
           this.showNames
-            ? this.hass.localize("ui.card.humidifier.target_humidity_entity", {
+            ? this.menuai.localize("ui.card.humidifier.target_humidity_entity", {
                 name: name,
               })
-            : this.hass.localize(
+            : this.menuai.localize(
                 "component.humidifier.entity_component._.state_attributes.humidity.name"
               )
         );
@@ -542,13 +542,13 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-current_humidity",
             this.showNames
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.card.humidifier.current_humidity_entity",
                   {
                     name: name,
                   }
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.humidifier.entity_component._.state_attributes.current_humidity.name"
                 )
           );
@@ -560,10 +560,10 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-humidifying",
             this.showNames
-              ? this.hass.localize("ui.card.humidifier.humidifying", {
+              ? this.menuai.localize("ui.card.humidifier.humidifying", {
                   name: name,
                 })
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.humidifier.entity_component._.state_attributes.action.state.humidifying"
                 ),
             computedStyles.getPropertyValue("--state-humidifier-on-color"),
@@ -573,10 +573,10 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-drying",
             this.showNames
-              ? this.hass.localize("ui.card.humidifier.drying", {
+              ? this.menuai.localize("ui.card.humidifier.drying", {
                   name: name,
                 })
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.humidifier.entity_component._.state_attributes.action.state.drying"
                 ),
             computedStyles.getPropertyValue("--state-humidifier-on-color"),
@@ -586,10 +586,10 @@ export class StateHistoryChartLine extends LitElement {
           addDataSet(
             states.entity_id + "-on",
             this.showNames
-              ? this.hass.localize("ui.card.humidifier.on_entity", {
+              ? this.menuai.localize("ui.card.humidifier.on_entity", {
                   name: name,
                 })
-              : this.hass.localize(
+              : this.menuai.localize(
                   "component.humidifier.entity_component._.state.on"
                 ),
             undefined,
@@ -736,7 +736,7 @@ export class StateHistoryChartLine extends LitElement {
               )
             ),
           };
-    const label = formatNumber(value, this.hass.locale, formatOptions);
+    const label = formatNumber(value, this.menuai.locale, formatOptions);
     const width = measureTextWidth(label, 12) + 5;
     if (width > this._yWidth) {
       this._yWidth = width;

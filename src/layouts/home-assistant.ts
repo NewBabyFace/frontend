@@ -9,9 +9,9 @@ import type { WindowWithPreloads } from "../data/preloads";
 import type { RecorderInfo } from "../data/recorder";
 import { getRecorderInfo } from "../data/recorder";
 import "../resources/custom-card-support";
-import { HassElement } from "../state/hass-element";
+import { menuaiElement } from "../state/menuai-element";
 import QuickBarMixin from "../state/quick-bar-mixin";
-import type { HomeAssistant, Route } from "../types";
+import type { menuai, Route } from "../types";
 import { storeState } from "../util/ha-pref-storage";
 import {
   removeLaunchScreen,
@@ -35,7 +35,7 @@ const panelUrl = (path: string) => {
 };
 
 @customElement("home-assistant")
-export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
+export class menuaiAppEl extends QuickBarMixin(menuaiElement) {
   @state() private _route: Route;
 
   @state() private _databaseMigration?: boolean;
@@ -65,10 +65,10 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     this._panelUrl = panelUrl(path);
   }
 
-  protected renderHass() {
+  protected rendermenuai() {
     return html`
       <home-assistant-main
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .route=${this._route}
       ></home-assistant-main>
     `;
@@ -78,9 +78,9 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     super.willUpdate(changedProps);
     if (
       this._databaseMigration === undefined &&
-      changedProps.has("hass") &&
-      this.hass?.config &&
-      changedProps.get("hass")?.config !== this.hass?.config
+      changedProps.has("menuai") &&
+      this.menuai?.config &&
+      changedProps.get("menuai")?.config !== this.menuai?.config
     ) {
       this.checkDataBaseMigration();
     }
@@ -88,12 +88,12 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
 
   protected update(changedProps: PropertyValues<this>) {
     if (
-      this.hass?.states &&
-      this.hass.config &&
-      this.hass.services &&
+      this.menuai?.states &&
+      this.menuai.config &&
+      this.menuai.services &&
       this._databaseMigration === false
     ) {
-      this.render = this.renderHass;
+      this.render = this.rendermenuai;
       this.update = super.update;
       removeLaunchScreen();
     }
@@ -102,12 +102,12 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
 
   protected firstUpdated(changedProps: PropertyValues<this>) {
     super.firstUpdated(changedProps);
-    this._initializeHass();
+    this._initializemenuai();
     setTimeout(() => registerServiceWorker(this), 1000);
 
-    this.addEventListener("hass-suspend-when-hidden", (ev) => {
-      this._updateHass({ suspendWhenHidden: ev.detail.suspend });
-      storeState(this.hass!);
+    this.addEventListener("menuai-suspend-when-hidden", (ev) => {
+      this._updatemenuai({ suspendWhenHidden: ev.detail.suspend });
+      storeState(this.menuai!);
     });
 
     // Navigation
@@ -122,7 +122,7 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
 
       this._panelUrl = panelUrl(path);
       this.panelUrlChanged(this._panelUrl!);
-      this._updateHass({ panelUrl: this._panelUrl });
+      this._updatemenuai({ panelUrl: this._panelUrl });
     };
 
     window.addEventListener("location-changed", () => updateRoute());
@@ -143,22 +143,22 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     });
 
     // Render launch screen info box (loading data / error message)
-    // if Home Assistant is not loaded yet.
-    if (this.render !== this.renderHass) {
+    // if MenuAI is not loaded yet.
+    if (this.render !== this.rendermenuai) {
       this._renderInitInfo(false);
     }
   }
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (changedProps.has("hass")) {
-      this.hassChanged(
-        this.hass!,
-        changedProps.get("hass") as HomeAssistant | undefined
+    if (changedProps.has("menuai")) {
+      this.menuaiChanged(
+        this.menuai!,
+        changedProps.get("menuai") as menuai | undefined
       );
     }
     if (changedProps.has("_databaseMigration")) {
-      if (this.render !== this.renderHass) {
+      if (this.render !== this.rendermenuai) {
         this._renderInitInfo(false);
       } else if (this._databaseMigration) {
         // we already removed the launch screen, so we refresh to add it again to show the migration screen
@@ -167,12 +167,12 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     }
   }
 
-  protected hassConnected() {
-    super.hassConnected();
+  protected menuaiConnected() {
+    super.menuaiConnected();
     // @ts-ignore
-    this._loadHassTranslations(this.hass!.language, "entity_component");
+    this._loadmenuaiTranslations(this.menuai!.language, "entity_component");
     // @ts-ignore
-    this._loadHassTranslations(this.hass!.language, "entity");
+    this._loadmenuaiTranslations(this.menuai!.language, "entity");
 
     document.addEventListener(
       "visibilitychange",
@@ -183,9 +183,9 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     document.addEventListener("resume", () => this._checkVisibility());
   }
 
-  protected hassReconnected() {
-    super.hassReconnected();
-    this._checkUpdate(this.hass!.connection);
+  protected menuaiReconnected() {
+    super.menuaiReconnected();
+    this._checkUpdate(this.menuai!.connection);
   }
 
   private _checkUpdate(connection: Connection) {
@@ -224,7 +224,7 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
       preloadWindow.recorderInfoProm = undefined;
     }
     const info = await (
-      recorderInfoProm || getRecorderInfo(this.hass!.connection)
+      recorderInfoProm || getRecorderInfo(this.menuai!.connection)
     ).catch((err) => {
       // If the command failed with code unknown_command, recorder is not enabled,
       // otherwise re-throw the error
@@ -239,22 +239,22 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     }
   }
 
-  protected async _initializeHass() {
+  protected async _initializemenuai() {
     try {
       let result;
 
-      if (window.hassConnection) {
-        result = await window.hassConnection;
+      if (window.menuaiConnection) {
+        result = await window.menuaiConnection;
       } else {
         // In the edge case that core.ts loads before app.ts
         result = await new Promise((resolve) => {
-          window.hassConnectionReady = resolve;
+          window.menuaiConnectionReady = resolve;
         });
       }
 
       const { auth, conn } = result;
       this._checkUpdate(conn);
-      this.initializeHass(auth, conn);
+      this.initializemenuai(auth, conn);
     } catch (_err: any) {
       this._renderInitInfo(true);
     }
@@ -273,13 +273,13 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
     if (this._visiblePromiseResolve) {
       return;
     }
-    this.hass!.connection.suspendReconnectUntil(
+    this.menuai!.connection.suspendReconnectUntil(
       new Promise((resolve) => {
         this._visiblePromiseResolve = resolve;
       })
     );
-    if (this.hass!.suspendWhenHidden !== false) {
-      // We close the connection to Home Assistant after being hidden for 5 minutes
+    if (this.menuai!.suspendWhenHidden !== false) {
+      // We close the connection to MenuAI after being hidden for 5 minutes
       this._hiddenTimeout = window.setTimeout(() => {
         this._hiddenTimeout = undefined;
         // setTimeout can be delayed in the background and only fire
@@ -293,11 +293,11 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
   }
 
   private _suspendApp() {
-    if (!this.hass!.connection.connected) {
+    if (!this.menuai!.connection.connected) {
       return;
     }
     window.stop();
-    this.hass!.connection.suspend();
+    this.menuai!.connection.suspend();
   }
 
   private _onVisible() {
@@ -325,6 +325,6 @@ export class HomeAssistantAppEl extends QuickBarMixin(HassElement) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "home-assistant": HomeAssistantAppEl;
+    "home-assistant": menuaiAppEl;
   }
 }

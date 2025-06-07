@@ -7,21 +7,21 @@ import { atLeastVersion } from "../../../src/common/config/version";
 import { navigate } from "../../../src/common/navigate";
 import { caseInsensitiveStringCompare } from "../../../src/common/string/compare";
 import "../../../src/components/ha-card";
-import type { HassioAddonRepository } from "../../../src/data/hassio/addon";
+import type { menuaiioAddonRepository } from "../../../src/data/menuaiio/addon";
 import type { StoreAddon } from "../../../src/data/supervisor/store";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
-import type { HomeAssistant } from "../../../src/types";
-import "../components/hassio-card-content";
-import { filterAndSort } from "../components/hassio-filter-addons";
-import { hassioStyle } from "../resources/hassio-style";
+import type { menuai } from "../../../src/types";
+import "../components/menuaiio-card-content";
+import { filterAndSort } from "../components/menuaiio-filter-addons";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
-@customElement("hassio-addon-repository")
-export class HassioAddonRepositoryEl extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-repository")
+export class menuaiioAddonRepositoryEl extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public repo!: HassioAddonRepository;
+  @property({ attribute: false }) public repo!: menuaiioAddonRepository;
 
   @property({ attribute: false }) public addons!: StoreAddon[];
 
@@ -32,14 +32,14 @@ export class HassioAddonRepositoryEl extends LitElement {
       return filterAndSort(addons, filter);
     }
     return addons.sort((a, b) =>
-      caseInsensitiveStringCompare(a.name, b.name, this.hass.locale.language)
+      caseInsensitiveStringCompare(a.name, b.name, this.menuai.locale.language)
     );
   });
 
   protected render(): TemplateResult {
     const repo = this.repo;
     let _addons = this.addons;
-    if (!this.hass.userData?.showAdvanced) {
+    if (!this.menuai.userData?.showAdvanced) {
       _addons = _addons.filter(
         (addon) => !addon.advanced && addon.stage === "stable"
       );
@@ -70,8 +70,8 @@ export class HassioAddonRepositoryEl extends LitElement {
                 @click=${this._addonTapped}
               >
                 <div class="card-content">
-                  <hassio-card-content
-                    .hass=${this.hass}
+                  <menuaiio-card-content
+                    .menuai=${this.menuai}
                     .title=${addon.name}
                     .description=${addon.description}
                     .available=${addon.available}
@@ -95,11 +95,11 @@ export class HassioAddonRepositoryEl extends LitElement {
                         ? "not_available"
                         : ""}
                     .iconImage=${atLeastVersion(
-                      this.hass.config.version,
+                      this.menuai.config.version,
                       0,
                       105
                     ) && addon.icon
-                      ? `/api/hassio/addons/${addon.slug}/icon`
+                      ? `/api/menuaiio/addons/${addon.slug}/icon`
                       : undefined}
                     .showTopbar=${addon.installed || !addon.available}
                     .topbarClass=${addon.installed
@@ -109,7 +109,7 @@ export class HassioAddonRepositoryEl extends LitElement {
                       : !addon.available
                         ? "unavailable"
                         : ""}
-                  ></hassio-card-content>
+                  ></menuaiio-card-content>
                 </div>
               </ha-card>
             `
@@ -120,12 +120,12 @@ export class HassioAddonRepositoryEl extends LitElement {
   }
 
   private _addonTapped(ev) {
-    navigate(`/hassio/addon/${ev.currentTarget.addon.slug}?store=true`);
+    navigate(`/menuaiio/addon/${ev.currentTarget.addon.slug}?store=true`);
   }
 
   static get styles(): CSSResultGroup {
     return [
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           cursor: pointer;
@@ -144,6 +144,6 @@ export class HassioAddonRepositoryEl extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-repository": HassioAddonRepositoryEl;
+    "menuaiio-addon-repository": menuaiioAddonRepositoryEl;
   }
 }

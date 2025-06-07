@@ -1,17 +1,17 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { until } from "lit/directives/until";
 import { attributeIcon } from "../data/icons";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon";
 import "./ha-svg-icon";
 
 @customElement("ha-attribute-icon")
 export class HaAttributeIcon extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property() public attribute?: string;
 
@@ -28,12 +28,12 @@ export class HaAttributeIcon extends LitElement {
       return nothing;
     }
 
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     const icon = attributeIcon(
-      this.hass,
+      this.menuai,
       this.stateObj,
       this.attribute,
       this.attributeValue

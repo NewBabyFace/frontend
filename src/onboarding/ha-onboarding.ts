@@ -15,7 +15,7 @@ import {
   saveTokens,
 } from "../common/auth/token_storage";
 import { applyThemesOnElement } from "../common/dom/apply_themes_on_element";
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import {
   addSearchParam,
   extractSearchParam,
@@ -24,7 +24,7 @@ import {
 import { subscribeOne } from "../common/util/subscribe-one";
 import "../components/ha-card";
 import type { AuthUrlSearchParams } from "../data/auth";
-import { hassUrl } from "../data/auth";
+import { menuaiUrl } from "../data/auth";
 import type { OnboardingResponses, OnboardingStep } from "../data/onboarding";
 import {
   fetchInstallationType,
@@ -33,8 +33,8 @@ import {
 } from "../data/onboarding";
 import { subscribeUser } from "../data/ws-user";
 import { litLocalizeLiteMixin } from "../mixins/lit-localize-lite-mixin";
-import { HassElement } from "../state/hass-element";
-import type { HomeAssistant } from "../types";
+import { menuaiElement } from "../state/menuai-element";
+import type { menuai } from "../types";
 import { storeState } from "../util/ha-pref-storage";
 import { registerServiceWorker } from "../util/register-service-worker";
 import "./onboarding-analytics";
@@ -73,20 +73,20 @@ interface OnboardingProgressEvent {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "onboarding-step": OnboardingEvent;
     "onboarding-progress": OnboardingProgressEvent;
   }
 
   interface GlobalEventHandlersEventMap {
-    "onboarding-step": HASSDomEvent<OnboardingEvent>;
-    "onboarding-progress": HASSDomEvent<OnboardingProgressEvent>;
+    "onboarding-step": menuaiDomEvent<OnboardingEvent>;
+    "onboarding-progress": menuaiDomEvent<OnboardingProgressEvent>;
   }
 }
 
 @customElement("ha-onboarding")
-class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+class HaOnboarding extends litLocalizeLiteMixin(menuaiElement) {
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public translationFragment =
     "page-onboarding";
@@ -106,7 +106,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
   @state() private _page = extractSearchParam("page");
 
   private _mobileApp =
-    extractSearchParam("redirect_uri") === "homeassistant://auth-callback";
+    extractSearchParam("redirect_uri") === "menuai://auth-callback";
 
   connectedCallback() {
     super.connectedCallback();
@@ -185,7 +185,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     if (step.step === "core_config") {
       return html`
         <onboarding-core-config
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .onboardingLocalize=${this.localize}
         ></onboarding-core-config>
       `;
@@ -193,7 +193,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     if (step.step === "analytics") {
       return html`
         <onboarding-analytics
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .localize=${this.localize}
         ></onboarding-analytics>
       `;
@@ -201,7 +201,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     if (step.step === "integration") {
       return html`
         <onboarding-integrations
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .onboardingLocalize=${this.localize}
         ></onboarding-integrations>
       `;
@@ -246,10 +246,10 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     if (changedProps.has("language")) {
       document.querySelector("html")!.setAttribute("lang", this.language);
     }
-    if (changedProps.has("hass")) {
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-      this.hassChanged(this.hass!, oldHass);
-      if (oldHass?.themes !== this.hass!.themes) {
+    if (changedProps.has("menuai")) {
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+      this.menuaiChanged(this.menuai!, oldmenuai);
+      if (oldmenuai?.themes !== this.menuai!.themes) {
         if (matchMedia("(prefers-color-scheme: dark)").matches) {
           applyThemesOnElement(
             document.documentElement,
@@ -277,8 +277,8 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     try {
       const response = await fetchInstallationType();
       this._supervisor = [
-        "Home Assistant OS",
-        "Home Assistant Supervised",
+        "MenuAI OS",
+        "MenuAI Supervised",
       ].includes(response.installation_type);
     } catch (err: any) {
       // eslint-disable-next-line no-console
@@ -310,13 +310,13 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
       if (steps[0].done) {
         // First step is already done, so we need to get auth somewhere else.
         const auth = await getAuth({
-          hassUrl,
-          limitHassInstance: true,
+          menuaiUrl,
+          limitmenuaiInstance: true,
           saveTokens,
           loadTokens: () => Promise.resolve(loadTokens()),
         });
         history.replaceState(null, "", location.pathname);
-        await this._connectHass(auth);
+        await this._connectmenuai(auth);
         const currentStep = steps.findIndex((stp) => !stp.done);
         const singelStepProgress = 1 / steps.length;
         this._progress = currentStep * singelStepProgress + singelStepProgress;
@@ -332,7 +332,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     }
   }
 
-  private _handleProgress(ev: HASSDomEvent<OnboardingProgressEvent>) {
+  private _handleProgress(ev: menuaiDomEvent<OnboardingProgressEvent>) {
     const stepSize = 1 / this._steps!.length;
     if (ev.detail.increase) {
       this._progress += ev.detail.increase * stepSize;
@@ -345,7 +345,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     }
   }
 
-  private async _handleStepDone(ev: HASSDomEvent<OnboardingEvent>) {
+  private async _handleStepDone(ev: menuaiDomEvent<OnboardingEvent>) {
     const stepResult = ev.detail;
     this._steps = this._steps!.map((step) =>
       step.step === stepResult.type ? { ...step, done: true } : step
@@ -368,12 +368,12 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
       enableWrite();
       try {
         const auth = await getAuth({
-          hassUrl,
-          limitHassInstance: true,
+          menuaiUrl,
+          limitmenuaiInstance: true,
           authCode: result.auth_code,
           saveTokens,
         });
-        await this._connectHass(auth);
+        await this._connectmenuai(auth);
       } catch (_err: any) {
         alert("Ah snap, something went wrong!");
         location.reload();
@@ -400,7 +400,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
               redirect_uri: `${location.protocol}//${location.host}/?auth_callback=1`,
               state: btoa(
                 JSON.stringify({
-                  hassUrl: `${location.protocol}//${location.host}`,
+                  menuaiUrl: `${location.protocol}//${location.host}`,
                   clientId: genClientId(),
                 })
               ),
@@ -409,13 +409,13 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
       let result: OnboardingResponses["integration"];
 
       try {
-        result = await onboardIntegrationStep(this.hass!, {
+        result = await onboardIntegrationStep(this.menuai!, {
           client_id: authParams.client_id!,
           redirect_uri: authParams.redirect_uri!,
         });
       } catch (err: any) {
-        this.hass!.connection.close();
-        await this.hass!.auth.revoke();
+        this.menuai!.connection.close();
+        await this.menuai!.auth.revoke();
 
         alert(`Unable to finish onboarding: ${err.message}`);
 
@@ -430,10 +430,10 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
       // HAWS will reload the page, since that will trigger the auth flow.
       // In Firefox, triggering a reload will overrule the navigation that
       // was in progress.
-      this.hass!.connection.close();
+      this.menuai!.connection.close();
 
       // Revoke current auth token.
-      await this.hass!.auth.revoke();
+      await this.menuai!.auth.revoke();
 
       // Build up the url to redirect to
       let redirectUrl = authParams.redirect_uri!;
@@ -449,7 +449,7 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
     }
   }
 
-  private async _connectHass(auth: Auth) {
+  private async _connectmenuai(auth: Auth) {
     const conn = await createConnection({ auth });
     // Make sure config and user info is loaded before we initialize.
     // It is needed for the core config step.
@@ -457,18 +457,18 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
       subscribeOne(conn, subscribeConfig),
       subscribeOne(conn, subscribeUser),
     ]);
-    this.initializeHass(auth, conn);
-    if (this.language !== this.hass!.language) {
-      this._updateHass({
-        locale: { ...this.hass!.locale, language: this.language },
+    this.initializemenuai(auth, conn);
+    if (this.language !== this.menuai!.language) {
+      this._updatemenuai({
+        locale: { ...this.menuai!.locale, language: this.language },
         language: this.language,
         selectedLanguage: this.language,
       });
-      storeState(this.hass!);
+      storeState(this.menuai!);
     }
     // Load config strings for integrations
-    (this as any)._loadFragmentTranslations(this.hass!.language, "config");
-    // Make sure hass is initialized + the config/user callbacks have called.
+    (this as any)._loadFragmentTranslations(this.menuai!.language, "config");
+    // Make sure menuai is initialized + the config/user callbacks have called.
     await new Promise((resolve) => {
       setTimeout(resolve, 0);
     });
@@ -477,13 +477,13 @@ class HaOnboarding extends litLocalizeLiteMixin(HassElement) {
   private _languageChanged(ev: CustomEvent) {
     const language = ev.detail.value;
     this.language = language;
-    if (this.hass) {
-      this._updateHass({
-        locale: { ...this.hass!.locale, language },
+    if (this.menuai) {
+      this._updatemenuai({
+        locale: { ...this.menuai!.locale, language },
         language,
         selectedLanguage: language,
       });
-      storeState(this.hass!);
+      storeState(this.menuai!);
     } else {
       try {
         window.localStorage.setItem(

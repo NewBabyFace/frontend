@@ -2,10 +2,10 @@ import type { CSSResultGroup } from "lit";
 import { mdiClose } from "@mdi/js";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { fireEvent } from "../../common/dom/fire_event";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-alert";
 import "../ha-dialog";
 import "../ha-button";
@@ -20,13 +20,13 @@ import {
   mediaPlayerJoin,
   mediaPlayerUnjoin,
 } from "../../data/media-player";
-import { extractApiErrorMessage } from "../../data/hassio/common";
+import { extractApiErrorMessage } from "../../data/menuaiio/common";
 import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
 import { computeDomain } from "../../common/entity/compute_domain";
 
 @customElement("dialog-join-media-players")
 class DialogJoinMediaPlayers extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _entityId?: string;
 
@@ -41,7 +41,7 @@ class DialogJoinMediaPlayers extends LitElement {
   public showDialog(params: JoinMediaPlayersDialogParams): void {
     this._entityId = params.entityId;
 
-    const stateObj = this.hass.states[params.entityId] as
+    const stateObj = this.menuai.states[params.entityId] as
       | MediaPlayerEntity
       | undefined;
 
@@ -68,7 +68,7 @@ class DialogJoinMediaPlayers extends LitElement {
     }
 
     const entityId = this._entityId;
-    const stateObj = this.hass.states[entityId] as HassEntity | undefined;
+    const stateObj = this.menuai.states[entityId] as menuaiEntity | undefined;
     const name = (stateObj && computeStateName(stateObj)) || entityId;
 
     return html`
@@ -82,16 +82,16 @@ class DialogJoinMediaPlayers extends LitElement {
       >
         <ha-dialog-header show-border slot="heading">
           <ha-icon-button
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             dialogAction="close"
             slot="navigationIcon"
           ></ha-icon-button>
           <span slot="title"
-            >${this.hass.localize("ui.card.media_player.media_players")}</span
+            >${this.menuai.localize("ui.card.media_player.media_players")}</span
           >
           <ha-button slot="actionItems" @click=${this._selectAll}>
-            ${this.hass.localize("ui.card.media_player.select_all")}
+            ${this.menuai.localize("ui.card.media_player.select_all")}
           </ha-button>
         </ha-dialog-header>
         ${this._error
@@ -99,15 +99,15 @@ class DialogJoinMediaPlayers extends LitElement {
           : nothing}
         <div class="content">
           <ha-media-player-toggle
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .entityId=${entityId}
             checked
             disabled
           ></ha-media-player-toggle>
-          ${this._mediaPlayerEntities(this.hass.entities).map(
+          ${this._mediaPlayerEntities(this.menuai.entities).map(
             (entity) =>
               html`<ha-media-player-toggle
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .entityId=${entity.entity_id}
                 .checked=${this._selectedEntities.includes(entity.entity_id)}
                 @change=${this._handleSelectedChange}
@@ -115,14 +115,14 @@ class DialogJoinMediaPlayers extends LitElement {
           )}
         </div>
         <ha-button slot="secondaryAction" @click=${this.closeDialog}>
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </ha-button>
         <ha-button
           .disabled=${this._submitting}
           slot="primaryAction"
           @click=${this._submit}
         >
-          ${this.hass.localize("ui.common.apply")}
+          ${this.menuai.localize("ui.common.apply")}
         </ha-button>
       </ha-dialog>
     `;
@@ -135,7 +135,7 @@ class DialogJoinMediaPlayers extends LitElement {
       return [];
     }
 
-    const currentPlatform = this.hass.entities[this._entityId]?.platform;
+    const currentPlatform = this.menuai.entities[this._entityId]?.platform;
 
     if (!currentPlatform) {
       return [];
@@ -148,13 +148,13 @@ class DialogJoinMediaPlayers extends LitElement {
       if (computeDomain(entity.entity_id) !== "media_player") {
         return false;
       }
-      if (this.hass.entities[entity.entity_id]?.platform !== currentPlatform) {
+      if (this.menuai.entities[entity.entity_id]?.platform !== currentPlatform) {
         return false;
       }
       if (
-        !this.hass.states[entity.entity_id] ||
+        !this.menuai.states[entity.entity_id] ||
         !supportsFeature(
-          this.hass.states[entity.entity_id],
+          this.menuai.states[entity.entity_id],
           MediaPlayerEntityFeature.GROUPING
         )
       ) {
@@ -165,7 +165,7 @@ class DialogJoinMediaPlayers extends LitElement {
   };
 
   private _selectAll() {
-    this._selectedEntities = this._mediaPlayerEntities(this.hass.entities).map(
+    this._selectedEntities = this._mediaPlayerEntities(this.menuai.entities).map(
       (entity) => entity.entity_id
     );
   }
@@ -189,11 +189,11 @@ class DialogJoinMediaPlayers extends LitElement {
     this._submitting = true;
     try {
       // If media is already playing
-      await mediaPlayerJoin(this.hass, this._entityId, this._selectedEntities);
+      await mediaPlayerJoin(this.menuai, this._entityId, this._selectedEntities);
       await Promise.all(
         this._groupMembers
           .filter((entityId) => !this._selectedEntities.includes(entityId))
-          .map((entityId) => mediaPlayerUnjoin(this.hass, entityId))
+          .map((entityId) => mediaPlayerUnjoin(this.menuai, entityId))
       );
       this.closeDialog();
     } catch (err) {

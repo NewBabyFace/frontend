@@ -19,11 +19,11 @@ import {
   localizeExtraFieldsComputeHelperCallback,
 } from "../../../../../data/device_automation";
 import type { EntityRegistryEntry } from "../../../../../data/entity_registry";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 @customElement("ha-automation-condition-device")
 export class HaDeviceCondition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Object }) public condition!: DeviceCondition;
 
@@ -66,13 +66,13 @@ export class HaDeviceCondition extends LitElement {
     }
     if (
       this.condition.device_id &&
-      !(this.condition.device_id in this.hass.devices)
+      !(this.condition.device_id in this.menuai.devices)
     ) {
       fireEvent(
         this,
         "ui-mode-not-available",
         Error(
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.edit_unknown_device"
           )
         )
@@ -89,9 +89,9 @@ export class HaDeviceCondition extends LitElement {
       <ha-device-picker
         .value=${deviceId}
         @value-changed=${this._devicePicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.conditions.type.device.label"
         )}
       ></ha-device-picker>
@@ -99,25 +99,25 @@ export class HaDeviceCondition extends LitElement {
         .value=${this.condition}
         .deviceId=${deviceId}
         @value-changed=${this._deviceConditionPicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.conditions.type.device.condition"
         )}
       ></ha-device-condition-picker>
       ${this._capabilities?.extra_fields
         ? html`
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .data=${this._extraFieldsData(this.condition, this._capabilities)}
               .schema=${this._capabilities.extra_fields}
               .disabled=${this.disabled}
               .computeLabel=${localizeExtraFieldsComputeLabelCallback(
-                this.hass,
+                this.menuai,
                 this.condition
               )}
               .computeHelper=${localizeExtraFieldsComputeHelperCallback(
-                this.hass,
+                this.menuai,
                 this.condition
               )}
               @value-changed=${this._extraFieldsChanged}
@@ -128,7 +128,7 @@ export class HaDeviceCondition extends LitElement {
   }
 
   protected firstUpdated() {
-    this.hass.loadBackendTranslation("device_automation");
+    this.menuai.loadBackendTranslation("device_automation");
     if (!this._capabilities) {
       this._getCapabilities();
     }
@@ -151,7 +151,7 @@ export class HaDeviceCondition extends LitElement {
     const condition = this.condition;
 
     this._capabilities = condition.domain
-      ? await fetchDeviceConditionCapabilities(this.hass, condition)
+      ? await fetchDeviceConditionCapabilities(this.menuai, condition)
       : undefined;
   }
 

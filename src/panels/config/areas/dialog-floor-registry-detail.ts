@@ -23,13 +23,13 @@ import type {
   FloorRegistryEntryMutableParams,
 } from "../../../data/floor_registry";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { FloorRegistryDetailDialogParams } from "./show-dialog-floor-registry-detail";
 import { showAreaRegistryDetailDialog } from "./show-dialog-area-registry-detail";
 import { updateAreaRegistryEntry } from "../../../data/area_registry";
 
 class DialogFloorDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _name!: string;
 
@@ -73,7 +73,7 @@ class DialogFloorDetail extends LitElement {
   private _floorAreas = memoizeOne(
     (
       entry: FloorRegistryEntry | undefined,
-      areas: HomeAssistant["areas"],
+      areas: menuai["areas"],
       added: Set<string>,
       removed: Set<string>
     ) =>
@@ -87,7 +87,7 @@ class DialogFloorDetail extends LitElement {
   protected render() {
     const areas = this._floorAreas(
       this._params?.entry,
-      this.hass.areas,
+      this.menuai.areas,
       this._addedAreas,
       this._removedAreas
     );
@@ -103,10 +103,10 @@ class DialogFloorDetail extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           entry
-            ? this.hass.localize("ui.panel.config.floors.editor.update_floor")
-            : this.hass.localize("ui.panel.config.floors.editor.create_floor")
+            ? this.menuai.localize("ui.panel.config.floors.editor.update_floor")
+            : this.menuai.localize("ui.panel.config.floors.editor.create_floor")
         )}
       >
         <div>
@@ -118,7 +118,7 @@ class DialogFloorDetail extends LitElement {
               ? html`
                   <ha-settings-row>
                     <span slot="heading">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.floors.editor.floor_id"
                       )}
                     </span>
@@ -130,8 +130,8 @@ class DialogFloorDetail extends LitElement {
             <ha-textfield
               .value=${this._name}
               @input=${this._nameChanged}
-              .label=${this.hass.localize("ui.panel.config.floors.editor.name")}
-              .validationMessage=${this.hass.localize(
+              .label=${this.menuai.localize("ui.panel.config.floors.editor.name")}
+              .validationMessage=${this.menuai.localize(
                 "ui.panel.config.floors.editor.name_required"
               )}
               required
@@ -141,17 +141,17 @@ class DialogFloorDetail extends LitElement {
             <ha-textfield
               .value=${this._level}
               @input=${this._levelChanged}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.floors.editor.level"
               )}
               type="number"
             ></ha-textfield>
 
             <ha-icon-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${this._icon}
               @value-changed=${this._iconChanged}
-              .label=${this.hass.localize("ui.panel.config.areas.editor.icon")}
+              .label=${this.menuai.localize("ui.panel.config.areas.editor.icon")}
             >
               ${!this._icon
                 ? html`
@@ -164,13 +164,13 @@ class DialogFloorDetail extends LitElement {
             </ha-icon-picker>
 
             <h3 class="header">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.floors.editor.areas_section"
               )}
             </h3>
 
             <p class="description">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.floors.editor.areas_description"
               )}
             </p>
@@ -201,34 +201,34 @@ class DialogFloorDetail extends LitElement {
               : nothing}
             <ha-area-picker
               no-add
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               @value-changed=${this._addArea}
               .excludeAreas=${areas.map((a) => a.area_id)}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.floors.editor.add_area"
               )}
             ></ha-area-picker>
 
             <h3 class="header">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.floors.editor.aliases_section"
               )}
             </h3>
 
             <p class="description">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.floors.editor.aliases_description"
               )}
             </p>
             <ha-aliases-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .aliases=${this._aliases}
               @value-changed=${this._aliasesChanged}
             ></ha-aliases-editor>
           </div>
         </div>
         <mwc-button slot="secondaryAction" @click=${this.closeDialog}>
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           slot="primaryAction"
@@ -236,8 +236,8 @@ class DialogFloorDetail extends LitElement {
           .disabled=${nameInvalid || this._submitting}
         >
           ${entry
-            ? this.hass.localize("ui.common.save")
-            : this.hass.localize("ui.common.create")}
+            ? this.menuai.localize("ui.common.save")
+            : this.menuai.localize("ui.common.create")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -248,7 +248,7 @@ class DialogFloorDetail extends LitElement {
     showAreaRegistryDetailDialog(this, {
       entry: area,
       updateEntry: (values) =>
-        updateAreaRegistryEntry(this.hass!, area.area_id, values),
+        updateAreaRegistryEntry(this.menuai!, area.area_id, values),
     });
   }
 
@@ -320,7 +320,7 @@ class DialogFloorDetail extends LitElement {
     } catch (err: any) {
       this._error =
         err.message ||
-        this.hass.localize("ui.panel.config.floors.editor.unknown_error");
+        this.menuai.localize("ui.panel.config.floors.editor.unknown_error");
     } finally {
       this._submitting = false;
     }

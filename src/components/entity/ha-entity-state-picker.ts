@@ -1,18 +1,18 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import { getStates } from "../../common/entity/get_states";
-import type { HomeAssistant, ValueChangedEvent } from "../../types";
+import type { menuai, ValueChangedEvent } from "../../types";
 import "../ha-combo-box";
 import type { HaComboBox } from "../ha-combo-box";
 
-export type HaEntityPickerEntityFilterFunc = (entityId: HassEntity) => boolean;
+export type HaEntityPickerEntityFilterFunc = (entityId: menuaiEntity) => boolean;
 
 @customElement("ha-entity-state-picker")
 class HaEntityStatePicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId?: string;
 
@@ -52,16 +52,16 @@ class HaEntityStatePicker extends LitElement {
       changedProps.has("extraOptions")
     ) {
       const stateObj = this.entityId
-        ? this.hass.states[this.entityId]
+        ? this.menuai.states[this.entityId]
         : undefined;
       (this._comboBox as any).items = [
         ...(this.extraOptions ?? []),
         ...(this.entityId && stateObj
-          ? getStates(this.hass, stateObj, this.attribute).map((key) => ({
+          ? getStates(this.menuai, stateObj, this.attribute).map((key) => ({
               value: key,
               label: !this.attribute
-                ? this.hass.formatEntityState(stateObj, key)
-                : this.hass.formatEntityAttributeValue(
+                ? this.menuai.formatEntityState(stateObj, key)
+                : this.menuai.formatEntityAttributeValue(
                     stateObj,
                     this.attribute,
                     key
@@ -73,17 +73,17 @@ class HaEntityStatePicker extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     return html`
       <ha-combo-box
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._value}
         .autofocus=${this.autofocus}
         .label=${this.label ??
-        this.hass.localize("ui.components.entity.entity-state-picker.state")}
+        this.menuai.localize("ui.components.entity.entity-state-picker.state")}
         .disabled=${this.disabled || !this.entityId}
         .required=${this.required}
         .helper=${this.helper}

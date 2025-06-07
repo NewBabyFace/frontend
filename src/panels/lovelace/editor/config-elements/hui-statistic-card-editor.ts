@@ -16,7 +16,7 @@ import {
   StatisticMeanType,
   statisticsMetaHasType,
 } from "../../../../data/recorder";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { StatisticCardConfig } from "../../cards/types";
 import { headerFooterConfigStructs } from "../../header-footer/structs";
 import type { LovelaceCardEditor } from "../../types";
@@ -62,7 +62,7 @@ export class HuiStatisticCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StatisticCardConfig;
 
@@ -167,7 +167,7 @@ export class HuiStatisticCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -175,13 +175,13 @@ export class HuiStatisticCardEditor
 
     const schema = this._schema(
       typeof data.period === "string" ? data.period : undefined,
-      this.hass.localize,
+      this.menuai.localize,
       this._metadata
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -191,11 +191,11 @@ export class HuiStatisticCardEditor
   }
 
   private async _fetchMetadata() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return;
     }
     this._metadata = (
-      await getStatisticMetadata(this.hass, [this._config.entity])
+      await getStatisticMetadata(this.menuai, [this._config.entity])
     )[0];
   }
 
@@ -216,7 +216,7 @@ export class HuiStatisticCardEditor
       config.entity !== this._metadata?.statistic_id
     ) {
       const metadata = (
-        await getStatisticMetadata(this.hass!, [config.entity])
+        await getStatisticMetadata(this.menuai!, [config.entity])
       )?.[0];
       if (metadata && !metadata.has_sum && config.stat_type === "change") {
         config.stat_type = "mean";
@@ -232,7 +232,7 @@ export class HuiStatisticCardEditor
 
     if (!config.stat_type && config.entity) {
       const metadata = (
-        await getStatisticMetadata(this.hass!, [config.entity])
+        await getStatisticMetadata(this.menuai!, [config.entity])
       )?.[0];
       config.stat_type = metadata?.has_sum ? "change" : "mean";
     }
@@ -244,20 +244,20 @@ export class HuiStatisticCardEditor
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ) => {
     if (schema.name === "period") {
-      return this.hass!.localize(
+      return this.menuai!.localize(
         "ui.panel.lovelace.editor.card.statistic.period"
       );
     }
 
     if (schema.name === "theme") {
-      return `${this.hass!.localize(
+      return `${this.menuai!.localize(
         "ui.panel.lovelace.editor.card.generic.theme"
-      )} (${this.hass!.localize(
+      )} (${this.menuai!.localize(
         "ui.panel.lovelace.editor.card.config.optional"
       )})`;
     }
 
-    return this.hass!.localize(
+    return this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     );
   };

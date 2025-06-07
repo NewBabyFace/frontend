@@ -1,14 +1,14 @@
 import { customElement, property } from "lit/decorators";
 import type { Supervisor } from "../../src/data/supervisor/supervisor";
-import type { RouterOptions } from "../../src/layouts/hass-router-page";
-import { HassRouterPage } from "../../src/layouts/hass-router-page";
-import type { HomeAssistant, Route } from "../../src/types";
+import type { RouterOptions } from "../../src/layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../src/layouts/menuai-router-page";
+import type { menuai, Route } from "../../src/types";
 // Don't codesplit it, that way the dashboard always loads fast.
-import "./dashboard/hassio-dashboard";
+import "./dashboard/menuaiio-dashboard";
 
-@customElement("hassio-panel-router")
-class HassioPanelRouter extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-panel-router")
+class menuaiioPanelRouter extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -21,25 +21,25 @@ class HassioPanelRouter extends HassRouterPage {
       page === "snapshots" ? "backups" : undefined,
     routes: {
       dashboard: {
-        tag: "hassio-dashboard",
+        tag: "menuaiio-dashboard",
       },
       store: {
-        tag: "hassio-addon-store",
-        load: () => import("./addon-store/hassio-addon-store"),
+        tag: "menuaiio-addon-store",
+        load: () => import("./addon-store/menuaiio-addon-store"),
       },
       backups: {
-        tag: "hassio-backups",
-        load: () => import("./backups/hassio-backups"),
+        tag: "menuaiio-backups",
+        load: () => import("./backups/menuaiio-backups"),
       },
       system: {
-        tag: "hassio-system",
-        load: () => import("./system/hassio-system"),
+        tag: "menuaiio-system",
+        load: () => import("./system/menuaiio-system"),
       },
     },
   };
 
   protected updatePageEl(el) {
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.supervisor = this.supervisor;
     el.route = this.route;
     el.narrow = this.narrow;
@@ -48,6 +48,6 @@ class HassioPanelRouter extends HassRouterPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-panel-router": HassioPanelRouter;
+    "menuaiio-panel-router": menuaiioPanelRouter;
   }
 }

@@ -6,11 +6,11 @@ import "../../components/ha-settings-row";
 import "../../components/ha-switch";
 import type { HaSwitch } from "../../components/ha-switch";
 import { forwardHaptic } from "../../data/haptics";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-set-vibrate-row")
 class HaSetVibrateRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -18,13 +18,13 @@ class HaSetVibrateRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.vibrate.header")}
+          ${this.menuai.localize("ui.panel.profile.vibrate.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.vibrate.description")}
+          ${this.menuai.localize("ui.panel.profile.vibrate.description")}
         </span>
         <ha-switch
-          .checked=${this.hass.vibrate}
+          .checked=${this.menuai.vibrate}
           @change=${this._checkedChanged}
         ></ha-switch>
       </ha-settings-row>
@@ -33,10 +33,10 @@ class HaSetVibrateRow extends LitElement {
 
   private async _checkedChanged(ev: Event) {
     const vibrate = (ev.target as HaSwitch).checked;
-    if (vibrate === this.hass.vibrate) {
+    if (vibrate === this.menuai.vibrate) {
       return;
     }
-    fireEvent(this, "hass-vibrate", {
+    fireEvent(this, "menuai-vibrate", {
       vibrate,
     });
     forwardHaptic("light");

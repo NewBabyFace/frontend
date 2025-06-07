@@ -17,11 +17,11 @@ import {
   getExposeNewEntities,
   setExposeNewEntities,
 } from "../../../data/expose";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 
 export class CloudAlexaPref extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public exposedEntities?: Record<
     string,
@@ -36,13 +36,13 @@ export class CloudAlexaPref extends LitElement {
     (exposedEntities: Record<string, ExposeEntitySettings>) =>
       Object.entries(exposedEntities).filter(
         ([entityId, expose]) =>
-          expose["cloud.alexa"] && entityId in this.hass.states
+          expose["cloud.alexa"] && entityId in this.menuai.states
       ).length
   );
 
   protected willUpdate() {
     if (!this.hasUpdated) {
-      getExposeNewEntities(this.hass, "cloud.alexa").then((value) => {
+      getExposeNewEntities(this.menuai, "cloud.alexa").then((value) => {
         this._exposeNew = value.expose_new;
       });
     }
@@ -68,11 +68,11 @@ export class CloudAlexaPref extends LitElement {
             src=${brandsUrl({
               domain: "alexa",
               type: "icon",
-              darkOptimized: this.hass.themes?.darkMode,
+              darkOptimized: this.menuai.themes?.darkMode,
             })}
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
-          />${this.hass.localize("ui.panel.config.cloud.account.alexa.title")}
+          />${this.menuai.localize("ui.panel.config.cloud.account.alexa.title")}
         </h1>
         <div class="header-actions">
           <a
@@ -82,7 +82,7 @@ export class CloudAlexaPref extends LitElement {
             class="icon-link"
           >
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.cloud.account.alexa.link_learn_how_it_works"
               )}
               .path=${mdiHelpCircle}
@@ -95,11 +95,11 @@ export class CloudAlexaPref extends LitElement {
         </div>
         <div class="card-content">
           <p>
-            ${this.hass!.localize("ui.panel.config.cloud.account.alexa.info")}
+            ${this.menuai!.localize("ui.panel.config.cloud.account.alexa.info")}
           </p>
           ${manualConfig
             ? html`<ha-alert alert-type="warning">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.alexa.manual_config"
                 )}
               </ha-alert>`
@@ -108,11 +108,11 @@ export class CloudAlexaPref extends LitElement {
             ? ""
             : html`${!alexa_registered
                   ? html`<ha-alert
-                      .title=${this.hass.localize(
+                      .title=${this.menuai.localize(
                         "ui.panel.config.cloud.account.alexa.not_configured_title"
                       )}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.cloud.account.alexa.not_configured_text"
                       )}
 
@@ -123,7 +123,7 @@ export class CloudAlexaPref extends LitElement {
                             target="_blank"
                             rel="noreferrer"
                           >
-                            ${this.hass!.localize(
+                            ${this.menuai!.localize(
                               "ui.panel.config.cloud.account.alexa.enable_ha_skill"
                             )}
                           </a>
@@ -134,7 +134,7 @@ export class CloudAlexaPref extends LitElement {
                             target="_blank"
                             rel="noreferrer"
                           >
-                            ${this.hass!.localize(
+                            ${this.menuai!.localize(
                               "ui.panel.config.cloud.account.alexa.config_documentation"
                             )}
                           </a>
@@ -143,12 +143,12 @@ export class CloudAlexaPref extends LitElement {
                     </ha-alert>`
                   : ""}<ha-settings-row>
                   <span slot="heading">
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.cloud.account.alexa.expose_new_entities"
                     )}
                   </span>
                   <span slot="description">
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.cloud.account.alexa.expose_new_entities_info"
                     )}
                   </span>
@@ -161,12 +161,12 @@ export class CloudAlexaPref extends LitElement {
                   ? html`
                       <ha-settings-row>
                         <span slot="heading">
-                          ${this.hass!.localize(
+                          ${this.menuai!.localize(
                             "ui.panel.config.cloud.account.alexa.enable_state_reporting"
                           )}
                         </span>
                         <span slot="description">
-                          ${this.hass!.localize(
+                          ${this.menuai!.localize(
                             "ui.panel.config.cloud.account.alexa.info_state_reporting"
                           )}
                         </span>
@@ -185,10 +185,10 @@ export class CloudAlexaPref extends LitElement {
               >
                 <mwc-button>
                   ${manualConfig
-                    ? this.hass!.localize(
+                    ? this.menuai!.localize(
                         "ui.panel.config.cloud.account.alexa.show_entities"
                       )
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         "ui.panel.config.cloud.account.alexa.exposed_entities",
                         {
                           number: this.exposedEntities
@@ -210,7 +210,7 @@ export class CloudAlexaPref extends LitElement {
       return;
     }
     try {
-      await setExposeNewEntities(this.hass, "cloud.alexa", toggle.checked);
+      await setExposeNewEntities(this.menuai, "cloud.alexa", toggle.checked);
     } catch (_err: any) {
       toggle.checked = !toggle.checked;
     }
@@ -219,7 +219,7 @@ export class CloudAlexaPref extends LitElement {
   private async _enabledToggleChanged(ev) {
     const toggle = ev.target as HaSwitch;
     try {
-      await updateCloudPref(this.hass!, { alexa_enabled: toggle.checked! });
+      await updateCloudPref(this.menuai!, { alexa_enabled: toggle.checked! });
       fireEvent(this, "ha-refresh-cloud-status");
     } catch (_err: any) {
       toggle.checked = !toggle.checked;
@@ -229,16 +229,16 @@ export class CloudAlexaPref extends LitElement {
   private async _reportToggleChanged(ev) {
     const toggle = ev.target as HaSwitch;
     try {
-      await updateCloudPref(this.hass!, {
+      await updateCloudPref(this.menuai!, {
         alexa_report_state: toggle.checked!,
       });
       fireEvent(this, "ha-refresh-cloud-status");
     } catch (err: any) {
       alert(
-        `${this.hass!.localize(
+        `${this.menuai!.localize(
           "ui.panel.config.cloud.account.alexa.state_reporting_error",
           {
-            enable_disable: this.hass!.localize(
+            enable_disable: this.menuai!.localize(
               toggle.checked
                 ? "ui.panel.config.cloud.account.alexa.enable"
                 : "ui.panel.config.cloud.account.alexa.disable"

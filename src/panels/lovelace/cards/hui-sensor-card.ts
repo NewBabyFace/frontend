@@ -1,9 +1,9 @@
-import type { HassEntity } from "home-assistant-js-websocket/dist/types";
+import type { menuaiEntity } from "home-assistant-js-websocket/dist/types";
 import type { CSSResultGroup } from "lit";
 import { css } from "lit";
 import { customElement } from "lit/decorators";
 import { computeDomain } from "../../../common/entity/compute_domain";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import type { GraphHeaderFooterConfig } from "../header-footer/types";
 import type { LovelaceCardEditor, LovelaceGridOptions } from "../types";
@@ -22,17 +22,17 @@ class HuiSensorCard extends HuiEntityCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): SensorCardConfig {
     const maxEntities = 1;
-    const entityFilter = (stateObj: HassEntity): boolean =>
+    const entityFilter = (stateObj: menuaiEntity): boolean =>
       !isNaN(Number(stateObj.state)) &&
       !!stateObj.attributes.unit_of_measurement;
 
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,

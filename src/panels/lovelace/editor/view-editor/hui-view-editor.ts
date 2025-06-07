@@ -10,7 +10,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   MASONRY_VIEW_LAYOUT,
   SECTIONS_VIEW_LAYOUT,
@@ -20,7 +20,7 @@ import {
 import { getViewType } from "../../views/get-view-type";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "view-config-changed": {
       config: LovelaceViewConfig;
     };
@@ -29,7 +29,7 @@ declare global {
 
 @customElement("hui-view-editor")
 export class HuiViewEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public isNew = false;
 
@@ -122,11 +122,11 @@ export class HuiViewEditor extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
-    const schema = this._schema(this.hass.localize, this._type);
+    const schema = this._schema(this.menuai.localize, this._type);
 
     const data = {
       ...this._config,
@@ -139,7 +139,7 @@ export class HuiViewEditor extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabel}
@@ -176,18 +176,18 @@ export class HuiViewEditor extends LitElement {
   ) => {
     switch (schema.name) {
       case "path":
-        return this.hass!.localize("ui.panel.lovelace.editor.card.generic.url");
+        return this.menuai!.localize("ui.panel.lovelace.editor.card.generic.url");
       case "type":
       case "subview":
       case "max_columns":
       case "dense_section_placement":
       case "top_margin":
       case "section_specifics":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.lovelace.editor.edit_view.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }
@@ -200,7 +200,7 @@ export class HuiViewEditor extends LitElement {
       case "subview":
       case "dense_section_placement":
       case "top_margin":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.lovelace.editor.edit_view.${schema.name}_helper`
         );
 

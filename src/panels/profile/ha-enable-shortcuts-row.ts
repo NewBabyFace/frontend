@@ -5,11 +5,11 @@ import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-settings-row";
 import "../../components/ha-switch";
 import type { HaSwitch } from "../../components/ha-switch";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-enable-shortcuts-row")
 class HaEnableShortcutsRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -17,13 +17,13 @@ class HaEnableShortcutsRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.enable_shortcuts.header")}
+          ${this.menuai.localize("ui.panel.profile.enable_shortcuts.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.enable_shortcuts.description")}
+          ${this.menuai.localize("ui.panel.profile.enable_shortcuts.description")}
         </span>
         <ha-switch
-          .checked=${this.hass.enableShortcuts}
+          .checked=${this.menuai.enableShortcuts}
           @change=${this._checkedChanged}
         ></ha-switch>
       </ha-settings-row>
@@ -32,11 +32,11 @@ class HaEnableShortcutsRow extends LitElement {
 
   private async _checkedChanged(ev: Event) {
     const enabled = (ev.target as HaSwitch).checked;
-    if (enabled === this.hass.enableShortcuts) {
+    if (enabled === this.menuai.enableShortcuts) {
       return;
     }
 
-    fireEvent(this, "hass-enable-shortcuts", enabled);
+    fireEvent(this, "menuai-enable-shortcuts", enabled);
   }
 }
 

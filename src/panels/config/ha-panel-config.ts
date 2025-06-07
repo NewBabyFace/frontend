@@ -43,15 +43,15 @@ import {
   subscribeEntityRegistry,
 } from "../../data/entity_registry";
 import { subscribeLabelRegistry } from "../../data/label_registry";
-import type { RouterOptions } from "../../layouts/hass-router-page";
-import { HassRouterPage } from "../../layouts/hass-router-page";
-import type { PageNavigation } from "../../layouts/hass-tabs-subpage";
+import type { RouterOptions } from "../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../layouts/menuai-router-page";
+import type { PageNavigation } from "../../layouts/menuai-tabs-subpage";
 import { SubscribeMixin } from "../../mixins/subscribe-mixin";
-import type { HomeAssistant, Route } from "../../types";
+import type { menuai, Route } from "../../types";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "ha-refresh-cloud-status": undefined;
     "ha-refresh-supervisor": undefined;
   }
@@ -81,11 +81,11 @@ export const configSections: Record<string, PageNavigation[]> = {
       component: "zone",
     },
     {
-      path: "/hassio",
+      path: "/menuaiio",
       translationKey: "supervisor",
       iconPath: mdiPuzzle,
       iconColor: "#F1C447",
-      component: "hassio",
+      component: "menuaiio",
     },
     {
       path: "/config/lovelace/dashboards",
@@ -339,14 +339,14 @@ export const configSections: Record<string, PageNavigation[]> = {
       translationKey: "storage",
       iconPath: mdiDatabase,
       iconColor: "#518C43",
-      component: "hassio",
+      component: "menuaiio",
     },
     {
       path: "/config/hardware",
       translationKey: "hardware",
       iconPath: mdiMemory,
       iconColor: "#301A8E",
-      component: ["hassio", "hardware"],
+      component: ["menuaiio", "hardware"],
     },
   ],
   about: [
@@ -362,8 +362,8 @@ export const configSections: Record<string, PageNavigation[]> = {
 };
 
 @customElement("ha-panel-config")
-class HaPanelConfig extends SubscribeMixin(HassRouterPage) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaPanelConfig extends SubscribeMixin(menuaiRouterPage) {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -379,12 +379,12 @@ class HaPanelConfig extends SubscribeMixin(HassRouterPage) {
     initialValue: [],
   });
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeEntityRegistry(this.hass.connection!, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection!, (entities) => {
         this._entitiesContext.setValue(entities);
       }),
-      subscribeLabelRegistry(this.hass.connection!, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection!, (labels) => {
         this._labelsContext.setValue(labels);
       }),
     ];
@@ -613,9 +613,9 @@ class HaPanelConfig extends SubscribeMixin(HassRouterPage) {
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("title");
-    this.hass.loadBackendTranslation("services");
-    if (isComponentLoaded(this.hass, "cloud")) {
+    this.menuai.loadBackendTranslation("title");
+    this.menuai.loadBackendTranslation("services");
+    if (isComponentLoaded(this.menuai, "cloud")) {
       this._updateCloudStatus();
       this.addEventListener("connection-status", (ev) => {
         if (ev.detail === "connected") {
@@ -643,18 +643,18 @@ class HaPanelConfig extends SubscribeMixin(HassRouterPage) {
 
   protected updatePageEl(el) {
     const isWide =
-      this.hass.dockedSidebar === "docked" ? this._wideSidebar : this._wide;
+      this.menuai.dockedSidebar === "docked" ? this._wideSidebar : this._wide;
 
     el.route = this.routeTail;
-    el.hass = this.hass;
-    el.showAdvanced = Boolean(this.hass.userData?.showAdvanced);
+    el.menuai = this.menuai;
+    el.showAdvanced = Boolean(this.menuai.userData?.showAdvanced);
     el.isWide = isWide;
     el.narrow = this.narrow;
     el.cloudStatus = this._cloudStatus;
   }
 
   private async _updateCloudStatus() {
-    this._cloudStatus = await fetchCloudStatus(this.hass);
+    this._cloudStatus = await fetchCloudStatus(this.menuai);
 
     if (
       // Relayer connecting

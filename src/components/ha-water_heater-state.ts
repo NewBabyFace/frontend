@@ -1,32 +1,32 @@
 import { customElement, property } from "lit/decorators";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { formatNumber } from "../common/number/format_number";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-water_heater-state")
 export class HaWaterHeaterState extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   protected render(): TemplateResult {
     return html`
       <div class="target">
         <span class="state-label label">
-          ${this.hass.formatEntityState(this.stateObj)}
+          ${this.menuai.formatEntityState(this.stateObj)}
         </span>
         <span class="label"
-          >${this._computeTarget(this.hass, this.stateObj)}</span
+          >${this._computeTarget(this.menuai, this.stateObj)}</span
         >
       </div>
     `;
   }
 
-  private _computeTarget(hass: HomeAssistant, stateObj: HassEntity) {
-    if (!hass || !stateObj) return null;
+  private _computeTarget(menuai: menuai, stateObj: menuaiEntity) {
+    if (!menuai || !stateObj) return null;
     // We're using "!= null" on purpose so that we match both null and undefined.
 
     if (
@@ -35,17 +35,17 @@ export class HaWaterHeaterState extends LitElement {
     ) {
       return `${formatNumber(
         stateObj.attributes.target_temp_low,
-        this.hass.locale
+        this.menuai.locale
       )} – ${formatNumber(
         stateObj.attributes.target_temp_high,
-        this.hass.locale
-      )} ${hass.config.unit_system.temperature}`;
+        this.menuai.locale
+      )} ${menuai.config.unit_system.temperature}`;
     }
     if (stateObj.attributes.temperature != null) {
       return `${formatNumber(
         stateObj.attributes.temperature,
-        this.hass.locale
-      )} ${hass.config.unit_system.temperature}`;
+        this.menuai.locale
+      )} ${menuai.config.unit_system.temperature}`;
     }
 
     return "";

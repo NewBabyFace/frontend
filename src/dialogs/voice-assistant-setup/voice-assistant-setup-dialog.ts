@@ -12,12 +12,12 @@ import "../../components/ha-dialog";
 import { getLanguageOptions } from "../../components/ha-language-picker";
 import "../../components/ha-md-button-menu";
 import type { AssistSatelliteConfiguration } from "../../data/assist_satellite";
-import { fetchAssistSatelliteConfiguration } from "../../data/assist_satellite";
+import { fetcmenuaiistSatelliteConfiguration } from "../../data/assist_satellite";
 import { getLanguageScores } from "../../data/conversation";
 import { UNAVAILABLE } from "../../data/entity";
 import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { VoiceAssistantSetupDialogParams } from "./show-voice-assistant-setup-dialog";
 import "./voice-assistant-setup-step-area";
 import "./voice-assistant-setup-step-change-wake-word";
@@ -44,7 +44,7 @@ export const enum STEP {
 
 @customElement("ha-voice-assistant-setup-dialog")
 export class HaVoiceAssistantSetupDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: VoiceAssistantSetupDialogParams;
 
@@ -69,7 +69,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
   ): Promise<void> {
     this._params = params;
 
-    await this._fetchAssistConfiguration();
+    await this._fetcmenuaiistConfiguration();
 
     this._step = STEP.UPDATE;
   }
@@ -99,7 +99,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
   private _deviceEntities = memoizeOne(
     (
       deviceId: string,
-      entities: HomeAssistant["entities"]
+      entities: menuai["entities"]
     ): EntityRegistryDisplayEntry[] =>
       Object.values(entities).filter((entity) => entity.device_id === deviceId)
   );
@@ -107,7 +107,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
   private _findDomainEntityId = memoizeOne(
     (
       deviceId: string,
-      entities: HomeAssistant["entities"],
+      entities: menuai["entities"],
       domain: string
     ): string | undefined => {
       const deviceEntities = this._deviceEntities(deviceId, entities);
@@ -124,12 +124,12 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
 
     const assistSatelliteEntityId = this._findDomainEntityId(
       this._params.deviceId,
-      this.hass.entities,
+      this.menuai.entities,
       "assist_satellite"
     );
 
     const assistEntityState = assistSatelliteEntityId
-      ? this.hass.states[assistSatelliteEntityId]
+      ? this.menuai.states[assistSatelliteEntityId]
       : undefined;
 
     return html`
@@ -147,14 +147,14 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
             : this._previousSteps.length
               ? html`<ha-icon-button
                   slot="navigationIcon"
-                  .label=${this.hass.localize("ui.common.back") ?? "Back"}
+                  .label=${this.menuai.localize("ui.common.back") ?? "Back"}
                   .path=${mdiChevronLeft}
                   @click=${this._goToPreviousStep}
                 ></ha-icon-button>`
               : this._step !== STEP.UPDATE
                 ? html`<ha-icon-button
                     slot="navigationIcon"
-                    .label=${this.hass.localize("ui.common.close") ?? "Close"}
+                    .label=${this.menuai.localize("ui.common.close") ?? "Close"}
                     .path=${mdiClose}
                     @click=${this.closeDialog}
                   ></ha-icon-button>`
@@ -164,7 +164,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
                 @click=${this._goToNextStep}
                 class="skip-btn"
                 slot="actionItems"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.skip"
                 )}</ha-button
               >`
@@ -177,7 +177,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
                     <ha-assist-chip
                       .label=${formatLanguageCode(
                         this._language,
-                        this.hass.locale
+                        this.menuai.locale
                       )}
                       slot="trigger"
                     >
@@ -190,7 +190,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
                       this._languages,
                       false,
                       false,
-                      this.hass.locale
+                      this.menuai.locale
                     ).map(
                       (lang) =>
                         html`<ha-md-menu-item
@@ -213,10 +213,10 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
         >
           ${this._step === STEP.UPDATE
             ? html`<ha-voice-assistant-setup-step-update
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .updateEntityId=${this._findDomainEntityId(
                   this._params.deviceId,
-                  this.hass.entities,
+                  this.menuai.entities,
                   "update"
                 )}
               ></ha-voice-assistant-setup-step-update>`
@@ -224,29 +224,29 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
               ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
               : assistEntityState?.state === UNAVAILABLE
                 ? html`<ha-alert alert-type="error"
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.config.voice_assistants.satellite_wizard.not_available"
                     )}</ha-alert
                   >`
                 : this._step === STEP.CHECK
                   ? html`<ha-voice-assistant-setup-step-check
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .assistEntityId=${assistSatelliteEntityId}
                     ></ha-voice-assistant-setup-step-check>`
                   : this._step === STEP.WAKEWORD
                     ? html`<ha-voice-assistant-setup-step-wake-word
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .assistConfiguration=${this._assistConfiguration}
                         .assistEntityId=${assistSatelliteEntityId}
                         .deviceEntities=${this._deviceEntities(
                           this._params.deviceId,
-                          this.hass.entities
+                          this.menuai.entities
                         )}
                       ></ha-voice-assistant-setup-step-wake-word>`
                     : this._step === STEP.CHANGE_WAKEWORD
                       ? html`
                           <ha-voice-assistant-setup-step-change-wake-word
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .assistConfiguration=${this._assistConfiguration}
                             .assistEntityId=${assistSatelliteEntityId}
                           ></ha-voice-assistant-setup-step-change-wake-word>
@@ -254,13 +254,13 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
                       : this._step === STEP.AREA
                         ? html`
                             <ha-voice-assistant-setup-step-area
-                              .hass=${this.hass}
+                              .menuai=${this.menuai}
                               .deviceId=${this._params.deviceId}
                             ></ha-voice-assistant-setup-step-area>
                           `
                         : this._step === STEP.PIPELINE
                           ? html`<ha-voice-assistant-setup-step-pipeline
-                              .hass=${this.hass}
+                              .menuai=${this.menuai}
                               .languages=${this._languages}
                               .language=${this._language}
                               .assistConfiguration=${this._assistConfiguration}
@@ -269,11 +269,11 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
                             ></ha-voice-assistant-setup-step-pipeline>`
                           : this._step === STEP.CLOUD
                             ? html`<ha-voice-assistant-setup-step-cloud
-                                .hass=${this.hass}
+                                .menuai=${this.menuai}
                               ></ha-voice-assistant-setup-step-cloud>`
                             : this._step === STEP.LOCAL
                               ? html`<ha-voice-assistant-setup-step-local
-                                  .hass=${this.hass}
+                                  .menuai=${this.menuai}
                                   .language=${this._language}
                                   .localOption=${this._localOption}
                                   .assistConfiguration=${this
@@ -281,7 +281,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
                                 ></ha-voice-assistant-setup-step-local>`
                               : this._step === STEP.SUCCESS
                                 ? html`<ha-voice-assistant-setup-step-success
-                                    .hass=${this.hass}
+                                    .menuai=${this.menuai}
                                     .assistConfiguration=${this
                                       ._assistConfiguration}
                                     .assistEntityId=${assistSatelliteEntityId}
@@ -298,7 +298,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
       return;
     }
 
-    const scores = await getLanguageScores(this.hass);
+    const scores = await getLanguageScores(this.menuai);
 
     this._languages = Object.entries(scores.languages)
       .filter(
@@ -314,13 +314,13 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
         : undefined;
   }
 
-  private async _fetchAssistConfiguration() {
+  private async _fetcmenuaiistConfiguration() {
     try {
-      this._assistConfiguration = await fetchAssistSatelliteConfiguration(
-        this.hass,
+      this._assistConfiguration = await fetcmenuaiistSatelliteConfiguration(
+        this.menuai,
         this._findDomainEntityId(
           this._params!.deviceId,
-          this.hass.entities,
+          this.menuai.entities,
           "assist_satellite"
         )!
       );
@@ -351,7 +351,7 @@ export class HaVoiceAssistantSetupDialog extends LitElement {
 
   private _goToNextStep(ev?: CustomEvent) {
     if (ev?.detail?.updateConfig) {
-      this._fetchAssistConfiguration();
+      this._fetcmenuaiistConfiguration();
     }
     if (ev?.detail?.nextStep) {
       this._nextStep = ev.detail.nextStep;
@@ -420,7 +420,7 @@ declare global {
     "ha-voice-assistant-setup-dialog": HaVoiceAssistantSetupDialog;
   }
 
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "next-step":
       | {
           step?: STEP;

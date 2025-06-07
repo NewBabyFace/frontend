@@ -3,13 +3,13 @@ import type { PropertyValues } from "lit";
 import { ReactiveElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { absoluteTime } from "../common/datetime/absolute_time";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 const SAFE_MARGIN = 5 * 1000;
 
 @customElement("ha-absolute-time")
 class HaAbsoluteTime extends ReactiveElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public datetime?: string | Date;
 
@@ -63,12 +63,12 @@ class HaAbsoluteTime extends ReactiveElement {
 
   private _updateAbsolute(): void {
     if (!this.datetime) {
-      this.innerHTML = this.hass.localize("ui.components.absolute_time.never");
+      this.innerHTML = this.menuai.localize("ui.components.absolute_time.never");
     } else {
       this.innerHTML = absoluteTime(
         new Date(this.datetime),
-        this.hass.locale,
-        this.hass.config
+        this.menuai.locale,
+        this.menuai.config
       );
     }
   }

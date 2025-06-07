@@ -7,12 +7,12 @@ import type {
   PipelineRunEvent,
 } from "../../../../data/assist_pipeline";
 import { processEvent } from "../../../../data/assist_pipeline";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./assist-render-pipeline-run";
 
 @customElement("assist-render-pipeline-events")
 export class AssistPipelineEvents extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public events!: PipelineRunEvent[];
 
@@ -44,7 +44,7 @@ export class AssistPipelineEvents extends LitElement {
     }
     return html`
       <assist-render-pipeline-run
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .pipelineRun=${run}
       ></assist-render-pipeline-run>
     `;

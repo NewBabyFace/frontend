@@ -16,11 +16,11 @@ import "../../../../components/ha-control-slider";
 import { UNAVAILABLE } from "../../../../data/entity";
 import type { LightColor, LightEntity } from "../../../../data/light";
 import { LightColorMode } from "../../../../data/light";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { DOMAIN_ATTRIBUTES_UNITS } from "../../../../data/entity_attributes";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "color-changed": LightColor;
   }
 }
@@ -47,7 +47,7 @@ export const generateColorTemperatureGradient = (min: number, max: number) => {
 
 @customElement("light-color-temp-picker")
 class LightColorTempPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: LightEntity;
 
@@ -79,7 +79,7 @@ class LightColorTempPicker extends LitElement {
         mode="cursor"
         @value-changed=${this._ctColorChanged}
         @slider-moved=${this._ctColorCursorMoved}
-        .ariaLabel=${this.hass.localize(
+        .ariaLabel=${this.menuai.localize(
           "ui.dialogs.more_info_control.light.color_temp"
         )}
         style=${styleMap({
@@ -88,7 +88,7 @@ class LightColorTempPicker extends LitElement {
         })}
         .disabled=${this.stateObj.state === UNAVAILABLE}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.light.color_temp_kelvin}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       >
       </ha-control-slider>
     `;
@@ -159,7 +159,7 @@ class LightColorTempPicker extends LitElement {
 
   private _applyColor(color: LightColor, params?: Record<string, any>) {
     fireEvent(this, "color-changed", color);
-    this.hass.callService("light", "turn_on", {
+    this.menuai.callService("light", "turn_on", {
       entity_id: this.stateObj!.entity_id,
       ...color,
       ...params,

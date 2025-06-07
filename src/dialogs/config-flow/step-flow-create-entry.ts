@@ -21,7 +21,7 @@ import {
   type EntityRegistryDisplayEntry,
 } from "../../data/entity_registry";
 import { domainToName } from "../../data/integration";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { brandsUrl } from "../../util/brands-url";
 import { showAlertDialog } from "../generic/show-dialog-box";
 import { showVoiceAssistantSetupDialog } from "../voice-assistant-setup/show-voice-assistant-setup-dialog";
@@ -32,7 +32,7 @@ import { configFlowContentStyles } from "./styles";
 class StepFlowCreateEntry extends LitElement {
   @property({ attribute: false }) public flowConfig!: FlowConfig;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public step!: DataEntryFlowStepCreateEntry;
 
@@ -59,7 +59,7 @@ class StepFlowCreateEntry extends LitElement {
   );
 
   protected willUpdate(changedProps: PropertyValues) {
-    if (!changedProps.has("devices") && !changedProps.has("hass")) {
+    if (!changedProps.has("devices") && !changedProps.has("menuai")) {
       return;
     }
 
@@ -73,13 +73,13 @@ class StepFlowCreateEntry extends LitElement {
 
     const assistSatellites = this._deviceEntities(
       this.devices[0].id,
-      Object.values(this.hass.entities),
+      Object.values(this.menuai.entities),
       "assist_satellite"
     );
     if (
       assistSatellites.length &&
       assistSatellites.some((satellite) =>
-        assistSatelliteSupportsSetupFlow(this.hass.states[satellite.entity_id])
+        assistSatelliteSupportsSetupFlow(this.menuai.states[satellite.entity_id])
       )
     ) {
       this.navigateToResult = false;
@@ -91,10 +91,10 @@ class StepFlowCreateEntry extends LitElement {
   }
 
   protected render(): TemplateResult {
-    const localize = this.hass.localize;
+    const localize = this.menuai.localize;
     return html`
       <div class="content">
-        ${this.flowConfig.renderCreateEntryDescription(this.hass, this.step)}
+        ${this.flowConfig.renderCreateEntryDescription(this.menuai, this.step)}
         ${this.step.result?.state === "not_loaded"
           ? html`<span class="error"
               >${localize(
@@ -122,13 +122,13 @@ class StepFlowCreateEntry extends LitElement {
                             ? html`<img
                                 slot="graphic"
                                 alt=${domainToName(
-                                  this.hass.localize,
+                                  this.menuai.localize,
                                   this.step.result.domain
                                 )}
                                 src=${brandsUrl({
                                   domain: this.step.result.domain,
                                   type: "icon",
-                                  darkOptimized: this.hass.themes?.darkMode,
+                                  darkOptimized: this.menuai.themes?.darkMode,
                                 })}
                                 crossorigin="anonymous"
                                 referrerpolicy="no-referrer"
@@ -149,7 +149,7 @@ class StepFlowCreateEntry extends LitElement {
                           )}
                           .placeholder=${computeDeviceNameDisplay(
                             device,
-                            this.hass
+                            this.menuai
                           )}
                           .value=${this._deviceUpdate[device.id]?.name ??
                           computeDeviceName(device)}
@@ -157,7 +157,7 @@ class StepFlowCreateEntry extends LitElement {
                           .device=${device.id}
                         ></ha-textfield>
                         <ha-area-picker
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .device=${device.id}
                           .value=${this._deviceUpdate[device.id]?.area ??
                           device.area_id ??
@@ -188,12 +188,12 @@ class StepFlowCreateEntry extends LitElement {
           if (update.name) {
             renamedDevices.push(deviceId);
           }
-          return updateDeviceRegistryEntry(this.hass, deviceId, {
+          return updateDeviceRegistryEntry(this.menuai, deviceId, {
             name_by_user: update.name,
             area_id: update.area,
           }).catch((err: any) => {
             showAlertDialog(this, {
-              text: this.hass.localize(
+              text: this.menuai.localize(
                 "ui.panel.config.integrations.config_flow.error_saving_device",
                 { error: err.message }
               ),
@@ -207,21 +207,21 @@ class StepFlowCreateEntry extends LitElement {
       renamedDevices.forEach((deviceId) => {
         const entities = this._deviceEntities(
           deviceId,
-          Object.values(this.hass.entities)
+          Object.values(this.menuai.entities)
         );
         entityIds.push(...entities.map((entity) => entity.entity_id));
       });
 
-      const entityIdsMapping = getAutomaticEntityIds(this.hass, entityIds);
+      const entityIdsMapping = getAutomaticEntityIds(this.menuai, entityIds);
 
       Object.entries(entityIdsMapping).forEach(([oldEntityId, newEntityId]) => {
         if (newEntityId) {
           entityUpdates.push(
-            updateEntityRegistryEntry(this.hass, oldEntityId, {
+            updateEntityRegistryEntry(this.menuai, oldEntityId, {
               new_entity_id: newEntityId,
             }).catch((err) =>
               showAlertDialog(this, {
-                text: this.hass.localize(
+                text: this.menuai.localize(
                   "ui.panel.config.integrations.config_flow.error_saving_entity",
                   { error: err.message }
                 ),

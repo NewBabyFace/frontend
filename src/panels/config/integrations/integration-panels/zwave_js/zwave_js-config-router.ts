@@ -1,10 +1,10 @@
 import { mdiServerNetwork, mdiMathLog } from "@mdi/js";
 import { customElement, property } from "lit/decorators";
-import type { RouterOptions } from "../../../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../../../types";
+import type { RouterOptions } from "../../../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../../../layouts/menuai-router-page";
+import type { menuai } from "../../../../../types";
 import { navigate } from "../../../../../common/navigate";
-import type { PageNavigation } from "../../../../../layouts/hass-tabs-subpage";
+import type { PageNavigation } from "../../../../../layouts/menuai-tabs-subpage";
 import { getConfigEntries } from "../../../../../data/config_entries";
 
 export const configTabs: PageNavigation[] = [
@@ -21,8 +21,8 @@ export const configTabs: PageNavigation[] = [
 ];
 
 @customElement("zwave_js-config-router")
-class ZWaveJSConfigRouter extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class ZWaveJSConfigRouter extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -66,7 +66,7 @@ class ZWaveJSConfigRouter extends HassRouterPage {
 
   protected updatePageEl(el): void {
     el.route = this.routeTail;
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.isWide = this.isWide;
     el.narrow = this.narrow;
     el.configEntryId = this._configEntry;
@@ -87,7 +87,7 @@ class ZWaveJSConfigRouter extends HassRouterPage {
     if (this._configEntry) {
       return;
     }
-    const entries = await getConfigEntries(this.hass, {
+    const entries = await getConfigEntries(this.menuai, {
       domain: "zwave_js",
     });
     if (entries.length) {

@@ -11,12 +11,12 @@ import { UNAVAILABLE } from "../../../data/entity";
 import type { HumidifierEntity } from "../../../data/humidifier";
 import { HumidifierEntityFeature } from "../../../data/humidifier";
 import "../../../state-control/humidifier/ha-state-control-humidifier-humidity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-control-select-container";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
 class MoreInfoHumidifier extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: HumidifierEntity;
 
@@ -34,7 +34,7 @@ class MoreInfoHumidifier extends LitElement {
       return nothing;
     }
 
-    const hass = this.hass;
+    const menuai = this.menuai;
     const stateObj = this.stateObj;
 
     const supportModes = supportsFeature(
@@ -48,13 +48,13 @@ class MoreInfoHumidifier extends LitElement {
           ? html`
               <div>
                 <p class="label">
-                  ${this.hass.formatEntityAttributeName(
+                  ${this.menuai.formatEntityAttributeName(
                     this.stateObj,
                     "current_humidity"
                   )}
                 </p>
                 <p class="value">
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "current_humidity"
                   )}
@@ -66,14 +66,14 @@ class MoreInfoHumidifier extends LitElement {
 
       <div class="controls">
         <ha-state-control-humidifier-humidity
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
         ></ha-state-control-humidifier-humidity>
       </div>
 
       <ha-more-info-control-select-container>
         <ha-control-select-menu
-          .label=${this.hass.localize("ui.card.humidifier.state")}
+          .label=${this.menuai.localize("ui.card.humidifier.state")}
           .value=${this.stateObj.state}
           .disabled=${this.stateObj.state === UNAVAILABLE}
           fixedMenuPosition
@@ -83,17 +83,17 @@ class MoreInfoHumidifier extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiPower}></ha-svg-icon>
           <ha-list-item value="off">
-            ${this.hass.formatEntityState(this.stateObj, "off")}
+            ${this.menuai.formatEntityState(this.stateObj, "off")}
           </ha-list-item>
           <ha-list-item value="on">
-            ${this.hass.formatEntityState(this.stateObj, "on")}
+            ${this.menuai.formatEntityState(this.stateObj, "on")}
           </ha-list-item>
         </ha-control-select-menu>
 
         ${supportModes
           ? html`
               <ha-control-select-menu
-                .label=${hass.localize("ui.card.humidifier.mode")}
+                .label=${menuai.localize("ui.card.humidifier.mode")}
                 .value=${stateObj.attributes.mode}
                 .disabled=${this.stateObj.state === UNAVAILABLE}
                 fixedMenuPosition
@@ -105,7 +105,7 @@ class MoreInfoHumidifier extends LitElement {
                   ? html`
                       <ha-attribute-icon
                         slot="icon"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="mode"
                         .attributeValue=${stateObj.attributes.mode}
@@ -122,12 +122,12 @@ class MoreInfoHumidifier extends LitElement {
                     <ha-list-item .value=${mode} graphic="icon">
                       <ha-attribute-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${stateObj}
                         attribute="mode"
                         .attributeValue=${mode}
                       ></ha-attribute-icon>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj!,
                         "mode",
                         mode
@@ -181,7 +181,7 @@ class MoreInfoHumidifier extends LitElement {
     data.entity_id = this.stateObj!.entity_id;
     const curState = this.stateObj;
 
-    await this.hass.callService("humidifier", service, data);
+    await this.menuai.callService("humidifier", service, data);
 
     // We reset stateObj to re-sync the inputs with the state. It will be out
     // of sync if our service call did not result in the entity to be turned

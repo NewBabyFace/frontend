@@ -9,7 +9,7 @@ import { rgbw2rgb, rgbww2rgb } from "../common/color/convert-light-color";
 import { fireEvent } from "../common/dom/fire_event";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "cursor-moved": { value?: any };
   }
 }

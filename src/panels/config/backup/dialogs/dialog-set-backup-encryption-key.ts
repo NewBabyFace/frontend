@@ -17,9 +17,9 @@ import {
   downloadEmergencyKit,
   generateEncryptionKey,
 } from "../../../../data/backup";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 import type { SetBackupEncryptionKeyDialogParams } from "./show-dialog-set-backup-encryption-key";
 
@@ -28,8 +28,8 @@ const STEPS = ["key", "done"] as const;
 type Step = (typeof STEPS)[number];
 
 @customElement("ha-dialog-set-backup-encryption-key")
-class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogSetBackupEncryptionKey extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -82,7 +82,7 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
 
     const dialogTitle =
       this._step === "key"
-        ? this.hass.localize(
+        ? this.menuai.localize(
             `ui.panel.config.backup.dialogs.set_encryption_key.key.title`
           )
         : "";
@@ -92,7 +92,7 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
@@ -106,14 +106,14 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
                   @click=${this._submit}
                   .disabled=${!this._newEncryptionKey}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.dialogs.set_encryption_key.actions.set"
                   )}
                 </ha-button>
               `
             : html`
                 <ha-button @click=${this._done}>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.dialogs.set_encryption_key.actions.done"
                   )}
                 </ha-button>
@@ -128,7 +128,7 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
       case "key":
         return html`
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.set_encryption_key.new.description"
             )}
           </p>
@@ -142,18 +142,18 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
           <ha-md-list>
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit_description"
                 )}
               </span>
               <ha-button slot="end" @click=${this._download}>
                 <ha-svg-icon .path=${mdiDownload} slot="icon"></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit_action"
                 )}
               </ha-button>
@@ -165,10 +165,10 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
           <div class="done">
             <img
               src="/static/images/voice-assistant/hi.png"
-              alt="Casita Home Assistant logo"
+              alt="Casita MenuAI logo"
             />
             <h1>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.dialogs.set_encryption_key.done.title"
               )}
             </h1>
@@ -184,7 +184,7 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
       this.renderRoot.querySelector("div")!
     );
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -192,7 +192,7 @@ class DialogSetBackupEncryptionKey extends LitElement implements HassDialog {
     if (!this._newEncryptionKey) {
       return;
     }
-    downloadEmergencyKit(this.hass, this._newEncryptionKey);
+    downloadEmergencyKit(this.menuai, this._newEncryptionKey);
   }
 
   private async _submit() {

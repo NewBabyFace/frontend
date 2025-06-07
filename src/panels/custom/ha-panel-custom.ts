@@ -5,7 +5,7 @@ import type { NavigateOptions } from "../../common/navigate";
 import { navigate } from "../../common/navigate";
 import { deepEqual } from "../../common/util/deep-equal";
 import type { CustomPanelInfo } from "../../data/panel_custom";
-import type { HomeAssistant, Route } from "../../types";
+import type { menuai, Route } from "../../types";
 import { createCustomPanelElement } from "../../util/custom-panel/create-custom-panel-element";
 import {
   getUrl,
@@ -23,7 +23,7 @@ declare global {
 }
 
 export class HaPanelCustom extends ReactiveElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -45,7 +45,7 @@ export class HaPanelCustom extends ReactiveElement {
 
   public registerIframe(initialize, setProperties) {
     initialize(this.panel, {
-      hass: this.hass,
+      menuai: this.menuai,
       narrow: this.narrow,
       route: this.route,
     });
@@ -102,16 +102,16 @@ export class HaPanelCustom extends ReactiveElement {
     ) {
       if (
         !confirm(
-          `${this.hass.localize(
+          `${this.menuai.localize(
             "ui.panel.custom.external_panel.question_trust",
             { name: config.name, link: tempA.href }
           )}
 
-           ${this.hass.localize(
+           ${this.menuai.localize(
              "ui.panel.custom.external_panel.complete_access"
            )}
 
-           (${this.hass.localize(
+           (${this.menuai.localize(
              "ui.panel.custom.external_panel.hide_message"
            )})`
         )
@@ -128,7 +128,7 @@ export class HaPanelCustom extends ReactiveElement {
             setCustomPanelProperties(element, props);
           setCustomPanelProperties(element, {
             panel,
-            hass: this.hass,
+            menuai: this.menuai,
             narrow: this.narrow,
             route: this.route,
           });

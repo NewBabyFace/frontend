@@ -3,7 +3,7 @@ import { html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators";
 import { mockHistory } from "../../../../demo/src/stubs/history";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../components/demo-cards";
 import { mockIcons } from "../../../../demo/src/stubs/icons";
 
@@ -211,12 +211,12 @@ class DemoStack extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    const hass = provideHass(this._demoRoot);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("lovelace", "en");
-    hass.addEntities(ENTITIES);
-    mockHistory(hass);
-    mockIcons(hass);
+    const menuai = providemenuai(this._demoRoot);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("lovelace", "en");
+    menuai.addEntities(ENTITIES);
+    mockHistory(menuai);
+    mockIcons(menuai);
   }
 }
 

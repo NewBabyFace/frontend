@@ -38,7 +38,7 @@ class HuiConditionalCard extends HuiConditionalBase implements LovelaceCard {
 
   private _createCardElement(cardConfig: LovelaceCardConfig) {
     const element = document.createElement("hui-card");
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.preview = this.preview;
     element.config = cardConfig;
     element.load();

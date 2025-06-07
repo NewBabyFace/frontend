@@ -1,10 +1,10 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { navigate } from "../common/navigate";
 import { ensureArray } from "../common/array/ensure-array";
-import type { Context, HomeAssistant } from "../types";
+import type { Context, menuai } from "../types";
 import type { BlueprintInput } from "./blueprint";
 import type { DeviceCondition, DeviceTrigger } from "./device_automation";
 import type { Action, MODES } from "./script";
@@ -14,8 +14,8 @@ import { createSearchParam } from "../common/url/search-params";
 export const AUTOMATION_DEFAULT_MODE: (typeof MODES)[number] = "single";
 export const AUTOMATION_DEFAULT_MAX = 10;
 
-export interface AutomationEntity extends HassEntityBase {
-  attributes: HassEntityAttributeBase & {
+export interface AutomationEntity extends menuaiEntityBase {
+  attributes: menuaiEntityAttributeBase & {
     id?: string;
     last_triggered: string;
   };
@@ -107,8 +107,8 @@ export interface GeoLocationTrigger extends BaseTrigger {
   event: "enter" | "leave";
 }
 
-export interface HassTrigger extends BaseTrigger {
-  trigger: "homeassistant";
+export interface menuaiTrigger extends BaseTrigger {
+  trigger: "menuai";
   event: "start" | "shutdown";
 }
 
@@ -195,7 +195,7 @@ export type Trigger =
   | StateTrigger
   | MqttTrigger
   | GeoLocationTrigger
-  | HassTrigger
+  | menuaiTrigger
   | NumericStateTrigger
   | SunTrigger
   | ConversationTrigger
@@ -337,37 +337,37 @@ export const expandConditionWithShorthand = (
 };
 
 export const triggerAutomationActions = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ) => {
-  hass.callService("automation", "trigger", {
+  menuai.callService("automation", "trigger", {
     entity_id: entityId,
     skip_condition: true,
   });
 };
 
-export const deleteAutomation = (hass: HomeAssistant, id: string) =>
-  hass.callApi("DELETE", `config/automation/config/${id}`);
+export const deleteAutomation = (menuai: menuai, id: string) =>
+  menuai.callApi("DELETE", `config/automation/config/${id}`);
 
 let initialAutomationEditorData: Partial<AutomationConfig> | undefined;
 
-export const fetchAutomationFileConfig = (hass: HomeAssistant, id: string) =>
-  hass.callApi<AutomationConfig>("GET", `config/automation/config/${id}`);
+export const fetchAutomationFileConfig = (menuai: menuai, id: string) =>
+  menuai.callApi<AutomationConfig>("GET", `config/automation/config/${id}`);
 
 export const getAutomationStateConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string
 ) =>
-  hass.callWS<{ config: AutomationConfig }>({
+  menuai.callWS<{ config: AutomationConfig }>({
     type: "automation/config",
     entity_id,
   });
 
 export const saveAutomationConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   config: AutomationConfig
-) => hass.callApi<undefined>("POST", `config/automation/config/${id}`, config);
+) => menuai.callApi<undefined>("POST", `config/automation/config/${id}`, config);
 
 export const normalizeAutomationConfig = <
   T extends Partial<AutomationConfig> | AutomationConfig,
@@ -512,7 +512,7 @@ export const isCondition = (config: unknown): boolean => {
 };
 
 export const subscribeTrigger = (
-  hass: HomeAssistant,
+  menuai: menuai,
   onChange: (result: {
     variables: {
       trigger: Record<string, unknown>;
@@ -522,18 +522,18 @@ export const subscribeTrigger = (
   trigger: Trigger | Trigger[],
   variables?: Record<string, unknown>
 ) =>
-  hass.connection.subscribeMessage(onChange, {
+  menuai.connection.subscribeMessage(onChange, {
     type: "subscribe_trigger",
     trigger,
     variables,
   });
 
 export const testCondition = (
-  hass: HomeAssistant,
+  menuai: menuai,
   condition: Condition | Condition[],
   variables?: Record<string, unknown>
 ) =>
-  hass.callWS<{ result: boolean }>({
+  menuai.callWS<{ result: boolean }>({
     type: "test_condition",
     condition,
     variables,

@@ -1,4 +1,4 @@
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 
 export interface ToggleActionConfig extends BaseActionConfig {
   action: "toggle";
@@ -9,7 +9,7 @@ export interface CallServiceActionConfig extends BaseActionConfig {
   /** @deprecated "service" is kept for backwards compatibility. Replaced by "perform_action". */
   service?: string;
   perform_action: string;
-  target?: HassServiceTarget;
+  target?: menuaiServiceTarget;
   /** @deprecated "service_data" is kept for backwards compatibility. Replaced by "data". */
   service_data?: Record<string, unknown>;
   data?: Record<string, unknown>;

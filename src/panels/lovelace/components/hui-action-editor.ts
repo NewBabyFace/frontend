@@ -21,7 +21,7 @@ import type {
   UrlActionConfig,
 } from "../../../data/lovelace/config/action";
 import type { ServiceAction } from "../../../data/script";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EditorTarget } from "../editor/types";
 
 export type UiAction = Exclude<ActionConfig["action"], "fire-dom-event">;
@@ -80,7 +80,7 @@ export class HuiActionEditor extends LitElement {
 
   @property({ attribute: false }) public tooltipText?: string;
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @query("ha-select") private _select!: HaSelect;
 
@@ -119,7 +119,7 @@ export class HuiActionEditor extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -143,11 +143,11 @@ export class HuiActionEditor extends LitElement {
           naturalMenuWidt
         >
           <ha-list-item value="default">
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.lovelace.editor.action-editor.actions.default_action"
             )}
             ${this.defaultAction
-              ? ` (${this.hass!.localize(
+              ? ` (${this.menuai!.localize(
                   `ui.panel.lovelace.editor.action-editor.actions.${this.defaultAction}`
                 ).toLowerCase()})`
               : nothing}
@@ -155,7 +155,7 @@ export class HuiActionEditor extends LitElement {
           ${actions.map(
             (actn) => html`
               <ha-list-item .value=${actn}>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   `ui.panel.lovelace.editor.action-editor.actions.${actn}`
                 )}
               </ha-list-item>
@@ -171,7 +171,7 @@ export class HuiActionEditor extends LitElement {
       ${this.config?.action === "navigate"
         ? html`
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .schema=${NAVIGATE_SCHEMA}
               .data=${this.config}
               .computeLabel=${this._computeFormLabel}
@@ -183,7 +183,7 @@ export class HuiActionEditor extends LitElement {
       ${this.config?.action === "url"
         ? html`
             <ha-textfield
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.lovelace.editor.action-editor.url_path"
               )}
               .value=${this._url_path}
@@ -196,9 +196,9 @@ export class HuiActionEditor extends LitElement {
       this.config?.action === "perform-action"
         ? html`
             <ha-service-control
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${this._serviceAction(this.config)}
-              .showAdvanced=${this.hass.userData?.showAdvanced}
+              .showAdvanced=${this.menuai.userData?.showAdvanced}
               narrow
               @value-changed=${this._serviceValueChanged}
             ></ha-service-control>
@@ -207,7 +207,7 @@ export class HuiActionEditor extends LitElement {
       ${this.config?.action === "assist"
         ? html`
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .schema=${ASSIST_SCHEMA}
               .data=${this.config}
               .computeLabel=${this._computeFormLabel}
@@ -221,7 +221,7 @@ export class HuiActionEditor extends LitElement {
 
   private _actionPicked(ev): void {
     ev.stopPropagation();
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     let action = this.config?.action;
@@ -263,7 +263,7 @@ export class HuiActionEditor extends LitElement {
 
   private _valueChanged(ev): void {
     ev.stopPropagation();
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     const target = ev.target! as EditorTarget;
@@ -288,7 +288,7 @@ export class HuiActionEditor extends LitElement {
   }
 
   private _computeFormLabel(schema: SchemaUnion<typeof ASSIST_SCHEMA>) {
-    return this.hass?.localize(
+    return this.menuai?.localize(
       `ui.panel.lovelace.editor.action-editor.${schema.name}`
     );
   }

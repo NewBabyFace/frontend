@@ -1,14 +1,14 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export const subscribePollingCollection = (
-  hass: HomeAssistant,
-  updateData: (hass: HomeAssistant) => void,
+  menuai: menuai,
+  updateData: (menuai: menuai) => void,
   interval: number
 ) => {
   let timeout;
   const fetchData = async () => {
     try {
-      await updateData(hass);
+      await updateData(menuai);
     } finally {
       timeout = setTimeout(() => fetchData(), interval);
     }

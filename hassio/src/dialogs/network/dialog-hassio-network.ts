@@ -18,35 +18,35 @@ import "../../../../src/components/ha-radio";
 import "../../../../src/components/ha-spinner";
 import "../../../../src/components/ha-textfield";
 import type { HaTextField } from "../../../../src/components/ha-textfield";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import type {
   AccessPoints,
   NetworkInterface,
   WifiConfiguration,
-} from "../../../../src/data/hassio/network";
+} from "../../../../src/data/menuaiio/network";
 import {
   accesspointScan,
   updateNetworkInterface,
-} from "../../../../src/data/hassio/network";
+} from "../../../../src/data/menuaiio/network";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../../src/dialogs/generic/show-dialog-box";
-import type { HassDialog } from "../../../../src/dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../src/dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import type { HassioNetworkDialogParams } from "./show-dialog-network";
+import type { menuai } from "../../../../src/types";
+import type { menuaiioNetworkDialogParams } from "./show-dialog-network";
 import "../../../../src/components/sl-tab-group";
 
 const IP_VERSIONS = ["ipv4", "ipv6"];
 
-@customElement("dialog-hassio-network")
-export class DialogHassioNetwork
+@customElement("dialog-menuaiio-network")
+export class DialogmenuaiioNetwork
   extends LitElement
-  implements HassDialog<HassioNetworkDialogParams>
+  implements menuaiDialog<menuaiioNetworkDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -60,7 +60,7 @@ export class DialogHassioNetwork
 
   @state() private _interfaces!: NetworkInterface[];
 
-  @state() private _params?: HassioNetworkDialogParams;
+  @state() private _params?: menuaiioNetworkDialogParams;
 
   @state() private _processing = false;
 
@@ -68,7 +68,7 @@ export class DialogHassioNetwork
 
   @state() private _wifiConfiguration?: WifiConfiguration;
 
-  public async showDialog(params: HassioNetworkDialogParams): Promise<void> {
+  public async showDialog(params: menuaiioNetworkDialogParams): Promise<void> {
     this._params = params;
     this._dirty = false;
     this._curTabIndex = 0;
@@ -295,7 +295,7 @@ export class DialogHassioNetwork
     this._scanning = true;
     try {
       this._accessPoints = await accesspointScan(
-        this.hass,
+        this.menuai,
         this._interface.interface
       );
     } catch (err: any) {
@@ -456,7 +456,7 @@ export class DialogHassioNetwork
 
     try {
       await updateNetworkInterface(
-        this.hass,
+        this.menuai,
         this._interface!.interface,
         interfaceOptions
       );
@@ -646,6 +646,6 @@ export class DialogHassioNetwork
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-network": DialogHassioNetwork;
+    "dialog-menuaiio-network": DialogmenuaiioNetwork;
   }
 }

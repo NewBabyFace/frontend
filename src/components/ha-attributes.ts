@@ -1,19 +1,19 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeAttributeNameDisplay } from "../common/entity/compute_attribute_display";
 import { STATE_ATTRIBUTES } from "../data/entity_attributes";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-attribute-value";
 import "./ha-expansion-panel";
 
 @customElement("ha-attributes")
 class HaAttributes extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property({ attribute: "extra-filters" }) public extraFilters?: string;
 
@@ -49,7 +49,7 @@ class HaAttributes extends LitElement {
 
     return html`
       <ha-expansion-panel
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.components.attributes.expansion_header"
         )}
         outlined
@@ -63,15 +63,15 @@ class HaAttributes extends LitElement {
                     <div class="data-entry">
                       <div class="key">
                         ${computeAttributeNameDisplay(
-                          this.hass.localize,
+                          this.menuai.localize,
                           this.stateObj!,
-                          this.hass.entities,
+                          this.menuai.entities,
                           attribute
                         )}
                       </div>
                       <div class="value">
                         <ha-attribute-value
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .attribute=${attribute}
                           .stateObj=${this.stateObj}
                         ></ha-attribute-value>

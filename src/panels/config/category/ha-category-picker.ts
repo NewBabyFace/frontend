@@ -16,7 +16,7 @@ import {
   subscribeCategoryRegistry,
 } from "../../../data/category_registry";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant, ValueChangedEvent } from "../../../types";
+import type { menuai, ValueChangedEvent } from "../../../types";
 import { showCategoryRegistryDetailDialog } from "./show-dialog-category-registry-detail";
 
 const ADD_NEW_ID = "___ADD_NEW___";
@@ -24,7 +24,7 @@ const NO_CATEGORIES_ID = "___NO_CATEGORIES___";
 
 @customElement("ha-category-picker")
 export class HaCategoryPicker extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public scope?: string;
 
@@ -47,17 +47,17 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
 
   @query("ha-generic-picker") private _picker?: HaGenericPicker;
 
-  protected hassSubscribeRequiredHostProps = ["scope"];
+  protected menuaiSubscribeRequiredHostProps = ["scope"];
 
   public async open() {
     await this.updateComplete;
     await this._picker?.open();
   }
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
       subscribeCategoryRegistry(
-        this.hass.connection,
+        this.menuai.connection,
         this.scope!,
         (categories) => {
           this._categories = categories;
@@ -106,7 +106,7 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
         return [
           {
             id: NO_CATEGORIES_ID,
-            primary: this.hass.localize(
+            primary: this.menuai.localize(
               "ui.components.category-picker.no_categories"
             ),
             icon_path: mdiTag,
@@ -162,7 +162,7 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
       return [
         {
           id: ADD_NEW_ID + searchString,
-          primary: this.hass.localize(
+          primary: this.menuai.localize(
             "ui.components.category-picker.add_new_sugestion",
             {
               name: searchString,
@@ -176,7 +176,7 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
     return [
       {
         id: ADD_NEW_ID,
-        primary: this.hass.localize("ui.components.category-picker.add_new"),
+        primary: this.menuai.localize("ui.components.category-picker.add_new"),
         icon_path: mdiPlus,
       },
     ];
@@ -185,16 +185,16 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
   protected render(): TemplateResult {
     const placeholder =
       this.placeholder ??
-      this.hass.localize("ui.components.category-picker.category");
+      this.menuai.localize("ui.components.category-picker.category");
 
     const valueRenderer = this._computeValueRenderer(this._categories);
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         .label=${this.label}
-        .notFoundLabel=${this.hass.localize(
+        .notFoundLabel=${this.menuai.localize(
           "ui.components.category-picker.no_match"
         )}
         .placeholder=${placeholder}
@@ -223,7 +223,7 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
     }
 
     if (value.startsWith(ADD_NEW_ID)) {
-      this.hass.loadFragmentTranslation("config");
+      this.menuai.loadFragmentTranslation("config");
 
       const suggestedName = value.substring(ADD_NEW_ID.length);
 
@@ -232,7 +232,7 @@ export class HaCategoryPicker extends SubscribeMixin(LitElement) {
         suggestedName: suggestedName,
         createEntry: async (values) => {
           const category = await createCategoryRegistryEntry(
-            this.hass,
+            this.menuai,
             this.scope!,
             values
           );

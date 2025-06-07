@@ -9,10 +9,10 @@ import { deepActiveElement } from "../common/dom/deep-active-element";
 import { deepEqual } from "../common/util/deep-equal";
 import { getDefaultPanel } from "../data/panel";
 import type { CustomPanelInfo } from "../data/panel_custom";
-import type { HomeAssistant, Panels } from "../types";
+import type { menuai, Panels } from "../types";
 import { removeLaunchScreen } from "../util/launch-screen";
-import type { RouteOptions, RouterOptions } from "./hass-router-page";
-import { HassRouterPage } from "./hass-router-page";
+import type { RouteOptions, RouterOptions } from "./menuai-router-page";
+import { menuaiRouterPage } from "./menuai-router-page";
 
 const CACHE_URL_PATHS = ["lovelace", "developer-tools"];
 const COMPONENTS = {
@@ -35,8 +35,8 @@ const COMPONENTS = {
 };
 
 @customElement("partial-panel-resolver")
-class PartialPanelResolver extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class PartialPanelResolver extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -63,45 +63,45 @@ class PartialPanelResolver extends HassRouterPage {
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
-    if (!changedProps.has("hass")) {
+    if (!changedProps.has("menuai")) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as this["hass"];
+    const oldmenuai = changedProps.get("menuai") as this["menuai"];
 
     if (
       this._waitForStart &&
-      (this.hass.config.state === STATE_STARTING ||
-        this.hass.config.state === STATE_RUNNING)
+      (this.menuai.config.state === STATE_STARTING ||
+        this.menuai.config.state === STATE_RUNNING)
     ) {
       this._waitForStart = false;
       this.rebuild();
     }
 
-    if (this.hass.panels && (!oldHass || oldHass.panels !== this.hass.panels)) {
-      this._updateRoutes(oldHass?.panels);
+    if (this.menuai.panels && (!oldmenuai || oldmenuai.panels !== this.menuai.panels)) {
+      this._updateRoutes(oldmenuai?.panels);
     }
   }
 
   protected createLoadingScreen() {
     const el = super.createLoadingScreen();
     el.rootnav = true;
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.narrow = this.narrow;
     return el;
   }
 
   protected updatePageEl(el) {
-    const hass = this.hass;
+    const menuai = this.menuai;
 
-    el.hass = hass;
+    el.menuai = menuai;
     el.narrow = this.narrow;
     el.route = this.routeTail;
-    el.panel = hass.panels[this._currentPage];
+    el.panel = menuai.panels[this._currentPage];
   }
 
   private _checkVisibility() {
-    if (this.hass.suspendWhenHidden === false) {
+    if (this.menuai.suspendWhenHidden === false) {
       return;
     }
 
@@ -128,7 +128,7 @@ class PartialPanelResolver extends HassRouterPage {
     return {
       beforeRender: (page) => {
         if (!page || !routes[page]) {
-          return getDefaultPanel(this.hass).url_path;
+          return getDefaultPanel(this.menuai).url_path;
         }
         return undefined;
       },
@@ -145,13 +145,13 @@ class PartialPanelResolver extends HassRouterPage {
       if (!document.hidden) {
         return;
       }
-      const curPanel = this.hass.panels[this._currentPage];
+      const curPanel = this.menuai.panels[this._currentPage];
       if (
         this.lastChild &&
         // iFrames will lose their state when disconnected
         // Do not disconnect any iframe panel
         curPanel.component_name !== "iframe" &&
-        // Do not disconnect any custom panel that embeds into iframe (ie hassio)
+        // Do not disconnect any custom panel that embeds into iframe (ie menuaiio)
         (curPanel.component_name !== "custom" ||
           !(curPanel as CustomPanelInfo).config._panel_custom.embed_iframe)
       ) {
@@ -183,15 +183,15 @@ class PartialPanelResolver extends HassRouterPage {
     }
   }
 
-  private async _updateRoutes(oldPanels?: HomeAssistant["panels"]) {
-    this.routerOptions = this._getRoutes(this.hass.panels);
+  private async _updateRoutes(oldPanels?: menuai["panels"]) {
+    this.routerOptions = this._getRoutes(this.menuai.panels);
 
     if (
       !this._waitForStart &&
       this._currentPage &&
-      !this.hass.panels[this._currentPage]
+      !this.menuai.panels[this._currentPage]
     ) {
-      if (this.hass.config.state === STATE_NOT_RUNNING) {
+      if (this.menuai.config.state === STATE_NOT_RUNNING) {
         this._waitForStart = true;
         if (this.lastChild) {
           this.removeChild(this.lastChild);
@@ -205,7 +205,7 @@ class PartialPanelResolver extends HassRouterPage {
       !oldPanels ||
       !deepEqual(
         oldPanels[this._currentPage],
-        this.hass.panels[this._currentPage]
+        this.menuai.panels[this._currentPage]
       )
     ) {
       await this.rebuild();

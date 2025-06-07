@@ -7,7 +7,7 @@ import { fireEvent } from "../../common/dom/fire_event";
 import { stopPropagation } from "../../common/dom/stop_propagation";
 import { caseInsensitiveStringCompare } from "../../common/string/compare";
 import type { SelectOption, SelectSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../chips/ha-chip-set";
 import "../chips/ha-input-chip";
 import "../ha-checkbox";
@@ -23,7 +23,7 @@ import "../ha-sortable";
 
 @customElement("ha-selector-select")
 export class HaSelectSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: SelectSelector;
 
@@ -87,7 +87,7 @@ export class HaSelectSelector extends LitElement {
         caseInsensitiveStringCompare(
           a.label,
           b.label,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
     }
@@ -105,7 +105,7 @@ export class HaSelectSelector extends LitElement {
           .value=${this.value as string | undefined}
           @value-changed=${this._valueChanged}
           .maxColumns=${this.selector.select?.box_max_columns}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
         ></ha-select-box>
         ${this._renderHelper()}
       `;
@@ -215,7 +215,7 @@ export class HaSelectSelector extends LitElement {
         <ha-combo-box
           item-value-path="value"
           item-label-path="label"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .label=${this.label}
           .helper=${this.helper}
           .disabled=${this.disabled}
@@ -245,7 +245,7 @@ export class HaSelectSelector extends LitElement {
         <ha-combo-box
           item-value-path="value"
           item-label-path="label"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .label=${this.label}
           .helper=${this.helper}
           .disabled=${this.disabled}

@@ -8,7 +8,7 @@ import {
   subscribeServices,
 } from "home-assistant-js-websocket";
 import { loadTokens, saveTokens } from "../common/auth/token_storage";
-import { hassUrl } from "../data/auth";
+import { menuaiUrl } from "../data/auth";
 import { isExternal } from "../data/external";
 import { subscribeFrontendUserData } from "../data/frontend";
 import { fetchConfig } from "../data/lovelace/config/types";
@@ -31,8 +31,8 @@ window.name = MAIN_WINDOW_NAME;
 
 declare global {
   interface Window {
-    hassConnection: Promise<{ auth: Auth; conn: Connection }>;
-    hassConnectionReady?: (hassConnection: Window["hassConnection"]) => void;
+    menuaiConnection: Promise<{ auth: Auth; conn: Connection }>;
+    menuaiConnectionReady?: (menuaiConnection: Window["menuaiConnection"]) => void;
   }
 }
 
@@ -58,12 +58,12 @@ const clearUrlParams = () => {
 const authProm = isExternal
   ? () =>
       import("../external_app/external_auth").then(({ createExternalAuth }) =>
-        createExternalAuth(hassUrl)
+        createExternalAuth(menuaiUrl)
       )
   : () =>
       getAuth({
-        hassUrl,
-        limitHassInstance: true,
+        menuaiUrl,
+        limitmenuaiInstance: true,
         saveTokens,
         loadTokens: () => Promise.resolve(loadTokens()),
       });
@@ -97,19 +97,19 @@ if (__DEV__ && "performance" in window) {
   // Remove adoptedStyleSheets so style inspector works on shadow DOM.
   // @ts-ignore
   delete Document.prototype.adoptedStyleSheets;
-  performance.mark("hass-start");
+  performance.mark("menuai-start");
 }
-window.hassConnection = (authProm() as Promise<Auth | ExternalAuth>).then(
+window.menuaiConnection = (authProm() as Promise<Auth | ExternalAuth>).then(
   connProm
 );
 
 // This is set if app was somehow loaded before core.
-if (window.hassConnectionReady) {
-  window.hassConnectionReady(window.hassConnection);
+if (window.menuaiConnectionReady) {
+  window.menuaiConnectionReady(window.menuaiConnection);
 }
 
 // Start fetching some of the data that we will need.
-window.hassConnection.then(({ conn }) => {
+window.menuaiConnection.then(({ conn }) => {
   const noop = () => {
     // do nothing
   };

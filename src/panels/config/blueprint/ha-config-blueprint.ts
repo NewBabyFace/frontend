@@ -2,21 +2,21 @@ import type { PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { Blueprints } from "../../../data/blueprint";
 import { fetchBlueprints } from "../../../data/blueprint";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 import "./ha-blueprint-overview";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "reload-blueprints": undefined;
   }
 }
 
 @customElement("ha-config-blueprint")
-class HaConfigBlueprint extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigBlueprint extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -42,8 +42,8 @@ class HaConfigBlueprint extends HassRouterPage {
 
   private async _getBlueprints() {
     const [automation, script] = await Promise.all([
-      fetchBlueprints(this.hass, "automation"),
-      fetchBlueprints(this.hass, "script"),
+      fetchBlueprints(this.menuai, "automation"),
+      fetchBlueprints(this.menuai, "script"),
     ]);
     this.blueprints = { automation, script };
   }
@@ -57,7 +57,7 @@ class HaConfigBlueprint extends HassRouterPage {
   }
 
   protected updatePageEl(pageEl, changedProps: PropertyValues) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.narrow = this.narrow;
     pageEl.isWide = this.isWide;
     pageEl.route = this.routeTail;

@@ -1,5 +1,5 @@
 import { stringCompare } from "../common/string/compare";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { AreaRegistryEntry } from "./area_registry";
 import type { RegistryEntry } from "./registry";
 
@@ -23,30 +23,30 @@ export interface FloorRegistryEntryMutableParams {
 }
 
 export const createFloorRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: FloorRegistryEntryMutableParams
 ) =>
-  hass.callWS<FloorRegistryEntry>({
+  menuai.callWS<FloorRegistryEntry>({
     type: "config/floor_registry/create",
     ...values,
   });
 
 export const updateFloorRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   floorId: string,
   updates: Partial<FloorRegistryEntryMutableParams>
 ) =>
-  hass.callWS<AreaRegistryEntry>({
+  menuai.callWS<AreaRegistryEntry>({
     type: "config/floor_registry/update",
     floor_id: floorId,
     ...updates,
   });
 
 export const deleteFloorRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   floorId: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/floor_registry/delete",
     floor_id: floorId,
   });

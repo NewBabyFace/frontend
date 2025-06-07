@@ -4,15 +4,15 @@ import { customElement, property, query, state } from "lit/decorators";
 import { isComponentLoaded } from "../common/config/is_component_loaded";
 import { fireEvent } from "../common/dom/fire_event";
 import { stringCompare } from "../common/string/compare";
-import type { HassioAddonInfo } from "../data/hassio/addon";
-import { fetchHassioAddonsInfo } from "../data/hassio/addon";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuaiioAddonInfo } from "../data/menuaiio/addon";
+import { fetchmenuaiioAddonsInfo } from "../data/menuaiio/addon";
+import type { menuai, ValueChangedEvent } from "../types";
 import "./ha-alert";
 import "./ha-combo-box";
 import type { HaComboBox } from "./ha-combo-box";
 import "./ha-combo-box-item";
 
-const rowRenderer: ComboBoxLitRenderer<HassioAddonInfo> = (item) => html`
+const rowRenderer: ComboBoxLitRenderer<menuaiioAddonInfo> = (item) => html`
   <ha-combo-box-item type="button">
     <span slot="headline">${item.name}</span>
     <span slot="supporting-text">${item.slug}</span>
@@ -21,7 +21,7 @@ const rowRenderer: ComboBoxLitRenderer<HassioAddonInfo> = (item) => html`
           <img
             alt=""
             slot="start"
-            .src="/api/hassio/addons/${item.slug}/icon"
+            .src="/api/menuaiio/addons/${item.slug}/icon"
           />
         `
       : nothing}
@@ -30,7 +30,7 @@ const rowRenderer: ComboBoxLitRenderer<HassioAddonInfo> = (item) => html`
 
 @customElement("ha-addon-picker")
 class HaAddonPicker extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -38,7 +38,7 @@ class HaAddonPicker extends LitElement {
 
   @property() public helper?: string;
 
-  @state() private _addons?: HassioAddonInfo[];
+  @state() private _addons?: menuaiioAddonInfo[];
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -69,9 +69,9 @@ class HaAddonPicker extends LitElement {
     }
     return html`
       <ha-combo-box
-        .hass=${this.hass}
-        .label=${this.label === undefined && this.hass
-          ? this.hass.localize("ui.components.addon-picker.addon")
+        .menuai=${this.menuai}
+        .label=${this.label === undefined && this.menuai
+          ? this.menuai.localize("ui.components.addon-picker.addon")
           : this.label}
         .value=${this._value}
         .required=${this.required}
@@ -89,20 +89,20 @@ class HaAddonPicker extends LitElement {
 
   private async _getAddons() {
     try {
-      if (isComponentLoaded(this.hass, "hassio")) {
-        const addonsInfo = await fetchHassioAddonsInfo(this.hass);
+      if (isComponentLoaded(this.menuai, "menuaiio")) {
+        const addonsInfo = await fetchmenuaiioAddonsInfo(this.menuai);
         this._addons = addonsInfo.addons
           .filter((addon) => addon.version)
           .sort((a, b) =>
-            stringCompare(a.name, b.name, this.hass.locale.language)
+            stringCompare(a.name, b.name, this.menuai.locale.language)
           );
       } else {
-        this._error = this.hass.localize(
+        this._error = this.menuai.localize(
           "ui.components.addon-picker.error.no_supervisor"
         );
       }
     } catch (_err: any) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.addon-picker.error.fetch_addons"
       );
     }

@@ -1,9 +1,9 @@
-import type { HassEventBase } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuaiEventBase } from "home-assistant-js-websocket";
+import type { menuai } from "../types";
 
 export const EVENT_TAG_SCANNED = "tag_scanned";
 
-export interface TagScannedEvent extends HassEventBase {
+export interface TagScannedEvent extends menuaiEventBase {
   event_type: "tag_scanned";
   data: {
     tag_id: string;
@@ -23,35 +23,35 @@ export interface UpdateTagParams {
   description?: Tag["description"];
 }
 
-export const fetchTags = async (hass: HomeAssistant) =>
-  hass.callWS<Tag[]>({
+export const fetchTags = async (menuai: menuai) =>
+  menuai.callWS<Tag[]>({
     type: "tag/list",
   });
 
 export const createTag = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   params: UpdateTagParams,
   tagId?: string
 ) =>
-  hass.callWS<Tag>({
+  menuai.callWS<Tag>({
     type: "tag/create",
     tag_id: tagId,
     ...params,
   });
 
 export const updateTag = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   tagId: string,
   params: UpdateTagParams
 ) =>
-  hass.callWS<Tag>({
+  menuai.callWS<Tag>({
     ...params,
     type: "tag/update",
     tag_id: tagId,
   });
 
-export const deleteTag = async (hass: HomeAssistant, tagId: string) =>
-  hass.callWS<undefined>({
+export const deleteTag = async (menuai: menuai, tagId: string) =>
+  menuai.callWS<undefined>({
     type: "tag/delete",
     tag_id: tagId,
   });

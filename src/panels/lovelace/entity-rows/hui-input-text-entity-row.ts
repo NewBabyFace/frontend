@@ -5,7 +5,7 @@ import { computeStateName } from "../../../common/entity/compute_state_name";
 import "../../../components/ha-textfield";
 import { isUnavailableState, UNAVAILABLE } from "../../../data/entity";
 import { setValue } from "../../../data/input_text";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -13,7 +13,7 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-input-text-entity-row")
 class HuiInputTextEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -29,23 +29,23 @@ class HuiInputTextEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
       <hui-generic-entity-row
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this._config}
         hide-name
       >
@@ -66,7 +66,7 @@ class HuiInputTextEntityRow extends LitElement implements LovelaceRow {
   }
 
   private _selectedValueChanged(ev): void {
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
 
     const newValue = ev.target.value;
 
@@ -77,7 +77,7 @@ class HuiInputTextEntityRow extends LitElement implements LovelaceRow {
     }
 
     if (newValue !== stateObj.state) {
-      setValue(this.hass!, stateObj.entity_id, newValue);
+      setValue(this.menuai!, stateObj.entity_id, newValue);
     }
 
     ev.target.blur();

@@ -72,7 +72,7 @@ export class HuiCardElementEditor extends HuiTypedElementEditor<LovelaceCardConf
       case "visibility":
         content = html`
           <hui-card-visibility-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .config=${this.value}
             @value-changed=${this._configChanged}
           ></hui-card-visibility-editor>
@@ -81,7 +81,7 @@ export class HuiCardElementEditor extends HuiTypedElementEditor<LovelaceCardConf
       case "layout":
         content = html`
           <hui-card-layout-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .config=${this.value}
             .sectionConfig=${this.sectionConfig!}
             @value-changed=${this._configChanged}
@@ -94,7 +94,7 @@ export class HuiCardElementEditor extends HuiTypedElementEditor<LovelaceCardConf
         ${displayedTabs.map(
           (tab) => html`
             <sl-tab slot="nav" .active=${this._currTab === tab} panel=${tab}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.lovelace.editor.edit_card.tab_${tab}`
               )}
             </sl-tab>

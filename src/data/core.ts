@@ -1,5 +1,5 @@
-import type { HassConfig } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuaiConfig } from "home-assistant-js-websocket";
+import type { menuai } from "../types";
 
 export interface ConfigUpdateValues {
   location_name: string;
@@ -23,18 +23,18 @@ export interface CheckConfigResult {
 }
 
 export const saveCoreConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: Partial<ConfigUpdateValues>
 ) =>
-  hass.callWS<HassConfig>({
+  menuai.callWS<menuaiConfig>({
     type: "config/core/update",
     ...values,
   });
 
-export const detectCoreConfig = (hass: HomeAssistant) =>
-  hass.callWS<Partial<ConfigUpdateValues>>({
+export const detectCoreConfig = (menuai: menuai) =>
+  menuai.callWS<Partial<ConfigUpdateValues>>({
     type: "config/core/detect",
   });
 
-export const checkCoreConfig = (hass: HomeAssistant) =>
-  hass.callApi<CheckConfigResult>("POST", "config/core/check_config");
+export const checkCoreConfig = (menuai: menuai) =>
+  menuai.callApi<CheckConfigResult>("POST", "config/core/check_config");

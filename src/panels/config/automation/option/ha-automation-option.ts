@@ -13,13 +13,13 @@ import "../../../../components/ha-sortable";
 import "../../../../components/ha-svg-icon";
 import type { AutomationClipboard } from "../../../../data/automation";
 import type { Option } from "../../../../data/script";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./ha-automation-option-row";
 import type HaAutomationOptionRow from "./ha-automation-option-row";
 
 @customElement("ha-automation-option")
 export default class HaAutomationOption extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -86,7 +86,7 @@ export default class HaAutomationOption extends LitElement {
                 @move-down=${this._moveDown}
                 @move-up=${this._moveUp}
                 @value-changed=${this._optionChanged}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               >
                 ${this._showReorder && !this.disabled
                   ? html`
@@ -102,7 +102,7 @@ export default class HaAutomationOption extends LitElement {
             <ha-button
               outlined
               .disabled=${this.disabled}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.choose.add_option"
               )}
               @click=${this._addOption}

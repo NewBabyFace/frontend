@@ -9,13 +9,13 @@ import "../../../../../components/ha-md-select-option";
 import "../../../../../components/ha-md-textfield";
 import type { HaMdTextfield } from "../../../../../components/ha-md-textfield";
 import type { SupervisorUpdateConfig } from "../../../../../data/supervisor/update";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 const MIN_RETENTION_VALUE = 1;
 
 @customElement("ha-backup-config-addon")
 class HaBackupConfigAddon extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public supervisorUpdateConfig?: SupervisorUpdateConfig;
@@ -25,12 +25,12 @@ class HaBackupConfigAddon extends LitElement {
       <ha-md-list>
         <ha-md-list-item>
           <span slot="headline">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.backup.schedule.update_preference.label`
             )}
           </span>
           <span slot="supporting-text">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.backup.schedule.update_preference.supporting_text`
             )}
           </span>
@@ -42,14 +42,14 @@ class HaBackupConfigAddon extends LitElement {
           >
             <ha-md-select-option value="false">
               <div slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.schedule.update_preference.skip_backups"
                 )}
               </div>
             </ha-md-select-option>
             <ha-md-select-option value="true">
               <div slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.schedule.update_preference.backup_before_update"
                 )}
               </div>
@@ -58,10 +58,10 @@ class HaBackupConfigAddon extends LitElement {
         </ha-md-list-item>
         <ha-md-list-item>
           <span slot="headline">
-            ${this.hass.localize(`ui.panel.config.backup.schedule.retention`)}
+            ${this.menuai.localize(`ui.panel.config.backup.schedule.retention`)}
           </span>
           <span slot="supporting-text">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.backup.settings.addon_update_backup.retention_description`
             )}
           </span>
@@ -73,7 +73,7 @@ class HaBackupConfigAddon extends LitElement {
             type="number"
             min=${MIN_RETENTION_VALUE.toString()}
             step="1"
-            .suffixText=${this.hass.localize(
+            .suffixText=${this.menuai.localize(
               "ui.panel.config.backup.schedule.retention_units.copies"
             )}
           >

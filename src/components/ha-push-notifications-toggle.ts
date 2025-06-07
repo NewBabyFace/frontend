@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import { getAppKey } from "../data/notify_html5";
 import { showPromptDialog } from "../dialogs/generic/show-dialog-box";
 import type { HaSwitch } from "./ha-switch";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { fireEvent } from "../common/dom/fire_event";
 import "./ha-switch";
 
@@ -17,7 +17,7 @@ export const pushSupported =
 
 @customElement("ha-push-notifications-toggle")
 class HaPushNotificationsToggle extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled!: boolean;
 
@@ -81,10 +81,10 @@ class HaPushNotificationsToggle extends LitElement {
       }
 
       const name = await showPromptDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.push_notifications.add_device_prompt.title"
         ),
-        inputLabel: this.hass.localize(
+        inputLabel: this.menuai.localize(
           "ui.panel.profile.push_notifications.add_device_prompt.input_label"
         ),
       });
@@ -95,7 +95,7 @@ class HaPushNotificationsToggle extends LitElement {
 
       let applicationServerKey: Uint8Array | null;
       try {
-        applicationServerKey = await getAppKey(this.hass);
+        applicationServerKey = await getAppKey(this.menuai);
       } catch (_err) {
         applicationServerKey = null;
       }
@@ -109,7 +109,7 @@ class HaPushNotificationsToggle extends LitElement {
         sub = await reg.pushManager.subscribe({ userVisibleOnly: true });
       }
 
-      await this.hass.callApi("POST", "notify.html5", {
+      await this.menuai.callApi("POST", "notify.html5", {
         subscription: sub,
         browser: browserName,
         name,
@@ -123,7 +123,7 @@ class HaPushNotificationsToggle extends LitElement {
       // eslint-disable-next-line
       console.error(err);
 
-      fireEvent(this, "hass-notification", { message });
+      fireEvent(this, "menuai-notification", { message });
       this._pushChecked = false;
     }
   }
@@ -136,7 +136,7 @@ class HaPushNotificationsToggle extends LitElement {
 
       if (!sub) return;
 
-      await this.hass.callApi("DELETE", "notify.html5", { subscription: sub });
+      await this.menuai.callApi("DELETE", "notify.html5", { subscription: sub });
       await sub.unsubscribe();
     } catch (err: any) {
       const message =
@@ -145,7 +145,7 @@ class HaPushNotificationsToggle extends LitElement {
       // eslint-disable-next-line
       console.error("Error in unsub push", err);
 
-      fireEvent(this, "hass-notification", { message });
+      fireEvent(this, "menuai-notification", { message });
       this._pushChecked = true;
     }
   }

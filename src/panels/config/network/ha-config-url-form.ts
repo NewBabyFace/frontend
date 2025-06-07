@@ -16,7 +16,7 @@ import type { CloudStatus } from "../../../data/cloud";
 import { fetchCloudStatus } from "../../../data/cloud";
 import { saveCoreConfig } from "../../../data/core";
 import { getNetworkUrls, type NetworkUrls } from "../../../data/network";
-import type { ValueChangedEvent, HomeAssistant } from "../../../types";
+import type { ValueChangedEvent, menuai } from "../../../types";
 import { copyToClipboard } from "../../../common/util/copy-clipboard";
 import { showToast } from "../../../util/toast";
 import type { HaSwitch } from "../../../components/ha-switch";
@@ -25,7 +25,7 @@ import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 
 @customElement("ha-config-url-form")
 class ConfigUrlForm extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: string;
 
@@ -49,9 +49,9 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
 
   @state() private _cloudChecked = false;
 
-  protected hassSubscribe() {
+  protected menuaiSubscribe() {
     return [
-      this.hass.connection.subscribeEvents(() => {
+      this.menuai.connection.subscribeEvents(() => {
         // update the data when the urls are updated in core
         this._fetchUrls();
       }, "core_config_updated"),
@@ -60,7 +60,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
 
   protected render() {
     const canEdit = ["storage", "default"].includes(
-      this.hass.config.config_source
+      this.menuai.config.config_source
     );
     const disabled = this._working || !canEdit;
 
@@ -100,13 +100,13 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
     return html`
       <ha-card
         outlined
-        .header=${this.hass.localize("ui.panel.config.url.caption")}
+        .header=${this.menuai.localize("ui.panel.config.url.caption")}
       >
         <div class="card-content">
           ${!canEdit
             ? html`
                 <ha-alert>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.core.section.core.core_config.edit_requires_storage"
                   )}
                 </ha-alert>
@@ -117,19 +117,19 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
             : ""}
 
           <div class="description">
-            ${this.hass.localize("ui.panel.config.url.description")}
+            ${this.menuai.localize("ui.panel.config.url.description")}
           </div>
 
           ${hasCloud
             ? html`
                 <h4>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.url.external_url_label"
                   )}
                 </h4>
                 <ha-settings-row slim>
                   <span slot="heading">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.url.external_use_ha_cloud"
                     )}
                   </span>
@@ -162,7 +162,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
                 ? html`
                     <ha-icon-button
                       class="toggle-unmasked-url"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.panel.config.common.${this._unmaskedExternalUrl ? "hide" : "show"}_url`
                       )}
                       @click=${this._toggleUnmaskedExternalUrl}
@@ -173,16 +173,16 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
             </div>
             <ha-button .url=${externalUrl} @click=${this._copyURL}>
               <ha-svg-icon slot="icon" .path=${mdiContentCopy}></ha-svg-icon>
-              ${this.hass.localize("ui.panel.config.common.copy_link")}
+              ${this.menuai.localize("ui.panel.config.common.copy_link")}
             </ha-button>
           </div>
-          ${hasCloud || !isComponentLoaded(this.hass, "cloud")
+          ${hasCloud || !isComponentLoaded(this.menuai, "cloud")
             ? ""
             : html`
                 <div class="row">
                   <div class="flex"></div>
                   <a href="/config/cloud"
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.config.url.external_get_ha_cloud"
                     )}</a
                   >
@@ -195,7 +195,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
                       <div class="row">
                         <div class="flex"></div>
                         <a href="/config/cloud"
-                          >${this.hass.localize(
+                          >${this.menuai.localize(
                             "ui.panel.config.url.manage_ha_cloud"
                           )}</a
                         >
@@ -203,12 +203,12 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
                     `
                   : html`
                       <ha-alert alert-type="error">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.url.ha_cloud_remote_not_enabled"
                         )}
                         <a href="/config/cloud" slot="action"
                           ><mwc-button
-                            .label=${this.hass.localize(
+                            .label=${this.menuai.localize(
                               "ui.panel.config.url.enable_remote"
                             )}
                           ></mwc-button
@@ -219,16 +219,16 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
             : ""}
 
           <h4>
-            ${this.hass.localize("ui.panel.config.url.internal_url_label")}
+            ${this.menuai.localize("ui.panel.config.url.internal_url_label")}
           </h4>
           <ha-settings-row slim>
             <span slot="heading">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.url.internal_url_automatic"
               )}
             </span>
             <span slot="description">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.url.internal_url_automatic_description"
               )}
             </span>
@@ -244,7 +244,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
               <ha-textfield
                 name="internal_url"
                 type="url"
-                placeholder=${this.hass.localize(
+                placeholder=${this.menuai.localize(
                   "ui.panel.config.url.internal_url_placeholder"
                 )}
                 .value=${this._unmaskedInternalUrl ||
@@ -262,7 +262,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
                 ? html`
                     <ha-icon-button
                       class="toggle-unmasked-url"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.panel.config.common.${this._unmaskedInternalUrl ? "hide" : "show"}_url`
                       )}
                       @click=${this._toggleUnmaskedInternalUrl}
@@ -273,7 +273,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
             </div>
             <ha-button .url=${internalUrl} @click=${this._copyURL}>
               <ha-svg-icon slot="icon" .path=${mdiContentCopy}></ha-svg-icon>
-              ${this.hass.localize("ui.panel.config.common.copy_link")}
+              ${this.menuai.localize("ui.panel.config.common.copy_link")}
             </ha-button>
           </div>
           ${
@@ -289,11 +289,11 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
                     .alertType=${this._showCustomInternalUrl
                       ? "info"
                       : "warning"}
-                    .title=${this.hass.localize(
+                    .title=${this.menuai.localize(
                       "ui.panel.config.url.internal_url_https_error_title"
                     )}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.url.internal_url_https_error_description"
                     )}
                   </ha-alert>
@@ -303,7 +303,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
         </div>
         <div class="card-actions">
           <mwc-button @click=${this._save} .disabled=${disabled}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.core.section.core.core_config.save_button"
             )}
           </mwc-button>
@@ -315,11 +315,11 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
   protected override firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
 
-    if (isComponentLoaded(this.hass, "cloud")) {
-      fetchCloudStatus(this.hass).then((cloudStatus) => {
+    if (isComponentLoaded(this.menuai, "cloud")) {
+      fetchCloudStatus(this.menuai).then((cloudStatus) => {
         this._cloudStatus = cloudStatus;
         this._showCustomExternalUrl = !(
-          this._cloudStatus.logged_in && !this.hass.config.external_url
+          this._cloudStatus.logged_in && !this.menuai.config.external_url
         );
       });
     } else {
@@ -349,7 +349,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
     const url = ev.currentTarget.url;
     await copyToClipboard(url);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -362,7 +362,7 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
     this._working = true;
     this._error = undefined;
     try {
-      await saveCoreConfig(this.hass, {
+      await saveCoreConfig(this.menuai, {
         external_url: this._showCustomExternalUrl
           ? this._external_url || null
           : null,
@@ -378,13 +378,13 @@ class ConfigUrlForm extends SubscribeMixin(LitElement) {
   }
 
   private async _fetchUrls() {
-    this._urls = await getNetworkUrls(this.hass);
+    this._urls = await getNetworkUrls(this.menuai);
     this._cloudChecked =
       this._urls?.cloud === this._urls?.external &&
-      !this.hass.config.external_url;
-    this._showCustomInternalUrl = !!this.hass.config.internal_url;
+      !this.menuai.config.external_url;
+    this._showCustomInternalUrl = !!this.menuai.config.internal_url;
     this._showCustomExternalUrl = !(
-      this._cloudStatus?.logged_in && !this.hass.config.external_url
+      this._cloudStatus?.logged_in && !this.menuai.config.external_url
     );
     this._internal_url = this._urls?.internal ?? "";
     this._external_url = this._urls?.external ?? "";

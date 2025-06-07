@@ -1,7 +1,7 @@
 import type { CSSResultGroup } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { property, state } from "lit/decorators";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-alert";
 import "../../../components/ha-aliases-editor";
@@ -21,7 +21,7 @@ import type {
 import { deleteAreaRegistryEntry } from "../../../data/area_registry";
 import type { CropOptions } from "../../../dialogs/image-cropper-dialog/show-image-cropper-dialog";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant, ValueChangedEvent } from "../../../types";
+import type { menuai, ValueChangedEvent } from "../../../types";
 import type { AreaRegistryDetailDialogParams } from "./show-dialog-area-registry-detail";
 import {
   SENSOR_DEVICE_CLASS_HUMIDITY,
@@ -42,7 +42,7 @@ const TEMPERATURE_DEVICE_CLASSES = [SENSOR_DEVICE_CLASS_TEMPERATURE];
 const HUMIDITY_DEVICE_CLASSES = [SENSOR_DEVICE_CLASS_HUMIDITY];
 
 class DialogAreaDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _name!: string;
 
@@ -106,7 +106,7 @@ class DialogAreaDetail extends LitElement {
         ? html`
             <ha-settings-row>
               <span slot="heading">
-                ${this.hass.localize("ui.panel.config.areas.editor.area_id")}
+                ${this.menuai.localize("ui.panel.config.areas.editor.area_id")}
               </span>
               <span slot="description"> ${entry.area_id} </span>
             </ha-settings-row>
@@ -116,8 +116,8 @@ class DialogAreaDetail extends LitElement {
       <ha-textfield
         .value=${this._name}
         @input=${this._nameChanged}
-        .label=${this.hass.localize("ui.panel.config.areas.editor.name")}
-        .validationMessage=${this.hass.localize(
+        .label=${this.menuai.localize("ui.panel.config.areas.editor.name")}
+        .validationMessage=${this.menuai.localize(
           "ui.panel.config.areas.editor.name_required"
         )}
         required
@@ -125,30 +125,30 @@ class DialogAreaDetail extends LitElement {
       ></ha-textfield>
 
       <ha-icon-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._icon}
         @value-changed=${this._iconChanged}
-        .label=${this.hass.localize("ui.panel.config.areas.editor.icon")}
+        .label=${this.menuai.localize("ui.panel.config.areas.editor.icon")}
       ></ha-icon-picker>
 
       <ha-floor-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._floor}
         @value-changed=${this._floorChanged}
-        .label=${this.hass.localize("ui.panel.config.areas.editor.floor")}
+        .label=${this.menuai.localize("ui.panel.config.areas.editor.floor")}
       ></ha-floor-picker>
 
       <ha-labels-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._labels}
         @value-changed=${this._labelsChanged}
-        .placeholder=${this.hass.localize(
+        .placeholder=${this.menuai.localize(
           "ui.panel.config.areas.editor.add_labels"
         )}
       ></ha-labels-picker>
 
       <ha-picture-upload
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._picture}
         crop
         select-media
@@ -162,19 +162,19 @@ class DialogAreaDetail extends LitElement {
     return html`
       <ha-expansion-panel
         outlined
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.areas.editor.aliases_section"
         )}
         expanded
       >
         <div class="content">
           <p class="description">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.areas.editor.aliases_description"
             )}
           </p>
           <ha-aliases-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .aliases=${this._aliases}
             @value-changed=${this._aliasesChanged}
           ></ha-aliases-editor>
@@ -187,18 +187,18 @@ class DialogAreaDetail extends LitElement {
     return html`
       <ha-expansion-panel
         outlined
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.areas.editor.related_entities_section"
         )}
         expanded
       >
         <div class="content">
           <ha-entity-picker
-            .hass=${this.hass}
-            .label=${this.hass.localize(
+            .menuai=${this.menuai}
+            .label=${this.menuai.localize(
               "ui.panel.config.areas.editor.temperature_entity"
             )}
-            .helper=${this.hass.localize(
+            .helper=${this.menuai.localize(
               "ui.panel.config.areas.editor.temperature_entity_description"
             )}
             .value=${this._temperatureEntity}
@@ -209,11 +209,11 @@ class DialogAreaDetail extends LitElement {
           ></ha-entity-picker>
 
           <ha-entity-picker
-            .hass=${this.hass}
-            .label=${this.hass.localize(
+            .menuai=${this.menuai}
+            .label=${this.menuai.localize(
               "ui.panel.config.areas.editor.humidity_entity"
             )}
-            .helper=${this.hass.localize(
+            .helper=${this.menuai.localize(
               "ui.panel.config.areas.editor.humidity_entity_description"
             )}
             .value=${this._humidityEntity}
@@ -240,10 +240,10 @@ class DialogAreaDetail extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           entry
-            ? this.hass.localize("ui.panel.config.areas.editor.update_area")
-            : this.hass.localize("ui.panel.config.areas.editor.create_area")
+            ? this.menuai.localize("ui.panel.config.areas.editor.update_area")
+            : this.menuai.localize("ui.panel.config.areas.editor.create_area")
         )}
       >
         <div>
@@ -261,20 +261,20 @@ class DialogAreaDetail extends LitElement {
               destructive
               @click=${this._deleteArea}
             >
-              ${this.hass.localize("ui.common.delete")}
+              ${this.menuai.localize("ui.common.delete")}
             </ha-button>`
           : nothing}
         <div slot="primaryAction">
           <ha-button @click=${this.closeDialog}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </ha-button>
           <ha-button
             @click=${this._updateEntry}
             .disabled=${nameInvalid || this._submitting}
           >
             ${entry
-              ? this.hass.localize("ui.common.save")
-              : this.hass.localize("ui.common.create")}
+              ? this.menuai.localize("ui.common.save")
+              : this.menuai.localize("ui.common.create")}
           </ha-button>
         </div>
       </ha-dialog>
@@ -285,8 +285,8 @@ class DialogAreaDetail extends LitElement {
     return this._name.trim() !== "";
   }
 
-  private _areaEntityFilter = (stateObj: HassEntity): boolean => {
-    const entityReg = this.hass.entities[stateObj.entity_id];
+  private _areaEntityFilter = (stateObj: menuaiEntity): boolean => {
+    const entityReg = this.menuai.entities[stateObj.entity_id];
     if (!entityReg) {
       return false;
     }
@@ -297,7 +297,7 @@ class DialogAreaDetail extends LitElement {
     if (!entityReg.device_id) {
       return false;
     }
-    const deviceReg = this.hass.devices[entityReg.device_id];
+    const deviceReg = this.menuai.devices[entityReg.device_id];
     return deviceReg && deviceReg.area_id === areaId;
   };
 
@@ -359,7 +359,7 @@ class DialogAreaDetail extends LitElement {
     } catch (err: any) {
       this._error =
         err.message ||
-        this.hass.localize("ui.panel.config.areas.editor.unknown_error");
+        this.menuai.localize("ui.panel.config.areas.editor.unknown_error");
     } finally {
       this._submitting = false;
     }
@@ -371,22 +371,22 @@ class DialogAreaDetail extends LitElement {
     }
 
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.areas.delete.confirmation_title",
         { name: this._params.entry.name }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.areas.delete.confirmation_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
     });
     if (!confirmed) {
       return;
     }
 
-    await deleteAreaRegistryEntry(this.hass!, this._params!.entry!.area_id);
+    await deleteAreaRegistryEntry(this.menuai!, this._params!.entry!.area_id);
     this.closeDialog();
   }
 

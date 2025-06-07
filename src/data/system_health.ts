@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 interface SystemCheckValueDateObject {
   type: "date";
@@ -27,12 +27,12 @@ export type SystemCheckValue =
   | SystemCheckValueObject;
 
 export type SystemHealthInfo = Partial<{
-  homeassistant: {
+  menuai: {
     info: {
       version: string;
       installation_type: string;
       dev: boolean;
-      hassio: boolean;
+      menuaiio: boolean;
       docker: boolean;
       user: string;
       virtualenv: boolean;
@@ -83,12 +83,12 @@ type SystemHealthEvent =
   | SystemHealthEventFinish;
 
 export const subscribeSystemHealthInfo = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callback: (info: SystemHealthInfo | undefined) => void
 ) => {
   let data = {};
 
-  const unsubProm = hass.connection.subscribeMessage<SystemHealthEvent>(
+  const unsubProm = menuai.connection.subscribeMessage<SystemHealthEvent>(
     (updateEvent) => {
       if (updateEvent.type === "initial") {
         data = updateEvent.data;

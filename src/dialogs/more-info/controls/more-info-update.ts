@@ -27,12 +27,12 @@ import {
   updateIsInstalling,
   updateReleaseNotes,
 } from "../../../data/update";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showAlertDialog } from "../../generic/show-dialog-box";
 
 @customElement("more-info-update")
 class MoreInfoUpdate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: UpdateEntity;
 
@@ -50,7 +50,7 @@ class MoreInfoUpdate extends LitElement {
 
   private async _fetchBackupConfig() {
     try {
-      const { config } = await fetchBackupConfig(this.hass);
+      const { config } = await fetchBackupConfig(this.menuai);
       this._backupConfig = config;
     } catch (err) {
       // ignore error, because user will get a manual backup option
@@ -61,9 +61,9 @@ class MoreInfoUpdate extends LitElement {
 
   private async _fetchUpdateBackupConfig(type: UpdateType) {
     try {
-      const config = await getSupervisorUpdateConfig(this.hass);
+      const config = await getSupervisorUpdateConfig(this.menuai);
 
-      // for home assistant and OS updates
+      // for MenuAI and OS updates
       if (this._isHaOrOsUpdate(type)) {
         this._createBackup = config.core_backup_before_update;
         return;
@@ -80,7 +80,7 @@ class MoreInfoUpdate extends LitElement {
   }
 
   private async _fetchEntitySources() {
-    this._entitySources = await fetchEntitySourcesWithCache(this.hass);
+    this._entitySources = await fetchEntitySourcesWithCache(this.menuai);
   }
 
   private _isHaOrOsUpdate(type: UpdateType): boolean {
@@ -110,10 +110,10 @@ class MoreInfoUpdate extends LitElement {
 
       if (!isBackupConfigValid) {
         return {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.dialogs.more_info_control.update.create_backup.manual"
           ),
-          description: this.hass.localize(
+          description: this.menuai.localize(
             "ui.dialogs.more_info_control.update.create_backup.manual_description"
           ),
         };
@@ -126,22 +126,22 @@ class MoreInfoUpdate extends LitElement {
       const now = new Date();
 
       return {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.dialogs.more_info_control.update.create_backup.automatic"
         ),
         description: lastAutomaticBackupDate
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.dialogs.more_info_control.update.create_backup.automatic_description_last",
               {
                 relative_time: relativeTime(
                   lastAutomaticBackupDate,
-                  this.hass.locale,
+                  this.menuai.locale,
                   now,
                   true
                 ),
               }
             )
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.dialogs.more_info_control.update.create_backup.automatic_description_none"
             ),
       };
@@ -151,11 +151,11 @@ class MoreInfoUpdate extends LitElement {
     if (updateType === "addon") {
       const version = this.stateObj.attributes.installed_version;
       return {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.dialogs.more_info_control.update.create_backup.addon"
         ),
         description: version
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.dialogs.more_info_control.update.create_backup.addon_description",
               { version: version }
             )
@@ -165,7 +165,7 @@ class MoreInfoUpdate extends LitElement {
 
     // Fallback to generic UI
     return {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.dialogs.more_info_control.update.create_backup.generic"
       ),
     };
@@ -173,7 +173,7 @@ class MoreInfoUpdate extends LitElement {
 
   protected render() {
     if (
-      !this.hass ||
+      !this.menuai ||
       !this.stateObj ||
       isUnavailableState(this.stateObj.state)
     ) {
@@ -205,26 +205,26 @@ class MoreInfoUpdate extends LitElement {
             : nothing}
           <div class="row">
             <div class="key">
-              ${this.hass.formatEntityAttributeName(
+              ${this.menuai.formatEntityAttributeName(
                 this.stateObj,
                 "installed_version"
               )}
             </div>
             <div class="value">
               ${this.stateObj.attributes.installed_version ??
-              this.hass.localize("state.default.unavailable")}
+              this.menuai.localize("state.default.unavailable")}
             </div>
           </div>
           <div class="row">
             <div class="key">
-              ${this.hass.formatEntityAttributeName(
+              ${this.menuai.formatEntityAttributeName(
                 this.stateObj,
                 "latest_version"
               )}
             </div>
             <div class="value">
               ${this.stateObj.attributes.latest_version ??
-              this.hass.localize("state.default.unavailable")}
+              this.menuai.localize("state.default.unavailable")}
             </div>
           </div>
 
@@ -236,7 +236,7 @@ class MoreInfoUpdate extends LitElement {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.dialogs.more_info_control.update.release_announcement"
                     )}
                   </a>
@@ -300,7 +300,7 @@ class MoreInfoUpdate extends LitElement {
           this.stateObj.attributes.skipped_version
             ? html`
                 <ha-button @click=${this._handleClearSkipped}>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.more_info_control.update.clear_skipped"
                   )}
                 </ha-button>
@@ -312,7 +312,7 @@ class MoreInfoUpdate extends LitElement {
                   this.stateObj.state === BINARY_STATE_OFF ||
                   updateIsInstalling(this.stateObj)}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.more_info_control.update.skip"
                   )}
                 </ha-button>
@@ -325,7 +325,7 @@ class MoreInfoUpdate extends LitElement {
                     !skippedVersion) ||
                   updateIsInstalling(this.stateObj)}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.more_info_control.update.update"
                   )}
                 </ha-button>
@@ -352,7 +352,7 @@ class MoreInfoUpdate extends LitElement {
       this._fetchEntitySources().then(() => {
         const type = getUpdateType(this.stateObj!, this._entitySources!);
         if (
-          isComponentLoaded(this.hass, "hassio") &&
+          isComponentLoaded(this.menuai, "menuaiio") &&
           ["addon", "home_assistant", "home_assistant_os"].includes(type)
         ) {
           this._fetchUpdateBackupConfig(type);
@@ -374,7 +374,7 @@ class MoreInfoUpdate extends LitElement {
   private async _fetchReleaseNotes() {
     try {
       this._releaseNotes = await updateReleaseNotes(
-        this.hass,
+        this.menuai,
         this.stateObj!.entity_id
       );
     } catch (err: any) {
@@ -405,7 +405,7 @@ class MoreInfoUpdate extends LitElement {
       installData.version = this.stateObj!.attributes.latest_version;
     }
 
-    this.hass.callService("update", "install", installData);
+    this.menuai.callService("update", "install", installData);
   }
 
   private _createBackupChanged(ev) {
@@ -415,22 +415,22 @@ class MoreInfoUpdate extends LitElement {
   private _handleSkip(): void {
     if (this.stateObj!.attributes.auto_update) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.dialogs.more_info_control.update.auto_update_enabled_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.dialogs.more_info_control.update.auto_update_enabled_text"
         ),
       });
       return;
     }
-    this.hass.callService("update", "skip", {
+    this.menuai.callService("update", "skip", {
       entity_id: this.stateObj!.entity_id,
     });
   }
 
   private _handleClearSkipped(): void {
-    this.hass.callService("update", "clear_skipped", {
+    this.menuai.callService("update", "clear_skipped", {
       entity_id: this.stateObj!.entity_id,
     });
   }

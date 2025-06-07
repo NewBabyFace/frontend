@@ -1,14 +1,14 @@
 import { html, css, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { ifDefined } from "lit/directives/if-defined";
-import "../../layouts/hass-error-screen";
-import "../../layouts/hass-subpage";
-import type { HomeAssistant, PanelInfo } from "../../types";
+import "../../layouts/menuai-error-screen";
+import "../../layouts/menuai-subpage";
+import type { menuai, PanelInfo } from "../../types";
 import { IFRAME_SANDBOX } from "../../util/iframe";
 
 @customElement("ha-panel-iframe")
 class HaPanelIframe extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -20,18 +20,18 @@ class HaPanelIframe extends LitElement {
       new URL(this.panel.config.url, location.toString()).protocol !== "https:"
     ) {
       return html`
-        <hass-error-screen
-          .hass=${this.hass}
+        <menuai-error-screen
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
-          error="Unable to load iframes that load websites over http:// if Home Assistant is served over https://."
+          error="Unable to load iframes that load websites over http:// if MenuAI is served over https://."
           rootnav
-        ></hass-error-screen>
+        ></menuai-error-screen>
       `;
     }
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .header=${this.panel.title}
         main-page
@@ -44,7 +44,7 @@ class HaPanelIframe extends LitElement {
           .sandbox=${IFRAME_SANDBOX}
           allow="fullscreen"
         ></iframe>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

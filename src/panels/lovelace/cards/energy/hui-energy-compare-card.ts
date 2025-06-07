@@ -7,7 +7,7 @@ import { formatDate } from "../../../../common/datetime/format_date";
 import type { EnergyData } from "../../../../data/energy";
 import { getEnergyDataCollection } from "../../../../data/energy";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyCardBaseConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -19,7 +19,7 @@ export class HuiEnergyCompareCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyCardBaseConfig;
 
@@ -47,11 +47,11 @@ export class HuiEnergyCompareCard
     this._config = config;
   }
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config!.collection_key,
       }).subscribe((data) => this._update(data)),
     ];
@@ -61,7 +61,7 @@ export class HuiEnergyCompareCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
@@ -77,29 +77,29 @@ export class HuiEnergyCompareCard
 
     return html`
       <ha-alert dismissable @alert-dismissed-clicked=${this._stopCompare}>
-        ${this.hass.localize("ui.panel.energy.compare.info", {
+        ${this.menuai.localize("ui.panel.energy.compare.info", {
           start: html`<b
             >${formatDate(
               this._start!,
-              this.hass.locale,
-              this.hass.config
+              this.menuai.locale,
+              this.menuai.config
             )}${dayDifference > 0
               ? ` -
           ${formatDate(
             this._end || endOfDay(new Date()),
-            this.hass.locale,
-            this.hass.config
+            this.menuai.locale,
+            this.menuai.config
           )}`
               : ""}</b
           >`,
           end: html`<b
             >${formatDate(
               this._startCompare,
-              this.hass.locale,
-              this.hass.config
+              this.menuai.locale,
+              this.menuai.config
             )}${dayDifference > 0
               ? ` -
-          ${formatDate(this._endCompare, this.hass.locale, this.hass.config)}`
+          ${formatDate(this._endCompare, this.menuai.locale, this.menuai.config)}`
               : ""}</b
           >`,
         })}
@@ -120,7 +120,7 @@ export class HuiEnergyCompareCard
   }
 
   private _stopCompare(): void {
-    const energyCollection = getEnergyDataCollection(this.hass, {
+    const energyCollection = getEnergyDataCollection(this.menuai, {
       key: this._config!.collection_key,
     });
     energyCollection.setCompare(false);

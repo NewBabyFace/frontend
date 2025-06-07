@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { computeObjectId } from "./compute_object_id";
 
 export const computeStateNameFromEntityAttributes = (
@@ -9,5 +9,5 @@ export const computeStateNameFromEntityAttributes = (
     ? computeObjectId(entityId).replace(/_/g, " ")
     : (attributes.friendly_name ?? "").toString();
 
-export const computeStateName = (stateObj: HassEntity): string =>
+export const computeStateName = (stateObj: menuaiEntity): string =>
   computeStateNameFromEntityAttributes(stateObj.entity_id, stateObj.attributes);

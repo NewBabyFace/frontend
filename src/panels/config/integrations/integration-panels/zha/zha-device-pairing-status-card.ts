@@ -11,13 +11,13 @@ import {
   INTERVIEW_COMPLETE,
 } from "../../../../../data/zha";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { formatAsPaddedHex } from "./functions";
 import "./zha-device-card";
 
 @customElement("zha-device-pairing-status-card")
 class ZHADevicePairingStatusCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device?: ZHADevice;
 
@@ -26,7 +26,7 @@ class ZHADevicePairingStatusCard extends LitElement {
   @state() private _showHelp = false;
 
   protected render() {
-    if (!this.hass || !this.device) {
+    if (!this.menuai || !this.device) {
       return nothing;
     }
 
@@ -38,12 +38,12 @@ class ZHADevicePairingStatusCard extends LitElement {
         })}"
         ><div class="header">
           <h4>
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               `ui.panel.config.zha.device_pairing_card.${this.device.pairing_status}`
             )}
           </h4>
           <h1>
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               `ui.panel.config.zha.device_pairing_card.${this.device.pairing_status}_status_text`
             )}
           </h1>
@@ -55,7 +55,7 @@ class ZHADevicePairingStatusCard extends LitElement {
             ? html`
                 <div class="model">${this.device.model}</div>
                 <div class="manuf">
-                  ${this.hass.localize("ui.dialogs.zha_device_info.manuf", {
+                  ${this.menuai.localize("ui.dialogs.zha_device_info.manuf", {
                     manufacturer: this.device.manufacturer,
                   })}
                 </div>
@@ -75,7 +75,7 @@ class ZHADevicePairingStatusCard extends LitElement {
             ? html`
                 <zha-device-card
                   class="card"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .device=${this.device}
                   .narrow=${this.narrow}
                   .showHelp=${this._showHelp}

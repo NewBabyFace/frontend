@@ -15,9 +15,9 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
-import "../../../../layouts/hass-subpage";
+import "../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../ha-config-section";
 import { showSupportPackageDialog } from "../account/show-dialog-cloud-support-package";
 import "./cloud-login";
@@ -25,7 +25,7 @@ import type { CloudLogin } from "./cloud-login";
 
 @customElement("cloud-login-panel")
 export class CloudLoginPanel extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -39,26 +39,26 @@ export class CloudLoginPanel extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        header="Home Assistant Cloud"
+        header="MenuAI Cloud"
       >
         <ha-button-menu slot="toolbar-icon" @action=${this._handleMenuAction}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
           <ha-list-item graphic="icon">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.account.reset_cloud_data"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiDeleteForever}></ha-svg-icon>
           </ha-list-item>
           <ha-list-item graphic="icon">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.account.download_support_package"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiDownload}></ha-svg-icon>
@@ -66,15 +66,15 @@ export class CloudLoginPanel extends LitElement {
         </ha-button-menu>
         <div class="content">
           <ha-config-section .isWide=${this.isWide}>
-            <span slot="header">Home Assistant Cloud</span>
+            <span slot="header">MenuAI Cloud</span>
             <div slot="introduction">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.login.introduction"
                 )}
               </p>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.login.introduction2"
                 )}
                 <a
@@ -83,12 +83,12 @@ export class CloudLoginPanel extends LitElement {
                   rel="noreferrer"
                 >
                   Nabu&nbsp;Casa,&nbsp;Inc</a
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.login.introduction2a"
                 )}
               </p>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.login.introduction3"
                 )}
               </p>
@@ -98,7 +98,7 @@ export class CloudLoginPanel extends LitElement {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.login.learn_more_link"
                   )}
                 </a>
@@ -115,9 +115,9 @@ export class CloudLoginPanel extends LitElement {
               : ""}
 
             <cloud-login
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .email=${this.email}
-              .localize=${this.hass.localize}
+              .localize=${this.menuai.localize}
               @cloud-forgot-password=${this._handleForgotPassword}
               check-connection
             ></cloud-login>
@@ -125,11 +125,11 @@ export class CloudLoginPanel extends LitElement {
             <ha-card outlined>
               <ha-list>
                 <ha-list-item @click=${this._handleRegister} twoline hasMeta>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.login.start_trial"
                   )}
                   <span slot="secondary">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.cloud.login.trial_info"
                     )}
                   </span>
@@ -139,7 +139,7 @@ export class CloudLoginPanel extends LitElement {
             </ha-card>
           </ha-config-section>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -176,23 +176,23 @@ export class CloudLoginPanel extends LitElement {
 
   private async _deleteCloudData() {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.cloud.account.reset_data_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.cloud.account.reset_data_confirm_text"
       ),
-      confirmText: this.hass.localize("ui.panel.config.cloud.account.reset"),
+      confirmText: this.menuai.localize("ui.panel.config.cloud.account.reset"),
       destructive: true,
     });
     if (!confirm) {
       return;
     }
     try {
-      await removeCloudData(this.hass);
+      await removeCloudData(this.menuai);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.cloud.account.reset_data_failed"
         ),
         text: err?.message,
@@ -239,7 +239,7 @@ declare global {
     "cloud-login-panel": CloudLoginPanel;
   }
 
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "cloud-email-changed": { value: string };
     "flash-message-changed": { value: string };
   }

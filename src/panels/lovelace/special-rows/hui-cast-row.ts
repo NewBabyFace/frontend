@@ -9,12 +9,12 @@ import {
   ensureConnectedCastSession,
 } from "../../../cast/receiver_messages";
 import "../../../components/ha-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { CastConfig, LovelaceRow } from "../entity-rows/types";
 
 @customElement("hui-cast-row")
 class HuiCastRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: CastConfig;
 
@@ -25,14 +25,14 @@ class HuiCastRow extends LitElement implements LovelaceRow {
   public setConfig(config: CastConfig): void {
     this._config = {
       icon: "mdi:television",
-      name: "Home Assistant Cast",
+      name: "MenuAI Cast",
       view: 0,
       ...config,
     };
   }
 
   protected shouldUpdate(changedProperties: PropertyValues) {
-    return !(changedProperties.size === 1 && changedProperties.has("hass"));
+    return !(changedProperties.size === 1 && changedProperties.has("menuai"));
   }
 
   protected render() {
@@ -81,7 +81,7 @@ class HuiCastRow extends LitElement implements LovelaceRow {
       this._noHTTPS = true;
     }
     import("../../../cast/cast_manager").then(({ getCastManager }) =>
-      getCastManager(this.hass.auth).then(
+      getCastManager(this.menuai.auth).then(
         (mgr) => {
           this._castManager = mgr;
           mgr.addEventListener("connection-changed", () => {
@@ -110,10 +110,10 @@ class HuiCastRow extends LitElement implements LovelaceRow {
   }
 
   private async _sendLovelace() {
-    await ensureConnectedCastSession(this._castManager!, this.hass.auth);
+    await ensureConnectedCastSession(this._castManager!, this.menuai.auth);
     castSendShowLovelaceView(
       this._castManager!,
-      this.hass.auth.data.hassUrl,
+      this.menuai.auth.data.menuaiUrl,
       this._config!.view!,
       this._config!.dashboard
     );

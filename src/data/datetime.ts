@@ -1,11 +1,11 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const setDateTimeValue = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   datetime: Date
 ) => {
-  hass.callService("datetime", "set_value", {
+  menuai.callService("datetime", "set_value", {
     entity_id: entityId,
     datetime: datetime.toISOString(),
   });

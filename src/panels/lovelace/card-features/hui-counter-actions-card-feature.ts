@@ -1,5 +1,5 @@
 import { mdiMinus, mdiPlus, mdiRestore } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -8,7 +8,7 @@ import "../../../components/ha-control-button";
 import "../../../components/ha-control-button-group";
 import "../../../components/ha-control-select";
 import { UNAVAILABLE } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import {
@@ -18,11 +18,11 @@ import {
 } from "./types";
 
 export const supportsCounterActionsCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -38,7 +38,7 @@ interface CounterButton {
 
 export const COUNTER_ACTIONS_BUTTON: Record<
   string,
-  (stateObj: HassEntity) => CounterButton
+  (stateObj: menuaiEntity) => CounterButton
 > = {
   increment: (stateObj) => ({
     translationKey: "increment",
@@ -65,17 +65,17 @@ class HuiCounterActionsCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: CounterActionsCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as HassEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as menuaiEntity | undefined;
   }
 
   public static async getConfigElement(): Promise<LovelaceCardFeatureEditor> {
@@ -102,10 +102,10 @@ class HuiCounterActionsCardFeature
   protected render(): TemplateResult | null {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsCounterActionsCardFeature(this.hass, this.context)
+      !supportsCounterActionsCardFeature(this.menuai, this.context)
     ) {
       return null;
     }
@@ -119,7 +119,7 @@ class HuiCounterActionsCardFeature
             return html`
               <ha-control-button
                 .entry=${button}
-                .label=${this.hass!.localize(
+                .label=${this.menuai!.localize(
                   // @ts-ignore
                   `ui.card.counter.actions.${button.translationKey}`
                 )}
@@ -138,7 +138,7 @@ class HuiCounterActionsCardFeature
   private _onActionTap(ev): void {
     ev.stopPropagation();
     const entry = (ev.target! as any).entry as CounterButton;
-    this.hass!.callService("counter", entry.serviceName, {
+    this.menuai!.callService("counter", entry.serviceName, {
       entity_id: this._stateObj!.entity_id,
     });
   }

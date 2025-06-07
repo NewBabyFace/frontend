@@ -1,6 +1,6 @@
 import type {
-  HassEntity,
-  HassEntityAttributeBase,
+  menuaiEntity,
+  menuaiEntityAttributeBase,
 } from "home-assistant-js-websocket";
 import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
 import type { FrontendLocaleData } from "../../data/translation";
@@ -11,11 +11,11 @@ import { round } from "./round";
  * Returns true if the entity is considered numeric based on the attributes it has
  * @param stateObj The entity state object
  */
-export const isNumericState = (stateObj: HassEntity): boolean =>
+export const isNumericState = (stateObj: menuaiEntity): boolean =>
   isNumericFromAttributes(stateObj.attributes);
 
 export const isNumericFromAttributes = (
-  attributes: HassEntityAttributeBase,
+  attributes: menuaiEntityAttributeBase,
   numericDeviceClasses?: string[]
 ): boolean =>
   !!attributes.unit_of_measurement ||
@@ -43,7 +43,7 @@ export const numberFormatToLocale = (
  * Formats a number based on the user's preference with thousands separator(s) and decimal character for better legibility.
  *
  * @param num The number to format
- * @param localeOptions The user-selected language and formatting, from `hass.locale`
+ * @param localeOptions The user-selected language and formatting, from `menuai.locale`
  * @param options Intl.NumberFormatOptions to use
  */
 export const formatNumber = (
@@ -101,7 +101,7 @@ export const formatNumber = (
  * @returns An `Intl.NumberFormatOptions` object with `maximumFractionDigits` set to 0, or `undefined`
  */
 export const getNumberFormatOptions = (
-  entityState?: HassEntity,
+  entityState?: menuaiEntity,
   entity?: EntityRegistryDisplayEntry
 ): Intl.NumberFormatOptions | undefined => {
   const precision = entity?.display_precision;

@@ -15,7 +15,7 @@ import "../../../../../components/ha-dialog";
 import "../../../../../components/ha-dialog-header";
 import "../../../../../components/ha-spinner";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZWaveJSRemoveNodeDialogParams } from "./show-dialog-zwave_js-remove-node";
 
 const EXCLUSION_TIMEOUT_SECONDS = 120;
@@ -28,7 +28,7 @@ export interface ZWaveJSRemovedNode {
 
 @customElement("dialog-zwave_js-remove-node")
 class DialogZWaveJSRemoveNode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private entry_id?: string;
 
@@ -70,7 +70,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
       return nothing;
     }
 
-    const dialogTitle = this.hass.localize(
+    const dialogTitle = this.menuai.localize(
       "ui.panel.config.zwave_js.remove_node.title"
     );
 
@@ -81,7 +81,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
             slot="navigationIcon"
             .path=${mdiClose}
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
           ></ha-icon-button>
           <span slot="title">${dialogTitle}</span>
         </ha-dialog-header>
@@ -96,7 +96,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
       return html`
         <ha-svg-icon .path=${mdiVectorSquareRemove}></ha-svg-icon>
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.remove_node.introduction"
           )}
         </p>
@@ -108,7 +108,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
         <ha-spinner></ha-spinner>
         <div>
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.zwave_js.remove_node.${this._step === "exclusion" ? "follow_device_instructions" : "removing_device"}`
             )}
           </p>
@@ -122,7 +122,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
           class="success"
         ></ha-svg-icon>
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.remove_node.exclusion_finished",
             { id: html`<b>${this._node!.node_id}</b>` }
           )}
@@ -133,7 +133,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
     return html`
       <ha-svg-icon .path=${mdiCloseCircle} class="failed"></ha-svg-icon>
       <p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.zwave_js.remove_node.exclusion_failed"
         )}
       </p>
@@ -151,7 +151,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
           ? this._startExclusion
           : this.closeDialog}
       >
-        ${this.hass.localize(
+        ${this.menuai.localize(
           this._step === "start"
             ? "ui.panel.config.zwave_js.remove_node.start_exclusion"
             : this._step === "exclusion"
@@ -163,7 +163,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
   }
 
   private _startExclusion(): void {
-    this._subscribed = this.hass.connection
+    this._subscribed = this.menuai.connection
       .subscribeMessage((message) => this._handleMessage(message), {
         type: "zwave_js/remove_node",
         entry_id: this.entry_id,
@@ -200,7 +200,7 @@ class DialogZWaveJSRemoveNode extends LitElement {
 
   private _stopExclusion(): void {
     try {
-      this.hass.callWS({
+      this.menuai.callWS({
         type: "zwave_js/stop_exclusion",
         entry_id: this.entry_id,
       });

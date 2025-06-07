@@ -12,9 +12,9 @@ import "../../../components/ha-icon-button";
 import "../../../components/ha-switch";
 import "../../../components/ha-yaml-editor";
 import type { LovelaceConfig } from "../../../data/lovelace/config/types";
-import type { HassDialog } from "../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { expandLovelaceConfigStrategies } from "../strategies/get-strategy";
 import type { SaveDialogParams } from "./show-save-config-dialog";
@@ -22,8 +22,8 @@ import type { SaveDialogParams } from "./show-save-config-dialog";
 const EMPTY_CONFIG: LovelaceConfig = { views: [{ title: "Home" }] };
 
 @customElement("hui-dialog-save-config")
-export class HuiSaveConfig extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+export class HuiSaveConfig extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _params?: SaveDialogParams;
 
@@ -52,7 +52,7 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
       return nothing;
     }
 
-    const heading = this.hass!.localize(
+    const heading = this.menuai!.localize(
       "ui.panel.lovelace.editor.save_config.header"
     );
     return html`
@@ -67,37 +67,37 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass!.localize("ui.common.close")}
+            .label=${this.menuai!.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">${heading}</span>
           <a
-            href=${documentationUrl(this.hass!, "/lovelace/")}
-            title=${this.hass!.localize("ui.panel.lovelace.menu.help")}
+            href=${documentationUrl(this.menuai!, "/lovelace/")}
+            title=${this.menuai!.localize("ui.panel.lovelace.menu.help")}
             target="_blank"
             rel="noreferrer"
             slot="actionItems"
           >
             <ha-icon-button
               .path=${mdiHelpCircle}
-              .label=${this.hass!.localize("ui.common.help")}
+              .label=${this.menuai!.localize("ui.common.help")}
             ></ha-icon-button>
           </a>
         </ha-dialog-header>
         <div>
           <p>
-            ${this.hass!.localize("ui.panel.lovelace.editor.save_config.para")}
+            ${this.menuai!.localize("ui.panel.lovelace.editor.save_config.para")}
           </p>
 
           ${this._params.mode === "storage"
             ? html`
                 <p>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.lovelace.editor.save_config.para_sure"
                   )}
                 </p>
                 <ha-formfield
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.lovelace.editor.save_config.empty_config"
                   )}
                 >
@@ -110,22 +110,22 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
               `
             : html`
                 <p>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.lovelace.editor.save_config.yaml_mode"
                   )}
                 </p>
                 <p>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.lovelace.editor.save_config.yaml_control"
                   )}
                 </p>
                 <p>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.lovelace.editor.save_config.yaml_config"
                   )}
                 </p>
                 <ha-yaml-editor
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .defaultValue=${this._params!.lovelace.config}
                   dialogInitialFocus
                 ></ha-yaml-editor>
@@ -134,7 +134,7 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
         ${this._params.mode === "storage"
           ? html`
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass!.localize("ui.common.cancel")}
+                ${this.menuai!.localize("ui.common.cancel")}
               </mwc-button>
               <mwc-button
                 slot="primaryAction"
@@ -147,14 +147,14 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
                       aria-label="Saving"
                     ></ha-spinner>`
                   : ""}
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.save_config.save"
                 )}
               </mwc-button>
             `
           : html`
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.save_config.close"
                 )}</mwc-button
               >
@@ -175,7 +175,7 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
   }
 
   private async _saveConfig(): Promise<void> {
-    if (!this.hass || !this._params) {
+    if (!this.menuai || !this._params) {
       return;
     }
     this._saving = true;
@@ -184,7 +184,7 @@ export class HuiSaveConfig extends LitElement implements HassDialog {
       await lovelace.saveConfig(
         this._emptyConfig
           ? EMPTY_CONFIG
-          : await expandLovelaceConfigStrategies(lovelace.config, this.hass)
+          : await expandLovelaceConfigStrategies(lovelace.config, this.menuai)
       );
       lovelace.setEditMode(true);
       this._saving = false;

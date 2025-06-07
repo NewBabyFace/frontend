@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const voiceAssistants = {
   conversation: { domain: "assist_pipeline", name: "Assist" },
@@ -19,36 +19,36 @@ export interface ExposeEntitySettings {
 }
 
 export const setExposeNewEntities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   assistant: string,
   expose_new: boolean
 ) =>
-  hass.callWS({
-    type: "homeassistant/expose_new_entities/set",
+  menuai.callWS({
+    type: "menuai/expose_new_entities/set",
     assistant,
     expose_new,
   });
 
-export const getExposeNewEntities = (hass: HomeAssistant, assistant: string) =>
-  hass.callWS<{ expose_new: boolean }>({
-    type: "homeassistant/expose_new_entities/get",
+export const getExposeNewEntities = (menuai: menuai, assistant: string) =>
+  menuai.callWS<{ expose_new: boolean }>({
+    type: "menuai/expose_new_entities/get",
     assistant,
   });
 
 export const exposeEntities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   assistants: string[],
   entity_ids: string[],
   should_expose: boolean
 ) =>
-  hass.callWS({
-    type: "homeassistant/expose_entity",
+  menuai.callWS({
+    type: "menuai/expose_entity",
     assistants,
     entity_ids,
     should_expose,
   });
 
-export const listExposedEntities = (hass: HomeAssistant) =>
-  hass.callWS<{ exposed_entities: Record<string, ExposeEntitySettings> }>({
-    type: "homeassistant/expose_entity/list",
+export const listExposedEntities = (menuai: menuai) =>
+  menuai.callWS<{ exposed_entities: Record<string, ExposeEntitySettings> }>({
+    type: "menuai/expose_entity/list",
   });

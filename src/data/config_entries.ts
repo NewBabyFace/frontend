@@ -1,5 +1,5 @@
 import type { UnsubscribeFunc } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { IntegrationType } from "./integration";
 
 export interface ConfigEntry {
@@ -36,18 +36,18 @@ export interface SubEntry {
   unique_id: string;
 }
 
-export const getSubEntries = (hass: HomeAssistant, entry_id: string) =>
-  hass.callWS<SubEntry[]>({
+export const getSubEntries = (menuai: menuai, entry_id: string) =>
+  menuai.callWS<SubEntry[]>({
     type: "config_entries/subentries/list",
     entry_id,
   });
 
 export const deleteSubEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   subentry_id: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "config_entries/subentries/delete",
     entry_id,
     subentry_id,
@@ -60,14 +60,14 @@ export type ConfigEntryMutableParams = Partial<
   >
 >;
 
-// https://github.com/home-assistant/core/blob/2286dea636fda001f03433ba14d7adbda43979e5/homeassistant/config_entries.py#L81
+// https://github.com/home-assistant/core/blob/2286dea636fda001f03433ba14d7adbda43979e5/menuai/config_entries.py#L81
 export const ERROR_STATES: ConfigEntry["state"][] = [
   "migration_error",
   "setup_error",
   "setup_retry",
 ];
 
-// https://github.com/home-assistant/core/blob/2286dea636fda001f03433ba14d7adbda43979e5/homeassistant/config_entries.py#L81
+// https://github.com/home-assistant/core/blob/2286dea636fda001f03433ba14d7adbda43979e5/menuai/config_entries.py#L81
 export const RECOVERABLE_STATES: ConfigEntry["state"][] = [
   "not_loaded",
   "loaded",
@@ -82,7 +82,7 @@ export interface ConfigEntryUpdate {
 }
 
 export const subscribeConfigEntries = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callbackFunction: (message: ConfigEntryUpdate[]) => void,
   filters?: {
     type?: IntegrationType[];
@@ -95,14 +95,14 @@ export const subscribeConfigEntries = (
   if (filters && filters.type) {
     params.type_filter = filters.type;
   }
-  return hass.connection.subscribeMessage<ConfigEntryUpdate[]>(
+  return menuai.connection.subscribeMessage<ConfigEntryUpdate[]>(
     (message) => callbackFunction(message),
     params
   );
 };
 
 export const getConfigEntries = (
-  hass: HomeAssistant,
+  menuai: menuai,
   filters?: {
     type?: IntegrationType[];
     domain?: string;
@@ -117,36 +117,36 @@ export const getConfigEntries = (
       params.domain = filters.domain;
     }
   }
-  return hass.callWS<ConfigEntry[]>({
+  return menuai.callWS<ConfigEntry[]>({
     type: "config_entries/get",
     ...params,
   });
 };
 
-export const getConfigEntry = (hass: HomeAssistant, configEntryId: string) =>
-  hass.callWS<{ config_entry: ConfigEntry }>({
+export const getConfigEntry = (menuai: menuai, configEntryId: string) =>
+  menuai.callWS<{ config_entry: ConfigEntry }>({
     type: "config_entries/get_single",
     entry_id: configEntryId,
   });
 
 export const updateConfigEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   configEntryId: string,
   updatedValues: ConfigEntryMutableParams
 ) =>
-  hass.callWS<{ require_restart: boolean; config_entry: ConfigEntry }>({
+  menuai.callWS<{ require_restart: boolean; config_entry: ConfigEntry }>({
     type: "config_entries/update",
     entry_id: configEntryId,
     ...updatedValues,
   });
 
-export const deleteConfigEntry = (hass: HomeAssistant, configEntryId: string) =>
-  hass.callApi<{
+export const deleteConfigEntry = (menuai: menuai, configEntryId: string) =>
+  menuai.callApi<{
     require_restart: boolean;
   }>("DELETE", `config/config_entries/entry/${configEntryId}`);
 
-export const reloadConfigEntry = (hass: HomeAssistant, configEntryId: string) =>
-  hass.callApi<{
+export const reloadConfigEntry = (menuai: menuai, configEntryId: string) =>
+  menuai.callApi<{
     require_restart: boolean;
   }>("POST", `config/config_entries/entry/${configEntryId}/reload`);
 
@@ -155,17 +155,17 @@ export interface DisableConfigEntryResult {
 }
 
 export const disableConfigEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   configEntryId: string
 ) =>
-  hass.callWS<DisableConfigEntryResult>({
+  menuai.callWS<DisableConfigEntryResult>({
     type: "config_entries/disable",
     entry_id: configEntryId,
     disabled_by: "user",
   });
 
-export const enableConfigEntry = (hass: HomeAssistant, configEntryId: string) =>
-  hass.callWS<{
+export const enableConfigEntry = (menuai: menuai, configEntryId: string) =>
+  menuai.callWS<{
     require_restart: boolean;
   }>({
     type: "config_entries/disable",

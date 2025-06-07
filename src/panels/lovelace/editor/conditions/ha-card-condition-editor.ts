@@ -19,7 +19,7 @@ import "../../../../components/ha-svg-icon";
 import "../../../../components/ha-yaml-editor";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { ICON_CONDITION } from "../../common/icon-condition";
 import type {
   Condition,
@@ -33,7 +33,7 @@ import type { LovelaceConditionEditorConstructor } from "./types";
 
 @customElement("ha-card-condition-editor")
 export class HaCardConditionEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) condition!: Condition | LegacyCondition;
 
@@ -69,12 +69,12 @@ export class HaCardConditionEditor extends LitElement {
       const validator = this._editor?.validateUIConfig;
       if (validator) {
         try {
-          validator(this._condition, this.hass);
+          validator(this._condition, this.menuai);
           this._uiAvailable = true;
           this._uiWarnings = [];
         } catch (err) {
           this._uiWarnings = handleStructError(
-            this.hass,
+            this.menuai,
             err as Error
           ).warnings;
           this._uiAvailable = false;
@@ -104,7 +104,7 @@ export class HaCardConditionEditor extends LitElement {
             .path=${ICON_CONDITION[condition.condition]}
           ></ha-svg-icon>
           <h3 slot="header">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.lovelace.editor.condition-editor.condition.${condition.condition}.label`
             ) || condition.condition}
           </h3>
@@ -119,20 +119,20 @@ export class HaCardConditionEditor extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             >
             </ha-icon-button>
 
             <ha-list-item graphic="icon">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.lovelace.editor.condition-editor.test"
               )}
               <ha-svg-icon slot="graphic" .path=${mdiFlask}></ha-svg-icon>
             </ha-list-item>
 
             <ha-list-item graphic="icon" .disabled=${!this._uiAvailable}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.lovelace.editor.edit_view.edit_${!this._yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon
@@ -144,7 +144,7 @@ export class HaCardConditionEditor extends LitElement {
             <li divider role="separator"></li>
 
             <ha-list-item class="warning" graphic="icon">
-              ${this.hass!.localize("ui.common.delete")}
+              ${this.menuai!.localize("ui.common.delete")}
               <ha-svg-icon
                 class="warning"
                 slot="graphic"
@@ -156,7 +156,7 @@ export class HaCardConditionEditor extends LitElement {
             ? html`
                 <ha-alert
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.errors.config.editor_not_supported"
                   )}
                 >
@@ -170,7 +170,7 @@ export class HaCardConditionEditor extends LitElement {
                         </ul>
                       `
                     : nothing}
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.errors.config.edit_in_yaml_supported"
                   )}
                 </ha-alert>
@@ -180,14 +180,14 @@ export class HaCardConditionEditor extends LitElement {
             ${this._yamlMode
               ? html`
                   <ha-yaml-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${this.condition}
                     @value-changed=${this._onYamlChange}
                   ></ha-yaml-editor>
                 `
               : html`
                   ${dynamicElement(`ha-card-condition-${condition.condition}`, {
-                    hass: this.hass,
+                    menuai: this.menuai,
                     condition: condition,
                   })}
                 `}
@@ -201,11 +201,11 @@ export class HaCardConditionEditor extends LitElement {
           })}"
         >
           ${this._testingResult
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.lovelace.editor.condition-editor.testing_pass"
               )
             : this._testingResult === false
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.lovelace.editor.condition-editor.testing_error"
                 )
               : nothing}
@@ -242,17 +242,17 @@ export class HaCardConditionEditor extends LitElement {
 
     if (!validateResult) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.lovelace.editor.condition-editor.invalid_config_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.condition-editor.invalid_config_text"
         ),
       });
       return;
     }
 
-    this._testingResult = checkConditionsMet([condition], this.hass);
+    this._testingResult = checkConditionsMet([condition], this.menuai);
 
     this._timeout = window.setTimeout(() => {
       this._testingResult = undefined;

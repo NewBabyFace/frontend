@@ -13,7 +13,7 @@ import {
 import type { IntegrationManifest } from "../../../data/integration";
 import { showConfigFlowDialog } from "../../../dialogs/config-flow/show-dialog-config-flow";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import type { DataEntryFlowProgressExtended } from "./ha-config-integrations";
 import "./ha-integration-action-card";
@@ -23,7 +23,7 @@ import "../../../components/ha-list-item";
 
 @customElement("ha-config-flow-card")
 export class HaConfigFlowCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public flow!: DataEntryFlowProgressExtended;
 
@@ -36,7 +36,7 @@ export class HaConfigFlowCard extends LitElement {
         class=${classMap({
           attention: attention,
         })}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .manifest=${this.manifest}
         .domain=${this.flow.handler}
         .label=${this.flow.localized_title}
@@ -44,7 +44,7 @@ export class HaConfigFlowCard extends LitElement {
         <ha-button
           unelevated
           @click=${this._continueFlow}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             attention
               ? "ui.panel.config.integrations.reconfigure"
               : "ui.common.add"
@@ -54,7 +54,7 @@ export class HaConfigFlowCard extends LitElement {
         this.flow.context.unique_id
           ? html`<ha-button
               @click=${this._ignoreFlow}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.integrations.ignore.ignore"
               )}
             ></ha-button>`
@@ -63,24 +63,24 @@ export class HaConfigFlowCard extends LitElement {
           ? html`<ha-button-menu slot="header-button">
               <ha-icon-button
                 slot="trigger"
-                .label=${this.hass.localize("ui.common.menu")}
+                .label=${this.menuai.localize("ui.common.menu")}
                 .path=${mdiDotsVertical}
               ></ha-icon-button>
               ${this.flow.context.configuration_url
                 ? html`<a
                     href=${this.flow.context.configuration_url.replace(
-                      /^homeassistant:\/\//,
+                      /^menuai:\/\//,
                       "/"
                     )}
                     rel="noreferrer"
                     target=${this.flow.context.configuration_url.startsWith(
-                      "homeassistant://"
+                      "menuai://"
                     )
                       ? "_self"
                       : "_blank"}
                   >
                     <ha-list-item graphic="icon" hasMeta>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.integrations.config_entry.open_configuration_url"
                       )}
                       <ha-svg-icon slot="graphic" .path=${mdiCog}></ha-svg-icon>
@@ -95,7 +95,7 @@ export class HaConfigFlowCard extends LitElement {
                 ? html`<a
                     href=${this.manifest.is_built_in
                       ? documentationUrl(
-                          this.hass,
+                          this.menuai,
                           `/integrations/${this.manifest.domain}`
                         )
                       : this.manifest.documentation}
@@ -103,7 +103,7 @@ export class HaConfigFlowCard extends LitElement {
                     target="_blank"
                   >
                     <ha-list-item graphic="icon" hasMeta>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.integrations.config_entry.documentation"
                       )}
                       <ha-svg-icon
@@ -125,7 +125,7 @@ export class HaConfigFlowCard extends LitElement {
 
   private _continueFlow() {
     if (this.flow.flow_id === "external") {
-      this.hass.auth.external!.fireMessage({
+      this.menuai.auth.external!.fireMessage({
         type: "improv/configure_device",
         payload: {
           name:
@@ -146,14 +146,14 @@ export class HaConfigFlowCard extends LitElement {
 
   private async _ignoreFlow() {
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.config.integrations.ignore.confirm_ignore_title",
-        { name: localizeConfigFlowTitle(this.hass.localize, this.flow) }
+        { name: localizeConfigFlowTitle(this.menuai.localize, this.flow) }
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.config.integrations.ignore.confirm_ignore"
       ),
-      confirmText: this.hass!.localize(
+      confirmText: this.menuai!.localize(
         "ui.panel.config.integrations.ignore.ignore"
       ),
     });
@@ -161,9 +161,9 @@ export class HaConfigFlowCard extends LitElement {
       return;
     }
     await ignoreConfigFlow(
-      this.hass,
+      this.menuai,
       this.flow.flow_id,
-      localizeConfigFlowTitle(this.hass.localize, this.flow)
+      localizeConfigFlowTitle(this.menuai.localize, this.flow)
     );
     this._handleFlowUpdated();
   }

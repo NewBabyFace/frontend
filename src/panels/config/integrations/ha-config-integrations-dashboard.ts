@@ -52,12 +52,12 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import type { ImprovDiscoveredDevice } from "../../../external_app/external_messaging";
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-tabs-subpage";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-tabs-subpage";
 import { KeyboardShortcutMixin } from "../../../mixins/keyboard-shortcut-mixin";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { configSections } from "../ha-panel-config";
 import { isHelperDomain } from "../helpers/const";
 import "./ha-config-flow-card";
@@ -91,7 +91,7 @@ const groupByIntegration = (
 class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
   SubscribeMixin(LitElement)
 ) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -149,12 +149,12 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
     );
   }
 
-  public hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  public menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeEntityRegistry(this.hass.connection, (entries) => {
+      subscribeEntityRegistry(this.menuai.connection, (entries) => {
         this._entityRegistryEntries = entries;
       }),
-      subscribeLogInfo(this.hass.connection, (log_infos) => {
+      subscribeLogInfo(this.menuai.connection, (log_infos) => {
         const logInfoLookup: Record<string, IntegrationLogInfo> = {};
         for (const log_info of log_infos) {
           logInfoLookup[log_info.domain] = log_info;
@@ -170,7 +170,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
       manifests: Record<string, IntegrationManifest>,
       configEntries: ConfigEntryExtended[],
       entityEntries: EntityRegistryEntry[],
-      localize: HomeAssistant["localize"],
+      localize: menuai["localize"],
       filter?: string
     ): [
       [string, ConfigEntryExtended[]][],
@@ -263,7 +263,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
           caseInsensitiveStringCompare(
             groupA[1][0].localized_domain_name || groupA[0],
             groupB[1][0].localized_domain_name || groupB[0],
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         ),
         ignored,
@@ -325,7 +325,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
         caseInsensitiveStringCompare(
           a.localized_title || a.handler,
           b.localized_title || b.handler,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
     }
@@ -341,8 +341,8 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
     this._scanUSBDevices();
     this._scanImprovDevices();
 
-    if (isComponentLoaded(this.hass, "diagnostics")) {
-      fetchDiagnosticHandlers(this.hass).then((infos) => {
+    if (isComponentLoaded(this.menuai, "diagnostics")) {
+      fetchDiagnosticHandlers(this.menuai).then((infos) => {
         const handlers = {};
         for (const info of infos) {
           handlers[info.domain] = info.handlers.config_entry;
@@ -380,18 +380,18 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
 
   protected render() {
     if (!this.configEntries || !this.configEntriesInProgress) {
-      return html`<hass-loading-screen
-        .hass=${this.hass}
+      return html`<menuai-loading-screen
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-      ></hass-loading-screen>`;
+      ></menuai-loading-screen>`;
     }
     const [integrations, ignoredConfigEntries, disabledConfigEntries] =
       this._filterConfigEntries(
-        this.hass.config.components,
+        this.menuai.config.components,
         this._manifests,
         this.configEntries,
         this._entityRegistryEntries,
-        this.hass.localize,
+        this.menuai.localize,
         this._filter
       );
     const configEntriesInProgress = this._filterConfigEntriesInProgress(
@@ -413,17 +413,17 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiFilterVariant}
             >
             </ha-icon-button>
             <ha-check-list-item left .selected=${this._showIgnored}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.integrations.ignore.show_ignored"
               )}
             </ha-check-list-item>
             <ha-check-list-item left .selected=${this._showDisabled}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.integrations.disable.show_disabled"
               )}
             </ha-check-list-item>
@@ -432,7 +432,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
         ${this.narrow
           ? html`
               <ha-integration-overflow-menu
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 slot="toolbar-icon"
               ></ha-integration-overflow-menu>
             `
@@ -441,8 +441,8 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
     `;
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
@@ -453,10 +453,10 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
           ? html`
               <div slot="header" class="header">
                 <search-input-outlined
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .filter=${this._filter}
                   @value-changed=${this._handleSearchChange}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.integrations.search"
                   )}
                 >
@@ -466,15 +466,15 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
             `
           : html`
               <ha-integration-overflow-menu
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 slot="toolbar-icon"
               ></ha-integration-overflow-menu>
               <div class="search">
                 <search-input-outlined
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .filter=${this._filter}
                   @value-changed=${this._handleSearchChange}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.integrations.search"
                   )}
                 >
@@ -485,13 +485,13 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
                         class="active-filters"
                         @click=${this._preventDefault}
                       >
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.integrations.disable.disabled_integrations",
                           { number: disabledConfigEntries.length }
                         )}
                         <mwc-button
                           @click=${this._toggleShowDisabled}
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.panel.config.integrations.disable.show"
                           )}
                         ></mwc-button>
@@ -503,7 +503,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
             `}
         ${this._showIgnored
           ? html`<h1>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.integrations.ignore.ignored"
                 )}
               </h1>
@@ -512,27 +512,27 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
                   ? ignoredConfigEntries.map(
                       (entry: ConfigEntryExtended) => html`
                         <ha-ignored-config-entry-card
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .manifest=${this._manifests[entry.domain]}
                           .entry=${entry}
                           @change=${this._handleFlowUpdated}
                         ></ha-ignored-config-entry-card>
                       `
                     )
-                  : html`${this.hass.localize(
+                  : html`${this.menuai.localize(
                       "ui.panel.config.integrations.no_ignored_integrations"
                     )}`}
               </div>`
           : ""}
         ${configEntriesInProgress.length
           ? html`<h1>
-                ${this.hass.localize("ui.panel.config.integrations.discovered")}
+                ${this.menuai.localize("ui.panel.config.integrations.discovered")}
               </h1>
               <div class="container">
                 ${configEntriesInProgress.map(
                   (flow: DataEntryFlowProgressExtended) => html`
                     <ha-config-flow-card
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .manifest=${this._manifests[flow.handler]}
                       .flow=${flow}
                       @change=${this._handleFlowUpdated}
@@ -543,21 +543,21 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
           : ""}
         ${this._showDisabled
           ? html`<h1>
-                ${this.hass.localize("ui.panel.config.integrations.disabled")}
+                ${this.menuai.localize("ui.panel.config.integrations.disabled")}
               </h1>
               <div class="container">
                 ${disabledConfigEntries.length > 0
                   ? disabledConfigEntries.map(
                       (entry: ConfigEntryExtended) => html`
                         <ha-disabled-config-entry-card
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .entry=${entry}
                           .manifest=${this._manifests[entry.domain]}
                           .entityRegistryEntries=${this._entityRegistryEntries}
                         ></ha-disabled-config-entry-card>
                       `
                     )
-                  : html`${this.hass.localize(
+                  : html`${this.menuai.localize(
                       "ui.panel.config.integrations.no_disabled_integrations"
                     )}`}
               </div>`
@@ -566,7 +566,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
         this._showDisabled ||
         this._showIgnored
           ? html`<h1>
-              ${this.hass.localize("ui.panel.config.integrations.configured")}
+              ${this.menuai.localize("ui.panel.config.integrations.configured")}
             </h1>`
           : ""}
         <div class="container">
@@ -575,7 +575,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
                 ([domain, items]) =>
                   html`<ha-integration-card
                     data-domain=${domain}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .domain=${domain}
                     .items=${items}
                     .manifest=${this._manifests[domain]}
@@ -596,19 +596,19 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
               ? html`
                   <div class="empty-message">
                     <h1>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.integrations.none_found"
                       )}
                     </h1>
                     <p>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.integrations.none_found_detail"
                       )}
                     </p>
                     <mwc-button
                       @click=${this._createFlow}
                       unelevated
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.integrations.add_integration"
                       )}
                     ></mwc-button>
@@ -625,19 +625,19 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
                   ? html`
                       <div class="empty-message">
                         <h1>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.integrations.none"
                           )}
                         </h1>
                         <p>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.integrations.no_integrations"
                           )}
                         </p>
                         <mwc-button
                           @click=${this._createFlow}
                           unelevated
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.panel.config.integrations.add_integration"
                           )}
                         ></mwc-button>
@@ -647,7 +647,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
         </div>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.integrations.add_integration"
           )}
           extended
@@ -655,7 +655,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -664,14 +664,14 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
   }
 
   private async _scanUSBDevices() {
-    if (!isComponentLoaded(this.hass, "usb")) {
+    if (!isComponentLoaded(this.menuai, "usb")) {
       return;
     }
-    await scanUSBDevices(this.hass);
+    await scanUSBDevices(this.menuai);
   }
 
   private _scanImprovDevices() {
-    if (!this.hass.auth.external?.config.canSetupImprov) {
+    if (!this.menuai.auth.external?.config.canSetupImprov) {
       return;
     }
 
@@ -685,17 +685,17 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
       this._reScanImprovDevices
     );
 
-    this.hass.auth.external!.fireMessage({
+    this.menuai.auth.external!.fireMessage({
       type: "improv/scan",
     });
   }
 
   private _reScanImprovDevices = () => {
-    if (!this.hass.auth.external?.config.canSetupImprov) {
+    if (!this.menuai.auth.external?.config.canSetupImprov) {
       return;
     }
     this._improvDiscovered = new Map();
-    this.hass.auth.external!.fireMessage({
+    this.menuai.auth.external!.fireMessage({
       type: "improv/scan",
     });
   };
@@ -708,7 +708,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
   };
 
   private async _fetchEntitySources() {
-    const entitySources = await fetchEntitySourcesWithCache(this.hass);
+    const entitySources = await fetchEntitySourcesWithCache(this.menuai);
 
     const entitiesByDomain = {};
 
@@ -723,7 +723,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
   }
 
   private async _fetchManifests(integrations?: string[]) {
-    const fetched = await fetchIntegrationManifests(this.hass, integrations);
+    const fetched = await fetchIntegrationManifests(this.menuai, integrations);
     // Make a copy so we can keep track of previously loaded manifests
     // for discovered flows (which are not part of these results)
     const manifests = { ...this._manifests };
@@ -826,7 +826,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
       return;
     }
 
-    const descriptions = await getIntegrationDescriptions(this.hass);
+    const descriptions = await getIntegrationDescriptions(this.menuai);
     const integrations = {
       ...descriptions.core.integration,
       ...descriptions.custom.integration,
@@ -836,17 +836,17 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
 
     if (integration?.config_flow) {
       if (integration.single_config_entry) {
-        const configEntries = await getConfigEntries(this.hass, { domain });
+        const configEntries = await getConfigEntries(this.menuai, { domain });
         if (configEntries.length > 0) {
-          const localize = await this.hass.loadBackendTranslation(
+          const localize = await this.menuai.loadBackendTranslation(
             "title",
             integration.name
           );
           showAlertDialog(this, {
-            title: this.hass.localize(
+            title: this.menuai.localize(
               "ui.panel.config.integrations.config_flow.single_config_entry_title"
             ),
-            text: this.hass.localize(
+            text: this.menuai.localize(
               "ui.panel.config.integrations.config_flow.single_config_entry",
               {
                 integration_name: domainToName(localize, integration.name!),
@@ -858,7 +858,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
       }
 
       // Integration exists, so we can just create a flow
-      const localize = await this.hass.loadBackendTranslation(
+      const localize = await this.menuai.loadBackendTranslation(
         "title",
         domain,
         false
@@ -879,7 +879,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
 
     if (integration?.supported_by) {
       // Integration is an alias, so we can just create a flow
-      const localize = await this.hass.loadBackendTranslation(
+      const localize = await this.menuai.loadBackendTranslation(
         "title",
         domain,
         false
@@ -894,7 +894,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
       }
 
       showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.supported_brand_flow",
           {
             supported_brand: integration.name || domainToName(localize, domain),
@@ -911,7 +911,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
           ) {
             protocolIntegrationPicked(
               this,
-              this.hass,
+              this.menuai,
               integration.supported_by!
             );
             return;
@@ -922,10 +922,10 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
             },
             startFlowHandler: integration.supported_by,
             manifest: await fetchIntegrationManifest(
-              this.hass,
+              this.menuai,
               integration.supported_by!
             ),
-            showAdvanced: this.hass.userData?.showAdvanced,
+            showAdvanced: this.menuai.userData?.showAdvanced,
           });
         },
       });
@@ -951,10 +951,10 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
       return;
     }
     showAlertDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.integrations.config_flow.error"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.integrations.config_flow.no_config_flow"
       ),
     });
@@ -970,7 +970,7 @@ class HaConfigIntegrationsDashboard extends KeyboardShortcutMixin(
     return [
       haStyle,
       css`
-        :host([narrow]) hass-tabs-subpage {
+        :host([narrow]) menuai-tabs-subpage {
           --main-title-margin: 0;
         }
         ha-button-menu {

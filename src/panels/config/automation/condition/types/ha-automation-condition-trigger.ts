@@ -13,7 +13,7 @@ import {
   type Trigger,
   type TriggerCondition,
 } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 const getTriggersIds = (triggers: Trigger[]): string[] => {
   const triggerIds = flattenTriggers(triggers)
@@ -24,7 +24,7 @@ const getTriggersIds = (triggers: Trigger[]): string[] => {
 
 @customElement("ha-automation-condition-trigger")
 export class HaTriggerCondition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: TriggerCondition;
 
@@ -73,7 +73,7 @@ export class HaTriggerCondition extends LitElement {
 
   protected render() {
     if (!this._triggerIds.length) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.automation.editor.conditions.type.trigger.no_triggers"
       );
     }
@@ -84,7 +84,7 @@ export class HaTriggerCondition extends LitElement {
       <ha-form
         .schema=${schema}
         .data=${this.condition}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -95,7 +95,7 @@ export class HaTriggerCondition extends LitElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.conditions.type.trigger.${schema.name}`
     );
 

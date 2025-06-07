@@ -15,7 +15,7 @@ import {
   mergeHistoryResults,
 } from "../../../data/history";
 import { getSensorNumericDeviceClasses } from "../../../data/sensor";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntitiesChanged } from "../common/has-changed";
 import { processConfigEntities } from "../common/process-config-entities";
 import type { LovelaceCard, LovelaceGridOptions } from "../types";
@@ -37,7 +37,7 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
     return { type: "history-graph", entities: ["sun.sun"] };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _history?: HistoryResult;
 
@@ -110,15 +110,15 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
   }
 
   private async _subscribeHistory() {
-    if (!isComponentLoaded(this.hass!, "history") || this._subscribed) {
+    if (!isComponentLoaded(this.menuai!, "history") || this._subscribed) {
       return;
     }
 
     const { numeric_device_classes: sensorNumericDeviceClasses } =
-      await getSensorNumericDeviceClasses(this.hass!);
+      await getSensorNumericDeviceClasses(this.menuai!);
 
     this._subscribed = subscribeHistoryStatesTimeWindow(
-      this.hass!,
+      this.menuai!,
       (combinedHistory) => {
         if (!this._subscribed) {
           // Message came in before we had a chance to unload
@@ -126,10 +126,10 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
         }
 
         this._stateHistory = computeHistory(
-          this.hass!,
+          this.menuai!,
           combinedHistory,
           this._entityIds,
-          this.hass!.localize,
+          this.menuai!.localize,
           sensorNumericDeviceClasses,
           this._config?.split_device_classes
         );
@@ -165,7 +165,7 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
     start.setHours(start.getHours() - this._hoursToShow);
 
     const statistics = await fetchStatistics(
-      this.hass!,
+      this.menuai!,
       start,
       now,
       this._entityIds,
@@ -175,7 +175,7 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
     );
 
     this._statisticsHistory = convertStatisticsToHistory(
-      this.hass!,
+      this.menuai!,
       statistics,
       this._entityIds,
       sensorNumericDeviceClasses,
@@ -209,7 +209,7 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
     return (
       hasConfigOrEntitiesChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
@@ -217,14 +217,14 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
     super.updated(changedProps);
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this._hoursToShow ||
       !this._entityIds.length
     ) {
       return;
     }
 
-    if (!changedProps.has("_config") && !changedProps.has("hass")) {
+    if (!changedProps.has("_config") && !changedProps.has("menuai")) {
       return;
     }
 
@@ -243,7 +243,7 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
     const now = new Date();
@@ -277,13 +277,13 @@ export class HuiHistoryGraphCard extends LitElement implements LovelaceCard {
           ${this._error
             ? html`
                 <ha-alert alert-type="error">
-                  ${this.hass.localize("ui.components.history_charts.error")}:
+                  ${this.menuai.localize("ui.components.history_charts.error")}:
                   ${this._error.message || this._error.code}
                 </ha-alert>
               `
             : html`
                 <state-history-charts
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .isLoadingData=${!this._history}
                   .historyData=${this._history}
                   .names=${this._names}

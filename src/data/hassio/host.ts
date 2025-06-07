@@ -1,11 +1,11 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "./common";
-import { hassioApiResultExtractor } from "./common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "./common";
+import { menuaiioApiResultExtractor } from "./common";
 
-export interface HassioHostInfo {
+export interface menuaiioHostInfo {
   agent_version: string;
-  chassis: string;
+  cmenuaiis: string;
   cpe: string;
   deployment: string;
   disk_life_time: number | "";
@@ -20,7 +20,7 @@ export interface HassioHostInfo {
   startup_time: number;
 }
 
-export interface HassioHassOSInfo {
+export interface menuaiiomenuaiOSInfo {
   board: string | null;
   boot: string | null;
   update_available: boolean;
@@ -44,46 +44,46 @@ export interface DatadiskList {
   disks: Datadisk[];
 }
 
-export const fetchHassioHostInfo = async (
-  hass: HomeAssistant
-): Promise<HassioHostInfo> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiioHostInfo = async (
+  menuai: menuai
+): Promise<menuaiioHostInfo> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/host/info",
       method: "get",
     });
   }
 
-  const response = await hass.callApi<HassioResponse<HassioHostInfo>>(
+  const response = await menuai.callApi<menuaiioResponse<menuaiioHostInfo>>(
     "GET",
-    "hassio/host/info"
+    "menuaiio/host/info"
   );
-  return hassioApiResultExtractor(response);
+  return menuaiioApiResultExtractor(response);
 };
 
-export const fetchHassioHassOsInfo = async (
-  hass: HomeAssistant
-): Promise<HassioHassOSInfo> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiiomenuaiOsInfo = async (
+  menuai: menuai
+): Promise<menuaiiomenuaiOSInfo> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/os/info",
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioHassOSInfo>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiiomenuaiOSInfo>>(
       "GET",
-      "hassio/os/info"
+      "menuaiio/os/info"
     )
   );
 };
 
-export const rebootHost = async (hass: HomeAssistant) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const rebootHost = async (menuai: menuai) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/host/reboot",
       method: "post",
@@ -91,12 +91,12 @@ export const rebootHost = async (hass: HomeAssistant) => {
     });
   }
 
-  return hass.callApi<HassioResponse<void>>("POST", "hassio/host/reboot");
+  return menuai.callApi<menuaiioResponse<void>>("POST", "menuaiio/host/reboot");
 };
 
-export const shutdownHost = async (hass: HomeAssistant) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const shutdownHost = async (menuai: menuai) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/host/shutdown",
       method: "post",
@@ -104,12 +104,12 @@ export const shutdownHost = async (hass: HomeAssistant) => {
     });
   }
 
-  return hass.callApi<HassioResponse<void>>("POST", "hassio/host/shutdown");
+  return menuai.callApi<menuaiioResponse<void>>("POST", "menuaiio/host/shutdown");
 };
 
-export const updateOS = async (hass: HomeAssistant) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const updateOS = async (menuai: menuai) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/os/update",
       method: "post",
@@ -117,12 +117,12 @@ export const updateOS = async (hass: HomeAssistant) => {
     });
   }
 
-  return hass.callApi<HassioResponse<void>>("POST", "hassio/os/update");
+  return menuai.callApi<menuaiioResponse<void>>("POST", "menuaiio/os/update");
 };
 
-export const configSyncOS = async (hass: HomeAssistant) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const configSyncOS = async (menuai: menuai) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/os/config/sync",
       method: "post",
@@ -130,12 +130,12 @@ export const configSyncOS = async (hass: HomeAssistant) => {
     });
   }
 
-  return hass.callApi<HassioResponse<void>>("POST", "hassio/os/config/sync");
+  return menuai.callApi<menuaiioResponse<void>>("POST", "menuaiio/os/config/sync");
 };
 
-export const changeHostOptions = async (hass: HomeAssistant, options: any) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const changeHostOptions = async (menuai: menuai, options: any) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/host/options",
       method: "post",
@@ -143,16 +143,16 @@ export const changeHostOptions = async (hass: HomeAssistant, options: any) => {
     });
   }
 
-  return hass.callApi<HassioResponse<void>>(
+  return menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    "hassio/host/options",
+    "menuaiio/host/options",
     options
   );
 };
 
-export const moveDatadisk = async (hass: HomeAssistant, device: string) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const moveDatadisk = async (menuai: menuai, device: string) => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/os/datadisk/move",
       method: "post",
@@ -161,14 +161,14 @@ export const moveDatadisk = async (hass: HomeAssistant, device: string) => {
     });
   }
 
-  return hass.callApi<HassioResponse<void>>("POST", "hassio/os/datadisk/move");
+  return menuai.callApi<menuaiioResponse<void>>("POST", "menuaiio/os/datadisk/move");
 };
 
 export const listDatadisks = async (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<DatadiskList> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS<DatadiskList>({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS<DatadiskList>({
       type: "supervisor/api",
       endpoint: "/os/datadisk/list",
       method: "get",
@@ -176,7 +176,7 @@ export const listDatadisks = async (
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<DatadiskList>>("GET", "/os/datadisk/list")
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<DatadiskList>>("GET", "/os/datadisk/list")
   );
 };

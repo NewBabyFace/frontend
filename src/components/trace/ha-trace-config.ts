@@ -5,11 +5,11 @@ import { customElement, property } from "lit/decorators";
 import "../ha-code-editor";
 import "../ha-icon-button";
 import type { TraceExtended } from "../../data/trace";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-trace-config")
 export class HaTraceConfig extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trace!: TraceExtended;
 

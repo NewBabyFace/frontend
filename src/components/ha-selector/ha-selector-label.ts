@@ -3,12 +3,12 @@ import { customElement, property } from "lit/decorators";
 import { ensureArray } from "../../common/array/ensure-array";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { LabelSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-labels-picker";
 
 @customElement("ha-selector-label")
 export class HaLabelSelector extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public value?: string | string[];
 
@@ -31,7 +31,7 @@ export class HaLabelSelector extends LitElement {
       return html`
         <ha-labels-picker
           no-add
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${ensureArray(this.value ?? [])}
           .required=${this.required}
           .disabled=${this.disabled}
@@ -44,7 +44,7 @@ export class HaLabelSelector extends LitElement {
     return html`
       <ha-label-picker
         no-add
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .required=${this.required}
         .disabled=${this.disabled}

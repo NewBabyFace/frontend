@@ -19,11 +19,11 @@ import type {
 } from "../../data/recorder";
 import { fetchStatistics, getStatisticMetadata } from "../../data/recorder";
 import { getSensorNumericDeviceClasses } from "../../data/sensor";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { haStyle } from "../../resources/styles";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     closed: undefined;
   }
 }
@@ -32,7 +32,7 @@ const statTypes: StatisticsTypes = ["state", "min", "mean", "max"];
 
 @customElement("ha-more-info-history")
 export class MoreInfoHistory extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -57,15 +57,15 @@ export class MoreInfoHistory extends LitElement {
       return nothing;
     }
 
-    return html`${isComponentLoaded(this.hass, "history")
+    return html`${isComponentLoaded(this.menuai, "history")
       ? html`<div class="header">
             <h2>
-              ${this.hass.localize("ui.dialogs.more_info_control.history")}
+              ${this.menuai.localize("ui.dialogs.more_info_control.history")}
             </h2>
             ${__DEMO__
               ? nothing
               : html`<a href=${this._showMoreHref}
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.dialogs.more_info_control.show_more"
                   )}</a
                 >`}
@@ -74,7 +74,7 @@ export class MoreInfoHistory extends LitElement {
             ? html`<div class="errors">${this._error}</div>`
             : this._statistics
               ? html`<statistics-chart
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .isLoadingData=${!this._statistics}
                   .statisticsData=${this._statistics}
                   .metadata=${this._metadata}
@@ -85,7 +85,7 @@ export class MoreInfoHistory extends LitElement {
                 ></statistics-chart>`
               : html`<state-history-charts
                   up-to-now
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .historyData=${this._stateHistory}
                   .isLoadingData=${!this._stateHistory}
                   .showNames=${false}
@@ -151,7 +151,7 @@ export class MoreInfoHistory extends LitElement {
 
   private async _getStatisticsMetaData(statisticIds: string[] | undefined) {
     const statsMetadataArray = await getStatisticMetadata(
-      this.hass,
+      this.menuai,
       statisticIds
     );
     const statisticsMetaData = {};
@@ -163,10 +163,10 @@ export class MoreInfoHistory extends LitElement {
 
   private async _getStateHistory(): Promise<void> {
     if (
-      isComponentLoaded(this.hass, "recorder") &&
+      isComponentLoaded(this.menuai, "recorder") &&
       computeDomain(this.entityId) === "sensor"
     ) {
-      const stateObj = this.hass.states[this.entityId];
+      const stateObj = this.menuai.states[this.entityId];
       // If there is no state class, the integration providing the entity
       // has not opted into statistics so there is no need to check as it
       // requires another round-trip to the server.
@@ -176,7 +176,7 @@ export class MoreInfoHistory extends LitElement {
         // faster.
         const _metadata = this._getStatisticsMetaData([this.entityId]);
         const _statistics = fetchStatistics(
-          this.hass!,
+          this.menuai!,
           subHours(new Date(), 24),
           undefined,
           [this.entityId],
@@ -197,7 +197,7 @@ export class MoreInfoHistory extends LitElement {
       }
     }
 
-    if (!isComponentLoaded(this.hass, "history")) {
+    if (!isComponentLoaded(this.menuai, "history")) {
       return;
     }
     if (this._subscribed) {
@@ -205,20 +205,20 @@ export class MoreInfoHistory extends LitElement {
     }
 
     const { numeric_device_classes: sensorNumericDeviceClasses } =
-      await getSensorNumericDeviceClasses(this.hass);
+      await getSensorNumericDeviceClasses(this.menuai);
 
     this._subscribed = subscribeHistoryStatesTimeWindow(
-      this.hass!,
+      this.menuai!,
       (combinedHistory) => {
         if (!this._subscribed) {
           // Message came in before we had a chance to unload
           return;
         }
         this._stateHistory = computeHistory(
-          this.hass!,
+          this.menuai!,
           combinedHistory,
           [this.entityId],
-          this.hass!.localize,
+          this.menuai!.localize,
           sensorNumericDeviceClasses
         );
       },

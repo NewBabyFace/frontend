@@ -4,8 +4,8 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { isUnavailableState } from "../../../data/entity";
 import type { ScriptEntity } from "../../../data/script";
-import { canRun, hasScriptFields } from "../../../data/script";
-import type { HomeAssistant } from "../../../types";
+import { canRun, menuaicriptFields } from "../../../data/script";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -15,7 +15,7 @@ import { confirmAction } from "../common/confirm-action";
 
 @customElement("hui-script-entity-row")
 class HuiScriptEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ActionRowConfig;
 
@@ -31,31 +31,31 @@ class HuiScriptEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity] as ScriptEntity;
+    const stateObj = this.menuai.states[this._config.entity] as ScriptEntity;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         ${stateObj.state === "on"
           ? html`<mwc-button @click=${this._cancelScript}>
               ${stateObj.attributes.mode !== "single" &&
               stateObj.attributes.current &&
               stateObj.attributes.current > 0
-                ? this.hass.localize("ui.card.script.cancel_multiple", {
+                ? this.menuai.localize("ui.card.script.cancel_multiple", {
                     number: stateObj.attributes.current,
                   })
-                : this.hass.localize("ui.card.script.cancel")}
+                : this.menuai.localize("ui.card.script.cancel")}
             </mwc-button>`
           : ""}
         ${stateObj.state === "off" || stateObj.attributes.max
@@ -65,7 +65,7 @@ class HuiScriptEntityRow extends LitElement implements LovelaceRow {
               !canRun(stateObj)}
             >
               ${this._config.action_name ||
-              this.hass!.localize("ui.card.script.run")}
+              this.menuai!.localize("ui.card.script.run")}
             </mwc-button>`
           : ""}
       </hui-generic-entity-row>
@@ -88,15 +88,15 @@ class HuiScriptEntityRow extends LitElement implements LovelaceRow {
   private async _runScript(ev): Promise<void> {
     ev.stopPropagation();
 
-    if (hasScriptFields(this.hass!, this._config!.entity)) {
+    if (menuaicriptFields(this.menuai!, this._config!.entity)) {
       showMoreInfoDialog(this, { entityId: this._config!.entity });
     } else if (
       !this._config?.confirmation ||
       (await confirmAction(
         this,
-        this.hass!,
+        this.menuai!,
         this._config.confirmation,
-        this._config.action_name || this.hass!.localize("ui.card.script.run")
+        this._config.action_name || this.menuai!.localize("ui.card.script.run")
       ))
     ) {
       this._callService("turn_on");
@@ -104,7 +104,7 @@ class HuiScriptEntityRow extends LitElement implements LovelaceRow {
   }
 
   private _callService(service: string): void {
-    this.hass!.callService("script", service, {
+    this.menuai!.callService("script", service, {
       entity_id: this._config!.entity,
     });
   }

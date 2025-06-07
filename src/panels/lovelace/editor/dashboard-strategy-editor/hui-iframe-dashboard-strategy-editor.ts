@@ -6,7 +6,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { IframeDashboardStrategyConfig } from "../../strategies/iframe/iframe-dashboard-strategy";
 import type { LovelaceStrategyEditor } from "../../strategies/types";
 
@@ -26,7 +26,7 @@ export class HuiIframeDashboarStrategyEditor
   extends LitElement
   implements LovelaceStrategyEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state()
   private _config?: IframeDashboardStrategyConfig;
@@ -36,13 +36,13 @@ export class HuiIframeDashboarStrategyEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -59,7 +59,7 @@ export class HuiIframeDashboarStrategyEditor
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) => {
     switch (schema.name) {
       case "url":
-        return this.hass?.localize(
+        return this.menuai?.localize(
           `ui.panel.lovelace.editor.strategy.iframe.${schema.name}`
         );
       default:

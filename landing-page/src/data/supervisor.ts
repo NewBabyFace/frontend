@@ -1,10 +1,10 @@
 import type { LandingPageKeys } from "../../../src/common/translations/localize";
-import type { HassioResponse } from "../../../src/data/hassio/common";
+import type { menuaiioResponse } from "../../../src/data/menuaiio/common";
 import type {
   DockerNetwork,
   NetworkInterface,
-} from "../../../src/data/hassio/network";
-import { handleFetchPromise } from "../../../src/util/hass-call-api";
+} from "../../../src/data/menuaiio/network";
+import { handleFetchPromise } from "../../../src/util/menuai-call-api";
 
 export interface NetworkInfo {
   interfaces: NetworkInterface[];
@@ -51,7 +51,7 @@ export async function pingSupervisor() {
 }
 
 export async function getSupervisorNetworkInfo(): Promise<NetworkInfo> {
-  const responseData = await handleFetchPromise<HassioResponse<NetworkInfo>>(
+  const responseData = await handleFetchPromise<menuaiioResponse<NetworkInfo>>(
     fetch("/supervisor-api/network/info")
   );
   return responseData?.data;

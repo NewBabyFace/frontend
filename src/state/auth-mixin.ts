@@ -1,36 +1,36 @@
 import { subscribeUser, userCollection } from "../data/ws-user";
 import type { Constructor } from "../types";
 import { clearState } from "../util/ha-pref-storage";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
-    "hass-refresh-current-user": undefined;
+  interface menuaiDomEvents {
+    "menuai-refresh-current-user": undefined;
   }
 }
 
-export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
+export default <T extends Constructor<menuaiBaseEl>>(superClass: T) =>
   class extends superClass {
     protected firstUpdated(changedProps) {
       super.firstUpdated(changedProps);
-      this.addEventListener("hass-logout", () => this._handleLogout());
-      this.addEventListener("hass-refresh-current-user", () => {
-        userCollection(this.hass!.connection).refresh();
+      this.addEventListener("menuai-logout", () => this._handleLogout());
+      this.addEventListener("menuai-refresh-current-user", () => {
+        userCollection(this.menuai!.connection).refresh();
       });
     }
 
-    protected hassConnected() {
-      super.hassConnected();
-      subscribeUser(this.hass!.connection, (user) =>
-        this._updateHass({ user })
+    protected menuaiConnected() {
+      super.menuaiConnected();
+      subscribeUser(this.menuai!.connection, (user) =>
+        this._updatemenuai({ user })
       );
     }
 
     private async _handleLogout() {
       try {
-        await this.hass!.auth.revoke();
-        this.hass!.connection.close();
+        await this.menuai!.auth.revoke();
+        this.menuai!.connection.close();
         clearState();
         document.location.href = "/";
       } catch (err: any) {

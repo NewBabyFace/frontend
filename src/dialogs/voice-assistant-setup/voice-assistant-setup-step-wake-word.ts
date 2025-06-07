@@ -9,7 +9,7 @@ import "../../components/ha-spinner";
 import "../../components/ha-dialog-header";
 import type { AssistSatelliteConfiguration } from "../../data/assist_satellite";
 import { interceptWakeWord } from "../../data/assist_satellite";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { AssistantSetupStyles } from "./styles";
 import { STEP } from "./voice-assistant-setup-dialog";
 import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
@@ -17,7 +17,7 @@ import { computeDomain } from "../../common/entity/compute_domain";
 
 @customElement("ha-voice-assistant-setup-step-wake-word")
 export class HaVoiceAssistantSetupStepWakeWord extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public assistConfiguration?: AssistSatelliteConfiguration;
@@ -91,7 +91,7 @@ export class HaVoiceAssistantSetupStepWakeWord extends LitElement {
       return nothing;
     }
 
-    const entityState = this.hass.states[this.assistEntityId];
+    const entityState = this.menuai.states[this.assistEntityId];
 
     if (entityState.state !== "idle") {
       return html`<ha-spinner></ha-spinner>`;
@@ -100,46 +100,46 @@ export class HaVoiceAssistantSetupStepWakeWord extends LitElement {
     return html`<div class="content">
         ${!this._detected
           ? html`
-          <img src="/static/images/voice-assistant/sleep.png" alt="Casita Home Assistant logo"/>
+          <img src="/static/images/voice-assistant/sleep.png" alt="Casita MenuAI logo"/>
           <h1>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.wake_word.title",
             { wakeword: this._activeWakeWord(this.assistConfiguration) }
           )}  
           </h1>
-          <p class="secondary">${this.hass.localize(
+          <p class="secondary">${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.wake_word.secondary"
           )}</p>
         </div>`
           : html`<img
                 src="/static/images/voice-assistant/ok-nabu.png"
-                alt="Casita Home Assistant logo"
+                alt="Casita MenuAI logo"
               />
               <h1>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.wake_word.title_2",
                   { wakeword: this._activeWakeWord(this.assistConfiguration) }
                 )}
               </h1>
               <p class="secondary">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.wake_word.secondary_2"
                 )}
               </p>`}
         ${this._timedout
           ? html`<ha-alert alert-type="warning"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.voice_assistants.satellite_wizard.wake_word.time_out"
               )}</ha-alert
             >`
           : this._muteSwitchEntity &&
-              this.hass.states[this._muteSwitchEntity].state === "on"
+              this.menuai.states[this._muteSwitchEntity].state === "on"
             ? html`<ha-alert
                 alert-type="warning"
-                .title=${this.hass.localize(
+                .title=${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.wake_word.muted"
                 )}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.wake_word.muted_description"
                 )}</ha-alert
               >`
@@ -149,7 +149,7 @@ export class HaVoiceAssistantSetupStepWakeWord extends LitElement {
       this.assistConfiguration.available_wake_words.length > 1
         ? html`<div class="footer centered">
             <ha-button @click=${this._changeWakeWord}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.voice_assistants.satellite_wizard.wake_word.change_wake_word"
               )}</ha-button
             >
@@ -163,7 +163,7 @@ export class HaVoiceAssistantSetupStepWakeWord extends LitElement {
       return;
     }
     await this._stopListeningWakeWord();
-    this._sub = interceptWakeWord(this.hass, entityId, () => {
+    this._sub = interceptWakeWord(this.menuai, entityId, () => {
       this._timedout = false;
       clearTimeout(this._timeout);
       this._stopListeningWakeWord();

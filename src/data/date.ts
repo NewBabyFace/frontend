@@ -1,14 +1,14 @@
-import type { HassEntityBase } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuaiEntityBase } from "home-assistant-js-websocket";
+import type { menuai } from "../types";
 
-export const stateToIsoDateString = (entityState: HassEntityBase) =>
+export const stateToIsoDateString = (entityState: menuaiEntityBase) =>
   `${entityState}T00:00:00`;
 
 export const setDateValue = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   date: string | undefined = undefined
 ) => {
   const param = { entity_id: entityId, date };
-  hass.callService("date", "set_value", param);
+  menuai.callService("date", "set_value", param);
 };

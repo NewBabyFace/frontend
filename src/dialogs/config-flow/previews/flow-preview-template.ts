@@ -1,4 +1,4 @@
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { debounce } from "../../../common/util/debounce";
@@ -8,14 +8,14 @@ import type {
   TemplatePreview,
 } from "../../../data/ws-templates";
 import { subscribePreviewTemplate } from "../../../data/ws-templates";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./entity-preview-row";
 import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-alert";
 
 @customElement("flow-preview-template")
 class FlowPreviewTemplate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public flowType!: FlowType;
 
@@ -27,7 +27,7 @@ class FlowPreviewTemplate extends LitElement {
 
   @property({ attribute: false }) public stepData!: Record<string, any>;
 
-  @state() private _preview?: HassEntity;
+  @state() private _preview?: menuaiEntity;
 
   @state() private _listeners?: TemplateListeners;
 
@@ -54,13 +54,13 @@ class FlowPreviewTemplate extends LitElement {
       return html`<ha-alert alert-type="error">${this._error}</ha-alert>`;
     }
     return html`<entity-preview-row
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this._preview}
       ></entity-preview-row>
       ${this._listeners?.time
         ? html`
             <p>
-              ${this.hass.localize("ui.dialogs.helper_settings.template.time")}
+              ${this.menuai.localize("ui.dialogs.helper_settings.template.time")}
             </p>
           `
         : nothing}
@@ -69,7 +69,7 @@ class FlowPreviewTemplate extends LitElement {
         : this._listeners.all
           ? html`
               <p class="all_listeners">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.dialogs.helper_settings.template.all_listeners"
                 )}
               </p>
@@ -77,7 +77,7 @@ class FlowPreviewTemplate extends LitElement {
           : this._listeners.domains.length || this._listeners.entities.length
             ? html`
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.helper_settings.template.listeners"
                   )}
                 </p>
@@ -88,7 +88,7 @@ class FlowPreviewTemplate extends LitElement {
                       (domain) => html`
                         <li>
                           <b
-                            >${this.hass.localize(
+                            >${this.menuai.localize(
                               "ui.dialogs.helper_settings.template.domain"
                             )}</b
                           >: ${domain}
@@ -101,7 +101,7 @@ class FlowPreviewTemplate extends LitElement {
                       (entity_id) => html`
                         <li>
                           <b
-                            >${this.hass.localize(
+                            >${this.menuai.localize(
                               "ui.dialogs.helper_settings.template.entity"
                             )}</b
                           >: ${entity_id}
@@ -112,7 +112,7 @@ class FlowPreviewTemplate extends LitElement {
               `
             : !this._listeners.time
               ? html`<p class="all_listeners">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.helper_settings.template.no_listeners"
                   )}
                 </p>`
@@ -152,7 +152,7 @@ class FlowPreviewTemplate extends LitElement {
     }
     try {
       this._unsub = subscribePreviewTemplate(
-        this.hass,
+        this.menuai,
         this.flowId,
         this.flowType,
         this.stepData,

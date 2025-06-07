@@ -1,6 +1,6 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
-export const deviceTrackerIcon = (stateObj: HassEntity, state?: string) => {
+export const deviceTrackerIcon = (stateObj: menuaiEntity, state?: string) => {
   const compareState = state ?? stateObj.state;
   if (stateObj?.attributes.source_type === "router") {
     return compareState === "home" ? "mdi:lan-connect" : "mdi:lan-disconnect";

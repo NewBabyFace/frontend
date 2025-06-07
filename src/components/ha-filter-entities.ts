@@ -11,7 +11,7 @@ import type { RelatedResult } from "../data/search";
 import { findRelated } from "../data/search";
 import { haStyleScrollbar } from "../resources/styles";
 import { loadVirtualizer } from "../resources/virtualizer";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-expansion-panel";
 import "./ha-list";
@@ -20,7 +20,7 @@ import "./search-input-outlined";
 
 @customElement("ha-filter-entities")
 export class HaFilterEntities extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -54,7 +54,7 @@ export class HaFilterEntities extends LitElement {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize("ui.panel.config.entities.caption")}
+          ${this.menuai.localize("ui.panel.config.entities.caption")}
           ${this.value?.length
             ? html`<div class="badge">${this.value?.length}</div>
                 <ha-icon-button
@@ -66,7 +66,7 @@ export class HaFilterEntities extends LitElement {
         ${this._shouldRender
           ? html`
               <search-input-outlined
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .filter=${this._filter}
                 @value-changed=${this._handleSearchChange}
               >
@@ -74,7 +74,7 @@ export class HaFilterEntities extends LitElement {
               <ha-list class="ha-scrollbar" multi>
                 <lit-virtualizer
                   .items=${this._entities(
-                    this.hass.states,
+                    this.menuai.states,
                     this.type,
                     this._filter || "",
                     this.value
@@ -113,7 +113,7 @@ export class HaFilterEntities extends LitElement {
         >
           <ha-state-icon
             slot="graphic"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .stateObj=${entity}
           ></ha-state-icon>
           ${computeStateName(entity)}
@@ -148,7 +148,7 @@ export class HaFilterEntities extends LitElement {
 
   private _entities = memoizeOne(
     (
-      states: HomeAssistant["states"],
+      states: menuai["states"],
       type: this["type"],
       filter: string,
       _value
@@ -168,7 +168,7 @@ export class HaFilterEntities extends LitElement {
           stringCompare(
             computeStateName(a),
             computeStateName(b),
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         );
     }
@@ -188,7 +188,7 @@ export class HaFilterEntities extends LitElement {
 
     for (const entityId of this.value) {
       if (this.type) {
-        relatedPromises.push(findRelated(this.hass, "entity", entityId));
+        relatedPromises.push(findRelated(this.menuai, "entity", entityId));
       }
     }
 

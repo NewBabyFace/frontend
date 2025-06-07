@@ -1,17 +1,17 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 
-export interface HassioBackupLocationDialogParams {
+export interface menuaiioBackupLocationDialogParams {
   supervisor: Supervisor;
 }
 
-export const showHassioBackupLocationDialog = (
+export const showmenuaiioBackupLocationDialog = (
   element: HTMLElement,
-  dialogParams: HassioBackupLocationDialogParams
+  dialogParams: menuaiioBackupLocationDialogParams
 ): void => {
   fireEvent(element, "show-dialog", {
-    dialogTag: "dialog-hassio-backup-location",
-    dialogImport: () => import("./dialog-hassio-backup-location"),
+    dialogTag: "dialog-menuaiio-backup-location",
+    dialogImport: () => import("./dialog-menuaiio-backup-location"),
     dialogParams,
   });
 };

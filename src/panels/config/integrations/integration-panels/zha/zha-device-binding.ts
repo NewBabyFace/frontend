@@ -9,12 +9,12 @@ import "../../../../../components/ha-list-item";
 import type { ZHADevice } from "../../../../../data/zha";
 import { bindDevices, unbindDevices } from "../../../../../data/zha";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ItemSelectedEvent } from "./types";
 
 @customElement("zha-device-binding-control")
 export class ZHADeviceBindingControl extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public device?: ZHADevice;
 
@@ -38,7 +38,7 @@ export class ZHADeviceBindingControl extends LitElement {
       <ha-card class="content">
         <div class="command-picker">
           <ha-select
-            label=${this.hass!.localize(
+            label=${this.menuai!.localize(
               "ui.panel.config.zha.device_binding.picker_label"
             )}
             class="menu"
@@ -65,14 +65,14 @@ export class ZHADeviceBindingControl extends LitElement {
             .disabled=${!(this._deviceToBind && this.device) ||
             this._bindingOperationInProgress}
           >
-            ${this.hass!.localize("ui.panel.config.zha.device_binding.bind")}
+            ${this.menuai!.localize("ui.panel.config.zha.device_binding.bind")}
           </ha-progress-button>
           <ha-progress-button
             @click=${this._onUnbindDevicesClick}
             .disabled=${!(this._deviceToBind && this.device) ||
             this._bindingOperationInProgress}
           >
-            ${this.hass!.localize("ui.panel.config.zha.device_binding.unbind")}
+            ${this.menuai!.localize("ui.panel.config.zha.device_binding.unbind")}
           </ha-progress-button>
         </div>
       </ha-card>
@@ -89,11 +89,11 @@ export class ZHADeviceBindingControl extends LitElement {
 
   private async _onBindDevicesClick(ev: CustomEvent): Promise<void> {
     const button = ev.currentTarget as any;
-    if (this.hass && this._deviceToBind && this.device) {
+    if (this.menuai && this._deviceToBind && this.device) {
       this._bindingOperationInProgress = true;
       button.progress = true;
       try {
-        await bindDevices(this.hass, this.device.ieee, this._deviceToBind.ieee);
+        await bindDevices(this.menuai, this.device.ieee, this._deviceToBind.ieee);
         button.actionSuccess();
       } catch (_err: any) {
         button.actionError();
@@ -106,12 +106,12 @@ export class ZHADeviceBindingControl extends LitElement {
 
   private async _onUnbindDevicesClick(ev: CustomEvent): Promise<void> {
     const button = ev.currentTarget as any;
-    if (this.hass && this._deviceToBind && this.device) {
+    if (this.menuai && this._deviceToBind && this.device) {
       this._bindingOperationInProgress = true;
       button.progress = true;
       try {
         await unbindDevices(
-          this.hass,
+          this.menuai,
           this.device.ieee,
           this._deviceToBind.ieee
         );

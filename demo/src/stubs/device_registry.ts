@@ -1,14 +1,14 @@
 import type { DeviceRegistryEntry } from "../../../src/data/device_registry";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 export const mockDeviceRegistry = (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   data: DeviceRegistryEntry[] = []
 ) => {
-  hass.mockWS("config/device_registry/list", () => data);
+  menuai.mockWS("config/device_registry/list", () => data);
   const devices = {};
   data.forEach((device) => {
     devices[device.id] = device;
   });
-  hass.updateHass({ devices });
+  menuai.updatemenuai({ devices });
 };

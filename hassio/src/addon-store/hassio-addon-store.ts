@@ -13,20 +13,20 @@ import "../../../src/components/ha-button-menu";
 import "../../../src/components/ha-icon-button";
 import "../../../src/components/ha-list-item";
 import "../../../src/components/search-input";
-import type { HassioAddonRepository } from "../../../src/data/hassio/addon";
-import { reloadHassioAddons } from "../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
+import type { menuaiioAddonRepository } from "../../../src/data/menuaiio/addon";
+import { reloadmenuaiioAddons } from "../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
 import type { StoreAddon } from "../../../src/data/supervisor/store";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import { showAlertDialog } from "../../../src/dialogs/generic/show-dialog-box";
-import "../../../src/layouts/hass-loading-screen";
-import "../../../src/layouts/hass-subpage";
-import type { HomeAssistant, Route } from "../../../src/types";
+import "../../../src/layouts/menuai-loading-screen";
+import "../../../src/layouts/menuai-subpage";
+import type { menuai, Route } from "../../../src/types";
 import { showRegistriesDialog } from "../dialogs/registries/show-dialog-registries";
 import { showRepositoriesDialog } from "../dialogs/repositories/show-dialog-repositories";
-import "./hassio-addon-repository";
+import "./menuaiio-addon-repository";
 
-const sortRepos = (a: HassioAddonRepository, b: HassioAddonRepository) => {
+const sortRepos = (a: menuaiioAddonRepository, b: menuaiioAddonRepository) => {
   if (a.slug === "local") {
     return -1;
   }
@@ -42,9 +42,9 @@ const sortRepos = (a: HassioAddonRepository, b: HassioAddonRepository) => {
   return a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1;
 };
 
-@customElement("hassio-addon-store")
-export class HassioAddonStore extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-store")
+export class menuaiioAddonStore extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -56,7 +56,7 @@ export class HassioAddonStore extends LitElement {
 
   public async refreshData() {
     try {
-      await reloadHassioAddons(this.hass);
+      await reloadmenuaiioAddons(this.menuai);
     } catch (err) {
       showAlertDialog(this, {
         text: extractApiErrorMessage(err),
@@ -78,8 +78,8 @@ export class HassioAddonStore extends LitElement {
     }
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .header=${this.supervisor.localize("panel.store")}
@@ -96,19 +96,19 @@ export class HassioAddonStore extends LitElement {
           <ha-list-item>
             ${this.supervisor.localize("store.repositories")}
           </ha-list-item>
-          ${this.hass.userData?.showAdvanced &&
-          atLeastVersion(this.hass.config.version, 0, 117)
+          ${this.menuai.userData?.showAdvanced &&
+          atLeastVersion(this.menuai.config.version, 0, 117)
             ? html`<ha-list-item>
                 ${this.supervisor.localize("store.registries")}
               </ha-list-item>`
             : ""}
         </ha-button-menu>
         ${repos.length === 0
-          ? html`<hass-loading-screen no-toolbar></hass-loading-screen>`
+          ? html`<menuai-loading-screen no-toolbar></menuai-loading-screen>`
           : html`
               <div class="search">
                 <search-input
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .filter=${this._filter}
                   @value-changed=${this._filterChanged}
                 ></search-input>
@@ -116,7 +116,7 @@ export class HassioAddonStore extends LitElement {
 
               ${repos}
             `}
-        ${!this.hass.userData?.showAdvanced
+        ${!this.menuai.userData?.showAdvanced
           ? html`
               <div class="advanced">
                 <a href="/profile" target="_top">
@@ -125,25 +125,25 @@ export class HassioAddonStore extends LitElement {
               </div>
             `
           : ""}
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
     const repositoryUrl = extractSearchParam("repository_url");
-    navigate("/hassio/store", { replace: true });
+    navigate("/menuaiio/store", { replace: true });
     if (repositoryUrl) {
       this._manageRepositories(repositoryUrl);
     }
 
-    this.addEventListener("hass-api-called", (ev) => this._apiCalled(ev));
+    this.addEventListener("menuai-api-called", (ev) => this._apiCalled(ev));
     this._loadData();
   }
 
   private addonRepositories = memoizeOne(
     (
-      repositories: HassioAddonRepository[],
+      repositories: menuaiioAddonRepository[],
       addons: StoreAddon[],
       filter?: string
     ) =>
@@ -154,13 +154,13 @@ export class HassioAddonStore extends LitElement {
 
         return filteredAddons.length !== 0
           ? html`
-              <hassio-addon-repository
-                .hass=${this.hass}
+              <menuaiio-addon-repository
+                .menuai=${this.menuai}
                 .repo=${repo}
                 .addons=${filteredAddons}
                 .filter=${filter!}
                 .supervisor=${this.supervisor}
-              ></hassio-addon-repository>
+              ></menuaiio-addon-repository>
             `
           : nothing;
       })
@@ -213,7 +213,7 @@ export class HassioAddonStore extends LitElement {
   }
 
   static styles = css`
-    hassio-addon-repository {
+    menuaiio-addon-repository {
       margin-top: 24px;
     }
     .search {
@@ -243,6 +243,6 @@ export class HassioAddonStore extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-store": HassioAddonStore;
+    "menuaiio-addon-store": menuaiioAddonStore;
   }
 }

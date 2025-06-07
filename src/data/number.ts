@@ -1,14 +1,14 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface NumberDeviceClassUnits {
   units: string[];
 }
 
 export const getNumberDeviceClassConvertibleUnits = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceClass: string
 ): Promise<NumberDeviceClassUnits> =>
-  hass.callWS({
+  menuai.callWS({
     type: "number/device_class_convertible_units",
     device_class: deviceClass,
   });

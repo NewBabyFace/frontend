@@ -2,7 +2,7 @@ import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { property, query, state } from "lit/decorators";
 import { cache } from "lit/directives/cache";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { fireEvent } from "../../../common/dom/fire_event";
 import { debounce } from "../../../common/util/debounce";
 import { handleStructError } from "../../../common/structs/handle-errors";
@@ -12,7 +12,7 @@ import "../../../components/ha-spinner";
 import "../../../components/ha-yaml-editor";
 import type { HaYamlEditor } from "../../../components/ha-yaml-editor";
 import type { LovelaceConfig } from "../../../data/lovelace/config/types";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type {
   LovelaceConfigForm,
   LovelaceGenericElementEditor,
@@ -33,7 +33,7 @@ export interface ConfigChangedEvent<T extends object = object> {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "config-changed": ConfigChangedEvent;
     "GUImode-changed": GUIModeChangedEvent;
     "edit-detail-element": EditDetailElementEvent;
@@ -51,7 +51,7 @@ export abstract class HuiElementEditor<
   T extends object = object,
   C = any,
 > extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: LovelaceConfig;
 
@@ -176,7 +176,7 @@ export abstract class HuiElementEditor<
   private _renderSubElement() {
     return html`
       <hui-sub-element-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this._subElementEditorConfig}
         @go-back=${this._goBack}
         @config-changed=${this._subElementChanged}
@@ -204,7 +204,7 @@ export abstract class HuiElementEditor<
   }
 
   private async _editSubElement(
-    ev: HASSDomEvent<EditSubElementEvent>
+    ev: menuaiDomEvent<EditSubElementEvent>
   ): Promise<void> {
     ev.stopPropagation();
 
@@ -238,7 +238,7 @@ export abstract class HuiElementEditor<
                 <ha-yaml-editor
                   .defaultValue=${this._config}
                   autofocus
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   @value-changed=${this._handleYAMLChanged}
                   @blur=${this._onBlurYaml}
                   @keydown=${this._ignoreKeydown}
@@ -250,15 +250,15 @@ export abstract class HuiElementEditor<
           ? html`
               <ha-alert
                 alert-type="info"
-                .title=${this.hass.localize(
+                .title=${this.menuai.localize(
                   "ui.errors.config.visual_editor_not_supported"
                 )}
               >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.errors.config.visual_editor_not_supported_reason_type"
                 )}
                 <br />
-                ${this.hass.localize("ui.errors.config.edit_in_yaml_supported")}
+                ${this.menuai.localize("ui.errors.config.edit_in_yaml_supported")}
               </ha-alert>
             `
           : nothing}
@@ -266,7 +266,7 @@ export abstract class HuiElementEditor<
           ? html`
               <ha-alert
                 alert-type="error"
-                .title=${this.hass.localize(
+                .title=${this.menuai.localize(
                   "ui.errors.config.configuration_error"
                 )}
               >
@@ -280,14 +280,14 @@ export abstract class HuiElementEditor<
           ? html`
               <ha-alert
                 alert-type="warning"
-                .title=${this.hass.localize(
+                .title=${this.menuai.localize(
                   "ui.errors.config.visual_editor_not_supported"
                 )}
               >
                 <ul>
                   ${this._warnings!.map((warning) => html`<li>${warning}</li>`)}
                 </ul>
-                ${this.hass.localize("ui.errors.config.edit_in_yaml_supported")}
+                ${this.menuai.localize("ui.errors.config.edit_in_yaml_supported")}
               </ha-alert>
             `
           : nothing}
@@ -298,8 +298,8 @@ export abstract class HuiElementEditor<
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
-    if (this._configElement && changedProperties.has("hass")) {
-      this._configElement.hass = this.hass;
+    if (this._configElement && changedProperties.has("menuai")) {
+      this._configElement.menuai = this.menuai;
     }
     if (
       this._configElement &&
@@ -393,7 +393,7 @@ export abstract class HuiElementEditor<
     }
 
     if (configElement) {
-      configElement.hass = this.hass;
+      configElement.menuai = this.menuai;
       if ("lovelace" in configElement) {
         configElement.lovelace = this.lovelace;
       }
@@ -425,7 +425,7 @@ export abstract class HuiElementEditor<
         try {
           this._configElement.setConfig(this.value);
         } catch (err: any) {
-          const msgs = handleStructError(this.hass, err);
+          const msgs = handleStructError(this.menuai, err);
           throw new GUISupportError(
             "Config is not supported",
             msgs.warnings,

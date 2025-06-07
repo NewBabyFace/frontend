@@ -64,7 +64,7 @@ import {
 import { showShortcutsDialog } from "../../dialogs/shortcuts/show-shortcuts-dialog";
 import { showVoiceCommandDialog } from "../../dialogs/voice-command-dialog/show-ha-voice-command-dialog";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant, PanelInfo } from "../../types";
+import type { menuai, PanelInfo } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 import { showDashboardDetailDialog } from "../config/lovelace/dashboards/show-dialog-lovelace-dashboard-detail";
 import { swapView } from "./editor/config-util";
@@ -83,7 +83,7 @@ import "./views/hui-view-background";
 class HUIRoot extends LitElement {
   @property({ attribute: false }) public panel?: PanelInfo<LovelacePanelConfig>;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -94,7 +94,7 @@ class HUIRoot extends LitElement {
     prefix: string;
   };
 
-  @state() private _curView?: number | "hass-unused-entities";
+  @state() private _curView?: number | "menuai-unused-entities";
 
   private _viewCache?: Record<string, HUIView>;
 
@@ -105,7 +105,7 @@ class HUIRoot extends LitElement {
   private _debouncedConfigChanged: () => void;
 
   private _conversation = memoizeOne((_components) =>
-    isComponentLoaded(this.hass, "conversation")
+    isComponentLoaded(this.menuai, "conversation")
   );
 
   constructor() {
@@ -126,19 +126,19 @@ class HUIRoot extends LitElement {
         html`<mwc-button
             outlined
             class="exit-edit-mode"
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.panel.lovelace.menu.exit_edit_mode"
             )}
             @click=${this._editModeDisable}
           ></mwc-button>
           <a
-            href=${documentationUrl(this.hass, "/dashboards/")}
+            href=${documentationUrl(this.menuai, "/dashboards/")}
             rel="noreferrer"
             class="menu-link"
             target="_blank"
           >
             <ha-icon-button
-              .label=${this.hass!.localize("ui.panel.lovelace.menu.help")}
+              .label=${this.menuai!.localize("ui.panel.lovelace.menu.help")}
               .path=${mdiHelpCircle}
             ></ha-icon-button>
           </a>`
@@ -180,7 +180,7 @@ class HUIRoot extends LitElement {
         icon: mdiFileMultiple,
         key: "ui.panel.lovelace.editor.menu.manage_resources",
         overflowAction: this._handleManageResources,
-        visible: this._editMode && this.hass.userData?.showAdvanced,
+        visible: this._editMode && this.menuai.userData?.showAdvanced,
         overflow: true,
       },
       {
@@ -190,7 +190,7 @@ class HUIRoot extends LitElement {
         overflowAction: this._handleShowQuickBar,
         visible: !this._editMode,
         overflow: this.narrow,
-        suffix: this.hass.enableShortcuts ? "(E)" : undefined,
+        suffix: this.menuai.enableShortcuts ? "(E)" : undefined,
       },
       {
         icon: mdiCommentProcessingOutline,
@@ -198,9 +198,9 @@ class HUIRoot extends LitElement {
         buttonAction: this._showVoiceCommandDialog,
         overflowAction: this._handleShowVoiceCommandDialog,
         visible:
-          !this._editMode && this._conversation(this.hass.config.components),
+          !this._editMode && this._conversation(this.menuai.config.components),
         overflow: this.narrow,
-        suffix: this.hass.enableShortcuts ? "(A)" : undefined,
+        suffix: this.menuai.enableShortcuts ? "(A)" : undefined,
       },
       {
         icon: mdiRefresh,
@@ -222,7 +222,7 @@ class HUIRoot extends LitElement {
         overflowAction: this._handleReloadResources,
         visible:
           !this._editMode &&
-          (this.hass.panels.lovelace?.config as LovelacePanelConfig)?.mode ===
+          (this.menuai.panels.lovelace?.config as LovelacePanelConfig)?.mode ===
             "yaml",
         overflow: true,
       },
@@ -233,8 +233,8 @@ class HUIRoot extends LitElement {
         buttonAction: this._enableEditMode,
         visible:
           !this._editMode &&
-          this.hass!.user?.is_admin &&
-          !this.hass!.config.recovery_mode,
+          this.menuai!.user?.is_admin &&
+          !this.menuai!.config.recovery_mode,
         overflow: true,
         overflow_can_promote: true,
       },
@@ -252,7 +252,7 @@ class HUIRoot extends LitElement {
         html`<ha-tooltip
           slot="actionItems"
           placement="bottom"
-          .content=${[this.hass!.localize(i.key), i.suffix].join(" ")}
+          .content=${[this.menuai!.localize(i.key), i.suffix].join(" ")}
         >
           <ha-icon-button
             .path=${i.icon}
@@ -269,7 +269,7 @@ class HUIRoot extends LitElement {
             graphic="icon"
             @request-selected=${i.overflowAction}
           >
-            ${[this.hass!.localize(i.key), i.suffix].join(" ")}
+            ${[this.menuai!.localize(i.key), i.suffix].join(" ")}
             <ha-svg-icon slot="graphic" .path=${i.icon}></ha-svg-icon>
           </ha-list-item>`
         );
@@ -278,7 +278,7 @@ class HUIRoot extends LitElement {
         html`<ha-button-menu slot="actionItems">
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass!.localize("ui.panel.lovelace.editor.menu.open")}
+            .label=${this.menuai!.localize("ui.panel.lovelace.editor.menu.open")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
           ${listItems}
@@ -295,7 +295,7 @@ class HUIRoot extends LitElement {
       typeof this._curView === "number" ? views[this._curView] : undefined;
 
     const dashboardTitle = this.panel
-      ? getPanelTitle(this.hass, this.panel)
+      ? getPanelTitle(this.menuai, this.panel)
       : undefined;
 
     const background = curViewConfig?.background || this.config.background;
@@ -303,7 +303,7 @@ class HUIRoot extends LitElement {
     const _isTabHiddenForUser = (view: LovelaceViewConfig) =>
       view.visible !== undefined &&
       ((Array.isArray(view.visible) &&
-        !view.visible.some((e) => e.user === this.hass!.user?.id)) ||
+        !view.visible.some((e) => e.user === this.menuai!.user?.id)) ||
         view.visible === false);
 
     const tabs = html`<sl-tab-group @sl-tab-show=${this._handleViewSelected}>
@@ -325,8 +325,8 @@ class HUIRoot extends LitElement {
             ${this._editMode
               ? html`
                   <ha-icon-button-arrow-prev
-                    .hass=${this.hass}
-                    .label=${this.hass!.localize(
+                    .menuai=${this.menuai}
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_view.move_left"
                     )}
                     class="edit-icon view"
@@ -346,11 +346,11 @@ class HUIRoot extends LitElement {
                   ></ha-icon>
                 `
               : view.title ||
-                this.hass.localize("ui.panel.lovelace.views.unnamed_view")}
+                this.menuai.localize("ui.panel.lovelace.views.unnamed_view")}
             ${this._editMode
               ? html`
                   <ha-icon-button
-                    .title=${this.hass!.localize(
+                    .title=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_view.edit"
                     )}
                     class="edit-icon view"
@@ -358,8 +358,8 @@ class HUIRoot extends LitElement {
                     @click=${this._editView}
                   ></ha-icon-button>
                   <ha-icon-button-arrow-next
-                    .hass=${this.hass}
-                    .label=${this.hass!.localize(
+                    .menuai=${this.menuai}
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_view.move_right"
                     )}
                     class="edit-icon view"
@@ -385,10 +385,10 @@ class HUIRoot extends LitElement {
               ? html`
                   <div class="main-title">
                     ${dashboardTitle ||
-                    this.hass!.localize("ui.panel.lovelace.editor.header")}
+                    this.menuai!.localize("ui.panel.lovelace.editor.header")}
                     <ha-icon-button
                       slot="actionItems"
-                      .label=${this.hass!.localize(
+                      .label=${this.menuai!.localize(
                         "ui.panel.lovelace.editor.edit_lovelace.edit_title"
                       )}
                       .path=${mdiPencil}
@@ -409,7 +409,7 @@ class HUIRoot extends LitElement {
                     : html`
                         <ha-menu-button
                           slot="navigationIcon"
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .narrow=${this.narrow}
                         ></ha-menu-button>
                       `}
@@ -432,7 +432,7 @@ class HUIRoot extends LitElement {
                   slot="nav"
                   id="add-view"
                   @click=${this._addView}
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.lovelace.editor.edit_view.add"
                   )}
                   .path=${mdiPlus}
@@ -441,12 +441,12 @@ class HUIRoot extends LitElement {
             : nothing}
         </div>
         <hui-view-container
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .theme=${curViewConfig?.theme}
           id="view"
           @ll-rebuild=${this._debouncedConfigChanged}
         >
-          <hui-view-background .hass=${this.hass} .background=${background}>
+          <hui-view-background .menuai=${this.menuai} .background=${background}>
           </hui-view-background>
         </hui-view-container>
       </div>
@@ -467,7 +467,7 @@ class HUIRoot extends LitElement {
         view.visible === undefined ||
         view.visible === true ||
         (Array.isArray(view.visible) &&
-          view.visible.some((show) => show.user === this.hass!.user?.id))
+          view.visible.some((show) => show.user === this.menuai!.user?.id))
     );
 
   private _clearParam(param: string) {
@@ -484,7 +484,7 @@ class HUIRoot extends LitElement {
     const searchParams = extractSearchParamsObject();
     if (searchParams.edit === "1") {
       this._clearParam("edit");
-      if (this.hass!.user?.is_admin && this.lovelace!.mode === "storage") {
+      if (this.menuai!.user?.is_admin && this.lovelace!.mode === "storage") {
         this.lovelace!.setEditMode(true);
       }
     } else if (searchParams.conversation === "1") {
@@ -521,8 +521,8 @@ class HUIRoot extends LitElement {
     const view = this._viewRoot;
     const huiView = view.lastChild as HUIView;
 
-    if (changedProperties.has("hass") && huiView) {
-      huiView.hass = this.hass;
+    if (changedProperties.has("menuai") && huiView) {
+      huiView.menuai = this.menuai;
     }
 
     if (changedProperties.has("narrow") && huiView) {
@@ -541,8 +541,8 @@ class HUIRoot extends LitElement {
       if (!viewPath && views.length) {
         newSelectView = views.findIndex(this._isVisible);
         this._navigateToView(views[newSelectView].path || newSelectView, true);
-      } else if (viewPath === "hass-unused-entities") {
-        newSelectView = "hass-unused-entities";
+      } else if (viewPath === "menuai-unused-entities") {
+        newSelectView = "menuai-unused-entities";
       } else if (viewPath) {
         const selectedView = viewPath;
         const selectedViewInt = Number(selectedView);
@@ -573,7 +573,7 @@ class HUIRoot extends LitElement {
         // Leave unused entities when leaving edit mode
         if (
           this.lovelace!.mode === "storage" &&
-          viewPath === "hass-unused-entities"
+          viewPath === "menuai-unused-entities"
         ) {
           newSelectView = views.findIndex(this._isVisible);
           this._navigateToView(
@@ -635,16 +635,16 @@ class HUIRoot extends LitElement {
     if (!shouldHandleRequestSelectedEvent(ev)) {
       return;
     }
-    this.hass.callService("lovelace", "reload_resources");
+    this.menuai.callService("lovelace", "reload_resources");
     showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.lovelace.reload_resources.refresh_header"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.lovelace.reload_resources.refresh_body"
       ),
-      confirmText: this.hass.localize("ui.common.refresh"),
-      dismissText: this.hass.localize("ui.common.not_now"),
+      confirmText: this.menuai.localize("ui.common.refresh"),
+      dismissText: this.menuai.localize("ui.common.not_now"),
       confirm: () => location.reload(),
     });
   }
@@ -659,14 +659,14 @@ class HUIRoot extends LitElement {
   private _showQuickBar(): void {
     const params = {
       keyboard_shortcut: html`<a href="#" @click=${this._openShortcutDialog}
-        >${this.hass.localize("ui.tips.keyboard_shortcut")}</a
+        >${this.menuai.localize("ui.tips.keyboard_shortcut")}</a
       >`,
     };
 
     showQuickBar(this, {
       mode: QuickBarMode.Entity,
-      hint: this.hass.enableShortcuts
-        ? this.hass.localize("ui.tips.key_e_tip", params)
+      hint: this.menuai.enableShortcuts
+        ? this.menuai.localize("ui.tips.key_e_tip", params)
         : undefined,
     });
   }
@@ -714,7 +714,7 @@ class HUIRoot extends LitElement {
     if (!shouldHandleRequestSelectedEvent(ev)) {
       return;
     }
-    navigate(`${this.route?.prefix}/hass-unused-entities`);
+    navigate(`${this.route?.prefix}/menuai-unused-entities`);
   }
 
   private _handleShowVoiceCommandDialog(
@@ -727,7 +727,7 @@ class HUIRoot extends LitElement {
   }
 
   private _showVoiceCommandDialog(): void {
-    showVoiceCommandDialog(this, this.hass, { pipeline_id: "last_used" });
+    showVoiceCommandDialog(this, this.menuai, { pipeline_id: "last_used" });
   }
 
   private _handleEnableEditMode(ev: CustomEvent<RequestSelectedDetail>): void {
@@ -740,7 +740,7 @@ class HUIRoot extends LitElement {
   private async _enableEditMode() {
     if (this._yamlMode) {
       showAlertDialog(this, {
-        text: this.hass!.localize("ui.panel.lovelace.editor.yaml_unsupported"),
+        text: this.menuai!.localize("ui.panel.lovelace.editor.yaml_unsupported"),
       });
       return;
     }
@@ -762,8 +762,8 @@ class HUIRoot extends LitElement {
       }
 
       const urlPath = this.route?.prefix.slice(1);
-      await this.hass.loadFragmentTranslation("config");
-      const dashboards = await fetchDashboards(this.hass);
+      await this.menuai.loadFragmentTranslation("config");
+      const dashboards = await fetchDashboards(this.menuai);
       const dashboard = dashboards.find((d) => d.url_path === urlPath);
 
       showDashboardStrategyEditorDialog(this, {
@@ -778,21 +778,21 @@ class HUIRoot extends LitElement {
         },
         deleteDashboard: async () => {
           const confirm = await showConfirmationDialog(this, {
-            title: this.hass!.localize(
+            title: this.menuai!.localize(
               "ui.panel.config.lovelace.dashboards.confirm_delete_title",
               { dashboard_title: dashboard!.title }
             ),
-            text: this.hass!.localize(
+            text: this.menuai!.localize(
               "ui.panel.config.lovelace.dashboards.confirm_delete_text"
             ),
-            confirmText: this.hass!.localize("ui.common.delete"),
+            confirmText: this.menuai!.localize("ui.common.delete"),
             destructive: true,
           });
           if (!confirm) {
             return false;
           }
           try {
-            await deleteDashboard(this.hass!, dashboard!.id);
+            await deleteDashboard(this.menuai!, dashboard!.id);
             return true;
           } catch (_err: any) {
             return false;
@@ -810,33 +810,33 @@ class HUIRoot extends LitElement {
 
   private async _editDashboard() {
     const urlPath = this.route?.prefix.slice(1);
-    await this.hass.loadFragmentTranslation("config");
-    const dashboards = await fetchDashboards(this.hass);
+    await this.menuai.loadFragmentTranslation("config");
+    const dashboards = await fetchDashboards(this.menuai);
     const dashboard = dashboards.find((d) => d.url_path === urlPath);
 
     showDashboardDetailDialog(this, {
       dashboard,
       urlPath,
       updateDashboard: async (values) => {
-        await updateDashboard(this.hass!, dashboard!.id, values);
+        await updateDashboard(this.menuai!, dashboard!.id, values);
       },
       removeDashboard: async () => {
         const confirm = await showConfirmationDialog(this, {
-          title: this.hass!.localize(
+          title: this.menuai!.localize(
             "ui.panel.config.lovelace.dashboards.confirm_delete_title",
             { dashboard_title: dashboard!.title }
           ),
-          text: this.hass!.localize(
+          text: this.menuai!.localize(
             "ui.panel.config.lovelace.dashboards.confirm_delete_text"
           ),
-          confirmText: this.hass!.localize("ui.common.delete"),
+          confirmText: this.menuai!.localize("ui.common.delete"),
           destructive: true,
         });
         if (!confirm) {
           return false;
         }
         try {
-          await deleteDashboard(this.hass!, dashboard!.id);
+          await deleteDashboard(this.menuai!, dashboard!.id);
           return true;
         } catch (_err: any) {
           return false;
@@ -944,11 +944,11 @@ class HUIRoot extends LitElement {
       root.removeChild(root.lastChild);
     }
 
-    if (viewIndex === "hass-unused-entities") {
+    if (viewIndex === "menuai-unused-entities") {
       const unusedEntities = document.createElement("hui-unused-entities");
       // Wait for promise to resolve so that the element has been upgraded.
       import("./editor/unused-entities/hui-unused-entities").then(() => {
-        unusedEntities.hass = this.hass!;
+        unusedEntities.menuai = this.menuai!;
         unusedEntities.lovelace = this.lovelace!;
         unusedEntities.narrow = this.narrow;
       });
@@ -973,7 +973,7 @@ class HUIRoot extends LitElement {
     }
 
     view.lovelace = this.lovelace;
-    view.hass = this.hass;
+    view.menuai = this.menuai;
     view.narrow = this.narrow;
 
     root.appendChild(view);

@@ -10,10 +10,10 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import { extractApiErrorMessage } from "../../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../../data/menuaiio/common";
 import { changeMountOptions } from "../../../../data/supervisor/mounts";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LocalBackupLocationDialogParams } from "./show-dialog-local-backup-location";
 
 const SCHEMA = [
@@ -26,7 +26,7 @@ const SCHEMA = [
 
 @customElement("dialog-local-backup-location")
 class LocalBackupLocationDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _dialogParams?: LocalBackupLocationDialogParams;
 
@@ -60,8 +60,8 @@ class LocalBackupLocationDialog extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             `ui.panel.config.backup.dialogs.local_backup_location.title`
           )
         )}
@@ -72,12 +72,12 @@ class LocalBackupLocationDialog extends LitElement {
           : nothing}
 
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.backup.dialogs.local_backup_location.description`
           )}
         </p>
         <ha-form
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .data=${this._data}
           .schema=${SCHEMA}
           .computeLabel=${this._computeLabelCallback}
@@ -85,7 +85,7 @@ class LocalBackupLocationDialog extends LitElement {
           dialogInitialFocus
         ></ha-form>
         <ha-alert alert-type="info">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.backup.dialogs.local_backup_location.note`
           )}
         </ha-alert>
@@ -94,14 +94,14 @@ class LocalBackupLocationDialog extends LitElement {
           @click=${this.closeDialog}
           dialogInitialFocus
         >
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </ha-button>
         <ha-button
           .disabled=${this._waiting || !this._data}
           slot="primaryAction"
           @click=${this._changeMount}
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </ha-button>
       </ha-dialog>
     `;
@@ -110,7 +110,7 @@ class LocalBackupLocationDialog extends LitElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<typeof SCHEMA>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.backup.dialogs.local_backup_location.options.${schema.name}.name`
     ) || schema.name;
 
@@ -128,7 +128,7 @@ class LocalBackupLocationDialog extends LitElement {
     this._error = undefined;
     this._waiting = true;
     try {
-      await changeMountOptions(this.hass, this._data);
+      await changeMountOptions(this.menuai, this._data);
     } catch (err: any) {
       this._error = extractApiErrorMessage(err);
       this._waiting = false;

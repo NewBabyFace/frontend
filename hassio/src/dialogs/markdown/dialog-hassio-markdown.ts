@@ -4,13 +4,13 @@ import { customElement, property, state } from "lit/decorators";
 import { createCloseHeading } from "../../../../src/components/ha-dialog";
 import "../../../../src/components/ha-markdown";
 import { haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import { hassioStyle } from "../../resources/hassio-style";
-import type { HassioMarkdownDialogParams } from "./show-dialog-hassio-markdown";
+import type { menuai } from "../../../../src/types";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
+import type { menuaiioMarkdownDialogParams } from "./show-dialog-menuaiio-markdown";
 
-@customElement("dialog-hassio-markdown")
-class HassioMarkdownDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-markdown")
+class menuaiioMarkdownDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property() public title!: string;
@@ -19,7 +19,7 @@ class HassioMarkdownDialog extends LitElement {
 
   @state() private _opened = false;
 
-  public showDialog(params: HassioMarkdownDialogParams) {
+  public showDialog(params: menuaiioMarkdownDialogParams) {
     this.title = params.title;
     this.content = params.content;
     this._opened = true;
@@ -37,7 +37,7 @@ class HassioMarkdownDialog extends LitElement {
       <ha-dialog
         open
         @closed=${this.closeDialog}
-        .heading=${createCloseHeading(this.hass, this.title)}
+        .heading=${createCloseHeading(this.menuai, this.title)}
         hideactions
       >
         <ha-markdown
@@ -51,7 +51,7 @@ class HassioMarkdownDialog extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyleDialog,
-      hassioStyle,
+      menuaiioStyle,
       css`
         @media all and (max-width: 450px), all and (max-height: 500px) {
           ha-markdown {
@@ -65,6 +65,6 @@ class HassioMarkdownDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-markdown": HassioMarkdownDialog;
+    "dialog-menuaiio-markdown": menuaiioMarkdownDialog;
   }
 }

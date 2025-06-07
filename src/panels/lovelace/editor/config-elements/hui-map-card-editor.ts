@@ -23,7 +23,7 @@ import type { SelectSelector } from "../../../../data/selector";
 import "../../../../components/ha-formfield";
 import "../../../../components/ha-switch";
 import "../../../../components/ha-selector/ha-selector-select";
-import type { HomeAssistant, ValueChangedEvent } from "../../../../types";
+import type { menuai, ValueChangedEvent } from "../../../../types";
 import { DEFAULT_HOURS_TO_SHOW, DEFAULT_ZOOM } from "../../cards/hui-map-card";
 import type { MapCardConfig } from "../../cards/types";
 import "../../components/hui-entity-editor";
@@ -78,7 +78,7 @@ const themeModes = ["auto", "light", "dark"] as const;
 
 @customElement("hui-map-card-editor")
 export class HuiMapCardEditor extends LitElement implements LovelaceCardEditor {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: MapCardConfig;
 
@@ -163,41 +163,41 @@ export class HuiMapCardEditor extends LitElement implements LovelaceCardEditor {
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
 
       <hui-entity-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entities=${this._configEntities}
         .entityFilter=${hasLocation}
         @entities-changed=${this._entitiesValueChanged}
       ></hui-entity-editor>
 
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.lovelace.editor.card.map.geo_location_sources"
         )}
       </h3>
 
       <ha-selector-select
-        .label=${this.hass.localize("ui.panel.lovelace.editor.card.map.source")}
+        .label=${this.menuai.localize("ui.panel.lovelace.editor.card.map.source")}
         .required=${false}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._geo_location_sources}
         @value-changed=${this._geoSourcesChanged}
         .selector=${this._selectSchema(
           this._possibleGeoSources,
-          this.hass.localize
+          this.menuai.localize
         )}
       ></ha-selector-select>
     `;
@@ -233,7 +233,7 @@ export class HuiMapCardEditor extends LitElement implements LovelaceCardEditor {
   }
 
   private _geoSourcesChanged(ev: ValueChangedEvent<any>): void {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -267,9 +267,9 @@ export class HuiMapCardEditor extends LitElement implements LovelaceCardEditor {
   }
 
   protected willUpdate() {
-    if (this.hass && !this._possibleGeoSources) {
+    if (this.menuai && !this._possibleGeoSources) {
       const sources: Record<string, string> = {};
-      Object.entries(this.hass.states).forEach(([entity_id, stateObj]) => {
+      Object.entries(this.menuai.states).forEach(([entity_id, stateObj]) => {
         const domain = computeDomain(entity_id);
         if (domain === "geo_location" && stateObj.attributes.source) {
           sources[stateObj.attributes.source] = stateObj.attributes.attribution;
@@ -290,15 +290,15 @@ export class HuiMapCardEditor extends LitElement implements LovelaceCardEditor {
   ) => {
     switch (schema.name) {
       case "theme_mode":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.map.${schema.name}`
         );
       case "default_zoom":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.map.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

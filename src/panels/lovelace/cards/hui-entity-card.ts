@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -25,7 +25,7 @@ import "../../../components/ha-card";
 import "../../../components/ha-icon";
 import { CLIMATE_HVAC_ACTION_TO_MODE } from "../../../data/climate";
 import { isUnavailableState } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeCardSize } from "../common/compute-card-size";
 import { findEntities } from "../common/find-entities";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
@@ -42,14 +42,14 @@ import type { EntityCardConfig } from "./types";
 @customElement("hui-entity-card")
 export class HuiEntityCard extends LitElement implements LovelaceCard {
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFill: string[]
   ) {
     const includeDomains = ["sensor", "light", "switch"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFill,
@@ -66,7 +66,7 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
       .default;
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public layout?: string;
 
@@ -74,7 +74,7 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
 
   private _footerElement?: HuiErrorCard | LovelaceHeaderFooter;
 
-  private _getStateColor(stateObj: HassEntity, config: EntityCardConfig) {
+  private _getStateColor(stateObj: menuaiEntity, config: EntityCardConfig) {
     const domain = stateObj ? computeStateDomain(stateObj) : undefined;
     return config && (config.state_color ?? domain === "light");
   }
@@ -106,16 +106,16 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -144,7 +144,7 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
             <ha-state-icon
               .icon=${this._config.icon}
               .stateObj=${stateObj}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               data-domain=${ifDefined(domain)}
               data-state=${stateObj.state}
               style=${styleMap({
@@ -164,24 +164,24 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
                 ? html`
                     <ha-attribute-value
                       hide-unit
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${stateObj}
                       .attribute=${this._config.attribute!}
                     >
                     </ha-attribute-value>
                   `
-                : this.hass.localize("state.default.unknown")
+                : this.menuai.localize("state.default.unknown")
               : (isNumericState(stateObj) || this._config.unit) &&
                   stateObj.attributes.device_class !== "duration"
                 ? formatNumber(
                     stateObj.state,
-                    this.hass.locale,
+                    this.menuai.locale,
                     getNumberFormatOptions(
                       stateObj,
-                      this.hass.entities[this._config.entity]
+                      this.menuai.entities[this._config.entity]
                     )
                   )
-                : this.hass.formatEntityState(stateObj)}</span
+                : this.menuai.formatEntityState(stateObj)}</span
           >${showUnit
             ? html`
                 <span class="measurement"
@@ -199,7 +199,7 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _computeColor(stateObj: HassEntity): string | undefined {
+  private _computeColor(stateObj: menuaiEntity): string | undefined {
     if (stateObj.attributes.hvac_action) {
       const hvacAction = stateObj.attributes.hvac_action;
       if (hvacAction in CLIMATE_HVAC_ACTION_TO_MODE) {
@@ -218,9 +218,9 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    // Side Effect used to update footer hass while keeping optimizations
+    // Side Effect used to update footer menuai while keeping optimizations
     if (this._footerElement) {
-      this._footerElement.hass = this.hass;
+      this._footerElement.menuai = this.menuai;
     }
 
     return hasConfigOrEntityChanged(this, changedProps);
@@ -228,27 +228,27 @@ export class HuiEntityCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | EntityCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config!.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config!.theme);
     }
   }
 
   private _handleClick(): void {
-    fireEvent(this, "hass-more-info", { entityId: this._config!.entity });
+    fireEvent(this, "menuai-more-info", { entityId: this._config!.entity });
   }
 
   public getGridOptions(): LovelaceGridOptions {

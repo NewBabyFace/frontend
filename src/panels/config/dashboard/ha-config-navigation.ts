@@ -6,12 +6,12 @@ import "../../../components/ha-card";
 import "../../../components/ha-icon-next";
 import "../../../components/ha-navigation-list";
 import type { CloudStatus } from "../../../data/cloud";
-import type { PageNavigation } from "../../../layouts/hass-tabs-subpage";
-import type { HomeAssistant } from "../../../types";
+import type { PageNavigation } from "../../../layouts/menuai-tabs-subpage";
+import type { menuai } from "../../../types";
 
 @customElement("ha-config-navigation")
 class HaConfigNavigation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -21,33 +21,33 @@ class HaConfigNavigation extends LitElement {
     const pages = this.pages
       .filter((page) =>
         page.path === "#external-app-configuration"
-          ? this.hass.auth.external?.config.hasSettingsScreen
-          : canShowPage(this.hass, page)
+          ? this.menuai.auth.external?.config.menuaiettingsScreen
+          : canShowPage(this.menuai, page)
       )
       .map((page) => ({
         ...page,
         name:
           page.name ||
-          this.hass.localize(
+          this.menuai.localize(
             `ui.panel.config.dashboard.${page.translationKey}.main`
           ),
         description:
           page.component === "cloud" && (page.info as CloudStatus)
             ? page.info.logged_in
               ? `
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.description_login"
                   )}
                 `
               : `
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.description_features"
                   )}
                 `
             : `
                 ${
                   page.description ||
-                  this.hass.localize(
+                  this.menuai.localize(
                     `ui.panel.config.dashboard.${page.translationKey}.secondary`
                   )
                 }
@@ -56,10 +56,10 @@ class HaConfigNavigation extends LitElement {
     return html`
       <ha-navigation-list
         has-secondary
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .pages=${pages}
-        .label=${this.hass.localize("panel.config")}
+        .label=${this.menuai.localize("panel.config")}
       ></ha-navigation-list>
     `;
   }

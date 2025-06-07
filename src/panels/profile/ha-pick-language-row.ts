@@ -3,11 +3,11 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-language-picker";
 import "../../components/ha-settings-row";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-pick-language-row")
 export class HaPickLanguageRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -15,23 +15,23 @@ export class HaPickLanguageRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading"
-          >${this.hass.localize("ui.panel.profile.language.header")}</span
+          >${this.menuai.localize("ui.panel.profile.language.header")}</span
         >
         <span slot="description">
           <a
             href="https://developers.home-assistant.io/docs/translations/"
             target="_blank"
             rel="noreferrer"
-            >${this.hass.localize("ui.panel.profile.language.link_promo")}</a
+            >${this.menuai.localize("ui.panel.profile.language.link_promo")}</a
           >
         </span>
         <ha-language-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           native-name
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.profile.language.dropdown_label"
           )}
-          .value=${this.hass.locale.language}
+          .value=${this.menuai.locale.language}
           @value-changed=${this._languageSelectionChanged}
           naturalMenuWidth
         >
@@ -42,9 +42,9 @@ export class HaPickLanguageRow extends LitElement {
 
   private _languageSelectionChanged(ev) {
     // Only fire event if language was changed. This prevents select updates when
-    // responding to hass changes.
-    if (ev.detail.value !== this.hass.language) {
-      fireEvent(this, "hass-language-select", ev.detail.value);
+    // responding to menuai changes.
+    if (ev.detail.value !== this.menuai.language) {
+      fireEvent(this, "menuai-language-select", ev.detail.value);
     }
   }
 

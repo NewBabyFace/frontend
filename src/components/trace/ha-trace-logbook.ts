@@ -2,14 +2,14 @@ import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { LogbookEntry } from "../../data/logbook";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./hat-logbook-note";
 import "../../panels/logbook/ha-logbook-renderer";
 import type { TraceExtended } from "../../data/trace";
 
 @customElement("ha-trace-logbook")
 export class HaTraceLogbook extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -22,12 +22,12 @@ export class HaTraceLogbook extends LitElement {
       ? html`
           <ha-logbook-renderer
             relative-time
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .entries=${this.logbookEntries}
             .narrow=${this.narrow}
           ></ha-logbook-renderer>
           <hat-logbook-note
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .domain=${this.trace.domain}
           ></hat-logbook-note>
         `

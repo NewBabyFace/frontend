@@ -1,7 +1,7 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import "../../../components/buttons/ha-call-service-button";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceElement, ServiceButtonElementConfig } from "./types";
 import type { LovelacePictureElementEditor } from "../types";
 
@@ -17,15 +17,15 @@ export class HuiServiceButtonElement
     return document.createElement("hui-service-button-element-editor");
   }
 
-  public static getStubConfig(hass: HomeAssistant): ServiceButtonElementConfig {
+  public static getStubConfig(menuai: menuai): ServiceButtonElementConfig {
     return {
       type: "action-button",
-      action: "homeassistant.turn_on",
-      title: hass.localize("ui.card.common.turn_on"),
+      action: "menuai.turn_on",
+      title: menuai.localize("ui.card.common.turn_on"),
     };
   }
 
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @state() private _config?: ServiceButtonElementConfig;
 
@@ -55,7 +55,7 @@ export class HuiServiceButtonElement
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
@@ -71,7 +71,7 @@ export class HuiServiceButtonElement
 
     return html`
       <ha-call-service-button
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .domain=${this._domain}
         .service=${this._service}
         .data=${this._config.data ?? this._config.service_data}

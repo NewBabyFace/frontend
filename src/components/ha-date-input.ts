@@ -1,12 +1,12 @@
 import { mdiCalendar } from "@mdi/js";
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { firstWeekdayIndex } from "../common/datetime/first_weekday";
 import { formatDateNumeric } from "../common/datetime/format_date";
 import { fireEvent } from "../common/dom/fire_event";
 import { TimeZone } from "../data/translation";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-svg-icon";
 import "./ha-textfield";
 
@@ -34,7 +34,7 @@ const showDatePickerDialog = (
 };
 @customElement("ha-date-input")
 export class HaDateInput extends LitElement {
-  @property({ attribute: false }) public locale!: HomeAssistant["locale"];
+  @property({ attribute: false }) public locale!: menuai["locale"];
 
   @property() public value?: string;
 
@@ -69,7 +69,7 @@ export class HaDateInput extends LitElement {
               ...this.locale,
               time_zone: TimeZone.local,
             },
-            {} as HassConfig
+            {} as menuaiConfig
           )
         : ""}
       .required=${this.required}

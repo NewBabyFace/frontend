@@ -14,10 +14,10 @@ import type {
 } from "../../../../data/lovelace/config/view";
 import type { User } from "../../../../data/user";
 import { fetchUsers } from "../../../../data/user";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "view-visibility-changed": {
       visible: ShowViewConfig[];
     };
@@ -32,7 +32,7 @@ export class HuiViewVisibilityEditor extends LitElement {
       this._config.visible === undefined ? true : this._config.visible;
   }
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config!: LovelaceViewConfig;
 
@@ -42,26 +42,26 @@ export class HuiViewVisibilityEditor extends LitElement {
 
   private _sortedUsers = memoizeOne((users: User[]) =>
     users.sort((a, b) =>
-      stringCompare(a.name, b.name, this.hass.locale.language)
+      stringCompare(a.name, b.name, this.menuai.locale.language)
     )
   );
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
 
-    fetchUsers(this.hass).then((users) => {
+    fetchUsers(this.menuai).then((users) => {
       this._users = users.filter((user) => !user.system_generated);
     });
   }
 
   protected render() {
-    if (!this.hass || !this._users) {
+    if (!this.menuai || !this._users) {
       return nothing;
     }
 
     return html`
       <p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.visibility.select_users"
         )}
       </p>
@@ -70,7 +70,7 @@ export class HuiViewVisibilityEditor extends LitElement {
           <ha-list-item graphic="avatar" hasMeta>
             <ha-user-badge
               slot="graphic"
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .user=${user}
             ></ha-user-badge>
             <span>${user.name}</span>

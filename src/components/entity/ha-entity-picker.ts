@@ -1,6 +1,6 @@
 import { mdiPlus, mdiShape } from "@mdi/js";
 import type { ComboBoxLitRenderer } from "@vaadin/combo-box/lit";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing, type PropertyValues } from "lit";
 import { customElement, property, query } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -19,7 +19,7 @@ import {
   type HelperDomain,
 } from "../../panels/config/helpers/const";
 import { showHelperDetailDialog } from "../../panels/config/helpers/show-dialog-helper-detail";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-combo-box-item";
 import "../ha-generic-picker";
 import type { HaGenericPicker } from "../ha-generic-picker";
@@ -33,16 +33,16 @@ import "./state-badge";
 
 interface EntityComboBoxItem extends PickerComboBoxItem {
   domain_name?: string;
-  stateObj?: HassEntity;
+  stateObj?: menuaiEntity;
 }
 
-export type HaEntityPickerEntityFilterFunc = (entity: HassEntity) => boolean;
+export type HaEntityPickerEntityFilterFunc = (entity: menuaiEntity) => boolean;
 
 const CREATE_ID = "___create-new-entity___";
 
 @customElement("ha-entity-picker")
 export class HaEntityPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
@@ -129,13 +129,13 @@ export class HaEntityPicker extends LitElement {
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
     // Load title translations so it is available when the combo-box opens
-    this.hass.loadBackendTranslation("title");
+    this.menuai.loadBackendTranslation("title");
   }
 
   private _valueRenderer: PickerValueRenderer = (value) => {
     const entityId = value || "";
 
-    const stateObj = this.hass.states[entityId];
+    const stateObj = this.menuai.states[entityId];
 
     if (!stateObj) {
       return html`
@@ -148,13 +148,13 @@ export class HaEntityPicker extends LitElement {
       `;
     }
 
-    const { area, device } = getEntityContext(stateObj, this.hass);
+    const { area, device } = getEntityContext(stateObj, this.menuai);
 
-    const entityName = computeEntityName(stateObj, this.hass);
+    const entityName = computeEntityName(stateObj, this.menuai);
     const deviceName = device ? computeDeviceName(device) : undefined;
     const areaName = area ? computeAreaName(area) : undefined;
 
-    const isRTL = computeRTL(this.hass);
+    const isRTL = computeRTL(this.menuai);
 
     const primary = entityName || deviceName || entityId;
     const secondary = [areaName, entityName ? deviceName : undefined]
@@ -163,7 +163,7 @@ export class HaEntityPicker extends LitElement {
 
     return html`
       <state-badge
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${stateObj}
         slot="start"
       ></state-badge>
@@ -173,7 +173,7 @@ export class HaEntityPicker extends LitElement {
   };
 
   private get _showEntityId() {
-    return this.showEntityId || this.hass.userData?.showEntityIdPicker;
+    return this.showEntityId || this.menuai.userData?.showEntityIdPicker;
   }
 
   private _rowRenderer: ComboBoxLitRenderer<EntityComboBoxItem> = (
@@ -196,7 +196,7 @@ export class HaEntityPicker extends LitElement {
               <state-badge
                 slot="start"
                 .stateObj=${item.stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               ></state-badge>
             `}
         <span slot="headline">${item.primary}</span>
@@ -222,11 +222,11 @@ export class HaEntityPicker extends LitElement {
   };
 
   private _getAdditionalItems = () =>
-    this._getCreateItems(this.hass.localize, this.createDomains);
+    this._getCreateItems(this.menuai.localize, this.createDomains);
 
   private _getCreateItems = memoizeOne(
     (
-      localize: this["hass"]["localize"],
+      localize: this["menuai"]["localize"],
       createDomains: this["createDomains"]
     ) => {
       if (!createDomains?.length) {
@@ -257,7 +257,7 @@ export class HaEntityPicker extends LitElement {
 
   private _getItems = () =>
     this._getEntities(
-      this.hass,
+      this.menuai,
       this.includeDomains,
       this.excludeDomains,
       this.entityFilter,
@@ -269,7 +269,7 @@ export class HaEntityPicker extends LitElement {
 
   private _getEntities = memoizeOne(
     (
-      hass: this["hass"],
+      menuai: this["menuai"],
       includeDomains: this["includeDomains"],
       excludeDomains: this["excludeDomains"],
       entityFilter: this["entityFilter"],
@@ -280,7 +280,7 @@ export class HaEntityPicker extends LitElement {
     ): EntityComboBoxItem[] => {
       let items: EntityComboBoxItem[] = [];
 
-      let entityIds = Object.keys(hass.states);
+      let entityIds = Object.keys(menuai.states);
 
       if (includeEntities) {
         entityIds = entityIds.filter((entityId) =>
@@ -306,20 +306,20 @@ export class HaEntityPicker extends LitElement {
         );
       }
 
-      const isRTL = computeRTL(this.hass);
+      const isRTL = computeRTL(this.menuai);
 
       items = entityIds.map<EntityComboBoxItem>((entityId) => {
-        const stateObj = hass!.states[entityId];
+        const stateObj = menuai!.states[entityId];
 
-        const { area, device } = getEntityContext(stateObj, hass);
+        const { area, device } = getEntityContext(stateObj, menuai);
 
         const friendlyName = computeStateName(stateObj); // Keep this for search
-        const entityName = computeEntityName(stateObj, hass);
+        const entityName = computeEntityName(stateObj, menuai);
         const deviceName = device ? computeDeviceName(device) : undefined;
         const areaName = area ? computeAreaName(area) : undefined;
 
         const domainName = domainToName(
-          this.hass.localize,
+          this.menuai.localize,
           computeDomain(entityId)
         );
 
@@ -388,14 +388,14 @@ export class HaEntityPicker extends LitElement {
   protected render() {
     const placeholder =
       this.placeholder ??
-      this.hass.localize("ui.components.entity.entity-picker.placeholder");
-    const notFoundLabel = this.hass.localize(
+      this.menuai.localize("ui.components.entity.entity-picker.placeholder");
+    const notFoundLabel = this.menuai.localize(
       "ui.components.entity.entity-picker.no_match"
     );
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .autofocus=${this.autofocus}
         .allowCustomValue=${this.allowCustomEntity}

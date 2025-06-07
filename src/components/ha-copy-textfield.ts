@@ -6,14 +6,14 @@ import "./ha-button";
 import "./ha-icon-button";
 import "./ha-svg-icon";
 import "./ha-textfield";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { copyToClipboard } from "../common/util/copy-clipboard";
 import { showToast } from "../util/toast";
 import type { HaTextField } from "./ha-textfield";
 
 @customElement("ha-copy-textfield")
 export class HaCopyTextfield extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "value" }) public value!: string;
 
@@ -40,7 +40,7 @@ export class HaCopyTextfield extends LitElement {
           ${this.maskedValue
             ? html`<ha-icon-button
                 class="toggle-unmasked"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   `ui.common.${this._showMasked ? "show" : "hide"}`
                 )}
                 @click=${this._toggleMasked}
@@ -50,7 +50,7 @@ export class HaCopyTextfield extends LitElement {
         </div>
         <ha-button @click=${this._copy} unelevated>
           <ha-svg-icon slot="icon" .path=${mdiContentCopy}></ha-svg-icon>
-          ${this.label || this.hass.localize("ui.common.copy")}
+          ${this.label || this.menuai.localize("ui.common.copy")}
         </ha-button>
       </div>
     `;
@@ -68,7 +68,7 @@ export class HaCopyTextfield extends LitElement {
   private async _copy(): Promise<void> {
     await copyToClipboard(this.value);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 

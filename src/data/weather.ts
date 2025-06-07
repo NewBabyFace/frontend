@@ -21,9 +21,9 @@ import {
   mdiWeatherWindyVariant,
 } from "@mdi/js";
 import type {
-  HassConfig,
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiConfig,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import type { SVGTemplateResult, TemplateResult } from "lit";
 import { css, html, svg } from "lit";
@@ -31,7 +31,7 @@ import { styleMap } from "lit/directives/style-map";
 import { supportsFeature } from "../common/entity/supports-feature";
 import { round } from "../common/number/round";
 import "../components/ha-svg-icon";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const enum WeatherEntityFeature {
   FORECAST_DAILY = 1,
@@ -56,7 +56,7 @@ interface ForecastAttribute {
   wind_speed?: string;
 }
 
-interface WeatherEntityAttributes extends HassEntityAttributeBase {
+interface WeatherEntityAttributes extends menuaiEntityAttributeBase {
   attribution?: string;
   humidity?: number;
   forecast?: ForecastAttribute[];
@@ -78,7 +78,7 @@ export interface ForecastEvent {
   forecast: [ForecastAttribute] | null;
 }
 
-export interface WeatherEntity extends HassEntityBase {
+export interface WeatherEntity extends menuaiEntityBase {
   attributes: WeatherEntityAttributes;
 }
 
@@ -191,19 +191,19 @@ const getWindBearing = (bearing: number | string): string => {
 };
 
 export const getWind = (
-  hass: HomeAssistant,
+  menuai: menuai,
   stateObj: WeatherEntity,
   speed?: number,
   bearing?: number | string
 ): string => {
   const speedText =
     speed !== undefined && speed !== null
-      ? hass.formatEntityAttributeValue(stateObj, "wind_speed", speed)
+      ? menuai.formatEntityAttributeValue(stateObj, "wind_speed", speed)
       : "-";
   if (bearing !== undefined && bearing !== null) {
     const cardinalDirection = getWindBearing(bearing);
     return `${speedText} (${
-      hass.localize(
+      menuai.localize(
         `ui.card.weather.cardinal_direction.${cardinalDirection.toLowerCase()}`
       ) || cardinalDirection
     })`;
@@ -212,7 +212,7 @@ export const getWind = (
 };
 
 export const getWeatherUnit = (
-  config: HassConfig,
+  config: menuaiConfig,
   stateObj: WeatherEntity,
   measure: string
 ): string => {
@@ -249,11 +249,11 @@ export const getWeatherUnit = (
 };
 
 export const getSecondaryWeatherAttribute = (
-  hass: HomeAssistant,
+  menuai: menuai,
   stateObj: WeatherEntity,
   forecast: ForecastAttribute[]
 ): TemplateResult | undefined => {
-  const extrema = getWeatherExtrema(hass, stateObj, forecast);
+  const extrema = getWeatherExtrema(menuai, stateObj, forecast);
 
   if (extrema) {
     return extrema;
@@ -285,13 +285,13 @@ export const getSecondaryWeatherAttribute = (
       ? html`
           <ha-svg-icon class="attr-icon" .path=${weatherAttrIcon}></ha-svg-icon>
         `
-      : hass!.localize(`ui.card.weather.attributes.${attribute}`)}
-    ${hass.formatEntityAttributeValue(stateObj, attribute, roundedValue)}
+      : menuai!.localize(`ui.card.weather.attributes.${attribute}`)}
+    ${menuai.formatEntityAttributeValue(stateObj, attribute, roundedValue)}
   `;
 };
 
 const getWeatherExtrema = (
-  hass: HomeAssistant,
+  menuai: menuai,
   stateObj: WeatherEntity,
   forecast: ForecastAttribute[]
 ): TemplateResult | undefined => {
@@ -324,11 +324,11 @@ const getWeatherExtrema = (
 
   return html`
     ${tempHigh
-      ? hass.formatEntityAttributeValue(stateObj, "temperature", tempHigh)
+      ? menuai.formatEntityAttributeValue(stateObj, "temperature", tempHigh)
       : ""}
     ${tempLow && tempHigh ? " / " : ""}
     ${tempLow
-      ? hass.formatEntityAttributeValue(stateObj, "temperature", tempLow)
+      ? menuai.formatEntityAttributeValue(stateObj, "temperature", tempLow)
       : ""}
   `;
 };
@@ -571,9 +571,9 @@ export interface WeatherUnits {
 }
 
 export const getWeatherConvertibleUnits = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<{ units: WeatherUnits }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "weather/convertible_units",
   });
 
@@ -640,19 +640,19 @@ export const getForecast = (
 };
 
 export const subscribeForecast = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   forecast_type: ModernForecastType,
   callback: (forecastevent: ForecastEvent) => void
 ) =>
-  hass.connection.subscribeMessage<ForecastEvent>(callback, {
+  menuai.connection.subscribeMessage<ForecastEvent>(callback, {
     type: "weather/subscribe_forecast",
     forecast_type,
     entity_id,
   });
 
 export const getSupportedForecastTypes = (
-  stateObj: HassEntityBase
+  stateObj: menuaiEntityBase
 ): ModernForecastType[] => {
   const supported: ModernForecastType[] = [];
   if (supportsFeature(stateObj, WeatherEntityFeature.FORECAST_DAILY)) {
@@ -667,7 +667,7 @@ export const getSupportedForecastTypes = (
   return supported;
 };
 
-export const getDefaultForecastType = (stateObj: HassEntityBase) => {
+export const getDefaultForecastType = (stateObj: menuaiEntityBase) => {
   if (supportsFeature(stateObj, WeatherEntityFeature.FORECAST_DAILY)) {
     return "daily";
   }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getDeviceContext } from "../../../../src/common/entity/context/get_device_context";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import { mockArea, mockDevice, mockFloor } from "./context-mock";
 
 describe("getDeviceContext", () => {
@@ -9,15 +9,15 @@ describe("getDeviceContext", () => {
       id: "device_1",
     });
 
-    const hass = {
+    const menuai = {
       devices: {
         device_1: device,
       },
       areas: {},
       floors: {},
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getDeviceContext(device, hass);
+    const result = getDeviceContext(device, menuai);
 
     expect(result).toEqual({
       device,
@@ -36,7 +36,7 @@ describe("getDeviceContext", () => {
       area_id: "area_1",
     });
 
-    const hass = {
+    const menuai = {
       devices: {
         device_2: device,
       },
@@ -44,9 +44,9 @@ describe("getDeviceContext", () => {
         area_1: area,
       },
       floors: {},
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getDeviceContext(device, hass);
+    const result = getDeviceContext(device, menuai);
 
     expect(result).toEqual({
       device,
@@ -70,7 +70,7 @@ describe("getDeviceContext", () => {
       floor_id: "floor_1",
     });
 
-    const hass = {
+    const menuai = {
       devices: {
         device_3: device,
       },
@@ -80,9 +80,9 @@ describe("getDeviceContext", () => {
       floors: {
         floor_1: floor,
       },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getDeviceContext(device, hass);
+    const result = getDeviceContext(device, menuai);
 
     expect(result).toEqual({
       device,

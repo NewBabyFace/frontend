@@ -10,7 +10,7 @@ import {
 import type { CSSResultGroup } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import type { HASSDomEvent } from "../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../common/dom/fire_event";
 import { fireEvent } from "../../common/dom/fire_event";
 import { stopPropagation } from "../../common/dom/stop_propagation";
 import type {
@@ -20,7 +20,7 @@ import type {
   MediaPlayerLayoutType,
 } from "../../data/media-player";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-dialog";
 import "../ha-dialog-header";
 import "../ha-list-item";
@@ -34,7 +34,7 @@ import type { MediaPlayerBrowseDialogParams } from "./show-media-browser-dialog"
 
 @customElement("dialog-media-player-browse")
 class DialogMediaPlayerBrowse extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _currentItem?: MediaPlayerItem;
 
@@ -78,7 +78,7 @@ class DialogMediaPlayerBrowse extends LitElement {
         hideActions
         flexContent
         .heading=${!this._currentItem
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.components.media-browser.media-player-browser"
             )
           : this._currentItem.title}
@@ -97,14 +97,14 @@ class DialogMediaPlayerBrowse extends LitElement {
             : nothing}
           <span slot="title">
             ${!this._currentItem
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.components.media-browser.media-player-browser"
                 )
               : this._currentItem.title}
           </span>
           <ha-media-manage-button
             slot="actionItems"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .currentItem=${this._currentItem}
             @media-refresh=${this._refreshMedia}
           ></ha-media-manage-button>
@@ -116,11 +116,11 @@ class DialogMediaPlayerBrowse extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item graphic="icon">
-              ${this.hass.localize("ui.components.media-browser.auto")}
+              ${this.menuai.localize("ui.components.media-browser.auto")}
               <ha-svg-icon
                 class=${this._preferredLayout === "auto"
                   ? "selected_menu_item"
@@ -130,7 +130,7 @@ class DialogMediaPlayerBrowse extends LitElement {
               ></ha-svg-icon>
             </ha-list-item>
             <ha-list-item graphic="icon">
-              ${this.hass.localize("ui.components.media-browser.grid")}
+              ${this.menuai.localize("ui.components.media-browser.grid")}
               <ha-svg-icon
                 class=${this._preferredLayout === "grid"
                   ? "selected_menu_item"
@@ -140,7 +140,7 @@ class DialogMediaPlayerBrowse extends LitElement {
               ></ha-svg-icon>
             </ha-list-item>
             <ha-list-item graphic="icon">
-              ${this.hass.localize("ui.components.media-browser.list")}
+              ${this.menuai.localize("ui.components.media-browser.list")}
               <ha-svg-icon
                 slot="graphic"
                 class=${this._preferredLayout === "list"
@@ -151,7 +151,7 @@ class DialogMediaPlayerBrowse extends LitElement {
             </ha-list-item>
           </ha-button-menu>
           <ha-icon-button
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             dialogAction="close"
             slot="actionItems"
@@ -159,7 +159,7 @@ class DialogMediaPlayerBrowse extends LitElement {
         </ha-dialog-header>
         <ha-media-player-browse
           dialog
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entityId=${this._params.entityId}
           .navigateIds=${this._navigateIds}
           .action=${this._action}
@@ -195,12 +195,12 @@ class DialogMediaPlayerBrowse extends LitElement {
     this._currentItem = undefined;
   }
 
-  private _mediaBrowsed(ev: { detail: HASSDomEvents["media-browsed"] }) {
+  private _mediaBrowsed(ev: { detail: menuaiDomEvents["media-browsed"] }) {
     this._navigateIds = ev.detail.ids;
     this._currentItem = ev.detail.current;
   }
 
-  private _mediaPicked(ev: HASSDomEvent<MediaPickedEvent>): void {
+  private _mediaPicked(ev: menuaiDomEvent<MediaPickedEvent>): void {
     this._params!.mediaPickedCallback(ev.detail);
     if (this._action !== "play") {
       this.closeDialog();

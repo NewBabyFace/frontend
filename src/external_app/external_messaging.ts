@@ -293,8 +293,8 @@ type EMIncomingMessage =
 type EMIncomingMessageHandler = (msg: EMIncomingMessageCommands) => boolean;
 
 export interface ExternalConfig {
-  hasSettingsScreen: boolean;
-  hasSidebar: boolean;
+  menuaiettingsScreen: boolean;
+  menuaiidebar: boolean;
   canWriteTag: boolean;
   hasExoPlayer: boolean;
   canCommissionMatter: boolean;

@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -7,7 +7,7 @@ import { findEntities } from "../common/find-entities";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import "../../../components/entity/ha-state-label-badge";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
 import { hasAction } from "../common/has-action";
@@ -31,16 +31,16 @@ export class HuiStateBadgeElement
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): StateBadgeElementConfig {
     const includeDomains = ["light", "switch", "sensor"];
     const maxEntities = 1;
-    const entityFilter = (stateObj: HassEntity): boolean =>
+    const entityFilter = (stateObj: menuaiEntity): boolean =>
       !isUnavailableState(stateObj.state);
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -51,7 +51,7 @@ export class HuiStateBadgeElement
     return { type: "state-badge", entity: foundEntities[0] || "" };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StateBadgeElementConfig;
 
@@ -72,23 +72,23 @@ export class HuiStateBadgeElement
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity!];
+    const stateObj = this.menuai.states[this._config.entity!];
 
     if (!stateObj) {
       return html`
         <hui-warning-element
-          .label=${createEntityNotFoundWarning(this.hass, this._config.entity!)}
+          .label=${createEntityNotFoundWarning(this.menuai, this._config.entity!)}
         ></hui-warning-element>
       `;
     }
 
     return html`
       <ha-state-label-badge
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .state=${stateObj}
         .title=${this._config.title === undefined
           ? computeStateName(stateObj)
@@ -109,7 +109,7 @@ export class HuiStateBadgeElement
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 }
 

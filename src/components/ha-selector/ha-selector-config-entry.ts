@@ -1,12 +1,12 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { ConfigEntrySelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-config-entry-picker";
 
 @customElement("ha-selector-config_entry")
 export class HaConfigEntrySelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: ConfigEntrySelector;
 
@@ -22,7 +22,7 @@ export class HaConfigEntrySelector extends LitElement {
 
   protected render() {
     return html`<ha-config-entry-picker
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .value=${this.value}
       .label=${this.label}
       .helper=${this.helper}

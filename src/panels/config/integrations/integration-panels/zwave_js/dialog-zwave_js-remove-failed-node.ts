@@ -10,12 +10,12 @@ import { createCloseHeading } from "../../../../../components/ha-dialog";
 import type { ZWaveJSRemovedNode } from "../../../../../data/zwave_js";
 import { removeFailedZwaveNode } from "../../../../../data/zwave_js";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZWaveJSRemoveFailedNodeDialogParams } from "./show-dialog-zwave_js-remove-failed-node";
 
 @customElement("dialog-zwave_js-remove-failed-node")
 class DialogZWaveJSRemoveFailedNode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device_id?: string;
 
@@ -61,8 +61,8 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             "ui.panel.config.zwave_js.remove_failed_node.title"
           )
         )}
@@ -75,13 +75,13 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
                   class="introduction"
                 ></ha-svg-icon>
                 <div class="status">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.remove_failed_node.introduction"
                   )}
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this._startExclusion}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.remove_failed_node.remove_device"
                 )}
               </mwc-button>
@@ -94,7 +94,7 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
                 <div class="status">
                   <p>
                     <b>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.zwave_js.remove_failed_node.in_progress"
                       )}
                     </b>
@@ -112,7 +112,7 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.remove_failed_node.removal_failed"
                     )}
                   </p>
@@ -122,7 +122,7 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : ``}
@@ -135,7 +135,7 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.remove_failed_node.removal_finished",
                       { id: this._node!.node_id }
                     )}
@@ -146,7 +146,7 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
                 slot="primaryAction"
                 @click=${this.closeDialogFinished}
               >
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : ``}
@@ -155,12 +155,12 @@ class DialogZWaveJSRemoveFailedNode extends LitElement {
   }
 
   private _startExclusion(): void {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._status = "started";
     this._subscribed = removeFailedZwaveNode(
-      this.hass,
+      this.menuai,
       this.device_id!,
       (message: any) => this._handleMessage(message)
     ).catch((error) => {

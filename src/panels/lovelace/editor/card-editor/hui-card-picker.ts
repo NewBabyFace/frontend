@@ -20,7 +20,7 @@ import {
   customCards,
   getCustomCardEntry,
 } from "../../../../data/lovelace_custom_cards";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   calcUnusedEntities,
   computeUsedEntities,
@@ -38,7 +38,7 @@ interface CardElement {
 
 @customElement("hui-card-picker")
 export class HuiCardPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public suggestedCards?: string[];
 
@@ -121,7 +121,7 @@ export class HuiCardPicker extends LitElement {
 
   protected render() {
     if (
-      !this.hass ||
+      !this.menuai ||
       !this.lovelace ||
       !this._unusedEntities ||
       !this._usedEntities
@@ -135,10 +135,10 @@ export class HuiCardPicker extends LitElement {
 
     return html`
       <search-input
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .filter=${this._filter}
         @value-changed=${this._handleSearchChange}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.lovelace.editor.edit_card.search_cards"
         )}
       ></search-input>
@@ -154,7 +154,7 @@ export class HuiCardPicker extends LitElement {
                 ${suggestedCards.length > 0
                   ? html`
                       <div class="cards-container-header">
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.card.generic.suggested_cards`
                         )}
                       </div>
@@ -169,7 +169,7 @@ export class HuiCardPicker extends LitElement {
                 ${suggestedCards.length > 0
                   ? html`
                       <div class="cards-container-header">
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.card.generic.other_cards`
                         )}
                       </div>
@@ -183,7 +183,7 @@ export class HuiCardPicker extends LitElement {
                 ${customCardsItems.length > 0
                   ? html`
                       <div class="cards-container-header">
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.card.generic.custom_cards`
                         )}
                       </div>
@@ -201,12 +201,12 @@ export class HuiCardPicker extends LitElement {
             .config=${{ type: "" }}
           >
             <div class="card-header">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.card.generic.manual`
               )}
             </div>
             <div class="preview description">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.card.generic.manual_description`
               )}
             </div>
@@ -218,12 +218,12 @@ export class HuiCardPicker extends LitElement {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    if (!oldHass) {
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    if (!oldmenuai) {
       return true;
     }
 
-    if (oldHass.locale !== this.hass!.locale) {
+    if (oldmenuai.locale !== this.menuai!.locale) {
       return true;
     }
 
@@ -231,22 +231,22 @@ export class HuiCardPicker extends LitElement {
   }
 
   protected firstUpdated(): void {
-    if (!this.hass || !this.lovelace) {
+    if (!this.menuai || !this.lovelace) {
       return;
     }
 
     const usedEntities = computeUsedEntities(this.lovelace);
-    const unusedEntities = calcUnusedEntities(this.hass, usedEntities);
+    const unusedEntities = calcUnusedEntities(this.menuai, usedEntities);
 
     this._usedEntities = [...usedEntities].filter(
       (eid) =>
-        this.hass!.states[eid] &&
-        !isUnavailableState(this.hass!.states[eid].state)
+        this.menuai!.states[eid] &&
+        !isUnavailableState(this.menuai!.states[eid].state)
     );
     this._unusedEntities = [...unusedEntities].filter(
       (eid) =>
-        this.hass!.states[eid] &&
-        !isUnavailableState(this.hass!.states[eid].state)
+        this.menuai!.states[eid] &&
+        !isUnavailableState(this.menuai!.states[eid].state)
     );
 
     this._loadCards();
@@ -264,10 +264,10 @@ export class HuiCardPicker extends LitElement {
 
   private _loadCards() {
     let cards: Card[] = coreCards.map((card: Card) => ({
-      name: this.hass!.localize(
+      name: this.menuai!.localize(
         `ui.panel.lovelace.editor.card.${card.type}.name`
       ),
-      description: this.hass!.localize(
+      description: this.menuai!.localize(
         `ui.panel.lovelace.editor.card.${card.type}.description`
       ),
       isSuggested: this.suggestedCards?.includes(card.type) || false,
@@ -284,7 +284,7 @@ export class HuiCardPicker extends LitElement {
       return stringCompare(
         a.name || a.type,
         b.name || b.type,
-        this.hass?.language
+        this.menuai?.language
       );
     });
 
@@ -302,7 +302,7 @@ export class HuiCardPicker extends LitElement {
             stringCompare(
               a.name || a.type,
               b.name || b.type,
-              this.hass?.language
+              this.menuai?.language
             )
           )
       );
@@ -331,10 +331,10 @@ export class HuiCardPicker extends LitElement {
           type: this._clipboard.type,
           showElement: true,
           isCustom: false,
-          name: this.hass!.localize(
+          name: this.menuai!.localize(
             "ui.panel.lovelace.editor.card.generic.paste"
           ),
-          description: `${this.hass!.localize(
+          description: `${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.generic.paste_description",
             {
               type: this._clipboard.type,
@@ -364,7 +364,7 @@ export class HuiCardPicker extends LitElement {
 
   private _tryCreateCardElement(cardConfig: LovelaceCardConfig) {
     const element = tryCreateCardElement(cardConfig) as LovelaceCard;
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.addEventListener(
       "ll-rebuild",
       (ev) => {
@@ -405,10 +405,10 @@ export class HuiCardPicker extends LitElement {
     let element: LovelaceCard | undefined;
     let cardConfig: LovelaceCardConfig = config ?? { type };
 
-    if (this.hass && this.lovelace) {
+    if (this.menuai && this.lovelace) {
       if (!config) {
         cardConfig = await getCardStubConfig(
-          this.hass,
+          this.menuai,
           type,
           this._unusedEntities!,
           this._usedEntities!
@@ -448,7 +448,7 @@ export class HuiCardPicker extends LitElement {
             ? element
             : customCard
               ? customCard.description ||
-                this.hass!.localize(
+                this.menuai!.localize(
                   `ui.panel.lovelace.editor.cardpicker.no_description`
                 )
               : description}

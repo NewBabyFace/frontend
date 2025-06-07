@@ -6,12 +6,12 @@ import { atLeastVersion } from "../common/config/version";
 import { applyThemesOnElement } from "../common/dom/apply_themes_on_element";
 import "../components/ha-card";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
-import "./hass-subpage";
+import type { menuai } from "../types";
+import "./menuai-subpage";
 
 @customElement("supervisor-error-screen")
 class SupervisorErrorScreen extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
@@ -21,39 +21,39 @@ class SupervisorErrorScreen extends LitElement {
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    if (!oldHass) {
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    if (!oldmenuai) {
       return;
     }
-    if (oldHass.themes !== this.hass.themes) {
+    if (oldmenuai.themes !== this.menuai.themes) {
       this._applyTheme();
     }
   }
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
-        .header=${this.hass.localize("ui.errors.supervisor.title")}
+      <menuai-subpage
+        .menuai=${this.menuai}
+        .header=${this.menuai.localize("ui.errors.supervisor.title")}
       >
         <ha-card header="Troubleshooting">
           <div class="card-content">
             <ol>
-              <li>${this.hass.localize("ui.errors.supervisor.wait")}</li>
+              <li>${this.menuai.localize("ui.errors.supervisor.wait")}</li>
               <li>
                 <a
                   class="supervisor_error-link"
-                  href="http://homeassistant.local:4357"
+                  href="http://menuai.local:4357"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize("ui.errors.supervisor.observer")}
+                  ${this.menuai.localize("ui.errors.supervisor.observer")}
                 </a>
               </li>
-              <li>${this.hass.localize("ui.errors.supervisor.reboot")}</li>
+              <li>${this.menuai.localize("ui.errors.supervisor.reboot")}</li>
               <li>
                 <a href="/config/info" target="_parent">
-                  ${this.hass.localize("ui.errors.supervisor.system_health")}
+                  ${this.menuai.localize("ui.errors.supervisor.system_health")}
                 </a>
               </li>
               <li>
@@ -62,37 +62,37 @@ class SupervisorErrorScreen extends LitElement {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize("ui.errors.supervisor.ask")}
+                  ${this.menuai.localize("ui.errors.supervisor.ask")}
                 </a>
               </li>
             </ol>
           </div>
         </ha-card>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private _applyTheme() {
     let themeName: string;
-    let themeSettings: Partial<HomeAssistant["selectedTheme"]> | undefined;
+    let themeSettings: Partial<menuai["selectedTheme"]> | undefined;
 
-    if (atLeastVersion(this.hass.config.version, 0, 114)) {
+    if (atLeastVersion(this.menuai.config.version, 0, 114)) {
       themeName =
-        this.hass.selectedTheme?.theme ||
-        (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
-          ? this.hass.themes.default_dark_theme!
-          : this.hass.themes.default_theme);
+        this.menuai.selectedTheme?.theme ||
+        (this.menuai.themes.darkMode && this.menuai.themes.default_dark_theme
+          ? this.menuai.themes.default_dark_theme!
+          : this.menuai.themes.default_theme);
 
-      themeSettings = this.hass.selectedTheme;
+      themeSettings = this.menuai.selectedTheme;
     } else {
       themeName =
-        (this.hass.selectedTheme as unknown as string) ||
-        this.hass.themes.default_theme;
+        (this.menuai.selectedTheme as unknown as string) ||
+        this.menuai.themes.default_theme;
     }
 
     applyThemesOnElement(
       this.parentElement,
-      this.hass.themes,
+      this.menuai.themes,
       themeName,
       themeSettings,
       true

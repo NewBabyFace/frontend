@@ -2,7 +2,7 @@ import { mdiRefresh } from "@mdi/js";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 import memoizeOne from "memoize-one";
 import { navigate } from "../../common/navigate";
 import { constructUrlCurrentPath } from "../../common/url/construct-url";
@@ -20,7 +20,7 @@ import "../../components/ha-top-app-bar-fixed";
 import "../../components/ha-target-picker";
 import { filterLogbookCompatibleEntities } from "../../data/logbook";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./ha-logbook";
 import { storage } from "../../common/decorators/storage";
 import { ensureArray } from "../../common/array/ensure-array";
@@ -28,7 +28,7 @@ import { resolveEntityIDs } from "../../data/selector";
 
 @customElement("ha-panel-logbook")
 export class HaPanelLogbook extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -45,7 +45,7 @@ export class HaPanelLogbook extends LitElement {
     state: true,
     subscribe: false,
   })
-  private _targetPickerValue: HassServiceTarget = {};
+  private _targetPickerValue: menuaiServiceTarget = {};
 
   public constructor() {
     super();
@@ -76,22 +76,22 @@ export class HaPanelLogbook extends LitElement {
           : html`
               <ha-menu-button
                 slot="navigationIcon"
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .narrow=${this.narrow}
               ></ha-menu-button>
             `}
-        <div slot="title">${this.hass.localize("panel.logbook")}</div>
+        <div slot="title">${this.menuai.localize("panel.logbook")}</div>
         <ha-icon-button
           slot="actionItems"
           @click=${this._refreshLogbook}
           .path=${mdiRefresh}
-          .label=${this.hass!.localize("ui.common.refresh")}
+          .label=${this.menuai!.localize("ui.common.refresh")}
         ></ha-icon-button>
 
         <div class="content">
           <div class="filters">
             <ha-date-range-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .startDate=${this._time.range[0]}
               .endDate=${this._time.range[1]}
               @value-changed=${this._dateRangeChanged}
@@ -99,7 +99,7 @@ export class HaPanelLogbook extends LitElement {
             ></ha-date-range-picker>
 
             <ha-target-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .entityFilter=${filterLogbookCompatibleEntities}
               .value=${this._targetPickerValue}
               add-on-top
@@ -108,7 +108,7 @@ export class HaPanelLogbook extends LitElement {
           </div>
 
           <ha-logbook
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .time=${this._time}
             .entityIds=${this._getEntityIds()}
             virtualize
@@ -130,7 +130,7 @@ export class HaPanelLogbook extends LitElement {
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("title");
+    this.menuai.loadBackendTranslation("title");
 
     const searchParams = extractSearchParamsObject();
     if (searchParams.back === "1" && history.length > 1) {
@@ -158,9 +158,9 @@ export class HaPanelLogbook extends LitElement {
   private _getEntityIds(): string[] | undefined {
     const entities = this.__getEntityIds(
       this._targetPickerValue,
-      this.hass.entities,
-      this.hass.devices,
-      this.hass.areas
+      this.menuai.entities,
+      this.menuai.devices,
+      this.menuai.areas
     );
     if (entities.length === 0) {
       return undefined;
@@ -170,12 +170,12 @@ export class HaPanelLogbook extends LitElement {
 
   private __getEntityIds = memoizeOne(
     (
-      targetPickerValue: HassServiceTarget,
-      entities: HomeAssistant["entities"],
-      devices: HomeAssistant["devices"],
-      areas: HomeAssistant["areas"]
+      targetPickerValue: menuaiServiceTarget,
+      entities: menuai["entities"],
+      devices: menuai["devices"],
+      areas: menuai["areas"]
     ): string[] =>
-      resolveEntityIDs(this.hass, targetPickerValue, entities, devices, areas)
+      resolveEntityIDs(this.menuai, targetPickerValue, entities, devices, areas)
   );
 
   private _applyURLParams() {

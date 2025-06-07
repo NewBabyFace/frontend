@@ -23,7 +23,7 @@ import {
 import type { DateTimeSelector, NumberSelector } from "../../../data/selector";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showToast } from "../../../util/toast";
 import type { DialogStatisticsAdjustSumParams } from "./show-dialog-statistics-adjust-sum";
 
@@ -34,7 +34,7 @@ interface CombinedStat {
 
 @customElement("dialog-statistics-adjust-sum")
 export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DialogStatisticsAdjustSumParams;
 
@@ -107,7 +107,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
         scrimClickAction
         escapeKeyAction
         @closed=${this.closeDialog}
-        .heading=${this.hass.localize(
+        .heading=${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.title"
         )}
       >
@@ -117,12 +117,12 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.size !== 1 || !changedProps.has("hass")) {
+    if (changedProps.size !== 1 || !changedProps.has("menuai")) {
       return true;
     }
-    // We only respond to hass changes if the translations changed
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    return !oldHass || oldHass.localize !== this.hass.localize;
+    // We only respond to menuai changes if the translations changed
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    return !oldmenuai || oldmenuai.localize !== this.menuai.localize;
   }
 
   private _renderPickStatistic() {
@@ -132,7 +132,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
       stats = html`<ha-spinner></ha-spinner>`;
     } else if (this._statsHour.length < 1 && this._stats5min.length < 1) {
       stats = html`<p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.no_statistics_found"
         )}
       </p>`;
@@ -140,7 +140,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
       const data =
         this._stats5min.length >= 1 ? this._stats5min : this._statsHour;
       const unit = getDisplayUnit(
-        this.hass,
+        this.menuai,
         this._params!.statistic.statistic_id,
         this._params!.statistic
       );
@@ -158,8 +158,8 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
             <span slot="secondary">
               ${formatDateTime(
                 new Date(stat.start),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )}
             </span>
             <ha-icon-next slot="meta"></ha-icon-next>
@@ -171,23 +171,23 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
 
     return html`
       <div class="text-content">
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.info_text_1"
         )}
       </div>
       <div class="text-content">
         <b
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.statistic"
           )}</b
         >
         ${this._params!.statistic.statistic_id}
       </div>
       <ha-selector-datetime
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.pick_a_time"
         )}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .selector=${this._dateTimeSelector}
         .value=${this._moment}
         @value-changed=${this._dateTimeSelectorChanged}
@@ -195,7 +195,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
       <div class="stat-list">${stats}</div>
       <mwc-button
         slot="secondaryAction"
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.outliers"
         )}
         @click=${this._fetchOutliers}
@@ -203,7 +203,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
       <mwc-button
         slot="primaryAction"
         dialogAction="cancel"
-        .label=${this.hass.localize("ui.common.close")}
+        .label=${this.menuai.localize("ui.common.close")}
       ></mwc-button>
     `;
   }
@@ -228,14 +228,14 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
 
   private _renderAdjustStat() {
     const unit = getDisplayUnit(
-      this.hass,
+      this.menuai,
       this._params!.statistic.statistic_id,
       this._params!.statistic
     );
     return html`
       <div class="text-content">
         <b
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.statistic"
           )}</b
         >
@@ -244,39 +244,39 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
 
       <div class="table-row">
         <span
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.start"
           )}</span
         >
         <span
           >${formatDateTime(
             new Date(this._chosenStat!.start),
-            this.hass.locale,
-            this.hass.config
+            this.menuai.locale,
+            this.menuai.config
           )}</span
         >
       </div>
 
       <div class="table-row">
         <span
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.end"
           )}</span
         >
         <span
           >${formatDateTime(
             new Date(this._chosenStat!.end),
-            this.hass.locale,
-            this.hass.config
+            this.menuai.locale,
+            this.menuai.config
           )}</span
         >
       </div>
 
       <ha-selector-number
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.new_value"
         )}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .selector=${this._amountSelector(unit || undefined)}
         .value=${this._amount}
         .disabled=${this._busy}
@@ -285,7 +285,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
 
       <mwc-button
         slot="primaryAction"
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.adjust"
         )}
         .disabled=${this._busy}
@@ -293,7 +293,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
       ></mwc-button>
       <mwc-button
         slot="secondaryAction"
-        .label=${this.hass.localize("ui.common.back")}
+        .label=${this.menuai.localize("ui.common.back")}
         .disabled=${this._busy}
         @click=${this._clearChosenStatistic}
       ></mwc-button>
@@ -320,7 +320,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
     hourStatEnd.setTime(hourStatEnd.getTime() + 3 * 3600 * 1000);
 
     const statsHourData = await fetchStatistics(
-      this.hass,
+      this.menuai,
       hourStatStart,
       hourStatEnd,
       [statId],
@@ -342,7 +342,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
     minStatEnd.setTime(minStatEnd.getTime() + 15 * 60 * 1000);
 
     const stats5MinData = await fetchStatistics(
-      this.hass,
+      this.menuai,
       minStatStart,
       minStatEnd,
       [statId],
@@ -363,7 +363,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
     const end = new Date();
 
     const statsHourData = await fetchStatistics(
-      this.hass,
+      this.menuai,
       start,
       end,
       [statId],
@@ -376,7 +376,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
     }
 
     const stats5MinData = await fetchStatistics(
-      this.hass,
+      this.menuai,
       start,
       end,
       [statId],
@@ -450,14 +450,14 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
 
   private async _fixIssue(): Promise<void> {
     const unit = getDisplayUnit(
-      this.hass,
+      this.menuai,
       this._params!.statistic.statistic_id,
       this._params!.statistic
     );
     this._busy = true;
     try {
       await adjustStatisticsSum(
-        this.hass,
+        this.menuai,
         this._params!.statistic.statistic_id,
         this._chosenStat!.start,
         this._amount! - this._origAmount!,
@@ -466,7 +466,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
     } catch (err: any) {
       this._busy = false;
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.error_sum_adjusted",
           { message: err.message || err }
         ),
@@ -474,7 +474,7 @@ export class DialogStatisticsFixUnsupportedUnitMetadata extends LitElement {
       return;
     }
     showToast(this, {
-      message: this.hass.localize(
+      message: this.menuai.localize(
         "ui.panel.developer-tools.tabs.statistics.fix_issue.adjust_sum.sum_adjusted"
       ),
     });

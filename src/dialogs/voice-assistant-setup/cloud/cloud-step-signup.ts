@@ -13,12 +13,12 @@ import {
   cloudRegister,
   cloudResendVerification,
 } from "../../../data/cloud";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { AssistantSetupStyles } from "../styles";
 
 @customElement("cloud-step-signup")
 export class CloudStepSignup extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _requestInProgress = false;
 
@@ -37,18 +37,18 @@ export class CloudStepSignup extends LitElement {
   render() {
     return html`<div class="content">
         <img
-          src=${`/static/images/logo_nabu_casa${this.hass.themes?.darkMode ? "_dark" : ""}.png`}
+          src=${`/static/images/logo_nabu_casa${this.menuai.themes?.darkMode ? "_dark" : ""}.png`}
           alt="Nabu Casa logo"
         />
         <h1>
-          ${this.hass.localize("ui.panel.config.cloud.register.create_account")}
+          ${this.menuai.localize("ui.panel.config.cloud.register.create_account")}
         </h1>
         ${this._error
           ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
           : ""}
         ${this._state === "VERIFY"
           ? html`<p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.cloud.register.confirm_email",
                 { email: this._email }
               )}
@@ -57,7 +57,7 @@ export class CloudStepSignup extends LitElement {
                 autofocus
                 id="email"
                 name="email"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.cloud.register.email_address"
                 )}
                 .disabled=${this._requestInProgress}
@@ -65,14 +65,14 @@ export class CloudStepSignup extends LitElement {
                 autocomplete="email"
                 required
                 @keydown=${this._keyDown}
-                validationMessage=${this.hass.localize(
+                validationMessage=${this.menuai.localize(
                   "ui.panel.config.cloud.register.email_error_msg"
                 )}
               ></ha-textfield>
               <ha-password-field
                 id="password"
                 name="password"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.cloud.register.password"
                 )}
                 .disabled=${this._requestInProgress}
@@ -80,7 +80,7 @@ export class CloudStepSignup extends LitElement {
                 minlength="8"
                 required
                 @keydown=${this._keyDown}
-                validationMessage=${this.hass.localize(
+                validationMessage=${this.menuai.localize(
                   "ui.panel.config.cloud.register.password_error_msg"
                 )}
               ></ha-password-field>`}
@@ -90,21 +90,21 @@ export class CloudStepSignup extends LitElement {
           ? html`<ha-button
                 @click=${this._handleResendVerifyEmail}
                 .disabled=${this._requestInProgress}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.register.resend_confirm_email"
                 )}</ha-button
               ><ha-button
                 unelevated
                 @click=${this._login}
                 .disabled=${this._requestInProgress}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.register.clicked_confirm"
                 )}</ha-button
               >`
           : html`<ha-button
                 @click=${this._signIn}
                 .disabled=${this._requestInProgress}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.login.sign_in"
                 )}</ha-button
               >
@@ -112,7 +112,7 @@ export class CloudStepSignup extends LitElement {
                 unelevated
                 @click=${this._handleRegister}
                 .disabled=${this._requestInProgress}
-                >${this.hass.localize("ui.common.next")}</ha-button
+                >${this.menuai.localize("ui.common.next")}</ha-button
               >`}
       </div>`;
   }
@@ -148,7 +148,7 @@ export class CloudStepSignup extends LitElement {
     this._requestInProgress = true;
 
     try {
-      await cloudRegister(this.hass, email, password);
+      await cloudRegister(this.menuai, email, password);
       this._email = email;
       this._password = password;
       this._verificationEmailSent();
@@ -168,7 +168,7 @@ export class CloudStepSignup extends LitElement {
       return;
     }
     try {
-      await cloudResendVerification(this.hass, this._email);
+      await cloudResendVerification(this.menuai, this._email);
       this._verificationEmailSent();
     } catch (err: any) {
       this._error =
@@ -191,7 +191,7 @@ export class CloudStepSignup extends LitElement {
 
     try {
       await cloudLogin({
-        hass: this.hass,
+        menuai: this.menuai,
         email: this._email,
         password: this._password,
       });

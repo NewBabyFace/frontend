@@ -4,11 +4,11 @@ import { classMap } from "lit/directives/class-map";
 import { styleMap } from "lit/directives/style-map";
 import type { BasePerson } from "../../data/person";
 import { computeUserInitials } from "../../data/user";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-person-badge")
 class PersonBadge extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public person?: BasePerson;
 
@@ -22,7 +22,7 @@ class PersonBadge extends LitElement {
     if (picture) {
       return html`<div
         style=${styleMap({
-          backgroundImage: `url(${this.hass.hassUrl(picture)})`,
+          backgroundImage: `url(${this.menuai.menuaiUrl(picture)})`,
         })}
         class="picture"
       ></div>`;

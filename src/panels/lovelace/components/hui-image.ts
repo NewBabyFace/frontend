@@ -14,7 +14,7 @@ import { fetchThumbnailUrlWithCache } from "../../../data/camera";
 import { UNAVAILABLE } from "../../../data/entity";
 import type { ImageEntity } from "../../../data/image";
 import { computeImageUrl } from "../../../data/image";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 const UPDATE_INTERVAL = 10000;
 const DEFAULT_FILTER = "grayscale(100%)";
@@ -32,7 +32,7 @@ export type StateSpecificConfig = Record<string, string>;
 
 @customElement("hui-image")
 export class HuiImage extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public entity?: string;
 
@@ -97,12 +97,12 @@ export class HuiImage extends LitElement {
   }
 
   public willUpdate(changedProps: PropertyValues): void {
-    if (changedProps.has("hass")) {
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    if (changedProps.has("menuai")) {
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
-      if (this._shouldStartCameraUpdates(oldHass)) {
+      if (this._shouldStartCameraUpdates(oldmenuai)) {
         this._startIntersectionObserverOrUpdates();
-      } else if (!this.hass!.connected) {
+      } else if (!this.menuai!.connected) {
         this._stopUpdateCameraInterval();
         this._stopIntersectionObserver();
         this._loadState = LoadState.Loading;
@@ -130,13 +130,13 @@ export class HuiImage extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
     const useRatio = Boolean(
       this._ratio && this._ratio.w > 0 && this._ratio.h > 0
     );
-    const stateObj = this.entity ? this.hass.states[this.entity] : undefined;
+    const stateObj = this.entity ? this.menuai.states[this.entity] : undefined;
     const entityState = stateObj ? stateObj.state : UNAVAILABLE;
 
     // Figure out image source to use
@@ -147,7 +147,7 @@ export class HuiImage extends LitElement {
 
     if (this.cameraImage) {
       if (this.cameraView === "live") {
-        cameraObj = this.hass.states[this.cameraImage] as CameraEntity;
+        cameraObj = this.menuai.states[this.cameraImage] as CameraEntity;
       } else {
         imageSrc = this._cameraImageSrc;
       }
@@ -160,7 +160,7 @@ export class HuiImage extends LitElement {
         imageSrc = this.image;
         imageFallback = true;
       }
-    } else if (this.darkModeImage && this.hass.themes.darkMode) {
+    } else if (this.darkModeImage && this.menuai.themes.darkMode) {
       imageSrc = this.darkModeImage;
     } else if (stateObj && computeDomain(stateObj.entity_id) === "image") {
       imageSrc = computeImageUrl(stateObj as ImageEntity);
@@ -169,13 +169,13 @@ export class HuiImage extends LitElement {
     }
 
     if (imageSrc) {
-      imageSrc = this.hass.hassUrl(imageSrc);
+      imageSrc = this.menuai.menuaiUrl(imageSrc);
     }
 
     // Figure out filter to use
     let filter = this.filter || "";
 
-    if (this.hass.themes.darkMode && this.darkModeFilter) {
+    if (this.menuai.themes.darkMode && this.darkModeFilter) {
       filter += this.darkModeFilter;
     }
 
@@ -215,7 +215,7 @@ export class HuiImage extends LitElement {
           ? html`
               <ha-camera-stream
                 muted
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${cameraObj}
                 .fitMode=${this.fitMode}
                 .aspectRatio=${this._ratio
@@ -267,10 +267,10 @@ export class HuiImage extends LitElement {
     `;
   }
 
-  protected _shouldStartCameraUpdates(oldHass?: HomeAssistant): boolean {
+  protected _shouldStartCameraUpdates(oldmenuai?: menuai): boolean {
     return !!(
-      (!oldHass || oldHass.connected !== this.hass!.connected) &&
-      this.hass!.connected &&
+      (!oldmenuai || oldmenuai.connected !== this.menuai!.connected) &&
+      this.menuai!.connected &&
       this.cameraView !== "live"
     );
   }
@@ -346,11 +346,11 @@ export class HuiImage extends LitElement {
   }
 
   private async _updateCameraImageSrc(): Promise<void> {
-    if (!this.hass || !this.cameraImage) {
+    if (!this.menuai || !this.cameraImage) {
       return;
     }
 
-    const cameraState = this.hass.states[this.cameraImage] as
+    const cameraState = this.menuai.states[this.cameraImage] as
       | CameraEntity
       | undefined;
 
@@ -377,7 +377,7 @@ export class HuiImage extends LitElement {
       height = Math.ceil(this._lastImageHeight * devicePixelRatio);
     }
     this._cameraImageSrc = await fetchThumbnailUrlWithCache(
-      this.hass,
+      this.menuai,
       this.cameraImage,
       width,
       height

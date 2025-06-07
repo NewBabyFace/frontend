@@ -4,7 +4,7 @@ import {
   isCustomType,
   stripCustomPrefix,
 } from "../../../data/lovelace_custom_cards";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 
 const NON_STANDARD_URLS = {
@@ -25,23 +25,23 @@ const NON_STANDARD_URLS = {
 };
 
 export const getCardDocumentationURL = (
-  hass: HomeAssistant,
+  menuai: menuai,
   type: string
 ): string | undefined => {
   if (isCustomType(type)) {
     return getCustomCardEntry(stripCustomPrefix(type))?.documentationURL;
   }
 
-  return `${documentationUrl(hass, "/dashboards/")}${NON_STANDARD_URLS[type] || type}`;
+  return `${documentationUrl(menuai, "/dashboards/")}${NON_STANDARD_URLS[type] || type}`;
 };
 
 export const getBadgeDocumentationURL = (
-  hass: HomeAssistant,
+  menuai: menuai,
   type: string
 ): string | undefined => {
   if (isCustomType(type)) {
     return getCustomBadgeEntry(stripCustomPrefix(type))?.documentationURL;
   }
 
-  return `${documentationUrl(hass, "/dashboards/badges")}`;
+  return `${documentationUrl(menuai, "/dashboards/badges")}`;
 };

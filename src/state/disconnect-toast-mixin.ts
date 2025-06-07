@@ -9,10 +9,10 @@ import { subscribeBootstrapIntegrations } from "../data/bootstrap_integrations";
 import { domainToName } from "../data/integration";
 import type { Constructor } from "../types";
 import { showToast } from "../util/toast";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 import { navigate } from "../common/navigate";
 
-export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
+export default <T extends Constructor<menuaiBaseEl>>(superClass: T) =>
   class extends superClass {
     private _subscribedBootstrapIntegrations?: Promise<UnsubscribeFunc>;
 
@@ -26,21 +26,21 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
 
     updated(changedProperties) {
       super.updated(changedProperties);
-      const oldHass = changedProperties.get("hass");
-      if (!changedProperties.has("hass") || !this.hass!.config) {
+      const oldmenuai = changedProperties.get("menuai");
+      if (!changedProperties.has("menuai") || !this.menuai!.config) {
         return;
       }
-      if (oldHass?.config?.state !== this.hass!.config.state) {
-        if (this.hass!.config.state === STATE_NOT_RUNNING) {
+      if (oldmenuai?.config?.state !== this.menuai!.config.state) {
+        if (this.menuai!.config.state === STATE_NOT_RUNNING) {
           showToast(this, {
             message:
-              this.hass!.localize("ui.notification_toast.starting") ||
-              "Home Assistant is starting. Not everything will be available until it is finished.",
+              this.menuai!.localize("ui.notification_toast.starting") ||
+              "MenuAI is starting. Not everything will be available until it is finished.",
             duration: -1,
             dismissable: false,
             action: {
               text:
-                this.hass!.localize("ui.notification_toast.dismiss") ||
+                this.menuai!.localize("ui.notification_toast.dismiss") ||
                 "Dismiss",
               action: () => {
                 this._unsubscribeBootstrapIntegrations();
@@ -49,45 +49,45 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
           });
           this._subscribeBootstrapIntegrations();
         } else if (
-          oldHass?.config &&
-          oldHass.config.state === STATE_NOT_RUNNING &&
-          (this.hass!.config.state === STATE_STARTING ||
-            this.hass!.config.state === STATE_RUNNING)
+          oldmenuai?.config &&
+          oldmenuai.config.state === STATE_NOT_RUNNING &&
+          (this.menuai!.config.state === STATE_STARTING ||
+            this.menuai!.config.state === STATE_RUNNING)
         ) {
           this._unsubscribeBootstrapIntegrations();
           showToast(this, {
-            message: this.hass!.localize("ui.notification_toast.started"),
+            message: this.menuai!.localize("ui.notification_toast.started"),
             duration: 5000,
           });
         }
       }
       if (
-        this.hass!.config.safe_mode &&
-        oldHass?.config?.safe_mode !== this.hass!.config.safe_mode
+        this.menuai!.config.safe_mode &&
+        oldmenuai?.config?.safe_mode !== this.menuai!.config.safe_mode
       ) {
         import("../dialogs/generic/show-dialog-box").then(
           ({ showAlertDialog }) => {
             showAlertDialog(this, {
               title:
-                this.hass!.localize("ui.dialogs.safe_mode.title") ||
+                this.menuai!.localize("ui.dialogs.safe_mode.title") ||
                 "Safe mode",
               text:
-                this.hass!.localize("ui.dialogs.safe_mode.text") ||
-                "Home Assistant is running in safe mode, custom integrations and modules are not available. Restart Home Assistant to exit safe mode.",
+                this.menuai!.localize("ui.dialogs.safe_mode.text") ||
+                "MenuAI is running in safe mode, custom integrations and modules are not available. Restart MenuAI to exit safe mode.",
             });
           }
         );
       }
       if (
-        this.hass!.config.recovery_mode &&
-        oldHass?.config?.recovery_mode !== this.hass!.config.recovery_mode
+        this.menuai!.config.recovery_mode &&
+        oldmenuai?.config?.recovery_mode !== this.menuai!.config.recovery_mode
       ) {
         navigate("/");
       }
     }
 
-    protected hassReconnected() {
-      super.hassReconnected();
+    protected menuaiReconnected() {
+      super.menuaiReconnected();
       if (this._disconnectedTimeout) {
         clearTimeout(this._disconnectedTimeout);
         this._disconnectedTimeout = undefined;
@@ -99,13 +99,13 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
       });
     }
 
-    protected hassDisconnected() {
-      super.hassDisconnected();
+    protected menuaiDisconnected() {
+      super.menuaiDisconnected();
 
       this._disconnectedTimeout = window.setTimeout(() => {
         this._disconnectedTimeout = undefined;
         showToast(this, {
-          message: this.hass!.localize("ui.notification_toast.connection_lost"),
+          message: this.menuai!.localize("ui.notification_toast.connection_lost"),
           duration: -1,
           dismissable: false,
         });
@@ -113,20 +113,20 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
     }
 
     private _handleMessage(message: BootstrapIntegrationsTimings): void {
-      if (this.hass!.config.state !== STATE_NOT_RUNNING) {
+      if (this.menuai!.config.state !== STATE_NOT_RUNNING) {
         return;
       }
 
       if (Object.keys(message).length === 0) {
         showToast(this, {
           message:
-            this.hass!.localize("ui.notification_toast.wrapping_up_startup") ||
+            this.menuai!.localize("ui.notification_toast.wrapping_up_startup") ||
             `Wrapping up startup. Not everything will be available until it is finished.`,
           duration: -1,
           dismissable: false,
           action: {
             text:
-              this.hass!.localize("ui.notification_toast.dismiss") || "Dismiss",
+              this.menuai!.localize("ui.notification_toast.dismiss") || "Dismiss",
             action: () => {
               this._unsubscribeBootstrapIntegrations();
             },
@@ -143,15 +143,15 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
       showToast(this, {
         id: "integration_starting",
         message:
-          this.hass!.localize("ui.notification_toast.integration_starting", {
-            integration: domainToName(this.hass!.localize, integration),
+          this.menuai!.localize("ui.notification_toast.integration_starting", {
+            integration: domainToName(this.menuai!.localize, integration),
           }) ||
           `Starting ${integration}. Not everything will be available until it is finished.`,
         duration: -1,
         dismissable: false,
         action: {
           text:
-            this.hass!.localize("ui.notification_toast.dismiss") || "Dismiss",
+            this.menuai!.localize("ui.notification_toast.dismiss") || "Dismiss",
           action: () => {
             this._unsubscribeBootstrapIntegrations();
           },
@@ -167,11 +167,11 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
     }
 
     private _subscribeBootstrapIntegrations() {
-      if (!this.hass) {
+      if (!this.menuai) {
         return;
       }
       this._subscribedBootstrapIntegrations = subscribeBootstrapIntegrations(
-        this.hass!,
+        this.menuai!,
         (message) => {
           this._handleMessage(message);
         }

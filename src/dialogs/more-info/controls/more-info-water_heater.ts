@@ -14,13 +14,13 @@ import {
   computeOperationModeIcon,
 } from "../../../data/water_heater";
 import "../../../state-control/water_heater/ha-state-control-water_heater-temperature";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-control-select-container";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
 @customElement("more-info-water_heater")
 class MoreInfoWaterHeater extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: WaterHeaterEntity;
 
@@ -49,13 +49,13 @@ class MoreInfoWaterHeater extends LitElement {
           ? html`
               <div>
                 <p class="label">
-                  ${this.hass.formatEntityAttributeName(
+                  ${this.menuai.formatEntityAttributeName(
                     this.stateObj,
                     "current_temperature"
                   )}
                 </p>
                 <p class="value">
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "current_temperature"
                   )}
@@ -66,7 +66,7 @@ class MoreInfoWaterHeater extends LitElement {
       </div>
       <div class="controls">
         <ha-state-control-water_heater-temperature
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
         ></ha-state-control-water_heater-temperature>
       </div>
@@ -74,7 +74,7 @@ class MoreInfoWaterHeater extends LitElement {
         ${supportOperationMode && stateObj.attributes.operation_list
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.localize("ui.card.water_heater.mode")}
+                .label=${this.menuai.localize("ui.card.water_heater.mode")}
                 .value=${stateObj.state}
                 .disabled=${stateObj.state === UNAVAILABLE}
                 fixedMenuPosition
@@ -93,7 +93,7 @@ class MoreInfoWaterHeater extends LitElement {
                           slot="graphic"
                           .path=${computeOperationModeIcon(mode)}
                         ></ha-svg-icon>
-                        ${this.hass.formatEntityState(stateObj, mode)}
+                        ${this.menuai.formatEntityState(stateObj, mode)}
                       </ha-list-item>
                     `
                   )}
@@ -103,7 +103,7 @@ class MoreInfoWaterHeater extends LitElement {
         ${supportAwayMode
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   stateObj,
                   "away_mode"
                 )}
@@ -120,7 +120,7 @@ class MoreInfoWaterHeater extends LitElement {
                     slot="graphic"
                     .path=${mdiAccountArrowRight}
                   ></ha-svg-icon>
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     stateObj,
                     "away_mode",
                     "on"
@@ -128,7 +128,7 @@ class MoreInfoWaterHeater extends LitElement {
                 </ha-list-item>
                 <ha-list-item value="off" graphic="icon">
                   <ha-svg-icon slot="graphic" .path=${mdiAccount}></ha-svg-icon>
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     stateObj,
                     "away_mode",
                     "off"
@@ -178,7 +178,7 @@ class MoreInfoWaterHeater extends LitElement {
     data.entity_id = this.stateObj!.entity_id;
     const curState = this.stateObj;
 
-    await this.hass.callService("water_heater", service, data);
+    await this.menuai.callService("water_heater", service, data);
 
     // We reset stateObj to re-sync the inputs with the state. It will be out
     // of sync if our service call did not result in the entity to be turned

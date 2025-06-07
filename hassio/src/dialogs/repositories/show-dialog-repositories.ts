@@ -1,19 +1,19 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
-import "./dialog-hassio-repositories";
+import "./dialog-menuaiio-repositories";
 
-export interface HassioRepositoryDialogParams {
+export interface menuaiioRepositoryDialogParams {
   supervisor: Supervisor;
   url?: string;
 }
 
 export const showRepositoriesDialog = (
   element: HTMLElement,
-  dialogParams: HassioRepositoryDialogParams
+  dialogParams: menuaiioRepositoryDialogParams
 ): void => {
   fireEvent(element, "show-dialog", {
-    dialogTag: "dialog-hassio-repositories",
-    dialogImport: () => import("./dialog-hassio-repositories"),
+    dialogTag: "dialog-menuaiio-repositories",
+    dialogImport: () => import("./dialog-menuaiio-repositories"),
     dialogParams,
   });
 };

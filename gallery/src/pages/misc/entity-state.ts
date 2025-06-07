@@ -1,6 +1,6 @@
 import type {
-  HassEntity,
-  HassEntityAttributeBase,
+  menuaiEntity,
+  menuaiEntityAttributeBase,
 } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -10,9 +10,9 @@ import { computeStateDisplay } from "../../../../src/common/entity/compute_state
 import "../../../../src/components/data-table/ha-data-table";
 import type { DataTableColumnContainer } from "../../../../src/components/data-table/ha-data-table";
 import "../../../../src/components/entity/state-badge";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import { mockIcons } from "../../../../demo/src/stubs/icons";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 
 const SENSOR_DEVICE_CLASSES = [
   "apparent_power",
@@ -91,7 +91,7 @@ const BINARY_SENSOR_DEVICE_CLASSES = [
   "window",
 ];
 
-const ENTITIES: HassEntity[] = [
+const ENTITIES: menuaiEntity[] = [
   // Alarm control panel
   createEntity("alarm_control_panel.disarmed", "disarmed"),
   createEntity("alarm_control_panel.armed_home", "armed_home"),
@@ -302,8 +302,8 @@ function createEntity(
   entity_id: string,
   state: string,
   device_class?: string,
-  attributes?: HassEntityAttributeBase | HassEntity["attributes"]
-): HassEntity {
+  attributes?: menuaiEntityAttributeBase | menuaiEntity["attributes"]
+): menuaiEntity {
   return {
     entity_id,
     state,
@@ -322,14 +322,14 @@ function createEntity(
 }
 
 interface EntityRowData {
-  stateObj: HassEntity;
+  stateObj: menuaiEntity;
   entity_id: string;
   state: string;
   device_class?: string;
   domain: string;
 }
 
-function createRowData(stateObj: HassEntity): EntityRowData {
+function createRowData(stateObj: menuaiEntity): EntityRowData {
   return {
     stateObj,
     entity_id: stateObj.entity_id,
@@ -341,16 +341,16 @@ function createRowData(stateObj: HassEntity): EntityRowData {
 
 @customElement("demo-misc-entity-state")
 export class DemoEntityState extends LitElement {
-  @property({ attribute: false }) hass?: HomeAssistant;
+  @property({ attribute: false }) menuai?: menuai;
 
   private _columns = memoizeOne(
-    (hass: HomeAssistant): DataTableColumnContainer => {
+    (menuai: menuai): DataTableColumnContainer => {
       const columns: DataTableColumnContainer<EntityRowData> = {
         icon: {
           title: "Icon",
           template: (entry) => html`
             <state-badge
-              .hass=${hass}
+              .menuai=${menuai}
               .stateObj=${entry.stateObj}
               .stateColor=${true}
             ></state-badge>
@@ -366,12 +366,12 @@ export class DemoEntityState extends LitElement {
           sortable: true,
           template: (entry) =>
             html`${computeStateDisplay(
-              hass.localize,
+              menuai.localize,
               entry.stateObj,
-              hass.locale,
+              menuai.locale,
               [], // numericDeviceClasses
-              hass.config,
-              hass.entities
+              menuai.config,
+              menuai.entities
             )}`,
         },
         device_class: {
@@ -398,9 +398,9 @@ export class DemoEntityState extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    const hass = provideHass(this);
-    mockIcons(hass);
-    hass.updateHass({
+    const menuai = providemenuai(this);
+    mockIcons(menuai);
+    menuai.updatemenuai({
       entities: {
         "select.speed": {
           entity_id: "select.speed",
@@ -410,19 +410,19 @@ export class DemoEntityState extends LitElement {
         },
       },
     });
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     return html`
       <ha-data-table
-        .hass=${this.hass}
-        .columns=${this._columns(this.hass)}
+        .menuai=${this.menuai}
+        .columns=${this._columns(this.menuai)}
         .data=${this._rows()}
         auto-height
       ></ha-data-table>

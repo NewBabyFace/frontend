@@ -16,9 +16,9 @@ import "../../../../components/chips/ha-chip-set";
 import "../../../../components/chips/ha-assist-chip";
 import "../../../../components/ha-area-picker";
 
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   EntityRegistryUpdate,
   SaveDialogParams,
@@ -26,8 +26,8 @@ import type {
 import { supportsMarkdownHelper } from "../../../../common/translations/markdown_support";
 
 @customElement("ha-dialog-automation-save")
-class DialogAutomationSave extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogAutomationSave extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -51,7 +51,7 @@ class DialogAutomationSave extends LitElement implements HassDialog {
     this._newIcon = "icon" in params.config ? params.config.icon : undefined;
     this._newName =
       params.config.alias ||
-      this.hass.localize(
+      this.menuai.localize(
         `ui.panel.config.${this._params.domain}.editor.default_name`
       );
     this._newDescription = params.config.description || "";
@@ -103,7 +103,7 @@ class DialogAutomationSave extends LitElement implements HassDialog {
         slot="secondaryAction"
         class="destructive"
       >
-        ${this.hass.localize("ui.common.dont_save")}
+        ${this.menuai.localize("ui.common.dont_save")}
       </ha-button>
     `;
   }
@@ -117,10 +117,10 @@ class DialogAutomationSave extends LitElement implements HassDialog {
       <ha-textfield
         dialogInitialFocus
         .value=${this._newName}
-        .placeholder=${this.hass.localize(
+        .placeholder=${this.menuai.localize(
           `ui.panel.config.${this._params.domain}.editor.default_name`
         )}
-        .label=${this.hass.localize("ui.panel.config.automation.editor.alias")}
+        .label=${this.menuai.localize("ui.panel.config.automation.editor.alias")}
         required
         type="string"
         @input=${this._valueChanged}
@@ -130,8 +130,8 @@ class DialogAutomationSave extends LitElement implements HassDialog {
       this._visibleOptionals.includes("icon")
         ? html`
             <ha-icon-picker
-              .hass=${this.hass}
-              .label=${this.hass.localize(
+              .menuai=${this.menuai}
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.icon"
               )}
               .value=${this._newIcon}
@@ -140,7 +140,7 @@ class DialogAutomationSave extends LitElement implements HassDialog {
               <ha-domain-icon
                 slot="fallback"
                 domain=${this._params.domain}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               >
               </ha-domain-icon>
             </ha-icon-picker>
@@ -148,23 +148,23 @@ class DialogAutomationSave extends LitElement implements HassDialog {
         : nothing}
       ${this._visibleOptionals.includes("description")
         ? html` <ha-textarea
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.automation.editor.description.label"
             )}
-            .placeholder=${this.hass.localize(
+            .placeholder=${this.menuai.localize(
               "ui.panel.config.automation.editor.description.placeholder"
             )}
             name="description"
             autogrow
             .value=${this._newDescription}
-            .helper=${supportsMarkdownHelper(this.hass.localize)}
+            .helper=${supportsMarkdownHelper(this.menuai.localize)}
             @input=${this._valueChanged}
           ></ha-textarea>`
         : nothing}
       ${this._visibleOptionals.includes("category")
         ? html` <ha-category-picker
             id="category"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .scope=${this._params.domain}
             .value=${this._entryUpdates.category}
             @value-changed=${this._registryEntryChanged}
@@ -173,7 +173,7 @@ class DialogAutomationSave extends LitElement implements HassDialog {
       ${this._visibleOptionals.includes("labels")
         ? html` <ha-labels-picker
             id="labels"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this._entryUpdates.labels}
             @value-changed=${this._registryEntryChanged}
           ></ha-labels-picker>`
@@ -181,7 +181,7 @@ class DialogAutomationSave extends LitElement implements HassDialog {
       ${this._visibleOptionals.includes("area")
         ? html` <ha-area-picker
             id="area"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${this._entryUpdates.area}
             @value-changed=${this._registryEntryChanged}
           ></ha-area-picker>`
@@ -190,33 +190,33 @@ class DialogAutomationSave extends LitElement implements HassDialog {
       <ha-chip-set>
         ${this._renderOptionalChip(
           "description",
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.dialog.add_description"
           )
         )}
         ${this._params.domain === "script"
           ? this._renderOptionalChip(
               "icon",
-              this.hass.localize(
+              this.menuai.localize(
                 "ui.panel.config.automation.editor.dialog.add_icon"
               )
             )
           : nothing}
         ${this._renderOptionalChip(
           "area",
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.dialog.add_area"
           )
         )}
         ${this._renderOptionalChip(
           "category",
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.dialog.add_category"
           )
         )}
         ${this._renderOptionalChip(
           "labels",
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.dialog.add_labels"
           )
         )}
@@ -229,7 +229,7 @@ class DialogAutomationSave extends LitElement implements HassDialog {
       return nothing;
     }
 
-    const title = this.hass.localize(
+    const title = this.menuai.localize(
       this._params.config.alias
         ? "ui.panel.config.automation.editor.rename"
         : "ui.panel.config.automation.editor.save"
@@ -246,14 +246,14 @@ class DialogAutomationSave extends LitElement implements HassDialog {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">${this._params.title || title}</span>
         </ha-dialog-header>
         ${this._error
           ? html`<ha-alert alert-type="error"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.automation.editor.missing_name"
               )}</ha-alert
             >`
@@ -265,10 +265,10 @@ class DialogAutomationSave extends LitElement implements HassDialog {
 
         <div slot="primaryAction">
           <mwc-button @click=${this.closeDialog}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </mwc-button>
           <mwc-button @click=${this._save}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               this._params.config.alias && !this._params.onDiscard
                 ? "ui.panel.config.automation.editor.rename"
                 : "ui.panel.config.automation.editor.save"

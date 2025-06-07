@@ -1,11 +1,11 @@
 import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 
 @customElement("hc-launch-screen")
 class HcLaunchScreen extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public error?: string;
 
@@ -13,11 +13,11 @@ class HcLaunchScreen extends LitElement {
     return html`
       <div class="container">
         <img
-          alt="Nabu Casa logo on left, Home Assistant logo on right, and red heart in center"
-          src="https://cast.home-assistant.io/images/nabu-loves-hass.png"
+          alt="Nabu Casa logo on left, MenuAI logo on right, and red heart in center"
+          src="https://cast.home-assistant.io/images/nabu-loves-menuai.png"
         />
         <div class="status">
-          ${this.hass ? "Connected" : "Not Connected"}
+          ${this.menuai ? "Connected" : "Not Connected"}
           ${this.error ? html` <p>Error: ${this.error}</p> ` : ""}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import type { HassEntities, HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntities, menuaiEntity } from "home-assistant-js-websocket";
 import {
   applyThemesOnElement,
   invalidateThemeCache,
@@ -15,7 +15,7 @@ import {
   TimeZone,
 } from "../data/translation";
 import { translationMetadata } from "../resources/translations-metadata";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { getLocalLanguage, getTranslation } from "../util/common-translation";
 import { demoConfig } from "./demo_config";
 import { demoPanels } from "./demo_panels";
@@ -27,16 +27,16 @@ const ensureArray = <T>(val: T | T[]): T[] =>
   Array.isArray(val) ? val : [val];
 
 type MockRestCallback = (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   method: string,
   path: string,
   parameters: Record<string, any> | undefined
 ) => any;
 
-export interface MockHomeAssistant extends HomeAssistant {
+export interface Mockmenuai extends menuai {
   mockEntities: any;
-  updateHass(obj: Partial<MockHomeAssistant>);
-  updateStates(newStates: HassEntities);
+  updatemenuai(obj: Partial<Mockmenuai>);
+  updateStates(newStates: menuaiEntities);
   addEntities(entites: Entity | Entity[], replace?: boolean);
   updateTranslations(fragment: null | string, language?: string);
   addTranslations(translations: Record<string, string>, language?: string);
@@ -44,29 +44,29 @@ export interface MockHomeAssistant extends HomeAssistant {
     type: string,
     callback: (
       msg: any,
-      hass: MockHomeAssistant,
+      menuai: Mockmenuai,
       onChange?: (response: any) => void
     ) => Awaited<ReturnType<T>>
   );
   mockAPI(path: string | RegExp, callback: MockRestCallback);
   mockEvent(event);
   mockTheme(theme: Record<string, string> | null);
-  formatEntityState(stateObj: HassEntity, state?: string): string;
+  formatEntityState(stateObj: menuaiEntity, state?: string): string;
   formatEntityAttributeValue(
-    stateObj: HassEntity,
+    stateObj: menuaiEntity,
     attribute: string,
     value?: any
   ): string;
-  formatEntityAttributeName(stateObj: HassEntity, attribute: string): string;
+  formatEntityAttributeName(stateObj: menuaiEntity, attribute: string): string;
 }
 
-export const provideHass = (
+export const providemenuai = (
   elements,
-  overrideData: Partial<HomeAssistant> = {}
-): MockHomeAssistant => {
+  overrideData: Partial<menuai> = {}
+): Mockmenuai => {
   elements = ensureArray(elements);
-  // Can happen because we store sidebar, more info etc on hass.
-  const hass = (): MockHomeAssistant => elements[0].hass;
+  // Can happen because we store sidebar, more info etc on menuai.
+  const menuai = (): Mockmenuai => elements[0].menuai;
 
   const wsCommands = {};
   const restResponses: [string | RegExp, MockRestCallback][] = [];
@@ -90,22 +90,22 @@ export const provideHass = (
     const lang = language || getLocalLanguage();
     const resources = {
       [lang]: {
-        ...(hass().resources && hass().resources[lang]),
+        ...(menuai().resources && menuai().resources[lang]),
         ...translations,
       },
     };
-    hass().updateHass({
+    menuai().updatemenuai({
       resources,
     });
-    hass().updateHass({
-      localize: await computeLocalize(elements[0], lang, hass().resources),
+    menuai().updatemenuai({
+      localize: await computeLocalize(elements[0], lang, menuai().resources),
     });
     fireEvent(window, "translations-updated");
   }
 
-  function updateStates(newStates: HassEntities) {
-    hass().updateHass({
-      states: { ...hass().states, ...newStates },
+  function updateStates(newStates: menuaiEntities) {
+    menuai().updatemenuai({
+      states: { ...menuai().states, ...newStates },
     });
   }
 
@@ -115,13 +115,13 @@ export const provideHass = (
       formatEntityAttributeName,
       formatEntityAttributeValue,
     } = await computeFormatFunctions(
-      hass().localize,
-      hass().locale,
-      hass().config,
-      hass().entities,
+      menuai().localize,
+      menuai().locale,
+      menuai().config,
+      menuai().entities,
       [] // numericDeviceClasses
     );
-    hass().updateHass({
+    menuai().updatemenuai({
       formatEntityState,
       formatEntityAttributeName,
       formatEntityAttributeValue,
@@ -131,12 +131,12 @@ export const provideHass = (
   function addEntities(newEntities, replace = false) {
     const states = {};
     ensureArray(newEntities).forEach((ent) => {
-      ent.hass = hass();
+      ent.menuai = menuai();
       entities[ent.entityId] = ent;
       states[ent.entityId] = ent.toState();
     });
     if (replace) {
-      hass().updateHass({
+      menuai().updatemenuai({
         states,
       });
     } else {
@@ -162,11 +162,11 @@ export const provideHass = (
   const localLanguage = getLocalLanguage();
   const noop = () => undefined;
 
-  const hassObj: MockHomeAssistant = {
-    // Home Assistant properties
+  const menuaiObj: Mockmenuai = {
+    // MenuAI properties
     auth: {
       data: {
-        hassUrl: "",
+        menuaiUrl: "",
       },
     } as any,
     connection: {
@@ -176,7 +176,7 @@ export const provideHass = (
         const callback = wsCommands[msg.type];
 
         if (callback) {
-          callback(msg, hass());
+          callback(msg, menuai());
         } else {
           // eslint-disable-next-line
           console.error(`Unknown WS command: ${msg.type}`);
@@ -185,19 +185,19 @@ export const provideHass = (
       sendMessagePromise: async (msg) => {
         const callback = wsCommands[msg.type];
         return callback
-          ? callback(msg, hass())
+          ? callback(msg, menuai())
           : Promise.reject({
               code: "command_not_mocked",
-              message: `WS Command ${msg.type} is not implemented in provide_hass.`,
+              message: `WS Command ${msg.type} is not implemented in provide_menuai.`,
             });
       },
       subscribeMessage: async (onChange, msg) => {
         const callback = wsCommands[msg.type];
         return callback
-          ? callback(msg, hass(), onChange)
+          ? callback(msg, menuai(), onChange)
           : Promise.reject({
               code: "command_not_mocked",
-              message: `WS Command ${msg.type} is not implemented in provide_hass.`,
+              message: `WS Command ${msg.type} is not implemented in provide_menuai.`,
             });
       },
       subscribeEvents: async (
@@ -260,7 +260,7 @@ export const provideHass = (
 
     translationMetadata: translationMetadata as any,
     async loadBackendTranslation() {
-      return hass().localize;
+      return menuai().localize;
     },
     dockedSidebar: "auto",
     vibrate: true,
@@ -288,20 +288,20 @@ export const provideHass = (
       );
 
       return response
-        ? response[1](hass(), method, path, parameters)
+        ? response[1](menuai(), method, path, parameters)
         : Promise.reject(`API Mock for ${path} is not implemented`);
     },
-    hassUrl: (path?) => path,
+    menuaiUrl: (path?) => path,
     fetchWithAuth: () => Promise.reject("Not implemented"),
-    sendWS: (msg) => hassObj.connection.sendMessage(msg),
-    callWS: (msg) => hassObj.connection.sendMessagePromise(msg),
+    sendWS: (msg) => menuaiObj.connection.sendMessage(msg),
+    callWS: (msg) => menuaiObj.connection.sendMessagePromise(msg),
 
     // Mock stuff
     mockEntities: entities,
-    updateHass(obj: Partial<MockHomeAssistant>) {
-      const newHass = { ...hass(), ...obj };
+    updatemenuai(obj: Partial<Mockmenuai>) {
+      const newmenuai = { ...menuai(), ...obj };
       elements.forEach((el) => {
-        el.hass = newHass;
+        el.menuai = newmenuai;
       });
     },
     updateStates,
@@ -309,7 +309,7 @@ export const provideHass = (
     addTranslations,
     loadFragmentTranslation: async (fragment: string) => {
       await updateTranslations(fragment);
-      return hass().localize;
+      return menuai().localize;
     },
     addEntities,
     mockWS(type, callback) {
@@ -321,16 +321,16 @@ export const provideHass = (
     },
     mockTheme(theme) {
       invalidateThemeCache();
-      hass().updateHass({
+      menuai().updatemenuai({
         selectedTheme: { theme: theme ? "mock" : "default" },
         themes: {
-          ...hass().themes,
+          ...menuai().themes,
           themes: {
             mock: theme as any,
           },
         },
       });
-      const { themes, selectedTheme } = hass();
+      const { themes, selectedTheme } = menuai();
       applyThemesOnElement(
         document.documentElement,
         themes,
@@ -350,10 +350,10 @@ export const provideHass = (
     ...overrideData,
   };
 
-  // Update the elements. Note, we call it on hassObj so that if it was
+  // Update the elements. Note, we call it on menuaiObj so that if it was
   // overridden (like in the demo), it will still work.
-  hassObj.updateHass(hassObj);
+  menuaiObj.updatemenuai(menuaiObj);
 
   // @ts-ignore
-  return hassObj;
+  return menuaiObj;
 };

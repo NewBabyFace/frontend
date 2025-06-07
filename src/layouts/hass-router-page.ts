@@ -43,7 +43,7 @@ export interface RouterOptions {
 // Time to wait for code to load before we show loading screen.
 const LOADING_SCREEN_THRESHOLD = 400; // ms
 
-export class HassRouterPage extends ReactiveElement {
+export class menuaiRouterPage extends ReactiveElement {
   @property({ attribute: false }) public route?: Route;
 
   protected routerOptions!: RouterOptions;
@@ -255,13 +255,13 @@ export class HassRouterPage extends ReactiveElement {
   }
 
   protected createLoadingScreen() {
-    import("./hass-loading-screen");
-    return document.createElement("hass-loading-screen");
+    import("./menuai-loading-screen");
+    return document.createElement("menuai-loading-screen");
   }
 
   protected createErrorScreen(error: string) {
-    import("./hass-error-screen");
-    const errorEl = document.createElement("hass-error-screen");
+    import("./menuai-error-screen");
+    const errorEl = document.createElement("menuai-error-screen");
     errorEl.error = error;
     return errorEl;
   }

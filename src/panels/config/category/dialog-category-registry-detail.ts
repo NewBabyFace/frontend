@@ -13,12 +13,12 @@ import type {
   CategoryRegistryEntryMutableParams,
 } from "../../../data/category_registry";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { CategoryRegistryDetailDialogParams } from "./show-dialog-category-registry-detail";
 
 @customElement("dialog-category-registry-detail")
 class DialogCategoryDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _name!: string;
 
@@ -62,10 +62,10 @@ class DialogCategoryDetail extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           entry
-            ? this.hass.localize("ui.panel.config.category.editor.edit")
-            : this.hass.localize("ui.panel.config.category.editor.create")
+            ? this.menuai.localize("ui.panel.config.category.editor.edit")
+            : this.menuai.localize("ui.panel.config.category.editor.create")
         )}
       >
         <div>
@@ -76,10 +76,10 @@ class DialogCategoryDetail extends LitElement {
             <ha-textfield
               .value=${this._name}
               @input=${this._nameChanged}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.category.editor.name"
               )}
-              .validationMessage=${this.hass.localize(
+              .validationMessage=${this.menuai.localize(
                 "ui.panel.config.category.editor.required_error_msg"
               )}
               required
@@ -87,17 +87,17 @@ class DialogCategoryDetail extends LitElement {
             ></ha-textfield>
 
             <ha-icon-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${this._icon}
               @value-changed=${this._iconChanged}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.category.editor.icon"
               )}
             ></ha-icon-picker>
           </div>
         </div>
         <mwc-button slot="secondaryAction" @click=${this.closeDialog}>
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           slot="primaryAction"
@@ -105,8 +105,8 @@ class DialogCategoryDetail extends LitElement {
           .disabled=${nameInvalid || this._submitting}
         >
           ${entry
-            ? this.hass.localize("ui.common.save")
-            : this.hass.localize("ui.common.add")}
+            ? this.menuai.localize("ui.common.save")
+            : this.menuai.localize("ui.common.add")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -144,7 +144,7 @@ class DialogCategoryDetail extends LitElement {
     } catch (err: any) {
       this._error =
         err.message ||
-        this.hass.localize("ui.panel.config.category.editor.unknown_error");
+        this.menuai.localize("ui.panel.config.category.editor.unknown_error");
     } finally {
       this._submitting = false;
     }

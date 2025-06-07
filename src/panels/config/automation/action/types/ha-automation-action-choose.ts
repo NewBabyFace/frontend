@@ -5,14 +5,14 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-button";
 import type { Action, ChooseAction, Option } from "../../../../../data/script";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../../option/ha-automation-option";
 import type { ActionElement } from "../ha-automation-action-row";
 import "../ha-automation-action";
 
 @customElement("ha-automation-action-choose")
 export class HaChooseAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -36,14 +36,14 @@ export class HaChooseAction extends LitElement implements ActionElement {
         .options=${options}
         .disabled=${this.disabled}
         @value-changed=${this._optionsChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
       ></ha-automation-option>
 
       ${this._showDefault || action.default
         ? html`
             <h2>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.choose.default"
               )}:
             </h2>
@@ -51,7 +51,7 @@ export class HaChooseAction extends LitElement implements ActionElement {
               .actions=${ensureArray(action.default) || []}
               .disabled=${this.disabled}
               @value-changed=${this._defaultChanged}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
             ></ha-automation-action>
           `
@@ -62,7 +62,7 @@ export class HaChooseAction extends LitElement implements ActionElement {
                 @click=${this._addDefault}
                 .disabled=${this.disabled}
               >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.actions.type.choose.add_default"
                 )}
               </button>

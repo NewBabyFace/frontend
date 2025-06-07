@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { isComponentLoaded } from "../../../src/common/config/is_component_loaded";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
 describe("isComponentLoaded", () => {
   it("should return if the component is loaded", () => {
-    const hass = {
+    const menuai = {
       config: { components: ["test_component"] },
-    } as unknown as HomeAssistant;
-    expect(isComponentLoaded(hass, "test_component")).toBe(true);
-    expect(isComponentLoaded(hass, "other_component")).toBe(false);
+    } as unknown as menuai;
+    expect(isComponentLoaded(menuai, "test_component")).toBe(true);
+    expect(isComponentLoaded(menuai, "other_component")).toBe(false);
   });
 });

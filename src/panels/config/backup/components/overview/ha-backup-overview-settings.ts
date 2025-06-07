@@ -17,13 +17,13 @@ import {
   isLocalAgent,
 } from "../../../../../data/backup";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { isComponentLoaded } from "../../../../../common/config/is_component_loaded";
 import { getRecorderInfo } from "../../../../../data/recorder";
 
 @customElement("ha-backup-overview-settings")
 class HaBackupBackupsSummary extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public config!: BackupConfig;
 
@@ -41,8 +41,8 @@ class HaBackupBackupsSummary extends LitElement {
   }
 
   private async _checkDbOption() {
-    if (isComponentLoaded(this.hass, "recorder")) {
-      const info = await getRecorderInfo(this.hass.connection);
+    if (isComponentLoaded(this.menuai, "recorder")) {
+      const info = await getRecorderInfo(this.menuai.connection);
       this._showDbOption = info.db_in_default_location;
     } else {
       this._showDbOption = false;
@@ -54,7 +54,7 @@ class HaBackupBackupsSummary extends LitElement {
     const { recurrence } = config.schedule;
 
     if (recurrence === BackupScheduleRecurrence.NEVER) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.overview.settings.schedule_never"
       );
     }
@@ -62,12 +62,12 @@ class HaBackupBackupsSummary extends LitElement {
     const time: string | undefined | null =
       this.config.schedule.time &&
       getFormattedBackupTime(
-        this.hass.locale,
-        this.hass.config,
+        this.menuai.locale,
+        this.menuai.config,
         this.config.schedule.time
       );
 
-    let scheduleText = this.hass.localize(
+    let scheduleText = this.menuai.localize(
       "ui.panel.config.backup.overview.settings.schedule_never"
     );
 
@@ -79,7 +79,7 @@ class HaBackupBackupsSummary extends LitElement {
         BackupScheduleRecurrence.CUSTOM_DAYS &&
         configDays.length === 7)
     ) {
-      scheduleText = this.hass.localize(
+      scheduleText = this.menuai.localize(
         `ui.panel.config.backup.overview.settings.schedule_${!this.config.schedule.time ? "optimized_" : ""}daily`,
         {
           time,
@@ -95,7 +95,7 @@ class HaBackupBackupsSummary extends LitElement {
         configDays.includes("sat") &&
         configDays.includes("sun")
       ) {
-        scheduleText = this.hass.localize(
+        scheduleText = this.menuai.localize(
           `ui.panel.config.backup.overview.settings.schedule_${!this.config.schedule.time ? "optimized_" : ""}weekend`,
           {
             time,
@@ -106,20 +106,20 @@ class HaBackupBackupsSummary extends LitElement {
         !configDays.includes("sat") &&
         !configDays.includes("sun")
       ) {
-        scheduleText = this.hass.localize(
+        scheduleText = this.menuai.localize(
           `ui.panel.config.backup.overview.settings.schedule_${!this.config.schedule.time ? "optimized_" : ""}weekdays`,
           {
             time,
           }
         );
       } else {
-        scheduleText = this.hass.localize(
+        scheduleText = this.menuai.localize(
           `ui.panel.config.backup.overview.settings.schedule_${!this.config.schedule.time ? "optimized_" : ""}days`,
           {
             count: configDays.length,
             days: configDays
               .map((dayCode) =>
-                this.hass.localize(
+                this.menuai.localize(
                   `ui.panel.config.backup.overview.settings.${configDays.length > 2 ? "short_weekdays" : "weekdays"}.${dayCode}`
                 )
               )
@@ -130,16 +130,16 @@ class HaBackupBackupsSummary extends LitElement {
       }
     }
 
-    let copiesText = this.hass.localize(
+    let copiesText = this.menuai.localize(
       `ui.panel.config.backup.overview.settings.schedule_copies_all`
     );
     if (copies) {
-      copiesText = this.hass.localize(
+      copiesText = this.menuai.localize(
         `ui.panel.config.backup.overview.settings.schedule_copies_backups`,
         { count: copies }
       );
     } else if (days) {
-      copiesText = this.hass.localize(
+      copiesText = this.menuai.localize(
         `ui.panel.config.backup.overview.settings.schedule_copies_days`,
         { count: days }
       );
@@ -150,18 +150,18 @@ class HaBackupBackupsSummary extends LitElement {
 
   private _addonsDescription(config: BackupConfig): string {
     if (config.create_backup.include_all_addons) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.overview.settings.addons_all"
       );
     }
     const count = config.create_backup.include_addons?.length;
     if (count) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.overview.settings.addons_many",
         { count }
       );
     }
-    return this.hass.localize(
+    return this.menuai.localize(
       "ui.panel.config.backup.overview.settings.addons_none"
     );
   }
@@ -178,37 +178,37 @@ class HaBackupBackupsSummary extends LitElement {
     if (offsiteLocations.length) {
       if (offsiteLocations.length === 1) {
         const name = computeBackupAgentName(
-          this.hass.localize,
+          this.menuai.localize,
           offsiteLocations[0],
           this.agents
         );
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.config.backup.overview.settings.locations_one",
           { name }
         );
       }
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.overview.settings.locations_many",
         { count: offsiteLocations.length }
       );
     }
     if (hasLocal) {
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.overview.settings.locations_local_only"
       );
     }
-    return this.hass.localize(
+    return this.menuai.localize(
       "ui.panel.config.backup.overview.settings.locations_none"
     );
   }
 
   render() {
-    const isHassio = this.hass.config.components.includes("hassio");
+    const ismenuaiio = this.menuai.config.components.includes("menuaiio");
 
     return html`
       <ha-card class="my-backups">
         <div class="card-header">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.backup.overview.settings.title"
           )}
         </div>
@@ -223,7 +223,7 @@ class HaBackupBackupsSummary extends LitElement {
                 ${this._scheduleDescription(this.config)}
               </div>
               <div slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.overview.settings.schedule"
                 )}
               </div>
@@ -234,21 +234,21 @@ class HaBackupBackupsSummary extends LitElement {
               <div slot="headline">
                 ${this._showDbOption &&
                 this.config.create_backup.include_database
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.backup.overview.settings.data_settings_history"
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       "ui.panel.config.backup.overview.settings.data_settings_only"
                     )}
               </div>
               <div slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.overview.settings.data"
                 )}
               </div>
               <ha-icon-next slot="end"></ha-icon-next>
             </ha-md-list-item>
-            ${isHassio
+            ${ismenuaiio
               ? html`
                   <ha-md-list-item
                     type="link"
@@ -259,7 +259,7 @@ class HaBackupBackupsSummary extends LitElement {
                       ${this._addonsDescription(this.config)}
                     </div>
                     <div slot="supporting-text">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.backup.overview.settings.addons"
                       )}
                     </div>
@@ -276,7 +276,7 @@ class HaBackupBackupsSummary extends LitElement {
                 ${this._locationsDescription(this.config)}
               </div>
               <div slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.overview.settings.locations"
                 )}
               </div>
@@ -286,7 +286,7 @@ class HaBackupBackupsSummary extends LitElement {
         </div>
         <div class="card-actions">
           <ha-button @click=${this._configure}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.overview.settings.configure"
             )}
           </ha-button>

@@ -1,7 +1,7 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { computeStateDomain } from "./compute_state_domain";
 import { UNAVAILABLE_STATES } from "../../data/entity";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { computeDomain } from "./compute_domain";
 import { stringCompare } from "../string/compare";
 
@@ -240,8 +240,8 @@ const FIXED_DOMAIN_ATTRIBUTE_STATES = {
 };
 
 export const getStates = (
-  hass: HomeAssistant,
-  state: HassEntity,
+  menuai: menuai,
+  state: menuaiEntity,
   attribute: string | undefined = undefined
 ): string[] => {
   const domain = computeStateDomain(state);
@@ -274,7 +274,7 @@ export const getStates = (
     case "person":
       if (!attribute) {
         result.push(
-          ...Object.entries(hass.states)
+          ...Object.entries(menuai.states)
             .filter(
               ([entityId, stateObj]) =>
                 computeDomain(entityId) === "zone" &&
@@ -283,7 +283,7 @@ export const getStates = (
             )
             .map(([_entityId, stateObj]) => stateObj.attributes.friendly_name!)
             .sort((zone1, zone2) =>
-              stringCompare(zone1, zone2, hass.locale.language)
+              stringCompare(zone1, zone2, menuai.locale.language)
             )
         );
       }

@@ -124,7 +124,7 @@ gulp.task("copy-translations-app", async () => {
 });
 
 gulp.task("copy-translations-supervisor", async () => {
-  const staticDir = paths.hassio_output_static;
+  const staticDir = paths.menuaiio_output_static;
   copyTranslations(staticDir);
 });
 
@@ -134,7 +134,7 @@ gulp.task("copy-translations-landing-page", async () => {
 });
 
 gulp.task("copy-static-supervisor", async () => {
-  const staticDir = paths.hassio_output_static;
+  const staticDir = paths.menuaiio_output_static;
   copyLocaleData(staticDir);
   copyFonts(staticDir);
 });

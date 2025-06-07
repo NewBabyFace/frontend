@@ -3,11 +3,11 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { isUnavailableState, OFF } from "../data/entity";
 import type { HumidifierEntity } from "../data/humidifier";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-humidifier-state")
 class HaHumidifierState extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: HumidifierEntity;
 
@@ -20,7 +20,7 @@ class HaHumidifierState extends LitElement {
                 ${this._localizeState()}
                 ${this.stateObj.attributes.mode
                   ? html`-
-                    ${this.hass.formatEntityAttributeValue(
+                    ${this.menuai.formatEntityAttributeValue(
                       this.stateObj,
                       "mode"
                     )}`
@@ -32,19 +32,19 @@ class HaHumidifierState extends LitElement {
 
       ${currentStatus && !isUnavailableState(this.stateObj.state)
         ? html`<div class="current">
-            ${this.hass.localize("ui.card.climate.currently")}:
+            ${this.menuai.localize("ui.card.climate.currently")}:
             <div class="unit">${currentStatus}</div>
           </div>`
         : ""}`;
   }
 
   private _computeCurrentStatus(): string | undefined {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return undefined;
     }
 
     if (this.stateObj.attributes.current_humidity != null) {
-      return `${this.hass.formatEntityAttributeValue(
+      return `${this.menuai.formatEntityAttributeValue(
         this.stateObj,
         "current_humidity"
       )}`;
@@ -54,12 +54,12 @@ class HaHumidifierState extends LitElement {
   }
 
   private _computeTarget(): string {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return "";
     }
 
     if (this.stateObj.attributes.humidity != null) {
-      return `${this.hass.formatEntityAttributeValue(
+      return `${this.menuai.formatEntityAttributeValue(
         this.stateObj,
         "humidity"
       )}`;
@@ -70,13 +70,13 @@ class HaHumidifierState extends LitElement {
 
   private _localizeState(): string {
     if (isUnavailableState(this.stateObj.state)) {
-      return this.hass.localize(`state.default.${this.stateObj.state}`);
+      return this.menuai.localize(`state.default.${this.stateObj.state}`);
     }
 
-    const stateString = this.hass.formatEntityState(this.stateObj);
+    const stateString = this.menuai.formatEntityState(this.stateObj);
 
     if (this.stateObj.attributes.action && this.stateObj.state !== OFF) {
-      const actionString = this.hass.formatEntityAttributeValue(
+      const actionString = this.menuai.formatEntityAttributeValue(
         this.stateObj,
         "action"
       );

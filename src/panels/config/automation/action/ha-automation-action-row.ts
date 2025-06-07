@@ -59,7 +59,7 @@ import {
   showPromptDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 import "./types/ha-automation-action-choose";
 import "./types/ha-automation-action-condition";
@@ -122,7 +122,7 @@ const preventDefault = (ev) => ev.preventDefault();
 
 @customElement("ha-automation-action-row")
 export default class HaAutomationActionRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public action!: Action;
 
@@ -197,7 +197,7 @@ export default class HaAutomationActionRow extends LitElement {
         ${this.action.enabled === false
           ? html`
               <div class="disabled-bar">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.actions.disabled"
                 )}
               </div>
@@ -209,7 +209,7 @@ export default class HaAutomationActionRow extends LitElement {
                 <ha-service-icon
                   slot="leading-icon"
                   class="action-icon"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .service=${this.action.action}
                 ></ha-service-icon>
               `
@@ -223,7 +223,7 @@ export default class HaAutomationActionRow extends LitElement {
           <h3 slot="header">
             ${capitalizeFirstLetter(
               describeAction(
-                this.hass,
+                this.menuai,
                 this._entityReg,
                 this._labelReg,
                 this._floorReg,
@@ -238,7 +238,7 @@ export default class HaAutomationActionRow extends LitElement {
           (this.action as NonConditionAction).continue_on_error === true
             ? html`<ha-tooltip
                 slot="icons"
-                .content=${this.hass.localize(
+                .content=${this.menuai.localize(
                   "ui.panel.config.automation.editor.actions.continue_on_error"
                 )}
               >
@@ -255,11 +255,11 @@ export default class HaAutomationActionRow extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-md-menu-item .clickAction=${this._runAction}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.run"
               )}
               <ha-svg-icon slot="start" .path=${mdiPlay}></ha-svg-icon>
@@ -269,7 +269,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._renameAction}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.rename"
               )}
               <ha-svg-icon slot="start" .path=${mdiRenameBox}></ha-svg-icon>
@@ -281,7 +281,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._duplicateAction}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.duplicate"
               )}
               <ha-svg-icon
@@ -294,7 +294,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._copyAction}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.copy"
               )}
               <ha-svg-icon slot="start" .path=${mdiContentCopy}></ha-svg-icon>
@@ -304,7 +304,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._cutAction}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.cut"
               )}
               <ha-svg-icon slot="start" .path=${mdiContentCut}></ha-svg-icon>
@@ -314,7 +314,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._moveUp}
               .disabled=${this.disabled || this.first}
             >
-              ${this.hass.localize("ui.panel.config.automation.editor.move_up")}
+              ${this.menuai.localize("ui.panel.config.automation.editor.move_up")}
               <ha-svg-icon slot="start" .path=${mdiArrowUp}></ha-svg-icon
             ></ha-md-menu-item>
 
@@ -322,7 +322,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._moveDown}
               .disabled=${this.disabled || this.last}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.move_down"
               )}
               <ha-svg-icon slot="start" .path=${mdiArrowDown}></ha-svg-icon
@@ -332,7 +332,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._toggleYamlMode}
               .disabled=${!this._uiModeAvailable}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.automation.editor.edit_${!yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon slot="start" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -345,10 +345,10 @@ export default class HaAutomationActionRow extends LitElement {
               .disabled=${this.disabled}
             >
               ${this.action.enabled === false
-                ? this.hass.localize(
+                ? this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.enable"
                   )
-                : this.hass.localize(
+                : this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.disable"
                   )}
               <ha-svg-icon
@@ -363,7 +363,7 @@ export default class HaAutomationActionRow extends LitElement {
               .clickAction=${this._onDelete}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.delete"
               )}
               <ha-svg-icon
@@ -383,7 +383,7 @@ export default class HaAutomationActionRow extends LitElement {
             ${this._warnings
               ? html`<ha-alert
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.errors.config.editor_not_supported"
                   )}
                 >
@@ -395,7 +395,7 @@ export default class HaAutomationActionRow extends LitElement {
                         )}
                       </ul>`
                     : ""}
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.errors.config.edit_in_yaml_supported"
                   )}
                 </ha-alert>`
@@ -404,13 +404,13 @@ export default class HaAutomationActionRow extends LitElement {
               ? html`
                   ${type === undefined
                     ? html`
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.editor.actions.unsupported_action"
                         )}
                       `
                     : ""}
                   <ha-yaml-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${this.action}
                     .readOnly=${this.disabled}
                     @value-changed=${this._onYamlChange}
@@ -422,7 +422,7 @@ export default class HaAutomationActionRow extends LitElement {
                     @value-changed=${this._onUiChanged}
                   >
                     ${dynamicElement(`ha-automation-action-${type}`, {
-                      hass: this.hass,
+                      menuai: this.menuai,
                       action: this.action,
                       narrow: this.narrow,
                       disabled: this.disabled,
@@ -439,7 +439,7 @@ export default class HaAutomationActionRow extends LitElement {
     // Prevent possible parent action-row from switching to yamlMode
     ev.stopPropagation();
 
-    this._warnings = handleStructError(this.hass, ev.detail).warnings;
+    this._warnings = handleStructError(this.menuai, ev.detail).warnings;
     if (!this._yamlMode) {
       this._yamlMode = true;
     }
@@ -462,13 +462,13 @@ export default class HaAutomationActionRow extends LitElement {
   };
 
   private _runAction = async () => {
-    const validated = await validateConfig(this.hass, {
+    const validated = await validateConfig(this.menuai, {
       actions: this.action,
     });
 
     if (!validated.actions.valid) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.automation.editor.actions.invalid_action"
         ),
         text: validated.actions.error,
@@ -477,10 +477,10 @@ export default class HaAutomationActionRow extends LitElement {
     }
 
     try {
-      await callExecuteScript(this.hass, this.action);
+      await callExecuteScript(this.menuai, this.action);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.automation.editor.actions.run_action_error"
         ),
         text: err.message || err,
@@ -489,7 +489,7 @@ export default class HaAutomationActionRow extends LitElement {
     }
 
     showToast(this, {
-      message: this.hass.localize(
+      message: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.run_action_success"
       ),
     });
@@ -497,14 +497,14 @@ export default class HaAutomationActionRow extends LitElement {
 
   private _onDelete = () => {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.delete_confirm_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: () => {
         fireEvent(this, "value-changed", { value: null });
@@ -543,16 +543,16 @@ export default class HaAutomationActionRow extends LitElement {
 
   private _renameAction = async (): Promise<void> => {
     const alias = await showPromptDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.change_alias"
       ),
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.config.automation.editor.actions.alias"
       ),
       inputType: "string",
       placeholder: capitalizeFirstLetter(
         describeAction(
-          this.hass,
+          this.menuai,
           this._entityReg,
           this._labelReg,
           this._floorReg,
@@ -562,7 +562,7 @@ export default class HaAutomationActionRow extends LitElement {
         )
       ),
       defaultValue: this.action.alias,
-      confirmText: this.hass.localize("ui.common.submit"),
+      confirmText: this.menuai.localize("ui.common.submit"),
     });
     if (alias !== null) {
       const value = { ...this.action };

@@ -2,39 +2,39 @@ import {
   applyThemesOnElement,
   invalidateThemeCache,
 } from "../common/dom/apply_themes_on_element";
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import { subscribeThemes } from "../data/ws-themes";
-import type { Constructor, HomeAssistant } from "../types";
+import type { Constructor, menuai } from "../types";
 import { storeState } from "../util/ha-pref-storage";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 declare global {
   // for add event listener
   interface HTMLElementEventMap {
-    settheme: HASSDomEvent<Partial<HomeAssistant["selectedTheme"]>>;
+    settheme: menuaiDomEvent<Partial<menuai["selectedTheme"]>>;
   }
-  interface HASSDomEvents {
-    settheme: Partial<HomeAssistant["selectedTheme"]>;
+  interface menuaiDomEvents {
+    settheme: Partial<menuai["selectedTheme"]>;
   }
 }
 
 const mql = matchMedia("(prefers-color-scheme: dark)");
 
-export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
+export default <T extends Constructor<menuaiBaseEl>>(superClass: T) =>
   class extends superClass {
     private _themeApplied = false;
 
     protected firstUpdated(changedProps) {
       super.firstUpdated(changedProps);
       this.addEventListener("settheme", (ev) => {
-        this._updateHass({
+        this._updatemenuai({
           selectedTheme: {
-            ...this.hass!.selectedTheme!,
+            ...this.menuai!.selectedTheme!,
             ...ev.detail,
           },
         });
         this._applyTheme(mql.matches);
-        storeState(this.hass!);
+        storeState(this.menuai!);
       });
       mql.addListener((ev) => this._applyTheme(ev.matches));
       if (!this._themeApplied && mql.matches) {
@@ -54,47 +54,47 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
       }
     }
 
-    protected hassConnected() {
-      super.hassConnected();
+    protected menuaiConnected() {
+      super.menuaiConnected();
 
-      subscribeThemes(this.hass!.connection, (themes) => {
+      subscribeThemes(this.menuai!.connection, (themes) => {
         this._themeApplied = true;
-        this._updateHass({ themes });
+        this._updatemenuai({ themes });
         invalidateThemeCache();
         this._applyTheme(mql.matches);
       });
     }
 
     private _applyTheme(darkPreferred: boolean) {
-      if (!this.hass) {
+      if (!this.menuai) {
         return;
       }
 
-      let themeSettings: Partial<HomeAssistant["selectedTheme"]> =
-        this.hass.config.recovery_mode || this.hass.config.safe_mode
+      let themeSettings: Partial<menuai["selectedTheme"]> =
+        this.menuai.config.recovery_mode || this.menuai.config.safe_mode
           ? {
-              ...this.hass.selectedTheme,
+              ...this.menuai.selectedTheme,
               theme: "default",
-              primaryColor: this.hass.config.recovery_mode
+              primaryColor: this.menuai.config.recovery_mode
                 ? "#db4437"
                 : "#e48629",
-              accentColor: this.hass.config.recovery_mode
+              accentColor: this.menuai.config.recovery_mode
                 ? "#ffca28"
                 : "#db4437",
             }
-          : this.hass.selectedTheme;
+          : this.menuai.selectedTheme;
 
       let darkMode =
         themeSettings?.dark === undefined ? darkPreferred : themeSettings.dark;
 
       const themeName =
         themeSettings?.theme ||
-        (darkMode && this.hass.themes.default_dark_theme
-          ? this.hass.themes.default_dark_theme
-          : this.hass.themes.default_theme);
+        (darkMode && this.menuai.themes.default_dark_theme
+          ? this.menuai.themes.default_dark_theme
+          : this.menuai.themes.default_theme);
 
       const selectedTheme = themeName
-        ? this.hass.themes.themes[themeName]
+        ? this.menuai.themes.themes[themeName]
         : undefined;
 
       if (selectedTheme && darkMode && !selectedTheme.modes) {
@@ -102,21 +102,21 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
       }
 
       themeSettings = { ...themeSettings, dark: darkMode };
-      this._updateHass({
-        themes: { ...this.hass.themes!, theme: themeName },
+      this._updatemenuai({
+        themes: { ...this.menuai.themes!, theme: themeName },
       });
 
       applyThemesOnElement(
         document.documentElement,
-        this.hass.themes,
+        this.menuai.themes,
         themeName,
         themeSettings,
         true
       );
 
-      if (darkMode !== this.hass.themes.darkMode) {
-        this._updateHass({
-          themes: { ...this.hass.themes!, darkMode },
+      if (darkMode !== this.menuai.themes.darkMode) {
+        this._updatemenuai({
+          themes: { ...this.menuai.themes!, darkMode },
         });
 
         const schemeMeta = document.querySelector("meta[name=color-scheme]");
@@ -149,6 +149,6 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) =>
         themeMeta.setAttribute("content", themeColor);
       }
 
-      this.hass!.auth.external?.fireMessage({ type: "theme-update" });
+      this.menuai!.auth.external?.fireMessage({ type: "theme-update" });
     }
   };

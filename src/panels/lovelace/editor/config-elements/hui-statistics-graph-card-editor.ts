@@ -32,7 +32,7 @@ import {
   isExternalStatistic,
   statisticsMetaHasType,
 } from "../../../../data/recorder";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { StatisticsGraphCardConfig } from "../../cards/types";
 import { processConfigEntities } from "../../common/process-config-entities";
 import type { LovelaceCardEditor } from "../../types";
@@ -90,7 +90,7 @@ export class HuiStatisticsGraphCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StatisticsGraphCardConfig;
 
@@ -108,7 +108,7 @@ export class HuiStatisticsGraphCardEditor
 
   private _getStatisticsMetaData = async (statisticIds?: string[]) => {
     this._metaDatas = await getStatisticMetadata(
-      this.hass!,
+      this.menuai!,
       statisticIds || []
     );
   };
@@ -135,7 +135,7 @@ export class HuiStatisticsGraphCardEditor
       const units = new Set<string>();
       metaDatas?.forEach((metaData) => {
         const unit = getDisplayUnit(
-          this.hass!,
+          this.menuai!,
           metaData.statistic_id,
           metaData
         );
@@ -278,12 +278,12 @@ export class HuiStatisticsGraphCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this._configEntities,
       this._metaDatas,
       this._config!.min_y_axis !== undefined ||
@@ -309,7 +309,7 @@ export class HuiStatisticsGraphCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -317,11 +317,11 @@ export class HuiStatisticsGraphCardEditor
       ></ha-form>
         <ha-statistics-picker
           allow-custom-entity
-          .hass=${this.hass}
-          .placeholder=${this.hass!.localize(
+          .menuai=${this.menuai}
+          .placeholder=${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.statistics-graph.pick_statistic"
           )}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.statistics-graph.picked_statistic"
           )}
           .includeStatisticsUnitOfMeasurement=${statisticsUnit}
@@ -359,7 +359,7 @@ export class HuiStatisticsGraphCardEditor
     }
     const metadata =
       config.stat_types || config.unit
-        ? await getStatisticMetadata(this.hass!, newEntityIds)
+        ? await getStatisticMetadata(this.menuai!, newEntityIds)
         : undefined;
     if (config.stat_types && config.entities.length) {
       config.stat_types = ensureArray(config.stat_types).filter((stat_type) =>
@@ -373,7 +373,7 @@ export class HuiStatisticsGraphCardEditor
       config.unit &&
       !metadata!.some(
         (metaData) =>
-          getDisplayUnit(this.hass!, metaData?.statistic_id, metaData) ===
+          getDisplayUnit(this.menuai!, metaData?.statistic_id, metaData) ===
           config.unit
       )
     ) {
@@ -395,11 +395,11 @@ export class HuiStatisticsGraphCardEditor
       case "min_y_axis":
       case "max_y_axis":
       case "fit_y_data":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.statistics-graph.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

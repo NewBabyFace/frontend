@@ -4,7 +4,7 @@ import { any, assert, literal, object, optional, string } from "superstruct";
 import { mdiGestureTap } from "@mdi/js";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../../../../../components/ha-form/ha-form";
 import type { LovelacePictureElementEditor } from "../../../types";
 import type { StateBadgeElementConfig } from "../../../elements/types";
@@ -70,7 +70,7 @@ export class HuiStateBadgeElementEditor
   extends LitElement
   implements LovelacePictureElementEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StateBadgeElementConfig;
 
@@ -80,13 +80,13 @@ export class HuiStateBadgeElementEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -100,10 +100,10 @@ export class HuiStateBadgeElementEditor
   }
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     ) ||
-    this.hass!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
+    this.menuai!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
     schema.name;
 }
 

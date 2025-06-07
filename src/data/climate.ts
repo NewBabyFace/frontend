@@ -9,8 +9,8 @@ import {
   mdiWaterPercent,
 } from "@mdi/js";
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 
 export const HVAC_MODES = [
@@ -37,8 +37,8 @@ export type HvacAction =
   | "off"
   | "preheating";
 
-export type ClimateEntity = HassEntityBase & {
-  attributes: HassEntityAttributeBase & {
+export type ClimateEntity = menuaiEntityBase & {
+  attributes: menuaiEntityAttributeBase & {
     hvac_mode: HvacMode;
     hvac_modes: HvacMode[];
     hvac_action?: HvacAction;

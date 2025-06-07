@@ -1,7 +1,7 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
-  HassServiceTarget,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
+  menuaiServiceTarget,
 } from "home-assistant-js-websocket";
 import type { Describe } from "superstruct";
 import {
@@ -17,7 +17,7 @@ import {
 } from "superstruct";
 import { arrayLiteralIncludes } from "../common/array/literal-includes";
 import { navigate } from "../common/navigate";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type {
   Condition,
   ShorthandAndCondition,
@@ -73,8 +73,8 @@ const playMediaActionStruct: Describe<PlayMediaAction> = assign(
   })
 );
 
-export interface ScriptEntity extends HassEntityBase {
-  attributes: HassEntityAttributeBase & {
+export interface ScriptEntity extends menuaiEntityBase {
+  attributes: menuaiEntityAttributeBase & {
     last_triggered: string;
     mode: (typeof MODES)[number];
     current?: number;
@@ -126,7 +126,7 @@ export interface ServiceAction extends BaseAction {
   action?: string;
   service_template?: string;
   entity_id?: string;
-  target?: HassServiceTarget;
+  target?: menuaiServiceTarget;
   data?: Record<string, unknown>;
   response_variable?: string;
   metadata?: Record<string, unknown>;
@@ -290,10 +290,10 @@ export interface ActionTypes {
 export type ActionType = keyof ActionTypes;
 
 export const triggerScript = (
-  hass: HomeAssistant,
+  menuai: menuai,
   scriptId: string,
   variables?: Record<string, unknown>
-) => hass.callService("script", scriptId, variables);
+) => menuai.callService("script", scriptId, variables);
 
 export const canRun = (state: ScriptEntity) => {
   if (state.state === "off") {
@@ -309,16 +309,16 @@ export const canRun = (state: ScriptEntity) => {
   return false;
 };
 
-export const deleteScript = (hass: HomeAssistant, objectId: string) =>
-  hass.callApi("DELETE", `config/script/config/${objectId}`);
+export const deleteScript = (menuai: menuai, objectId: string) =>
+  menuai.callApi("DELETE", `config/script/config/${objectId}`);
 
 let inititialScriptEditorData: Partial<ScriptConfig> | undefined;
 
-export const fetchScriptFileConfig = (hass: HomeAssistant, objectId: string) =>
-  hass.callApi<ScriptConfig>("GET", `config/script/config/${objectId}`);
+export const fetchScriptFileConfig = (menuai: menuai, objectId: string) =>
+  menuai.callApi<ScriptConfig>("GET", `config/script/config/${objectId}`);
 
-export const getScriptStateConfig = (hass: HomeAssistant, entity_id: string) =>
-  hass.callWS<{ config: ScriptConfig }>({
+export const getScriptStateConfig = (menuai: menuai, entity_id: string) =>
+  menuai.callWS<{ config: ScriptConfig }>({
     type: "script/config",
     entity_id,
   });
@@ -396,11 +396,11 @@ export const getActionType = (action: Action): ActionType => {
   return "unknown";
 };
 
-export const hasScriptFields = (
-  hass: HomeAssistant,
+export const menuaicriptFields = (
+  menuai: menuai,
   entityId: string
 ): boolean => {
-  const fields = hass.services.script[computeObjectId(entityId)]?.fields;
+  const fields = menuai.services.script[computeObjectId(entityId)]?.fields;
   return fields !== undefined && Object.keys(fields).length > 0;
 };
 

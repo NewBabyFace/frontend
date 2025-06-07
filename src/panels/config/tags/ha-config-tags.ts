@@ -33,9 +33,9 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { configSections } from "../ha-panel-config";
 import { showTagDetailDialog } from "./show-dialog-tag-detail";
@@ -48,7 +48,7 @@ export interface TagRowData extends Tag {
 
 @customElement("ha-config-tags")
 export class HaConfigTags extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -59,7 +59,7 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
   @state() private _tags: Tag[] = [];
 
   private get _canWriteTags() {
-    return this.hass.auth.external?.config.canWriteTag;
+    return this.menuai.auth.external?.config.canWriteTag;
   }
 
   @state()
@@ -95,11 +95,11 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
         template: (tag) => html`
           ${tag.last_scanned_datetime
             ? html`<ha-relative-time
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .datetime=${tag.last_scanned_datetime}
                 capitalize
               ></ha-relative-time>`
-            : this.hass.localize("ui.panel.config.tag.never_scanned")}
+            : this.menuai.localize("ui.panel.config.tag.never_scanned")}
         `,
       },
     };
@@ -113,7 +113,7 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
           html`<ha-icon-button
             .tag=${tag}
             @click=${this._handleWriteClick}
-            .label=${this.hass.localize("ui.panel.config.tag.write")}
+            .label=${this.menuai.localize("ui.panel.config.tag.write")}
             .path=${mdiMemoryArrowDown}
           ></ha-icon-button>`,
       };
@@ -127,18 +127,18 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
       type: "overflow-menu",
       template: (tag) => html`
         <ha-icon-overflow-menu
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           narrow
           .items=${[
             {
-              label: this.hass.localize(
+              label: this.menuai.localize(
                 "ui.panel.config.tag.create_automation"
               ),
               path: mdiRobot,
               action: () => this._createAutomation(tag),
             },
             {
-              label: this.hass.localize("ui.common.delete"),
+              label: this.menuai.localize("ui.common.delete"),
               path: mdiDelete,
               action: () => this._removeTag(tag),
               warning: true,
@@ -166,9 +166,9 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
     this._fetchTags();
   }
 
-  protected hassSubscribe() {
+  protected menuaiSubscribe() {
     return [
-      this.hass.connection.subscribeEvents<TagScannedEvent>((ev) => {
+      this.menuai.connection.subscribeEvents<TagScannedEvent>((ev) => {
         const foundTag = this._tags.find((tag) => tag.id === ev.data.tag_id);
         if (!foundTag) {
           this._fetchTags();
@@ -182,15 +182,15 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
 
   protected render() {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${configSections.tags}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._data(this._tags)}
-        .noDataText=${this.hass.localize("ui.panel.config.tag.no_tags")}
+        .noDataText=${this.menuai.localize("ui.panel.config.tag.no_tags")}
         .filter=${this._filter}
         @search-changed=${this._handleSearchChange}
         has-fab
@@ -201,18 +201,18 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
         <ha-icon-button
           slot="toolbar-icon"
           @click=${this._showHelp}
-          .label=${this.hass.localize("ui.common.help")}
+          .label=${this.menuai.localize("ui.common.help")}
           .path=${mdiHelpCircle}
         ></ha-icon-button>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize("ui.panel.config.tag.add_tag")}
+          .label=${this.menuai.localize("ui.panel.config.tag.add_tag")}
           extended
           @click=${this._addTag}
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -221,7 +221,7 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
 
   private _createAutomation = (tag: Tag) => {
     const data = {
-      alias: this.hass.localize("ui.panel.config.tag.automation_title", {
+      alias: this.menuai.localize("ui.panel.config.tag.automation_title", {
         name: tag.name || tag.id,
       }),
       trigger: [{ trigger: "tag", tag_id: tag.id } as TagTrigger],
@@ -236,15 +236,15 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
 
   private _showHelp() {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.panel.config.tag.caption"),
+      title: this.menuai.localize("ui.panel.config.tag.caption"),
       text: html`
         <p>
-          ${this.hass.localize("ui.panel.config.tag.detail.usage", {
+          ${this.menuai.localize("ui.panel.config.tag.detail.usage", {
             companion_link: html`<a
               href="https://companion.home-assistant.io/"
               target="_blank"
               rel="noreferrer"
-              >${this.hass!.localize(
+              >${this.menuai!.localize(
                 "ui.panel.config.tag.detail.companion_apps"
               )}</a
             >`,
@@ -252,11 +252,11 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
         </p>
         <p>
           <a
-            href=${documentationUrl(this.hass, "/integrations/tag/")}
+            href=${documentationUrl(this.menuai, "/integrations/tag/")}
             target="_blank"
             rel="noreferrer"
           >
-            ${this.hass.localize("ui.panel.config.tag.learn_more")}
+            ${this.menuai.localize("ui.panel.config.tag.learn_more")}
           </a>
         </p>
       `,
@@ -264,11 +264,11 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
   }
 
   private async _fetchTags() {
-    this._tags = await fetchTags(this.hass);
+    this._tags = await fetchTags(this.menuai);
   }
 
   private _openWrite(tag: Tag) {
-    this.hass.auth.external!.fireMessage({
+    this.menuai.auth.external!.fireMessage({
       type: "tag/write",
       payload: { name: tag.name || null, tag: tag.id },
     });
@@ -294,7 +294,7 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
     values: Partial<UpdateTagParams>,
     tagId?: string
   ): Promise<Tag> {
-    const newTag = await createTag(this.hass, values, tagId);
+    const newTag = await createTag(this.menuai, values, tagId);
     this._tags = [...this._tags, newTag];
     return newTag;
   }
@@ -303,7 +303,7 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
     selectedTag: Tag,
     values: Partial<UpdateTagParams>
   ): Promise<Tag> {
-    const updated = await updateTag(this.hass, selectedTag.id, values);
+    const updated = await updateTag(this.menuai, selectedTag.id, values);
     this._tags = this._tags.map((tag) =>
       tag.id === selectedTag.id ? updated : tag
     );
@@ -313,19 +313,19 @@ export class HaConfigTags extends SubscribeMixin(LitElement) {
   private async _removeTag(selectedTag: Tag) {
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass!.localize("ui.panel.config.tag.confirm_delete_title"),
-        text: this.hass.localize("ui.panel.config.tag.confirm_delete", {
+        title: this.menuai!.localize("ui.panel.config.tag.confirm_delete_title"),
+        text: this.menuai.localize("ui.panel.config.tag.confirm_delete", {
           tag: selectedTag.name || selectedTag.id,
         }),
-        dismissText: this.hass!.localize("ui.common.cancel"),
-        confirmText: this.hass!.localize("ui.common.delete"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
+        confirmText: this.menuai!.localize("ui.common.delete"),
         destructive: true,
       }))
     ) {
       return false;
     }
     try {
-      await deleteTag(this.hass, selectedTag.id);
+      await deleteTag(this.menuai, selectedTag.id);
       this._tags = this._tags.filter((tag) => tag.id !== selectedTag.id);
       return true;
     } catch (_err: any) {

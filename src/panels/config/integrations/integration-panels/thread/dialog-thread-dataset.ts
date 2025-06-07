@@ -1,14 +1,14 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../../../common/dom/fire_event";
-import type { HassDialog } from "../../../../../dialogs/make-dialog-manager";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuaiDialog } from "../../../../../dialogs/make-dialog-manager";
+import type { menuai } from "../../../../../types";
 import type { DialogThreadDatasetParams } from "./show-dialog-thread-dataset";
 import { createCloseHeading } from "../../../../../components/ha-dialog";
 
 @customElement("ha-dialog-thread-dataset")
-class DialogThreadDataset extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogThreadDataset extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DialogThreadDatasetParams;
 
@@ -40,7 +40,7 @@ class DialogThreadDataset extends LitElement implements HassDialog {
     return html`<ha-dialog
       open
       @closed=${this.closeDialog}
-      .heading=${createCloseHeading(this.hass, network.name)}
+      .heading=${createCloseHeading(this.menuai, network.name)}
     >
       <div>
         Network name: ${dataset.network_name}<br />

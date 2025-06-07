@@ -1,6 +1,6 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./ha-form";
 import type {
   HaFormDataContainer,
@@ -11,7 +11,7 @@ import type {
 
 @customElement("ha-form-expandable")
 export class HaFormExpendable extends LitElement implements HaFormElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data!: HaFormDataContainer;
 
@@ -89,7 +89,7 @@ export class HaFormExpendable extends LitElement implements HaFormElement {
         <div class="content">
           ${this._renderDescription()}
           <ha-form
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this.data}
             .schema=${this.schema.schema}
             .disabled=${this.disabled}

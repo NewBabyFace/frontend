@@ -9,7 +9,7 @@ import { classMap } from "lit/directives/class-map";
 import memoizeOne from "memoize-one";
 import { atLeastVersion } from "../../../src/common/config/version";
 import { relativeTime } from "../../../src/common/datetime/relative_time";
-import type { HASSDomEvent } from "../../../src/common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../src/common/dom/fire_event";
 import type {
   DataTableColumnContainer,
   RowClickedEvent,
@@ -20,38 +20,38 @@ import "../../../src/components/ha-fab";
 import "../../../src/components/ha-icon-button";
 import "../../../src/components/ha-list-item";
 import "../../../src/components/ha-svg-icon";
-import type { HassioBackup } from "../../../src/data/hassio/backup";
+import type { menuaiioBackup } from "../../../src/data/menuaiio/backup";
 import {
-  fetchHassioBackups,
+  fetchmenuaiioBackups,
   friendlyFolderName,
-  reloadHassioBackups,
+  reloadmenuaiioBackups,
   removeBackup,
-} from "../../../src/data/hassio/backup";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
+} from "../../../src/data/menuaiio/backup";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../src/dialogs/generic/show-dialog-box";
-import "../../../src/layouts/hass-loading-screen";
-import "../../../src/layouts/hass-tabs-subpage-data-table";
-import type { HaTabsSubpageDataTable } from "../../../src/layouts/hass-tabs-subpage-data-table";
+import "../../../src/layouts/menuai-loading-screen";
+import "../../../src/layouts/menuai-tabs-subpage-data-table";
+import type { HaTabsSubpageDataTable } from "../../../src/layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../src/types";
+import type { menuai, Route } from "../../../src/types";
 import { showBackupUploadDialog } from "../dialogs/backup/show-dialog-backup-upload";
-import { showHassioBackupLocationDialog } from "../dialogs/backup/show-dialog-hassio-backu-location";
-import { showHassioBackupDialog } from "../dialogs/backup/show-dialog-hassio-backup";
-import { showHassioCreateBackupDialog } from "../dialogs/backup/show-dialog-hassio-create-backup";
-import { supervisorTabs } from "../hassio-tabs";
-import { hassioStyle } from "../resources/hassio-style";
+import { showmenuaiioBackupLocationDialog } from "../dialogs/backup/show-dialog-menuaiio-backu-location";
+import { showmenuaiioBackupDialog } from "../dialogs/backup/show-dialog-menuaiio-backup";
+import { showmenuaiioCreateBackupDialog } from "../dialogs/backup/show-dialog-menuaiio-create-backup";
+import { supervisorTabs } from "../menuaiio-tabs";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
-type BackupItem = HassioBackup & {
+type BackupItem = menuaiioBackup & {
   secondary: string;
 };
 
-@customElement("hassio-backups")
-export class HassioBackups extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-backups")
+export class menuaiioBackups extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -63,29 +63,29 @@ export class HassioBackups extends LitElement {
 
   @state() private _selectedBackups: string[] = [];
 
-  @state() private _backups?: HassioBackup[] = [];
+  @state() private _backups?: menuaiioBackup[] = [];
 
   @state() private _isLoading = false;
 
-  @query("hass-tabs-subpage-data-table", true)
+  @query("menuai-tabs-subpage-data-table", true)
   private _dataTable!: HaTabsSubpageDataTable;
 
   private _firstUpdatedCalled = false;
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass && this._firstUpdatedCalled) {
+    if (this.menuai && this._firstUpdatedCalled) {
       this._fetchBackups();
     }
   }
 
-  private _computeBackupContent = (backup: HassioBackup): string => {
+  private _computeBackupContent = (backup: menuaiioBackup): string => {
     if (backup.type === "full") {
       return this.supervisor.localize("backup.full_backup");
     }
     const content: string[] = [];
-    if (backup.content.homeassistant) {
-      content.push("Home Assistant");
+    if (backup.content.menuai) {
+      content.push("MenuAI");
     }
     if (backup.content.folders.length !== 0) {
       for (const folder of backup.content.folders) {
@@ -107,7 +107,7 @@ export class HassioBackups extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
-    if (this.hass && this.isConnected) {
+    if (this.menuai && this.isConnected) {
       this._fetchBackups();
     }
     this._firstUpdatedCalled = true;
@@ -147,7 +147,7 @@ export class HassioBackups extends LitElement {
         filterable: true,
         sortable: true,
         template: (backup) =>
-          relativeTime(new Date(backup.date), this.hass.locale),
+          relativeTime(new Date(backup.date), this.menuai.locale),
       },
       secondary: {
         title: "",
@@ -157,7 +157,7 @@ export class HassioBackups extends LitElement {
     })
   );
 
-  private _backupData = memoizeOne((backups: HassioBackup[]): BackupItem[] =>
+  private _backupData = memoizeOne((backups: menuaiioBackup[]): BackupItem[] =>
     backups.map((backup) => ({
       ...backup,
       secondary: this._computeBackupContent(backup),
@@ -170,23 +170,23 @@ export class HassioBackups extends LitElement {
     }
 
     if (this._isLoading) {
-      return html`<hass-loading-screen
+      return html`<menuai-loading-screen
         .message=${this.supervisor.localize("backup.loading_backups")}
-      ></hass-loading-screen>`;
+      ></menuai-loading-screen>`;
     }
 
     return html`
-      <hass-tabs-subpage-data-table
-        .tabs=${atLeastVersion(this.hass.config.version, 2022, 5)
+      <menuai-tabs-subpage-data-table
+        .tabs=${atLeastVersion(this.menuai.config.version, 2022, 5)
           ? [
               {
                 translationKey: "panel.backups",
-                path: `/hassio/backups`,
+                path: `/menuaiio/backups`,
                 iconPath: mdiBackupRestore,
               },
             ]
-          : supervisorTabs(this.hass)}
-        .hass=${this.hass}
+          : supervisorTabs(this.menuai)}
+        .menuai=${this.menuai}
         .localizeFunc=${this.supervisor.localize}
         .searchLabel=${this.supervisor.localize("backup.search")}
         .noDataText=${this.supervisor.localize("backup.no_backups")}
@@ -200,8 +200,8 @@ export class HassioBackups extends LitElement {
         clickable
         selectable
         has-fab
-        .mainPage=${!atLeastVersion(this.hass.config.version, 2021, 12)}
-        back-path=${atLeastVersion(this.hass.config.version, 2022, 5)
+        .mainPage=${!atLeastVersion(this.menuai.config.version, 2021, 12)}
+        back-path=${atLeastVersion(this.menuai.config.version, 2022, 5)
           ? "/config/system"
           : "/config"}
         supervisor
@@ -218,7 +218,7 @@ export class HassioBackups extends LitElement {
           <ha-list-item>
             ${this.supervisor.localize("dialog.backup_location.title")}
           </ha-list-item>
-          ${atLeastVersion(this.hass.config.version, 0, 116)
+          ${atLeastVersion(this.menuai.config.version, 0, 116)
             ? html`<ha-list-item>
                 ${this.supervisor.localize("backup.upload_backup")}
               </ha-list-item>`
@@ -270,7 +270,7 @@ export class HassioBackups extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -280,7 +280,7 @@ export class HassioBackups extends LitElement {
         this._fetchBackups();
         break;
       case 1:
-        showHassioBackupLocationDialog(this, { supervisor: this.supervisor });
+        showmenuaiioBackupLocationDialog(this, { supervisor: this.supervisor });
         break;
       case 2:
         this._showUploadBackupDialog();
@@ -289,7 +289,7 @@ export class HassioBackups extends LitElement {
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selectedBackups = ev.detail.value;
   }
@@ -297,7 +297,7 @@ export class HassioBackups extends LitElement {
   private _showUploadBackupDialog() {
     showBackupUploadDialog(this, {
       showBackup: (slug: string) =>
-        showHassioBackupDialog(this, {
+        showmenuaiioBackupDialog(this, {
           slug,
           supervisor: this.supervisor,
           onDelete: () => this._fetchBackups(),
@@ -308,8 +308,8 @@ export class HassioBackups extends LitElement {
 
   private async _fetchBackups() {
     this._isLoading = true;
-    await reloadHassioBackups(this.hass);
-    this._backups = await fetchHassioBackups(this.hass);
+    await reloadmenuaiioBackups(this.menuai);
+    this._backups = await fetchmenuaiioBackups(this.menuai);
     this._isLoading = false;
   }
 
@@ -329,7 +329,7 @@ export class HassioBackups extends LitElement {
 
     try {
       await Promise.all(
-        this._selectedBackups.map((slug) => removeBackup(this.hass, slug))
+        this._selectedBackups.map((slug) => removeBackup(this.menuai, slug))
       );
     } catch (err: any) {
       showAlertDialog(this, {
@@ -342,9 +342,9 @@ export class HassioBackups extends LitElement {
     this._dataTable.clearSelection();
   }
 
-  private _handleRowClicked(ev: HASSDomEvent<RowClickedEvent>) {
+  private _handleRowClicked(ev: menuaiDomEvent<RowClickedEvent>) {
     const slug = ev.detail.id;
-    showHassioBackupDialog(this, {
+    showmenuaiioBackupDialog(this, {
       slug,
       supervisor: this.supervisor,
       onDelete: () => this._fetchBackups(),
@@ -361,7 +361,7 @@ export class HassioBackups extends LitElement {
       });
       return;
     }
-    showHassioCreateBackupDialog(this, {
+    showmenuaiioCreateBackupDialog(this, {
       supervisor: this.supervisor!,
       onCreate: () => this._fetchBackups(),
     });
@@ -370,7 +370,7 @@ export class HassioBackups extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         :host {
           color: var(--primary-text-color);
@@ -419,6 +419,6 @@ export class HassioBackups extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-backups": HassioBackups;
+    "menuaiio-backups": menuaiioBackups;
   }
 }

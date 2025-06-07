@@ -6,13 +6,13 @@ import { stopPropagation } from "../common/dom/stop_propagation";
 import { stringCompare } from "../common/string/compare";
 import type { Blueprint, BlueprintDomain, Blueprints } from "../data/blueprint";
 import { fetchBlueprints } from "../data/blueprint";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-select";
 
 @customElement("ha-blueprint-picker")
 class HaBluePrintPicker extends LitElement {
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @property() public label?: string;
 
@@ -43,18 +43,18 @@ class HaBluePrintPicker extends LitElement {
         path,
       }));
     return result.sort((a, b) =>
-      stringCompare(a.name, b.name, this.hass!.locale.language)
+      stringCompare(a.name, b.name, this.menuai!.locale.language)
     );
   });
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
     return html`
       <ha-select
         .label=${this.label ||
-        this.hass.localize("ui.components.blueprint-picker.select_blueprint")}
+        this.menuai.localize("ui.components.blueprint-picker.select_blueprint")}
         fixedMenuPosition
         naturalMenuWidth
         .value=${this.value}
@@ -76,7 +76,7 @@ class HaBluePrintPicker extends LitElement {
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
     if (this.blueprints === undefined) {
-      fetchBlueprints(this.hass!, this.domain).then((blueprints) => {
+      fetchBlueprints(this.menuai!, this.domain).then((blueprints) => {
         this.blueprints = blueprints;
       });
     }

@@ -37,7 +37,7 @@ class HaLandingPage extends LandingPageBaseElement {
   @state() private _coreCheckActive = false;
 
   private _mobileApp =
-    extractSearchParam("redirect_uri") === "homeassistant://auth-callback";
+    extractSearchParam("redirect_uri") === "menuai://auth-callback";
 
   render() {
     const networkIssue = this._networkInfo && !this._networkInfo.host_internet;

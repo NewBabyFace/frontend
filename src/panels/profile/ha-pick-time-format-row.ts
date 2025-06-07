@@ -8,11 +8,11 @@ import "../../components/ha-list-item";
 import "../../components/ha-select";
 import "../../components/ha-settings-row";
 import { TimeFormat } from "../../data/translation";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-pick-time-format-row")
 class TimeFormatRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -21,17 +21,17 @@ class TimeFormatRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.time_format.header")}
+          ${this.menuai.localize("ui.panel.profile.time_format.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.time_format.description")}
+          ${this.menuai.localize("ui.panel.profile.time_format.description")}
         </span>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.profile.time_format.dropdown_label"
           )}
-          .disabled=${this.hass.locale === undefined}
-          .value=${this.hass.locale.time_format}
+          .disabled=${this.menuai.locale === undefined}
+          .value=${this.menuai.locale.time_format}
           @selected=${this._handleFormatSelection}
           naturalMenuWidth
         >
@@ -39,12 +39,12 @@ class TimeFormatRow extends LitElement {
             const formattedTime = formatTime(
               date,
               {
-                ...this.hass.locale,
+                ...this.menuai.locale,
                 time_format: format,
               },
-              this.hass.config
+              this.menuai.config
             );
-            const value = this.hass.localize(
+            const value = this.menuai.localize(
               `ui.panel.profile.time_format.formats.${format}`
             );
             return html`<ha-list-item .value=${format} twoline>
@@ -58,7 +58,7 @@ class TimeFormatRow extends LitElement {
   }
 
   private async _handleFormatSelection(ev) {
-    fireEvent(this, "hass-time-format-select", ev.target.value);
+    fireEvent(this, "menuai-time-format-select", ev.target.value);
   }
 }
 

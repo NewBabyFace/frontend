@@ -8,7 +8,7 @@ import "../../../components/entity/ha-state-label-badge";
 import "../../../components/ha-svg-icon";
 import type { LovelaceViewElement } from "../../../data/lovelace";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiBadge } from "../badges/hui-badge";
 import "../badges/hui-view-badges";
 import type { HuiCard } from "../cards/hui-card";
@@ -34,7 +34,7 @@ const getColumnIndex = (columnSizes: number[], size: number) => {
 };
 
 export class MasonryView extends LitElement implements LovelaceViewElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -76,7 +76,7 @@ export class MasonryView extends LitElement implements LovelaceViewElement {
   protected render(): TemplateResult {
     return html`
       <hui-view-badges
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .badges=${this.badges}
         .lovelace=${this.lovelace}
         .viewIndex=${this.index}
@@ -89,7 +89,7 @@ export class MasonryView extends LitElement implements LovelaceViewElement {
       ${this.lovelace?.editMode
         ? html`
             <ha-fab
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.lovelace.editor.edit_card.add"
               )}
               extended
@@ -127,12 +127,12 @@ export class MasonryView extends LitElement implements LovelaceViewElement {
       import("./default-view-editable");
     }
 
-    if (changedProperties.has("hass")) {
-      const oldHass = changedProperties.get("hass") as
-        | HomeAssistant
+    if (changedProperties.has("menuai")) {
+      const oldmenuai = changedProperties.get("menuai") as
+        | menuai
         | undefined;
 
-      if (this.hass!.dockedSidebar !== oldHass?.dockedSidebar) {
+      if (this.menuai!.dockedSidebar !== oldmenuai?.dockedSidebar) {
         this._updateColumns();
         return;
       }
@@ -256,7 +256,7 @@ export class MasonryView extends LitElement implements LovelaceViewElement {
       columnEl.appendChild(card);
     } else {
       const wrapper = document.createElement("hui-card-options");
-      wrapper.hass = this.hass;
+      wrapper.menuai = this.menuai;
       wrapper.lovelace = this.lovelace;
       wrapper.path = [this.index!, index];
       card.preview = true;
@@ -274,7 +274,7 @@ export class MasonryView extends LitElement implements LovelaceViewElement {
     const newColumns = Math.max(
       1,
       matchColumns -
-        Number(!this.narrow && this.hass!.dockedSidebar === "docked")
+        Number(!this.narrow && this.menuai!.dockedSidebar === "docked")
     );
     if (newColumns === this._columns) {
       return;

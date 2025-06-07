@@ -3,13 +3,13 @@ import { customElement, property, state } from "lit/decorators";
 import { applyThemesOnElement } from "../../../src/common/dom/apply_themes_on_element";
 import "../../../src/components/ha-formfield";
 import "../../../src/components/ha-switch";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import "../ha-demo-options";
 import "./demo-more-info";
 
 @customElement("demo-more-infos")
 class DemoMoreInfos extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Array }) public entities!: string[];
 
@@ -32,7 +32,7 @@ class DemoMoreInfos extends LitElement {
               html`<demo-more-info
                 .entityId=${item}
                 .showConfig=${this._showConfig}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               ></demo-more-info>`
           )}
         </div>

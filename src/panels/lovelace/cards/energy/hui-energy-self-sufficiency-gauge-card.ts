@@ -15,7 +15,7 @@ import {
   getSummedData,
 } from "../../../../data/energy";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import { severityMap } from "../hui-gauge-card";
 import type { EnergySelfSufficiencyGaugeCardConfig } from "../types";
@@ -30,17 +30,17 @@ class HuiEnergySelfSufficiencyGaugeCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EnergySelfSufficiencyGaugeCardConfig;
 
   @state() private _data?: EnergyData;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass!, {
+      getEnergyDataCollection(this.menuai!, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -60,17 +60,17 @@ class HuiEnergySelfSufficiencyGaugeCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
     if (!this._data) {
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.panel.lovelace.cards.energy.loading"
       )}`;
     }
@@ -105,14 +105,14 @@ class HuiEnergySelfSufficiencyGaugeCard
                 .value=${value}
                 label="%"
                 .formatOptions=${FORMAT_OPTIONS}
-                .locale=${this.hass.locale}
+                .locale=${this.menuai.locale}
                 style=${styleMap({
                   "--gauge-color": this._computeSeverity(value),
                 })}
               ></ha-gauge>
               <ha-tooltip
                 placement="left"
-                .content=${this.hass.localize(
+                .content=${this.menuai.localize(
                   "ui.panel.lovelace.cards.energy.self_sufficiency_gauge.card_indicates_self_sufficiency_quota"
                 )}
                 hoist
@@ -120,12 +120,12 @@ class HuiEnergySelfSufficiencyGaugeCard
                 <ha-svg-icon .path=${mdiInformation}></ha-svg-icon>
               </ha-tooltip>
               <div class="name">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.cards.energy.self_sufficiency_gauge.self_sufficiency_quota"
                 )}
               </div>
             `
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.panel.lovelace.cards.energy.self_sufficiency_gauge.self_sufficiency_could_not_calc"
             )}
       </ha-card>

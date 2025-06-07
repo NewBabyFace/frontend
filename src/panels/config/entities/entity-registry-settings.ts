@@ -1,6 +1,6 @@
 import "@material/mwc-button/mwc-button";
 
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
@@ -24,7 +24,7 @@ import {
 } from "../../../dialogs/generic/show-dialog-box";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showDeviceRegistryDetailDialog } from "../devices/device-registry-detail/show-dialog-device-registry-detail";
 import "./entity-registry-settings-editor";
 import type { EntityRegistrySettingsEditor } from "./entity-registry-settings-editor";
@@ -33,7 +33,7 @@ const invalidDomainUpdate = false;
 
 @customElement("entity-registry-settings")
 export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Object }) public entry!: ExtEntityRegistryEntry;
 
@@ -60,10 +60,10 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
     }
     try {
       const configEntry = (
-        await getConfigEntry(this.hass, this.entry.config_entry_id)
+        await getConfigEntry(this.menuai, this.entry.config_entry_id)
       ).config_entry;
       const manifest = await fetchIntegrationManifest(
-        this.hass,
+        this.menuai,
         configEntry.domain
       );
       if (manifest.integration_type === "helper") {
@@ -74,11 +74,11 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
   }
 
   protected render() {
-    const stateObj: HassEntity | undefined =
-      this.hass.states[this.entry.entity_id];
+    const stateObj: menuaiEntity | undefined =
+      this.menuai.states[this.entry.entity_id];
 
     const device = this.entry.device_id
-      ? this.hass.devices[this.entry.device_id]
+      ? this.menuai.devices[this.entry.device_id]
       : undefined;
 
     return html`
@@ -86,18 +86,18 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
         ? html`
             <ha-alert alert-type="warning">
               ${device?.disabled_by
-                ? html`${this.hass!.localize(
+                ? html`${this.menuai!.localize(
                       "ui.dialogs.entity_registry.editor.device_disabled"
                     )}<mwc-button
                       @click=${this._openDeviceSettings}
                       slot="action"
                     >
-                      ${this.hass!.localize(
+                      ${this.menuai!.localize(
                         "ui.dialogs.entity_registry.editor.open_device_settings"
                       )}
                     </mwc-button>`
                 : this.entry.disabled_by
-                  ? html`${this.hass!.localize(
+                  ? html`${this.menuai!.localize(
                       "ui.dialogs.entity_registry.editor.entity_disabled"
                     )}${["user", "integration"].includes(
                       this.entry.disabled_by!
@@ -106,12 +106,12 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
                           slot="action"
                           @click=${this._enableEntry}
                         >
-                          ${this.hass!.localize(
+                          ${this.menuai!.localize(
                             "ui.dialogs.entity_registry.editor.enable_entity"
                           )}</mwc-button
                         >`
                       : ""}`
-                  : this.hass!.localize(
+                  : this.menuai!.localize(
                       "ui.dialogs.entity_registry.editor.unavailable"
                     )}
             </ha-alert>
@@ -122,7 +122,7 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
         : ""}
       <div class="form container">
         <entity-registry-settings-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entry=${this.entry}
           .helperConfigEntry=${this._helperConfigEntry}
           .disabled=${this._submitting}
@@ -136,13 +136,13 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
           .disabled=${this._submitting ||
           (!this._helperConfigEntry && !stateObj?.attributes.restored)}
         >
-          ${this.hass.localize("ui.dialogs.entity_registry.editor.delete")}
+          ${this.menuai.localize("ui.dialogs.entity_registry.editor.delete")}
         </mwc-button>
         <mwc-button
           @click=${this._updateEntry}
           .disabled=${invalidDomainUpdate || this._submitting}
         >
-          ${this.hass.localize("ui.dialogs.entity_registry.editor.update")}
+          ${this.menuai.localize("ui.dialogs.entity_registry.editor.update")}
         </mwc-button>
       </div>
     `;
@@ -153,12 +153,12 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
   }
 
   private _openDeviceSettings() {
-    const device = this.hass.devices[this.entry.device_id!];
+    const device = this.menuai.devices[this.entry.device_id!];
 
     showDeviceRegistryDetailDialog(this, {
       device: device,
       updateEntry: async (updates) => {
-        await updateDeviceRegistryEntry(this.hass, device.id, updates);
+        await updateDeviceRegistryEntry(this.menuai, device.id, updates);
       },
     });
   }
@@ -168,21 +168,21 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
     this._submitting = true;
     try {
       const result = await updateEntityRegistryEntry(
-        this.hass!,
+        this.menuai!,
         this.entry.entity_id,
         { disabled_by: null }
       );
       fireEvent(this, "entity-entry-updated", result.entity_entry);
       if (result.require_restart) {
         showAlertDialog(this, {
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.dialogs.entity_registry.editor.enabled_restart_confirm"
           ),
         });
       }
       if (result.reload_delay) {
         showAlertDialog(this, {
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.dialogs.entity_registry.editor.enabled_delay_confirm",
             { delay: result.reload_delay }
           ),
@@ -212,11 +212,11 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
   private async _confirmDeleteEntry(): Promise<void> {
     if (
       !(await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.dialogs.entity_registry.editor.confirm_delete"
         ),
-        confirmText: this.hass.localize("ui.common.delete"),
-        dismissText: this.hass.localize("ui.common.cancel"),
+        confirmText: this.menuai.localize("ui.common.delete"),
+        dismissText: this.menuai.localize("ui.common.cancel"),
         destructive: true,
       }))
     ) {
@@ -227,9 +227,9 @@ export class EntityRegistrySettings extends SubscribeMixin(LitElement) {
 
     try {
       if (this._helperConfigEntry) {
-        await deleteConfigEntry(this.hass, this._helperConfigEntry.entry_id);
+        await deleteConfigEntry(this.menuai, this._helperConfigEntry.entry_id);
       } else {
-        await removeEntityRegistryEntry(this.hass!, this.entry.entity_id);
+        await removeEntityRegistryEntry(this.menuai!, this.entry.entity_id);
       }
       fireEvent(this, "close-dialog");
     } finally {
@@ -270,7 +270,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "entity-registry-settings": EntityRegistrySettings;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "entity-entry-updated": ExtEntityRegistryEntry;
   }
 }

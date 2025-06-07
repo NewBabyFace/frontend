@@ -14,11 +14,11 @@ import {
   fetchZwaveNodeCapabilities,
   fetchZwaveNodeMetadata,
 } from "../../../../../data/zwave_js";
-import "../../../../../layouts/hass-error-screen";
-import "../../../../../layouts/hass-loading-screen";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/menuai-error-screen";
+import "../../../../../layouts/menuai-loading-screen";
+import "../../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import "../../../ha-config-section";
 import "./capability-controls/zwave_js-capability-control-color-switch";
 import "./capability-controls/zwave_js-capability-control-door-lock";
@@ -34,7 +34,7 @@ const CAPABILITY_CONTROLS = {
 
 @customElement("zwave_js-node-installer")
 class ZWaveJSNodeInstaller extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -65,19 +65,19 @@ class ZWaveJSNodeInstaller extends LitElement {
 
   protected render(): TemplateResult {
     if (this._error) {
-      return html`<hass-error-screen
-        .hass=${this.hass}
-        .error=${this.hass.localize(
+      return html`<menuai-error-screen
+        .menuai=${this.menuai}
+        .error=${this.menuai.localize(
           `ui.panel.config.zwave_js.node_config.error_${this._error}`
         )}
-      ></hass-error-screen>`;
+      ></menuai-error-screen>`;
     }
 
     if (!this._capabilities || !this._nodeMetadata) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
 
-    const device = this.hass.devices[this.deviceId];
+    const device = this.menuai.devices[this.deviceId];
 
     const endpoints = Object.entries(this._capabilities).filter(
       ([_endpoint, capabilities]) => {
@@ -89,8 +89,8 @@ class ZWaveJSNodeInstaller extends LitElement {
     );
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
       >
@@ -100,7 +100,7 @@ class ZWaveJSNodeInstaller extends LitElement {
           vertical
         >
           <div slot="header">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.node_installer.header"
             )}
           </div>
@@ -109,12 +109,12 @@ class ZWaveJSNodeInstaller extends LitElement {
             ${device
               ? html`
                   <div class="device-info">
-                    <h2>${computeDeviceNameDisplay(device, this.hass)}</h2>
+                    <h2>${computeDeviceNameDisplay(device, this.menuai)}</h2>
                     <p>${device.manufacturer} ${device.model}</p>
                   </div>
                 `
               : ``}
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.node_installer.introduction"
             )}
           </div>
@@ -122,7 +122,7 @@ class ZWaveJSNodeInstaller extends LitElement {
             ? endpoints.map(
                 ([endpoint, capabilities]) => html`
                   <h3>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zwave_js.node_installer.endpoint"
                     )}:
                     ${endpoint}
@@ -133,7 +133,7 @@ class ZWaveJSNodeInstaller extends LitElement {
                         ${capability.id in CAPABILITY_CONTROLS
                           ? html` <div class="capability">
                               <h4>
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.panel.config.zwave_js.node_installer.command_class"
                                 )}:
                                 ${capability.name}
@@ -141,7 +141,7 @@ class ZWaveJSNodeInstaller extends LitElement {
                               ${dynamicElement(
                                 `zwave_js-capability-control-${CAPABILITY_CONTROLS[capability.id]}`,
                                 {
-                                  hass: this.hass,
+                                  menuai: this.menuai,
                                   device: device,
                                   endpoint: endpoint,
                                   command_class: capability.id,
@@ -157,12 +157,12 @@ class ZWaveJSNodeInstaller extends LitElement {
                 `
               )
             : html`<ha-card class="empty"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.no_settings"
                 )}</ha-card
               >`}
         </ha-config-section>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -171,15 +171,15 @@ class ZWaveJSNodeInstaller extends LitElement {
       return;
     }
 
-    const device = this.hass.devices[this.deviceId];
+    const device = this.menuai.devices[this.deviceId];
     if (!device) {
       this._error = "device_not_found";
       return;
     }
 
     [this._nodeMetadata, this._capabilities] = await Promise.all([
-      fetchZwaveNodeMetadata(this.hass, device.id),
-      fetchZwaveNodeCapabilities(this.hass, device.id),
+      fetchZwaveNodeMetadata(this.menuai, device.id),
+      fetchZwaveNodeCapabilities(this.menuai, device.id),
     ]);
   }
 

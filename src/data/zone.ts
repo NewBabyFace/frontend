@@ -1,5 +1,5 @@
 import { navigate } from "../common/navigate";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface Zone {
   id: string;
@@ -26,28 +26,28 @@ export interface ZoneMutableParams {
   radius?: number;
 }
 
-export const fetchZones = (hass: HomeAssistant) =>
-  hass.callWS<Zone[]>({ type: "zone/list" });
+export const fetchZones = (menuai: menuai) =>
+  menuai.callWS<Zone[]>({ type: "zone/list" });
 
-export const createZone = (hass: HomeAssistant, values: ZoneMutableParams) =>
-  hass.callWS<Zone>({
+export const createZone = (menuai: menuai, values: ZoneMutableParams) =>
+  menuai.callWS<Zone>({
     type: "zone/create",
     ...values,
   });
 
 export const updateZone = (
-  hass: HomeAssistant,
+  menuai: menuai,
   zoneId: string,
   updates: Partial<ZoneMutableParams>
 ) =>
-  hass.callWS<Zone>({
+  menuai.callWS<Zone>({
     type: "zone/update",
     zone_id: zoneId,
     ...updates,
   });
 
-export const deleteZone = (hass: HomeAssistant, zoneId: string) =>
-  hass.callWS({
+export const deleteZone = (menuai: menuai, zoneId: string) =>
+  menuai.callWS({
     type: "zone/delete",
     zone_id: zoneId,
   });

@@ -13,7 +13,7 @@ import type { HaSwitch } from "./ha-switch";
 const ADDITIONAL_PREFERENCES = ["usage", "statistics"] as const;
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "analytics-preferences-changed": { preferences: AnalyticsPreferences };
   }
 }

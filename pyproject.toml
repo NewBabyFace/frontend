@@ -7,10 +7,10 @@ name         = "home-assistant-frontend"
 version      = "20250430.0"
 license      = "Apache-2.0"
 license-files = ["LICENSE*"]
-description  = "The Home Assistant frontend"
+description  = "The MenuAI frontend"
 readme       = "README.md"
 authors      = [
-    {name = "The Home Assistant Authors", email = "hello@home-assistant.io"}
+    {name = "The MenuAI Authors", email = "hello@home-assistant.io"}
 ]
 requires-python = ">=3.13.0"
 
@@ -21,4 +21,4 @@ requires-python = ">=3.13.0"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["hass_frontend*"]
+include = ["menuai_frontend*"]

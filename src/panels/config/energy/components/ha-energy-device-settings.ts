@@ -22,7 +22,7 @@ import {
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { documentationUrl } from "../../../../util/documentation-url";
 import { showEnergySettingsDeviceDialog } from "../dialogs/show-dialogs-energy";
 import "./ha-energy-validation-result";
@@ -30,7 +30,7 @@ import { energyCardStyles } from "./styles";
 
 @customElement("ha-energy-device-settings")
 export class EnergyDeviceSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public preferences!: EnergyPreferences;
@@ -46,24 +46,24 @@ export class EnergyDeviceSettings extends LitElement {
       <ha-card outlined>
         <h1 class="card-header">
           <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.title"
           )}
         </h1>
 
         <div class="card-content">
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.device_consumption.sub"
             )}
             <a
               target="_blank"
               rel="noopener noreferrer"
               href=${documentationUrl(
-                this.hass,
+                this.menuai,
                 "/docs/energy/individual-devices/"
               )}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.device_consumption.learn_more"
               )}</a
             >
@@ -71,13 +71,13 @@ export class EnergyDeviceSettings extends LitElement {
           ${this.validationResult?.device_consumption.map(
             (result) => html`
               <ha-energy-validation-result
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .issues=${result}
               ></ha-energy-validation-result>
             `
           )}
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.device_consumption.devices"
             )}
           </h3>
@@ -94,18 +94,18 @@ export class EnergyDeviceSettings extends LitElement {
                     <span class="content"
                       >${device.name ||
                       getStatisticLabel(
-                        this.hass,
+                        this.menuai,
                         device.stat_consumption,
                         this.statsMetadata?.[device.stat_consumption]
                       )}</span
                     >
                     <ha-icon-button
-                      .label=${this.hass.localize("ui.common.edit")}
+                      .label=${this.menuai.localize("ui.common.edit")}
                       @click=${this._editDevice}
                       .path=${mdiPencil}
                     ></ha-icon-button>
                     <ha-icon-button
-                      .label=${this.hass.localize("ui.common.delete")}
+                      .label=${this.menuai.localize("ui.common.delete")}
                       @click=${this._deleteDevice}
                       .device=${device}
                       .path=${mdiDelete}
@@ -118,7 +118,7 @@ export class EnergyDeviceSettings extends LitElement {
           <div class="row">
             <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
             <mwc-button @click=${this._addDevice}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.device_consumption.add_device"
               )}</mwc-button
             >
@@ -194,7 +194,7 @@ export class EnergyDeviceSettings extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_source"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_source"),
       }))
     ) {
       return;
@@ -215,7 +215,7 @@ export class EnergyDeviceSettings extends LitElement {
   }
 
   private async _savePreferences(preferences: EnergyPreferences) {
-    const result = await saveEnergyPreferences(this.hass, preferences);
+    const result = await saveEnergyPreferences(this.menuai, preferences);
     fireEvent(this, "value-changed", { value: result });
   }
 

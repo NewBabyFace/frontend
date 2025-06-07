@@ -1,5 +1,5 @@
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockEvents = (hass: MockHomeAssistant) => {
-  hass.mockAPI("events", () => []);
+export const mockEvents = (menuai: Mockmenuai) => {
+  menuai.mockAPI("events", () => []);
 };

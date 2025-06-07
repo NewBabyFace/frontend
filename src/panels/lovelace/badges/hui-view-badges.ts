@@ -9,7 +9,7 @@ import "../../../components/ha-ripple";
 import "../../../components/ha-sortable";
 import type { HaSortableOptions } from "../../../components/ha-sortable";
 import "../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/hui-badge-edit-mode";
 import { moveBadge } from "../editor/config-util";
 import type { LovelaceCardPath } from "../editor/lovelace-path";
@@ -25,7 +25,7 @@ const BADGE_SORTABLE_OPTIONS: HaSortableOptions = {
 
 @customElement("hui-view-badges")
 export class HuiViewBadges extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace!: Lovelace;
 
@@ -150,7 +150,7 @@ export class HuiViewBadges extends LitElement {
                         ? html`
                             <hui-badge-edit-mode
                               data-sortable
-                              .hass=${this.hass}
+                              .menuai=${this.menuai}
                               .lovelace=${this.lovelace}
                               .path=${badgePath}
                               .hiddenOverlay=${this._dragging}
@@ -168,17 +168,17 @@ export class HuiViewBadges extends LitElement {
                       <button
                         class="add"
                         @click=${this._addBadge}
-                        aria-label=${this.hass.localize(
+                        aria-label=${this.menuai.localize(
                           "ui.panel.lovelace.editor.section.add_badge"
                         )}
-                        .title=${this.hass.localize(
+                        .title=${this.menuai.localize(
                           "ui.panel.lovelace.editor.section.add_badge"
                         )}
                       >
                         <ha-ripple></ha-ripple>
                         <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
                         ${this.showAddLabel
-                          ? this.hass.localize(
+                          ? this.menuai.localize(
                               "ui.panel.lovelace.editor.section.add_badge"
                             )
                           : nothing}

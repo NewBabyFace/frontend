@@ -7,7 +7,7 @@ import { stringCompare } from "../../../../common/string/compare";
 import "../../../../components/ha-checkbox";
 import type { HaCheckbox } from "../../../../components/ha-checkbox";
 import "../../../../components/ha-formfield";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./ha-backup-formfield-label";
 
 export interface BackupAddonItem {
@@ -20,7 +20,7 @@ export interface BackupAddonItem {
 
 @customElement("ha-backup-addons-picker")
 export class HaBackupAddonsPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public addons!: BackupAddonItem[];
 
@@ -33,7 +33,7 @@ export class HaBackupAddonsPicker extends LitElement {
 
   private _addons = memoizeOne((addons: BackupAddonItem[]) =>
     addons.sort((a, b) =>
-      stringCompare(a.name, b.name, this.hass?.locale?.language)
+      stringCompare(a.name, b.name, this.menuai?.locale?.language)
     )
   );
 
@@ -49,7 +49,7 @@ export class HaBackupAddonsPicker extends LitElement {
                 .version=${this.hideVersion ? undefined : item.version}
                 .iconPath=${item.iconPath || mdiPuzzle}
                 .imageUrl=${this.addons?.find((a) => a.slug === item.slug)?.icon
-                  ? `/api/hassio/addons/${item.slug}/icon`
+                  ? `/api/menuaiio/addons/${item.slug}/icon`
                   : undefined}
               >
               </ha-backup-formfield-label>

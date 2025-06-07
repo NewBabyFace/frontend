@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { DataEntryFlowStep } from "./data_entry_flow";
 
 const HEADERS = {
@@ -6,24 +6,24 @@ const HEADERS = {
 };
 
 export const createSubConfigFlow = (
-  hass: HomeAssistant,
+  menuai: menuai,
   configEntryId: string,
   subFlowType: string,
   subentry_id?: string
 ) =>
-  hass.callApi<DataEntryFlowStep>(
+  menuai.callApi<DataEntryFlowStep>(
     "POST",
     "config/config_entries/subentries/flow",
     {
       handler: [configEntryId, subFlowType],
-      show_advanced_options: Boolean(hass.userData?.showAdvanced),
+      show_advanced_options: Boolean(menuai.userData?.showAdvanced),
       subentry_id,
     },
     HEADERS
   );
 
-export const fetchSubConfigFlow = (hass: HomeAssistant, flowId: string) =>
-  hass.callApi<DataEntryFlowStep>(
+export const fetchSubConfigFlow = (menuai: menuai, flowId: string) =>
+  menuai.callApi<DataEntryFlowStep>(
     "GET",
     `config/config_entries/subentries/flow/${flowId}`,
     undefined,
@@ -31,16 +31,16 @@ export const fetchSubConfigFlow = (hass: HomeAssistant, flowId: string) =>
   );
 
 export const handleSubConfigFlowStep = (
-  hass: HomeAssistant,
+  menuai: menuai,
   flowId: string,
   data: Record<string, any>
 ) =>
-  hass.callApi<DataEntryFlowStep>(
+  menuai.callApi<DataEntryFlowStep>(
     "POST",
     `config/config_entries/subentries/flow/${flowId}`,
     data,
     HEADERS
   );
 
-export const deleteSubConfigFlow = (hass: HomeAssistant, flowId: string) =>
-  hass.callApi("DELETE", `config/config_entries/subentries/flow/${flowId}`);
+export const deleteSubConfigFlow = (menuai: menuai, flowId: string) =>
+  menuai.callApi("DELETE", `config/config_entries/subentries/flow/${flowId}`);

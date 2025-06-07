@@ -3,7 +3,7 @@ import { mdiDelete } from "@mdi/js";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import { navigate } from "../../../../../common/navigate";
 import type { SelectionChangedEvent } from "../../../../../components/data-table/ha-data-table";
 import "../../../../../components/ha-card";
@@ -19,9 +19,9 @@ import {
   removeGroups,
   removeMembersFromGroup,
 } from "../../../../../data/zha";
-import "../../../../../layouts/hass-error-screen";
-import "../../../../../layouts/hass-subpage";
-import type { HomeAssistant } from "../../../../../types";
+import "../../../../../layouts/menuai-error-screen";
+import "../../../../../layouts/menuai-subpage";
+import type { menuai } from "../../../../../types";
 import "../../../ha-config-section";
 import { formatAsPaddedHex } from "./functions";
 import "./zha-device-endpoint-data-table";
@@ -29,7 +29,7 @@ import type { ZHADeviceEndpointDataTable } from "./zha-device-endpoint-data-tabl
 
 @customElement("zha-group-page")
 export class ZHAGroupPage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Object }) public group?: ZHAGroup;
 
@@ -63,7 +63,7 @@ export class ZHAGroupPage extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass && this._firstUpdatedCalled) {
+    if (this.menuai && this._firstUpdatedCalled) {
       this._fetchData();
     }
   }
@@ -80,7 +80,7 @@ export class ZHAGroupPage extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
-    if (this.hass) {
+    if (this.menuai) {
       this._fetchData();
     }
     this._firstUpdatedCalled = true;
@@ -89,18 +89,18 @@ export class ZHAGroupPage extends LitElement {
   protected render() {
     if (!this.group) {
       return html`
-        <hass-error-screen
-          .hass=${this.hass}
-          .error=${this.hass.localize(
+        <menuai-error-screen
+          .menuai=${this.menuai}
+          .error=${this.menuai.localize(
             "ui.panel.config.zha.groups.group_not_found"
           )}
-        ></hass-error-screen>
+        ></menuai-error-screen>
       `;
     }
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .header=${this.group.name}
       >
@@ -108,22 +108,22 @@ export class ZHAGroupPage extends LitElement {
           slot="toolbar-icon"
           .path=${mdiDelete}
           @click=${this._deleteGroup}
-          .label=${this.hass.localize("ui.panel.config.zha.groups.delete")}
+          .label=${this.menuai.localize("ui.panel.config.zha.groups.delete")}
         ></ha-icon-button>
         <ha-config-section .isWide=${this.isWide}>
           <div class="header">
-            ${this.hass.localize("ui.panel.config.zha.groups.group_info")}
+            ${this.menuai.localize("ui.panel.config.zha.groups.group_info")}
           </div>
 
           <p slot="introduction">
-            ${this.hass.localize("ui.panel.config.zha.groups.group_details")}
+            ${this.menuai.localize("ui.panel.config.zha.groups.group_details")}
           </p>
 
           <p><b>Name:</b> ${this.group.name}</p>
           <p><b>Group Id:</b> ${formatAsPaddedHex(this.group.group_id)}</p>
 
           <div class="header">
-            ${this.hass.localize("ui.panel.config.zha.groups.members")}
+            ${this.menuai.localize("ui.panel.config.zha.groups.members")}
           </div>
           <ha-card>
             <ha-list>
@@ -148,14 +148,14 @@ export class ZHAGroupPage extends LitElement {
           ${this.group.members.length
             ? html`
                 <div class="header">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zha.groups.remove_members"
                   )}
                 </div>
 
                 <zha-device-endpoint-data-table
                   id="removeMembers"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .deviceEndpoints=${this.group.members}
                   .narrow=${this.narrow}
                   selectable
@@ -172,12 +172,12 @@ export class ZHAGroupPage extends LitElement {
                   >
                     ${this._processingRemove
                       ? html`<ha-spinner
-                          .ariaLabel=${this.hass.localize(
+                          .ariaLabel=${this.menuai.localize(
                             "ui.panel.config.zha.groups.removing_members"
                           )}
                         ></ha-spinner>`
                       : nothing}
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.zha.groups.remove_members"
                     )}</mwc-button
                   >
@@ -186,12 +186,12 @@ export class ZHAGroupPage extends LitElement {
             : nothing}
 
           <div class="header">
-            ${this.hass.localize("ui.panel.config.zha.groups.add_members")}
+            ${this.menuai.localize("ui.panel.config.zha.groups.add_members")}
           </div>
 
           <zha-device-endpoint-data-table
             id="addMembers"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .deviceEndpoints=${this._filteredDeviceEndpoints}
             .narrow=${this.narrow}
             selectable
@@ -212,21 +212,21 @@ export class ZHAGroupPage extends LitElement {
                     aria-label="Saving"
                   ></ha-spinner>`
                 : ""}
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.config.zha.groups.add_members"
               )}</mwc-button
             >
           </div>
         </ha-config-section>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private async _fetchData() {
     if (this.groupId !== null && this.groupId !== undefined) {
-      this.group = await fetchGroup(this.hass!, this.groupId);
+      this.group = await fetchGroup(this.menuai!, this.groupId);
     }
-    this.deviceEndpoints = await fetchGroupableDevices(this.hass!);
+    this.deviceEndpoints = await fetchGroupableDevices(this.menuai!);
     // filter the groupable devices so we only show devices that aren't already in the group
     this._filterDevices();
   }
@@ -244,13 +244,13 @@ export class ZHAGroupPage extends LitElement {
   }
 
   private _handleAddSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selectedDevicesToAdd = ev.detail.value;
   }
 
   private _handleRemoveSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selectedDevicesToRemove = ev.detail.value;
   }
@@ -261,7 +261,7 @@ export class ZHAGroupPage extends LitElement {
       const memberParts = member.split("_");
       return { ieee: memberParts[0], endpoint_id: memberParts[1] };
     });
-    this.group = await addMembersToGroup(this.hass, this.groupId, members);
+    this.group = await addMembersToGroup(this.menuai, this.groupId, members);
     this._filterDevices();
     this._selectedDevicesToAdd = [];
     this._zhaAddMembersDataTable.clearSelection();
@@ -274,7 +274,7 @@ export class ZHAGroupPage extends LitElement {
       const memberParts = member.split("_");
       return { ieee: memberParts[0], endpoint_id: memberParts[1] };
     });
-    this.group = await removeMembersFromGroup(this.hass, this.groupId, members);
+    this.group = await removeMembersFromGroup(this.menuai, this.groupId, members);
     this._filterDevices();
     this._selectedDevicesToRemove = [];
     this._zhaRemoveMembersDataTable.clearSelection();
@@ -282,14 +282,14 @@ export class ZHAGroupPage extends LitElement {
   }
 
   private async _deleteGroup(): Promise<void> {
-    await removeGroups(this.hass, [this.groupId]);
+    await removeGroups(this.menuai, [this.groupId]);
     navigate(`/config/zha/groups`, { replace: true });
   }
 
   static get styles(): CSSResultGroup {
     return [
       css`
-        hass-subpage {
+        menuai-subpage {
           --app-header-text-color: var(--sidebar-icon-color);
         }
         .header {

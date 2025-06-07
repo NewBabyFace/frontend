@@ -11,14 +11,14 @@ import { domainToName } from "../../../../../data/integration";
 import type { MatterCommissioningParameters } from "../../../../../data/matter";
 import { openMatterCommissioningWindow } from "../../../../../data/matter";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { brandsUrl } from "../../../../../util/brands-url";
 import type { MatterOpenCommissioningWindowDialogParams } from "./show-dialog-matter-open-commissioning-window";
 import { copyToClipboard } from "../../../../../common/util/copy-clipboard";
 
 @customElement("dialog-matter-open-commissioning-window")
 class DialogMatterOpenCommissioningWindow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device_id?: string;
 
@@ -42,8 +42,8 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             "ui.panel.config.matter.open_commissioning_window.title"
           )
         )}
@@ -51,11 +51,11 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
         ${this._commissionParams
           ? html`
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.matter.open_commissioning_window.success"
                 )}
                 <br />
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.matter.open_commissioning_window.scan_code"
                 )}
               </p>
@@ -64,11 +64,11 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
                   <img
                     crossorigin="anonymous"
                     referrerpolicy="no-referrer"
-                    alt=${domainToName(this.hass.localize, "matter")}
+                    alt=${domainToName(this.menuai.localize, "matter")}
                     src=${brandsUrl({
                       domain: "matter",
                       type: "logo",
-                      darkOptimized: this.hass.themes?.darkMode,
+                      darkOptimized: this.menuai.themes?.darkMode,
                     })}
                   />
                   <ha-qr-code
@@ -91,7 +91,7 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this._copyCode}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.matter.open_commissioning_window.copy_code"
                 )}
               </mwc-button>
@@ -103,7 +103,7 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
                   <div class="status">
                     <p>
                       <b>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.matter.open_commissioning_window.in_progress"
                         )}
                       </b>
@@ -111,7 +111,7 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
                   </div>
                 </div>
                 <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                  ${this.hass.localize("ui.common.close")}
+                  ${this.menuai.localize("ui.common.close")}
                 </mwc-button>
               `
             : this._status === "failed"
@@ -123,23 +123,23 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
                     ></ha-svg-icon>
                     <div class="status">
                       <p>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.matter.open_commissioning_window.failed"
                         )}
                       </p>
                     </div>
                   </div>
                   <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                    ${this.hass.localize("ui.common.close")}
+                    ${this.menuai.localize("ui.common.close")}
                   </mwc-button>
                 `
               : html`
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.matter.open_commissioning_window.description",
                       {
                         startCommissioning: html`<b
-                          >${this.hass.localize(
+                          >${this.menuai.localize(
                             "ui.panel.config.matter.open_commissioning_window.start_commissioning"
                           )}</b
                         >`,
@@ -147,12 +147,12 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
                     )}
                   </p>
                   <p class="note">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.matter.open_commissioning_window.prevent_misuse_description"
                     )}
                   </p>
                   <mwc-button slot="primaryAction" @click=${this._start}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.matter.open_commissioning_window.start_commissioning"
                     )}
                   </mwc-button>
@@ -162,14 +162,14 @@ class DialogMatterOpenCommissioningWindow extends LitElement {
   }
 
   private async _start(): Promise<void> {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._status = "started";
     this._commissionParams = undefined;
     try {
       this._commissionParams = await openMatterCommissioningWindow(
-        this.hass,
+        this.menuai,
         this.device_id!
       );
     } catch (_e) {

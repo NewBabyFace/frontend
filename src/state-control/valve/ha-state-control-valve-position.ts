@@ -8,11 +8,11 @@ import "../../components/ha-control-slider";
 import type { CoverEntity } from "../../data/cover";
 import { UNAVAILABLE } from "../../data/entity";
 import { DOMAIN_ATTRIBUTES_UNITS } from "../../data/entity_attributes";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-state-control-valve-position")
 export class HaStateControlValvePosition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: CoverEntity;
 
@@ -30,7 +30,7 @@ export class HaStateControlValvePosition extends LitElement {
     const value = (ev.detail as any).value;
     if (isNaN(value)) return;
 
-    this.hass.callService("valve", "set_valve_position", {
+    this.menuai.callService("valve", "set_valve_position", {
       entity_id: this.stateObj!.entity_id,
       position: value,
     });
@@ -49,9 +49,9 @@ export class HaStateControlValvePosition extends LitElement {
         show-handle
         @value-changed=${this._valueChanged}
         .ariaLabel=${computeAttributeNameDisplay(
-          this.hass.localize,
+          this.menuai.localize,
           this.stateObj,
-          this.hass.entities,
+          this.menuai.entities,
           "current_position"
         )}
         style=${styleMap({
@@ -60,7 +60,7 @@ export class HaStateControlValvePosition extends LitElement {
         })}
         .disabled=${this.stateObj.state === UNAVAILABLE}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.valve.current_position}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       >
       </ha-control-slider>
     `;

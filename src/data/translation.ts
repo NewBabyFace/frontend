@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { saveFrontendUserData, subscribeFrontendUserData } from "./frontend";
 
 export enum NumberFormat {
@@ -75,23 +75,23 @@ export type TranslationCategory =
   | "services";
 
 export const subscribeTranslationPreferences = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callback: (data: { value: FrontendLocaleData | null }) => void
-) => subscribeFrontendUserData(hass.connection, "language", callback);
+) => subscribeFrontendUserData(menuai.connection, "language", callback);
 
 export const saveTranslationPreferences = (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: FrontendLocaleData
-) => saveFrontendUserData(hass.connection, "language", data);
+) => saveFrontendUserData(menuai.connection, "language", data);
 
-export const getHassTranslations = async (
-  hass: HomeAssistant,
+export const getmenuaiTranslations = async (
+  menuai: menuai,
   language: string,
   category: TranslationCategory,
   integration?: string | string[],
   config_flow?: boolean
 ): Promise<Record<string, unknown>> => {
-  const result = await hass.callWS<{ resources: Record<string, unknown> }>({
+  const result = await menuai.callWS<{ resources: Record<string, unknown> }>({
     type: "frontend/get_translations",
     language,
     category,
@@ -101,11 +101,11 @@ export const getHassTranslations = async (
   return result.resources;
 };
 
-export const getHassTranslationsPre109 = async (
-  hass: HomeAssistant,
+export const getmenuaiTranslationsPre109 = async (
+  menuai: menuai,
   language: string
 ): Promise<Record<string, unknown>> => {
-  const result = await hass.callWS<{ resources: Record<string, unknown> }>({
+  const result = await menuai.callWS<{ resources: Record<string, unknown> }>({
     type: "frontend/get_translations",
     language,
   });

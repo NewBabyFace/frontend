@@ -1,4 +1,4 @@
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 import type { Lovelace } from "../../../src/panels/lovelace/types";
 import { energyEntities } from "../stubs/entities";
 import type { DemoConfig } from "./types";
@@ -18,7 +18,7 @@ export let selectedDemoConfig: Promise<DemoConfig> =
   demoConfigs[selectedDemoConfigIndex]();
 
 export const setDemoConfig = async (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   lovelace: Lovelace,
   index: number
 ) => {
@@ -28,8 +28,8 @@ export const setDemoConfig = async (
   selectedDemoConfigIndex = index;
   selectedDemoConfig = confProm;
 
-  hass.addEntities(config.entities(hass.localize), true);
-  hass.addEntities(energyEntities());
-  lovelace.saveConfig(config.lovelace(hass.localize));
-  hass.mockTheme(config.theme());
+  menuai.addEntities(config.entities(menuai.localize), true);
+  menuai.addEntities(energyEntities());
+  lovelace.saveConfig(config.lovelace(menuai.localize));
+  menuai.mockTheme(config.theme());
 };

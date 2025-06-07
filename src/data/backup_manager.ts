@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export type BackupManagerState =
   | "idle"
@@ -71,11 +71,11 @@ export type ManagerStateEvent =
   | RestoreBackupEvent;
 
 export const subscribeBackupEvents = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callback: (event: ManagerStateEvent) => void,
   preCheck?: () => boolean | Promise<boolean>
 ) =>
-  hass.connection.subscribeMessage<ManagerStateEvent>(
+  menuai.connection.subscribeMessage<ManagerStateEvent>(
     callback,
     {
       type: "backup/subscribe_events",

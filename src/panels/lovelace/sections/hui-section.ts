@@ -13,7 +13,7 @@ import type {
   LovelaceSectionRawConfig,
 } from "../../../data/lovelace/config/section";
 import { isStrategySection } from "../../../data/lovelace/config/section";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../cards/hui-card";
 import type { HuiCard } from "../cards/hui-card";
 import {
@@ -31,14 +31,14 @@ import type { Lovelace } from "../types";
 import { DEFAULT_SECTION_LAYOUT } from "./const";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "section-visibility-changed": { value: boolean };
   }
 }
 
 @customElement("hui-section")
 export class HuiSection extends ReactiveElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public config!: LovelaceSectionRawConfig;
 
@@ -71,7 +71,7 @@ export class HuiSection extends ReactiveElement {
 
   private _createCardElement(cardConfig: LovelaceCardConfig) {
     const element = document.createElement("hui-card");
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.preview = this.preview;
     element.config = cardConfig;
     element.addEventListener("card-updated", (ev: Event) => {
@@ -94,7 +94,7 @@ export class HuiSection extends ReactiveElement {
        - initialization: create layout element, populate
        - config changed to section with same layout element
        - config changed to section with different layout element
-       - forwarded properties hass/narrow/lovelace/cards change
+       - forwarded properties menuai/narrow/lovelace/cards change
           - cards change if one is rebuild when it was loaded later
           - lovelace changes if edit mode is enabled or config has changed
     */
@@ -127,11 +127,11 @@ export class HuiSection extends ReactiveElement {
     // If no layout element, we're still creating one
     if (this._layoutElement) {
       // Config has not changed. Just props
-      if (changedProperties.has("hass")) {
+      if (changedProperties.has("menuai")) {
         this._cards.forEach((element) => {
-          element.hass = this.hass;
+          element.menuai = this.menuai;
         });
-        this._layoutElement.hass = this.hass;
+        this._layoutElement.menuai = this.menuai;
       }
       if (changedProperties.has("lovelace")) {
         this._layoutElement.lovelace = this.lovelace;
@@ -148,7 +148,7 @@ export class HuiSection extends ReactiveElement {
       if (changedProperties.has("_cards")) {
         this._layoutElement.cards = this._cards;
       }
-      if (changedProperties.has("hass") || changedProperties.has("preview")) {
+      if (changedProperties.has("menuai") || changedProperties.has("preview")) {
         this._updateElement();
       }
     }
@@ -186,7 +186,7 @@ export class HuiSection extends ReactiveElement {
       isStrategy = true;
       sectionConfig = await generateLovelaceSectionStrategy(
         sectionConfig,
-        this.hass!
+        this.menuai!
       );
     }
 
@@ -208,7 +208,7 @@ export class HuiSection extends ReactiveElement {
 
     this._createCards(sectionConfig);
     this._layoutElement!.isStrategy = isStrategy;
-    this._layoutElement!.hass = this.hass;
+    this._layoutElement!.menuai = this.menuai;
     this._layoutElement!.lovelace = this.lovelace;
     this._layoutElement!.index = this.index;
     this._layoutElement!.viewIndex = this.viewIndex;
@@ -230,7 +230,7 @@ export class HuiSection extends ReactiveElement {
       forceVisible ||
       this.preview ||
       !this.config.visibility ||
-      checkConditionsMet(this.config.visibility, this.hass);
+      checkConditionsMet(this.config.visibility, this.menuai);
 
     if (this.hidden !== !visible) {
       this.style.setProperty("display", visible ? "" : "none");
@@ -286,7 +286,7 @@ export class HuiSection extends ReactiveElement {
     this._layoutElement.addEventListener("ll-delete-card", (ev) => {
       ev.stopPropagation();
       if (!this.lovelace) return;
-      performDeleteCard(this.hass, this.lovelace, ev.detail);
+      performDeleteCard(this.menuai, this.lovelace, ev.detail);
     });
     this._layoutElement.addEventListener("ll-duplicate-card", (ev) => {
       ev.stopPropagation();

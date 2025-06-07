@@ -1,16 +1,16 @@
 import type { LitElement } from "lit";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
-export function computeRTL(hass: HomeAssistant) {
-  const lang = hass.language || "en";
-  if (hass.translationMetadata.translations[lang]) {
-    return hass.translationMetadata.translations[lang].isRTL || false;
+export function computeRTL(menuai: menuai) {
+  const lang = menuai.language || "en";
+  if (menuai.translationMetadata.translations[lang]) {
+    return menuai.translationMetadata.translations[lang].isRTL || false;
   }
   return false;
 }
 
-export function computeRTLDirection(hass: HomeAssistant) {
-  return emitRTLDirection(computeRTL(hass));
+export function computeRTLDirection(menuai: menuai) {
+  return emitRTLDirection(computeRTL(menuai));
 }
 
 export function emitRTLDirection(rtl: boolean) {

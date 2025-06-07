@@ -1,5 +1,5 @@
 import { mdiClose } from "@mdi/js";
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -26,7 +26,7 @@ import {
   getExtendedEntityRegistryEntry,
   subscribeEntityRegistry,
 } from "../../../data/entity_registry";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
 import type { LovelaceCard } from "../types";
@@ -51,7 +51,7 @@ export const ALARM_MODE_STATE_MAP: Record<
 };
 
 export const filterSupportedAlarmStates = (
-  stateObj: HassEntity | undefined,
+  stateObj: menuaiEntity | undefined,
   states: AlarmPanelCardConfigState[]
 ): AlarmPanelCardConfigState[] =>
   states.filter(
@@ -71,14 +71,14 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): AlarmPanelCardConfig {
     const includeDomains = ["alarm_control_panel"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -86,7 +86,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
     );
 
     const entity = foundEntities[0] || "";
-    const stateObj = hass.states[entity];
+    const stateObj = menuai.states[entity];
 
     return {
       type: "alarm-panel",
@@ -95,7 +95,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: AlarmPanelCardConfig;
 
@@ -116,11 +116,11 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
   }
 
   public async getCardSize(): Promise<number> {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return 10;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     return !stateObj || stateObj.attributes.code_format !== FORMAT_NUMBER
       ? 4
@@ -142,21 +142,21 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | AlarmPanelCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
@@ -165,18 +165,18 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
       return true;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
     if (
-      !oldHass ||
-      oldHass.themes !== this.hass!.themes ||
-      oldHass.locale !== this.hass!.locale
+      !oldmenuai ||
+      oldmenuai.themes !== this.menuai!.themes ||
+      oldmenuai.locale !== this.menuai!.locale
     ) {
       return true;
     }
     return (
-      oldHass.states[this._config!.entity] !==
-      this.hass!.states[this._config!.entity]
+      oldmenuai.states[this._config!.entity] !==
+      this.menuai!.states[this._config!.entity]
     );
   }
 
@@ -193,13 +193,13 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
     }
     try {
       this._unsubEntityRegistry = subscribeEntityRegistry(
-        this.hass!.connection,
+        this.menuai!.connection,
         async (entries) => {
           if (
             entries.some((entry) => entry.entity_id === this._config!.entity)
           ) {
             this._entry = await getExtendedEntityRegistryEntry(
-              this.hass!,
+              this.menuai!,
               this._config!.entity
             );
           }
@@ -211,18 +211,18 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
     const states =
       this._config.states ||
       filterSupportedAlarmStates(stateObj, DEFAULT_STATES);
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -248,7 +248,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
           >
             <ha-state-icon
               slot="icon"
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${stateObj}
             ></ha-state-icon>
           </ha-assist-chip>
@@ -275,7 +275,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
               <ha-textfield
                 .value=${this._value || ""}
                 @input=${this._handleInput}
-                .label=${this.hass.localize("ui.card.alarm_control_panel.code")}
+                .label=${this.menuai.localize("ui.card.alarm_control_panel.code")}
                 type="password"
                 .inputMode=${stateObj.attributes.code_format === FORMAT_NUMBER
                   ? "numeric"
@@ -296,7 +296,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
                             class="clear"
                             .value=${value}
                             .disabled=${!this._value}
-                            .label=${this.hass!.localize("ui.common.clear")}
+                            .label=${this.menuai!.localize("ui.common.clear")}
                           >
                             <ha-svg-icon path=${mdiClose}></ha-svg-icon>
                           </ha-control-button>
@@ -320,13 +320,13 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
   private _actionDisplay(
     entityState: NonNullable<AlarmPanelCardConfig["states"]>[number]
   ): string {
-    return this.hass!.localize(`ui.card.alarm_control_panel.${entityState}`);
+    return this.menuai!.localize(`ui.card.alarm_control_panel.${entityState}`);
   }
 
   private _stateDisplay(entityState: string): string {
     return entityState === UNAVAILABLE
-      ? this.hass!.localize("state.default.unavailable")
-      : this.hass!.localize(
+      ? this.menuai!.localize("state.default.unavailable")
+      : this.menuai!.localize(
           `component.alarm_control_panel.entity_component._.state.${entityState}`
         ) || entityState;
   }
@@ -342,7 +342,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
 
   private _handleActionClick(e: MouseEvent): void {
     callAlarmAction(
-      this.hass!,
+      this.menuai!,
       this._config!.entity,
       (e.currentTarget! as any).action,
       this._value || undefined
@@ -351,7 +351,7 @@ class HuiAlarmPanelCard extends LitElement implements LovelaceCard {
   }
 
   private _handleMoreInfo() {
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: this._config!.entity,
     });
   }

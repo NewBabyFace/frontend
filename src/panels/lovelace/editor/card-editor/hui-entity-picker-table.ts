@@ -3,7 +3,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { styleMap } from "lit/directives/style-map";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { computeAreaName } from "../../../../common/entity/compute_area_name";
 import { computeDeviceName } from "../../../../common/entity/compute_device_name";
@@ -21,7 +21,7 @@ import type {
 import "../../../../components/entity/state-badge";
 import "../../../../components/ha-relative-time";
 import { domainToName } from "../../../../data/integration";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 const ENTITY_ID_STYLE = styleMap({
   fontFamily: "var(--ha-font-family-code)",
@@ -42,7 +42,7 @@ interface EntityPickerTableRowData extends DataTableRowData {
 
 @customElement("hui-entity-picker-table")
 export class HuiEntityPickerTable extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -53,22 +53,22 @@ export class HuiEntityPickerTable extends LitElement {
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
-    this.hass.loadBackendTranslation("title");
+    this.menuai.loadBackendTranslation("title");
   }
 
   private _data = memoizeOne(
     (
-      states: HomeAssistant["states"],
+      states: menuai["states"],
       localize: LocalizeFunc,
       entities?: string[]
     ): EntityPickerTableRowData[] =>
       (entities || Object.keys(states)).map<EntityPickerTableRowData>(
         (entity) => {
-          const stateObj = this.hass.states[entity];
+          const stateObj = this.menuai.states[entity];
 
-          const { area, device } = getEntityContext(stateObj, this.hass);
+          const { area, device } = getEntityContext(stateObj, this.menuai);
 
-          const entityName = computeEntityName(stateObj, this.hass);
+          const entityName = computeEntityName(stateObj, this.menuai);
           const deviceName = device ? computeDeviceName(device) : undefined;
           const areaName = area ? computeAreaName(area) : undefined;
           const name = [deviceName, entityName].filter(Boolean).join(" ");
@@ -91,32 +91,32 @@ export class HuiEntityPickerTable extends LitElement {
 
   protected render(): TemplateResult {
     const data = this._data(
-      this.hass.states,
-      this.hass.localize,
+      this.menuai.states,
+      this.menuai.localize,
       this.entities
     );
 
-    const showEntityId = Boolean(this.hass.userData?.showEntityIdPicker);
+    const showEntityId = Boolean(this.menuai.userData?.showEntityIdPicker);
 
     const columns = this._columns(
       this.narrow,
-      computeRTL(this.hass),
+      computeRTL(this.menuai),
       showEntityId
     );
 
     return html`
       <ha-data-table
         class=${showEntityId ? "show-entity-id" : ""}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         selectable
         .id=${"entity_id"}
         .columns=${columns}
         .data=${data}
-        .searchLabel=${this.hass.localize(
+        .searchLabel=${this.menuai.localize(
           "ui.panel.lovelace.unused_entities.search"
         )}
         .noLabelFloat=${this.noLabelFloat}
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.lovelace.unused_entities.no_data"
         )}
         @selection-changed=${this._handleSelectionChanged}
@@ -129,20 +129,20 @@ export class HuiEntityPickerTable extends LitElement {
       const columns: DataTableColumnContainer = {
         icon: {
           title: "",
-          label: this.hass!.localize(
+          label: this.menuai!.localize(
             "ui.panel.lovelace.unused_entities.state_icon"
           ),
           type: "icon",
           template: (entity) => html`
             <state-badge
               @click=${this._handleEntityClicked}
-              .hass=${this.hass!}
+              .menuai=${this.menuai!}
               .stateObj=${entity.stateObj}
             ></state-badge>
           `,
         },
         name: {
-          title: this.hass!.localize(
+          title: this.menuai!.localize(
             "ui.panel.lovelace.unused_entities.entity"
           ),
           sortable: true,
@@ -197,7 +197,7 @@ export class HuiEntityPickerTable extends LitElement {
       };
 
       columns.entity_id = {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.lovelace.unused_entities.entity_id"
         ),
         sortable: true,
@@ -206,14 +206,14 @@ export class HuiEntityPickerTable extends LitElement {
       };
 
       columns.domain_name = {
-        title: this.hass!.localize("ui.panel.lovelace.unused_entities.domain"),
+        title: this.menuai!.localize("ui.panel.lovelace.unused_entities.domain"),
         sortable: true,
         filterable: true,
         hidden: narrow || showEntityId,
       };
 
       columns.last_changed = {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.lovelace.unused_entities.last_changed"
         ),
         type: "numeric",
@@ -221,7 +221,7 @@ export class HuiEntityPickerTable extends LitElement {
         hidden: narrow,
         template: (entity) => html`
           <ha-relative-time
-            .hass=${this.hass!}
+            .menuai=${this.menuai!}
             .datetime=${entity.last_changed}
             capitalize
           ></ha-relative-time>
@@ -233,7 +233,7 @@ export class HuiEntityPickerTable extends LitElement {
   );
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     const selectedEntities = ev.detail.value;
 
@@ -244,7 +244,7 @@ export class HuiEntityPickerTable extends LitElement {
     const entityId = (
       (ev.target as HTMLElement).closest(".mdc-data-table__row") as any
     ).rowId;
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId,
     });
   }

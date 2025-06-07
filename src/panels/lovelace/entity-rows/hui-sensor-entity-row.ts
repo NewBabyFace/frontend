@@ -3,7 +3,7 @@ import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { isUnavailableState } from "../../../data/entity";
 import { SENSOR_DEVICE_CLASS_TIMESTAMP } from "../../../data/sensor";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntitiesCardEntityConfig } from "../cards/types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
@@ -18,7 +18,7 @@ interface SensorEntityConfig extends EntitiesCardEntityConfig {
 
 @customElement("hui-sensor-entity-row")
 class HuiSensorEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: SensorEntityConfig;
 
@@ -34,33 +34,33 @@ class HuiSensorEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         ${stateObj.attributes.device_class === SENSOR_DEVICE_CLASS_TIMESTAMP &&
         !isUnavailableState(stateObj.state)
           ? html`
               <hui-timestamp-display
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .ts=${new Date(stateObj.state)}
                 .format=${this._config.format}
                 capitalize
               ></hui-timestamp-display>
             `
-          : this.hass.formatEntityState(stateObj)}
+          : this.menuai.formatEntityState(stateObj)}
       </hui-generic-entity-row>
     `;
   }

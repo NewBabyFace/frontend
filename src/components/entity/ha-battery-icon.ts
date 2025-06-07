@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { batteryLevelIcon } from "../../common/entity/battery_icon";
@@ -6,9 +6,9 @@ import "../ha-icon";
 
 @customElement("ha-battery-icon")
 export class HaBatteryIcon extends LitElement {
-  @property({ attribute: false }) public batteryStateObj?: HassEntity;
+  @property({ attribute: false }) public batteryStateObj?: menuaiEntity;
 
-  @property({ attribute: false }) public batteryChargingStateObj?: HassEntity;
+  @property({ attribute: false }) public batteryChargingStateObj?: menuaiEntity;
 
   protected render() {
     if (!this.batteryStateObj) return nothing;

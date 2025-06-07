@@ -1,12 +1,12 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { styleMap } from "lit/directives/style-map";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { DividerConfig, LovelaceRow } from "../entity-rows/types";
 
 @customElement("hui-divider-row")
 class HuiDividerRow extends LitElement implements LovelaceRow {
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @state() private _config?: DividerConfig;
 

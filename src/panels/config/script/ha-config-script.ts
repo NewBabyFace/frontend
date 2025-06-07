@@ -1,5 +1,5 @@
 import { consume } from "@lit/context";
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -8,9 +8,9 @@ import { debounce } from "../../../common/util/debounce";
 import { fullEntitiesContext } from "../../../data/context";
 import type { EntityRegistryEntry } from "../../../data/entity_registry";
 import type { ScriptEntity } from "../../../data/script";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 import "./ha-script-editor";
 import "./ha-script-picker";
 
@@ -22,8 +22,8 @@ const equal = (a: ScriptEntity[], b: ScriptEntity[]): boolean => {
 };
 
 @customElement("ha-config-script")
-class HaConfigScript extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigScript extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -58,14 +58,14 @@ class HaConfigScript extends HassRouterPage {
   };
 
   private _debouncedUpdateScripts = debounce((pageEl) => {
-    const newScript = this._getScripts(this.hass.states);
+    const newScript = this._getScripts(this.menuai.states);
     if (!equal(newScript, pageEl.scripts)) {
       pageEl.scripts = newScript;
     }
   }, 10);
 
   private _getScripts = memoizeOne(
-    (states: HassEntities): ScriptEntity[] =>
+    (states: menuaiEntities): ScriptEntity[] =>
       Object.values(states).filter(
         (entity) =>
           computeStateDomain(entity) === "script" && !entity.attributes.restored
@@ -74,21 +74,21 @@ class HaConfigScript extends HassRouterPage {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("device_automation");
+    this.menuai.loadBackendTranslation("device_automation");
   }
 
   protected updatePageEl(pageEl, changedProps: PropertyValues) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.narrow = this.narrow;
     pageEl.isWide = this.isWide;
     pageEl.route = this.routeTail;
     pageEl.showAdvanced = this.showAdvanced;
     pageEl.entityRegistry = this._entityReg;
 
-    if (this.hass) {
+    if (this.menuai) {
       if (!pageEl.scripts || !changedProps) {
-        pageEl.scripts = this._getScripts(this.hass.states);
-      } else if (changedProps.has("hass")) {
+        pageEl.scripts = this._getScripts(this.menuai.states);
+      } else if (changedProps.has("menuai")) {
         this._debouncedUpdateScripts(pageEl);
       }
     }

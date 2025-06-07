@@ -17,7 +17,7 @@ import {
   type,
   union,
 } from "superstruct";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { customType } from "../../../../common/structs/is-custom-type";
 import "../../../../components/ha-card";
@@ -27,7 +27,7 @@ import "../../../../components/ha-switch";
 import "../../../../components/ha-textfield";
 import "../../../../components/ha-theme-picker";
 import { isCustomType } from "../../../../data/lovelace_custom_cards";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { EntitiesCardConfig } from "../../cards/types";
 import { TIMESTAMP_RENDERING_FORMATS } from "../../components/types";
 import type { LovelaceRowConfig } from "../../entity-rows/types";
@@ -195,7 +195,7 @@ export class HuiEntitiesCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntitiesCardConfig;
 
@@ -218,14 +218,14 @@ export class HuiEntitiesCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     if (this._subElementEditorConfig) {
       return html`
         <hui-sub-element-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .config=${this._subElementEditorConfig}
           @go-back=${this._goBack}
           @config-changed=${this._handleSubElementChanged}
@@ -237,9 +237,9 @@ export class HuiEntitiesCardEditor
     return html`
       <div class="card-config">
         <ha-textfield
-          .label="${this.hass.localize(
+          .label="${this.menuai.localize(
             "ui.panel.lovelace.editor.card.generic.title"
-          )} (${this.hass.localize(
+          )} (${this.menuai.localize(
             "ui.panel.lovelace.editor.card.config.optional"
           )})"
           .value=${this._title}
@@ -247,11 +247,11 @@ export class HuiEntitiesCardEditor
           @input=${this._valueChanged}
         ></ha-textfield>
         <ha-theme-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._theme}
-          .label=${`${this.hass!.localize(
+          .label=${`${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.generic.theme"
-          )} (${this.hass!.localize(
+          )} (${this.menuai!.localize(
             "ui.panel.lovelace.editor.card.config.optional"
           )})`}
           .configValue=${"theme"}
@@ -259,7 +259,7 @@ export class HuiEntitiesCardEditor
         ></ha-theme-picker>
         <div class="side-by-side">
           <ha-formfield
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.lovelace.editor.card.entities.show_header_toggle"
             )}
           >
@@ -270,7 +270,7 @@ export class HuiEntitiesCardEditor
             ></ha-switch>
           </ha-formfield>
           <ha-formfield
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.lovelace.editor.card.generic.state_color"
             )}
           >
@@ -282,14 +282,14 @@ export class HuiEntitiesCardEditor
           </ha-formfield>
         </div>
         <hui-header-footer-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .configValue=${"header"}
           .config=${this._config.header}
           @value-changed=${this._valueChanged}
           @edit-detail-element=${this._editDetailElement}
         ></hui-header-footer-editor>
         <hui-header-footer-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .configValue=${"footer"}
           .config=${this._config.footer}
           @value-changed=${this._valueChanged}
@@ -297,7 +297,7 @@ export class HuiEntitiesCardEditor
         ></hui-header-footer-editor>
       </div>
       <hui-entities-card-row-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entities=${this._configEntities}
         @entities-changed=${this._valueChanged}
         @edit-detail-element=${this._editDetailElement}
@@ -307,7 +307,7 @@ export class HuiEntitiesCardEditor
 
   private _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -359,7 +359,7 @@ export class HuiEntitiesCardEditor
 
   private _handleSubElementChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -397,7 +397,7 @@ export class HuiEntitiesCardEditor
     fireEvent(this, "config-changed", { config: this._config });
   }
 
-  private _editDetailElement(ev: HASSDomEvent<EditDetailElementEvent>): void {
+  private _editDetailElement(ev: menuaiDomEvent<EditDetailElementEvent>): void {
     this._subElementEditorConfig = ev.detail.subElementConfig;
   }
 

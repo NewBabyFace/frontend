@@ -39,7 +39,7 @@ import {
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { brandsUrl } from "../../../../util/brands-url";
 import { documentationUrl } from "../../../../util/documentation-url";
 import {
@@ -51,7 +51,7 @@ import { energyCardStyles } from "./styles";
 
 @customElement("ha-energy-grid-settings")
 export class EnergyGridSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public preferences!: EnergyPreferences;
@@ -91,20 +91,20 @@ export class EnergyGridSettings extends LitElement {
       <ha-card outlined>
         <h1 class="card-header">
           <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
-          ${this.hass.localize("ui.panel.config.energy.grid.title")}
+          ${this.menuai.localize("ui.panel.config.energy.grid.title")}
         </h1>
 
         <div class="card-content">
           <p>
-            ${this.hass.localize("ui.panel.config.energy.grid.sub")}
+            ${this.menuai.localize("ui.panel.config.energy.grid.sub")}
             <a
               target="_blank"
               rel="noopener noreferrer"
               href=${documentationUrl(
-                this.hass,
+                this.menuai,
                 "/docs/energy/electricity-grid/"
               )}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.grid.learn_more"
               )}</a
             >
@@ -112,19 +112,19 @@ export class EnergyGridSettings extends LitElement {
           ${gridValidation
             ? html`
                 <ha-energy-validation-result
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .issues=${gridValidation}
                 ></ha-energy-validation-result>
               `
             : ""}
 
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.grid.grid_consumption"
             )}
           </h3>
           ${gridSource.flow_from.map((flow) => {
-            const entityState = this.hass.states[flow.stat_energy_from];
+            const entityState = this.menuai.states[flow.stat_energy_from];
             return html`
               <div class="row" .source=${flow}>
                 ${entityState?.attributes.icon
@@ -136,20 +136,20 @@ export class EnergyGridSettings extends LitElement {
                     ></ha-svg-icon>`}
                 <span class="content"
                   >${getStatisticLabel(
-                    this.hass,
+                    this.menuai,
                     flow.stat_energy_from,
                     this.statsMetadata?.[flow.stat_energy_from]
                   )}</span
                 >
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.grid.edit_consumption"
                   )}
                   @click=${this._editFromSource}
                   .path=${mdiPencil}
                 ></ha-icon-button>
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.grid.delete_consumption"
                   )}
                   @click=${this._deleteFromSource}
@@ -161,17 +161,17 @@ export class EnergyGridSettings extends LitElement {
           <div class="row border-bottom">
             <ha-svg-icon .path=${mdiHomeImportOutline}></ha-svg-icon>
             <mwc-button @click=${this._addFromSource}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.grid.add_consumption"
               )}</mwc-button
             >
           </div>
 
           <h3>
-            ${this.hass.localize("ui.panel.config.energy.grid.return_to_grid")}
+            ${this.menuai.localize("ui.panel.config.energy.grid.return_to_grid")}
           </h3>
           ${gridSource.flow_to.map((flow) => {
-            const entityState = this.hass.states[flow.stat_energy_to];
+            const entityState = this.menuai.states[flow.stat_energy_to];
             return html`
               <div class="row" .source=${flow}>
                 ${entityState?.attributes.icon
@@ -183,20 +183,20 @@ export class EnergyGridSettings extends LitElement {
                     ></ha-svg-icon>`}
                 <span class="content"
                   >${getStatisticLabel(
-                    this.hass,
+                    this.menuai,
                     flow.stat_energy_to,
                     this.statsMetadata?.[flow.stat_energy_to]
                   )}</span
                 >
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.grid.edit_return"
                   )}
                   @click=${this._editToSource}
                   .path=${mdiPencil}
                 ></ha-icon-button>
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.grid.delete_return"
                   )}
                   @click=${this._deleteToSource}
@@ -208,14 +208,14 @@ export class EnergyGridSettings extends LitElement {
           <div class="row border-bottom">
             <ha-svg-icon .path=${mdiHomeExportOutline}></ha-svg-icon>
             <mwc-button @click=${this._addToSource}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.grid.add_return"
               )}</mwc-button
             >
           </div>
 
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.grid.grid_carbon_footprint"
             )}
           </h3>
@@ -228,7 +228,7 @@ export class EnergyGridSettings extends LitElement {
                   src=${brandsUrl({
                     domain: "co2signal",
                     type: "icon",
-                    darkOptimized: this.hass.themes?.darkMode,
+                    darkOptimized: this.menuai.themes?.darkMode,
                   })}
                 />
                 <span class="content">${this._co2ConfigEntry.title}</span>
@@ -238,7 +238,7 @@ export class EnergyGridSettings extends LitElement {
                   <ha-icon-button .path=${mdiPencil}></ha-icon-button>
                 </a>
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.grid.remove_co2_signal"
                   )}
                   @click=${this._removeCO2Sensor}
@@ -254,11 +254,11 @@ export class EnergyGridSettings extends LitElement {
                     src=${brandsUrl({
                       domain: "co2signal",
                       type: "icon",
-                      darkOptimized: this.hass.themes?.darkMode,
+                      darkOptimized: this.menuai.themes?.darkMode,
                     })}
                   />
                   <mwc-button @click=${this._addCO2Sensor}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.energy.grid.add_co2_signal"
                     )}
                   </mwc-button>
@@ -270,7 +270,7 @@ export class EnergyGridSettings extends LitElement {
   }
 
   private async _fetchCO2SignalConfigEntries() {
-    const entries = await getConfigEntries(this.hass, { domain: "co2signal" });
+    const entries = await getConfigEntries(this.menuai, { domain: "co2signal" });
     this._co2ConfigEntry = entries.length ? entries[0] : undefined;
   }
 
@@ -287,13 +287,13 @@ export class EnergyGridSettings extends LitElement {
     const entryId = ev.currentTarget.closest(".row").entry.entry_id;
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_integration"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_integration"),
       }))
     ) {
       return;
     }
 
-    await deleteConfigEntry(this.hass, entryId);
+    await deleteConfigEntry(this.menuai, entryId);
     this._fetchCO2SignalConfigEntries();
   }
 
@@ -434,7 +434,7 @@ export class EnergyGridSettings extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_source"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_source"),
       }))
     ) {
       return;
@@ -461,7 +461,7 @@ export class EnergyGridSettings extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_source"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_source"),
       }))
     ) {
       return;
@@ -502,7 +502,7 @@ export class EnergyGridSettings extends LitElement {
 
   private async _savePreferences(preferences: EnergyPreferences) {
     try {
-      const result = await saveEnergyPreferences(this.hass, preferences);
+      const result = await saveEnergyPreferences(this.menuai, preferences);
       fireEvent(this, "value-changed", { value: result });
     } catch (err: any) {
       showAlertDialog(this, { title: `Failed to save config: ${err.message}` });

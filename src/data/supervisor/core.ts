@@ -1,22 +1,22 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "../hassio/common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "../menuaiio/common";
 
-export const restartCore = async (hass: HomeAssistant) => {
-  await hass.callService("homeassistant", "restart");
+export const restartCore = async (menuai: menuai) => {
+  await menuai.callService("menuai", "restart");
 };
 
-export const updateCore = async (hass: HomeAssistant, backup: boolean) => {
-  if (atLeastVersion(hass.config.version, 2025, 2, 0)) {
-    await hass.callWS({
-      type: "hassio/update/core",
+export const updateCore = async (menuai: menuai, backup: boolean) => {
+  if (atLeastVersion(menuai.config.version, 2025, 2, 0)) {
+    await menuai.callWS({
+      type: "menuaiio/update/core",
       backup: backup,
     });
     return;
   }
 
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: "/core/update",
       method: "post",
@@ -26,7 +26,7 @@ export const updateCore = async (hass: HomeAssistant, backup: boolean) => {
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>("POST", "hassio/core/update", {
+  await menuai.callApi<menuaiioResponse<void>>("POST", "menuaiio/core/update", {
     backup,
   });
 };

@@ -1,6 +1,6 @@
 import type {
-  HassEntity,
-  HassServiceTarget,
+  menuaiEntity,
+  menuaiServiceTarget,
 } from "home-assistant-js-websocket";
 import { ensureArray } from "../common/array/ensure-array";
 import { computeStateDomain } from "../common/entity/compute_state_domain";
@@ -8,7 +8,7 @@ import { supportsFeature } from "../common/entity/supports-feature";
 import type { CropOptions } from "../dialogs/image-cropper-dialog/show-image-cropper-dialog";
 import { isHelperDomain } from "../panels/config/helpers/const";
 import type { UiAction } from "../panels/lovelace/components/hui-action-editor";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import {
   type DeviceRegistryEntry,
   getDeviceIntegrationLookup,
@@ -477,11 +477,11 @@ export interface UiStateContentSelector {
 }
 
 export const expandLabelTarget = (
-  hass: HomeAssistant,
+  menuai: menuai,
   labelId: string,
-  areas: HomeAssistant["areas"],
-  devices: HomeAssistant["devices"],
-  entities: HomeAssistant["entities"],
+  areas: menuai["areas"],
+  devices: menuai["devices"],
+  entities: menuai["entities"],
   targetSelector: TargetSelector,
   entitySources?: EntitySources
 ) => {
@@ -493,7 +493,7 @@ export const expandLabelTarget = (
     if (
       area.labels.includes(labelId) &&
       areaMeetsTargetSelector(
-        hass,
+        menuai,
         entities,
         devices,
         area.area_id,
@@ -509,7 +509,7 @@ export const expandLabelTarget = (
     if (
       device.labels.includes(labelId) &&
       deviceMeetsTargetSelector(
-        hass,
+        menuai,
         Object.values(entities),
         device,
         targetSelector,
@@ -524,7 +524,7 @@ export const expandLabelTarget = (
     if (
       entity.labels.includes(labelId) &&
       entityMeetsTargetSelector(
-        hass.states[entity.entity_id],
+        menuai.states[entity.entity_id],
         targetSelector,
         entitySources
       )
@@ -537,9 +537,9 @@ export const expandLabelTarget = (
 };
 
 export const expandFloorTarget = (
-  hass: HomeAssistant,
+  menuai: menuai,
   floorId: string,
-  areas: HomeAssistant["areas"],
+  areas: menuai["areas"],
   targetSelector: TargetSelector,
   entitySources?: EntitySources
 ) => {
@@ -548,9 +548,9 @@ export const expandFloorTarget = (
     if (
       area.floor_id === floorId &&
       areaMeetsTargetSelector(
-        hass,
-        hass.entities,
-        hass.devices,
+        menuai,
+        menuai.entities,
+        menuai.devices,
         area.area_id,
         targetSelector,
         entitySources
@@ -563,10 +563,10 @@ export const expandFloorTarget = (
 };
 
 export const expandAreaTarget = (
-  hass: HomeAssistant,
+  menuai: menuai,
   areaId: string,
-  devices: HomeAssistant["devices"],
-  entities: HomeAssistant["entities"],
+  devices: menuai["devices"],
+  entities: menuai["entities"],
   targetSelector: TargetSelector,
   entitySources?: EntitySources
 ) => {
@@ -576,7 +576,7 @@ export const expandAreaTarget = (
     if (
       device.area_id === areaId &&
       deviceMeetsTargetSelector(
-        hass,
+        menuai,
         Object.values(entities),
         device,
         targetSelector,
@@ -590,7 +590,7 @@ export const expandAreaTarget = (
     if (
       entity.area_id === areaId &&
       entityMeetsTargetSelector(
-        hass.states[entity.entity_id],
+        menuai.states[entity.entity_id],
         targetSelector,
         entitySources
       )
@@ -602,9 +602,9 @@ export const expandAreaTarget = (
 };
 
 export const expandDeviceTarget = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceId: string,
-  entities: HomeAssistant["entities"],
+  entities: menuai["entities"],
   targetSelector: TargetSelector,
   entitySources?: EntitySources
 ) => {
@@ -613,7 +613,7 @@ export const expandDeviceTarget = (
     if (
       entity.device_id === deviceId &&
       entityMeetsTargetSelector(
-        hass.states[entity.entity_id],
+        menuai.states[entity.entity_id],
         targetSelector,
         entitySources
       )
@@ -625,9 +625,9 @@ export const expandDeviceTarget = (
 };
 
 export const areaMeetsTargetSelector = (
-  hass: HomeAssistant,
-  entities: HomeAssistant["entities"],
-  devices: HomeAssistant["devices"],
+  menuai: menuai,
+  entities: menuai["entities"],
+  devices: menuai["devices"],
   areaId: string,
   targetSelector: TargetSelector,
   entitySources?: EntitySources
@@ -636,7 +636,7 @@ export const areaMeetsTargetSelector = (
     if (
       device.area_id === areaId &&
       deviceMeetsTargetSelector(
-        hass,
+        menuai,
         Object.values(entities),
         device,
         targetSelector,
@@ -654,7 +654,7 @@ export const areaMeetsTargetSelector = (
     if (
       entity.area_id === areaId &&
       entityMeetsTargetSelector(
-        hass.states[entity.entity_id],
+        menuai.states[entity.entity_id],
         targetSelector,
         entitySources
       )
@@ -666,7 +666,7 @@ export const areaMeetsTargetSelector = (
 };
 
 export const deviceMeetsTargetSelector = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryDisplayEntry[] | EntityRegistryEntry[],
   device: DeviceRegistryEntry,
   targetSelector: TargetSelector,
@@ -690,7 +690,7 @@ export const deviceMeetsTargetSelector = (
       (reg) => reg.device_id === device.id
     );
     return entities.some((entity) => {
-      const entityState = hass.states[entity.entity_id];
+      const entityState = menuai.states[entity.entity_id];
       return entityMeetsTargetSelector(
         entityState,
         targetSelector,
@@ -702,7 +702,7 @@ export const deviceMeetsTargetSelector = (
 };
 
 export const entityMeetsTargetSelector = (
-  entity: HassEntity | undefined,
+  entity: menuaiEntity | undefined,
   targetSelector: TargetSelector,
   entitySources?: EntitySources
 ): boolean => {
@@ -751,7 +751,7 @@ export const filterSelectorDevices = (
 
 export const filterSelectorEntities = (
   filterEntity: EntitySelectorFilter,
-  entity: HassEntity,
+  entity: menuaiEntity,
   entitySources?: EntitySources
 ): boolean => {
   const {
@@ -891,11 +891,11 @@ export const computeCreateDomains = (
 };
 
 export const resolveEntityIDs = (
-  hass: HomeAssistant,
-  targetPickerValue: HassServiceTarget,
-  entities: HomeAssistant["entities"],
-  devices: HomeAssistant["devices"],
-  areas: HomeAssistant["areas"]
+  menuai: menuai,
+  targetPickerValue: menuaiServiceTarget,
+  entities: menuai["entities"],
+  devices: menuai["devices"],
+  areas: menuai["areas"]
 ): string[] => {
   if (!targetPickerValue) {
     return [];
@@ -910,7 +910,7 @@ export const resolveEntityIDs = (
 
   targetLabels.forEach((labelId) => {
     const expanded = expandLabelTarget(
-      hass,
+      menuai,
       labelId,
       areas,
       devices,
@@ -923,13 +923,13 @@ export const resolveEntityIDs = (
   });
 
   targetFloors.forEach((floorId) => {
-    const expanded = expandFloorTarget(hass, floorId, areas, targetSelector);
+    const expanded = expandFloorTarget(menuai, floorId, areas, targetSelector);
     expanded.areas.forEach((id) => targetAreas.add(id));
   });
 
   targetAreas.forEach((areaId) => {
     const expanded = expandAreaTarget(
-      hass,
+      menuai,
       areaId,
       devices,
       entities,
@@ -941,7 +941,7 @@ export const resolveEntityIDs = (
 
   targetDevices.forEach((deviceId) => {
     const expanded = expandDeviceTarget(
-      hass,
+      menuai,
       deviceId,
       entities,
       targetSelector

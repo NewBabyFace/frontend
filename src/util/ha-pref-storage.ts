@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 const STORED_STATE = [
   "dockedSidebar",
@@ -11,10 +11,10 @@ const STORED_STATE = [
   "defaultPanel",
 ];
 
-export function storeState(hass: HomeAssistant) {
+export function storeState(menuai: menuai) {
   try {
     STORED_STATE.forEach((key) => {
-      const value = hass[key];
+      const value = menuai[key];
       window.localStorage.setItem(
         key,
         JSON.stringify(value === undefined ? null : value)

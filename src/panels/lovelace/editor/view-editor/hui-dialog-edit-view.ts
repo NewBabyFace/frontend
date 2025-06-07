@@ -9,7 +9,7 @@ import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { stopPropagation } from "../../../../common/dom/stop_propagation";
 import { navigate } from "../../../../common/navigate";
@@ -35,7 +35,7 @@ import {
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../components/hui-entity-editor";
 import type { Lovelace } from "../../types";
 import { SECTIONS_VIEW_LAYOUT } from "../../views/const";
@@ -59,7 +59,7 @@ const TABS = ["tab-settings", "tab-background", "tab-visibility"] as const;
 
 @customElement("hui-dialog-edit-view")
 export class HuiDialogEditView extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _params?: EditViewDialogParams;
 
@@ -127,10 +127,10 @@ export class HuiDialogEditView extends LitElement {
 
   private get _viewConfigTitle(): string {
     if (!this._config || !this._config.title) {
-      return this.hass!.localize("ui.panel.lovelace.editor.edit_view.header");
+      return this.menuai!.localize("ui.panel.lovelace.editor.edit_view.header");
     }
 
-    return this.hass!.localize(
+    return this.menuai!.localize(
       "ui.panel.lovelace.editor.edit_view.header_name",
       { name: this._config.title }
     );
@@ -146,7 +146,7 @@ export class HuiDialogEditView extends LitElement {
     if (this._yamlMode) {
       content = html`
         <ha-yaml-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           dialogInitialFocus
           @value-changed=${this._viewYamlChanged}
         ></ha-yaml-editor>
@@ -157,7 +157,7 @@ export class HuiDialogEditView extends LitElement {
           content = html`
             <hui-view-editor
               .isNew=${this._params.viewIndex === undefined}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .config=${this._config}
               @view-config-changed=${this._viewConfigChanged}
             ></hui-view-editor>
@@ -166,7 +166,7 @@ export class HuiDialogEditView extends LitElement {
         case "tab-background":
           content = html`
             <hui-view-background-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .config=${this._config}
               @view-config-changed=${this._viewConfigChanged}
             ></hui-view-background-editor>
@@ -175,7 +175,7 @@ export class HuiDialogEditView extends LitElement {
         case "tab-visibility":
           content = html`
             <hui-view-visibility-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .config=${this._config}
               @view-visibility-changed=${this._viewVisibilityChanged}
             ></hui-view-visibility-editor>
@@ -208,7 +208,7 @@ export class HuiDialogEditView extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass!.localize("ui.common.close")}
+            .label=${this.menuai!.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <h2 slot="title">${this._viewConfigTitle}</h2>
@@ -222,11 +222,11 @@ export class HuiDialogEditView extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass!.localize("ui.common.menu")}
+              .label=${this.menuai!.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item graphic="icon">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.edit_view.edit_${!this._yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon
@@ -235,7 +235,7 @@ export class HuiDialogEditView extends LitElement {
               ></ha-svg-icon>
             </ha-list-item>
             <ha-list-item graphic="icon">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.lovelace.editor.edit_view.move_to_dashboard"
               )}
               <ha-svg-icon
@@ -247,12 +247,12 @@ export class HuiDialogEditView extends LitElement {
           ${convertToSection
             ? html`
                 <ha-alert alert-type="info">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.lovelace.editor.edit_view.card_to_section_convert"
                   )}
                   <ha-button
                     slot="action"
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_view.convert_view"
                     )}
                     @click=${this._convertToSection}
@@ -264,7 +264,7 @@ export class HuiDialogEditView extends LitElement {
           ${convertNotSupported
             ? html`
                 <ha-alert alert-type="warning">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.lovelace.editor.edit_view.section_to_card_not_supported"
                   )}
                 </ha-alert>
@@ -279,7 +279,7 @@ export class HuiDialogEditView extends LitElement {
                       .panel=${tab}
                       .active=${this._currTab === tab}
                     >
-                      ${this.hass!.localize(
+                      ${this.menuai!.localize(
                         `ui.panel.lovelace.editor.edit_view.${tab.replace("-", "_")}`
                       )}
                     </sl-tab>
@@ -296,7 +296,7 @@ export class HuiDialogEditView extends LitElement {
                 slot="secondaryAction"
                 @click=${this._deleteConfirm}
               >
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.edit_view.delete"
                 )}
               </ha-button>
@@ -315,7 +315,7 @@ export class HuiDialogEditView extends LitElement {
           ${this._saving
             ? html`<ha-spinner size="small" aria-label="Saving"></ha-spinner>`
             : nothing}
-          ${this.hass!.localize("ui.common.save")}</ha-button
+          ${this.menuai!.localize("ui.common.save")}</ha-button
         >
       </ha-dialog>
     `;
@@ -349,12 +349,12 @@ export class HuiDialogEditView extends LitElement {
 
     try {
       toConfig = (await fetchConfig(
-        this.hass!.connection,
+        this.menuai!.connection,
         urlPath,
         false
       )) as LovelaceConfig;
     } catch (err: any) {
-      errorMessage = this.hass!.localize(
+      errorMessage = this.menuai!.localize(
         "ui.panel.lovelace.editor.select_dashboard.get_config_failed"
       );
       // eslint-disable-next-line no-console
@@ -362,14 +362,14 @@ export class HuiDialogEditView extends LitElement {
     }
 
     if (toConfig && isStrategyDashboard(toConfig)) {
-      errorMessage = this.hass!.localize(
+      errorMessage = this.menuai!.localize(
         "ui.panel.lovelace.editor.select_dashboard.cannot_move_to_strategy"
       );
     }
 
     if (!errorMessage) {
       const [newFromConfig, newToConfig] = moveViewToDashboard(
-        this.hass!,
+        this.menuai!,
         this._lovelace!.config,
         toConfig,
         this._params!.viewIndex!
@@ -379,25 +379,25 @@ export class HuiDialogEditView extends LitElement {
       const oldToConfig = toConfig;
 
       undoAction = async () => {
-        await saveConfig(this.hass!, urlPath, oldToConfig);
+        await saveConfig(this.menuai!, urlPath, oldToConfig);
         await this._lovelace!.saveConfig(oldFromConfig);
       };
 
       try {
         await this._lovelace!.saveConfig(newFromConfig);
-        await saveConfig(this.hass!, urlPath, newToConfig);
+        await saveConfig(this.menuai!, urlPath, newToConfig);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(err);
         try {
           await undoAction();
-          errorMessage = this.hass!.localize(
+          errorMessage = this.menuai!.localize(
             "ui.panel.lovelace.editor.select_dashboard.move_failed"
           );
         } catch (revertError) {
           // eslint-disable-next-line no-console
           console.error(revertError);
-          errorMessage = this.hass!.localize(
+          errorMessage = this.menuai!.localize(
             "ui.panel.lovelace.editor.select_dashboard.revert_failed"
           );
         }
@@ -410,13 +410,13 @@ export class HuiDialogEditView extends LitElement {
       });
     } else {
       this._lovelace!.showToast({
-        message: this.hass!.localize(
+        message: this.menuai!.localize(
           "ui.panel.lovelace.editor.select_dashboard.success"
         ),
         duration: 4000,
         action: {
           action: undoAction,
-          text: this.hass!.localize("ui.common.undo"),
+          text: this.menuai!.localize("ui.common.undo"),
         },
       });
       this.closeDialog();
@@ -429,16 +429,16 @@ export class HuiDialogEditView extends LitElement {
       return;
     }
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_view.convert_view_title"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_view.convert_view_text"
       ),
-      confirmText: this.hass!.localize(
+      confirmText: this.menuai!.localize(
         "ui.panel.lovelace.editor.edit_view.convert_view_action"
       ),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
     });
 
     if (!confirm) {
@@ -449,13 +449,13 @@ export class HuiDialogEditView extends LitElement {
       ...this._config,
     };
     newConfig.type = SECTIONS_VIEW_LAYOUT;
-    newConfig.sections = [generateDefaultSection(this.hass!.localize)];
+    newConfig.sections = [generateDefaultSection(this.menuai!.localize)];
     newConfig.path = undefined;
     const lovelace = this._params!.lovelace!;
 
     try {
       await lovelace.saveConfig(
-        addView(this.hass!, lovelace.config, newConfig)
+        addView(this.menuai!, lovelace.config, newConfig)
       );
       if (this._params.saveCallback) {
         this._params.saveCallback(lovelace.config.views.length, newConfig);
@@ -463,7 +463,7 @@ export class HuiDialogEditView extends LitElement {
       this.closeDialog();
     } catch (err: any) {
       showAlertDialog(this, {
-        text: `${this.hass!.localize(
+        text: `${this.menuai!.localize(
           "ui.panel.lovelace.editor.edit_view.saving_failed"
         )}: ${err.message}`,
       });
@@ -499,12 +499,12 @@ export class HuiDialogEditView extends LitElement {
     const named = this._config?.title ? "named" : "unnamed";
 
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass!.localize("ui.panel.lovelace.views.delete_title"),
-      text: this.hass!.localize(
+      title: this.menuai!.localize("ui.panel.lovelace.views.delete_title"),
+      text: this.menuai!.localize(
         `ui.panel.lovelace.views.delete_${named}_view_${type}`,
         { name: this._config?.title }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
       destructive: true,
     });
 
@@ -537,7 +537,7 @@ export class HuiDialogEditView extends LitElement {
     };
     // Ensure we have at least one section if we are in sections view
     if (viewConf.type === SECTIONS_VIEW_LAYOUT && !viewConf.sections?.length) {
-      viewConf.sections = [generateDefaultSection(this.hass!.localize)];
+      viewConf.sections = [generateDefaultSection(this.menuai!.localize)];
     } else if (!viewConf.cards?.length) {
       viewConf.cards = [];
     }
@@ -547,9 +547,9 @@ export class HuiDialogEditView extends LitElement {
     try {
       await lovelace.saveConfig(
         this._creatingView
-          ? addView(this.hass!, lovelace.config, viewConf)
+          ? addView(this.menuai!, lovelace.config, viewConf)
           : replaceView(
-              this.hass!,
+              this.menuai!,
               lovelace.config,
               this._params.viewIndex!,
               viewConf
@@ -564,7 +564,7 @@ export class HuiDialogEditView extends LitElement {
       this.closeDialog();
     } catch (err: any) {
       showAlertDialog(this, {
-        text: `${this.hass!.localize(
+        text: `${this.menuai!.localize(
           "ui.panel.lovelace.editor.edit_view.saving_failed"
         )}: ${err.message}`,
       });
@@ -585,7 +585,7 @@ export class HuiDialogEditView extends LitElement {
   }
 
   private _viewVisibilityChanged(
-    ev: HASSDomEvent<ViewVisibilityChangeEvent>
+    ev: menuaiDomEvent<ViewVisibilityChangeEvent>
   ): void {
     if (ev.detail.visible && this._config) {
       this._config = {

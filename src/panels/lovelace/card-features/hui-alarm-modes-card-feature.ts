@@ -21,7 +21,7 @@ import {
   supportedAlarmModes,
 } from "../../../data/alarm_control_panel";
 import { UNAVAILABLE } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import { filterModes } from "./common/filter-modes";
@@ -31,11 +31,11 @@ import type {
 } from "./types";
 
 export const supportsAlarmModesCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -47,7 +47,7 @@ class HuiAlarmModeCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -76,10 +76,10 @@ class HuiAlarmModeCardFeature
   }
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id] as
+    return this.menuai.states[this.context.entity_id] as
       | AlarmControlPanelEntity
       | undefined;
   }
@@ -87,11 +87,11 @@ class HuiAlarmModeCardFeature
   protected willUpdate(changedProp: PropertyValues): void {
     super.willUpdate(changedProp);
     if (
-      (changedProp.has("hass") || changedProp.has("context")) &&
+      (changedProp.has("menuai") || changedProp.has("context")) &&
       this._stateObj
     ) {
-      const oldHass = changedProp.get("hass") as HomeAssistant | undefined;
-      const oldStateObj = oldHass?.states[this.context!.entity_id!];
+      const oldmenuai = changedProp.get("menuai") as menuai | undefined;
+      const oldStateObj = oldmenuai?.states[this.context!.entity_id!];
       if (oldStateObj !== this._stateObj) {
         this._currentMode = this._getCurrentMode(this._stateObj);
       }
@@ -126,7 +126,7 @@ class HuiAlarmModeCardFeature
   private async _setMode(mode: AlarmMode) {
     await setProtectedAlarmControlPanelMode(
       this,
-      this.hass!,
+      this.menuai!,
       this._stateObj!,
       mode
     );
@@ -135,10 +135,10 @@ class HuiAlarmModeCardFeature
   protected render(): TemplateResult | typeof nothing {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsAlarmModesCardFeature(this.hass, this.context)
+      !supportsAlarmModesCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -152,7 +152,7 @@ class HuiAlarmModeCardFeature
       this._config.modes
     ).map<ControlSelectOption>((mode) => ({
       value: mode,
-      label: this.hass!.localize(`ui.card.alarm_control_panel.modes.${mode}`),
+      label: this.menuai!.localize(`ui.card.alarm_control_panel.modes.${mode}`),
       path: ALARM_MODES[mode].path,
     }));
 
@@ -160,7 +160,7 @@ class HuiAlarmModeCardFeature
       return html`
         <ha-control-button-group>
           <ha-control-button
-            .label=${this.hass.localize("ui.card.alarm_control_panel.disarm")}
+            .label=${this.menuai.localize("ui.card.alarm_control_panel.disarm")}
             @click=${this._disarm}
           >
             <ha-svg-icon .path=${mdiShieldOff}></ha-svg-icon>
@@ -175,7 +175,7 @@ class HuiAlarmModeCardFeature
         .value=${this._currentMode}
         @value-changed=${this._valueChanged}
         hide-label
-        .ariaLabel=${this.hass.localize(
+        .ariaLabel=${this.menuai.localize(
           "ui.card.alarm_control_panel.modes_label"
         )}
         style=${styleMap({

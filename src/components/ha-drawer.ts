@@ -77,7 +77,7 @@ export class HaDrawer extends DrawerBase {
       })
     );
     this._mc.on("swipeleft swiperight", () => {
-      fireEvent(this, "hass-toggle-menu", { open: false });
+      fireEvent(this, "menuai-toggle-menu", { open: false });
     });
   }
 

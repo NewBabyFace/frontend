@@ -12,20 +12,20 @@ import { updateEntityRegistryEntry } from "../../../../data/entity_registry";
 import type { LightColor, LightEntity } from "../../../../data/light";
 import { computeDefaultFavoriteColors } from "../../../../data/light";
 import { actionHandler } from "../../../../panels/lovelace/common/directives/action-handler-directive";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showConfirmationDialog } from "../../../generic/show-dialog-box";
 import "./ha-favorite-color-button";
 import { showLightColorFavoriteDialog } from "./show-dialog-light-color-favorite";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "favorite-color-edit-started";
   }
 }
 
 @customElement("ha-more-info-light-favorite-colors")
 export class HaMoreInfoLightFavoriteColors extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: LightEntity;
 
@@ -63,7 +63,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
 
   private _apply = (index: number) => {
     const favorite = this._favoriteColors[index];
-    this.hass.callService("light", "turn_on", {
+    this.menuai.callService("light", "turn_on", {
       entity_id: this.stateObj!.entity_id,
       ...favorite,
     });
@@ -71,7 +71,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
 
   private async _save(newFavoriteColors: LightColor[]) {
     const result = await updateEntityRegistryEntry(
-      this.hass,
+      this.menuai,
       this.entry!.entity_id,
       {
         options_domain: "light",
@@ -86,7 +86,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
   private _add = async () => {
     const color = await showLightColorFavoriteDialog(this, {
       entry: this.entry!,
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.dialogs.more_info_control.light.favorite_color.add_title"
       ),
     });
@@ -103,7 +103,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
     const color = await showLightColorFavoriteDialog(this, {
       entry: this.entry!,
       initialColor: this._favoriteColors[index],
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.dialogs.more_info_control.light.favorite_color.edit_title"
       ),
     });
@@ -120,13 +120,13 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
   private _delete = async (index) => {
     const confirm = await showConfirmationDialog(this, {
       destructive: true,
-      title: this.hass.localize(
+      title: this.menuai.localize(
         `ui.dialogs.more_info_control.light.favorite_color.delete_confirm_title`
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         `ui.dialogs.more_info_control.light.favorite_color.delete_confirm_text`
       ),
-      confirmText: this.hass.localize(
+      confirmText: this.menuai.localize(
         `ui.dialogs.more_info_control.light.favorite_color.delete_confirm_action`
       ),
     });
@@ -152,7 +152,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
 
   private _handleColorAction = (ev) => {
     ev.stopPropagation();
-    if (ev.detail.action === "hold" && this.hass.user?.is_admin) {
+    if (ev.detail.action === "hold" && this.menuai.user?.is_admin) {
       fireEvent(this, "toggle-edit-mode", true);
       return;
     }
@@ -188,7 +188,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
                   })}"
                 >
                   <ha-favorite-color-button
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       `ui.dialogs.more_info_control.light.favorite_color.${
                         this.editMode ? "edit" : "set"
                       }`,
@@ -198,7 +198,7 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
                     .color=${color}
                     .index=${index}
                     .actionHandler=${actionHandler({
-                      hasHold: !this.editMode && this.hass.user?.is_admin,
+                      hasHold: !this.editMode && this.menuai.user?.is_admin,
                       disabled: this.stateObj!.state === UNAVAILABLE,
                     })}
                     @action=${this._handleColorAction}
@@ -210,11 +210,11 @@ export class HaMoreInfoLightFavoriteColors extends LitElement {
                           @click=${this._handleDeleteButton}
                           class="delete"
                           .index=${index}
-                          aria-label=${this.hass.localize(
+                          aria-label=${this.menuai.localize(
                             `ui.dialogs.more_info_control.light.favorite_color.delete`,
                             { number: index }
                           )}
-                          .title=${this.hass.localize(
+                          .title=${this.menuai.localize(
                             `ui.dialogs.more_info_control.light.favorite_color.delete`,
                             { number: index }
                           )}

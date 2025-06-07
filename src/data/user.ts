@@ -4,7 +4,7 @@ import {
   mdiHomeCircleOutline,
   mdiCancel,
 } from "@mdi/js";
-import type { HomeAssistant, TranslationDict } from "../types";
+import type { menuai, TranslationDict } from "../types";
 import type { Credential } from "./auth";
 
 export const SYSTEM_GROUP_ID_ADMIN = "system-admin";
@@ -32,19 +32,19 @@ export interface UpdateUserParams {
   local_only?: boolean;
 }
 
-export const fetchUsers = async (hass: HomeAssistant) =>
-  hass.callWS<User[]>({
+export const fetchUsers = async (menuai: menuai) =>
+  menuai.callWS<User[]>({
     type: "config/auth/list",
   });
 
 export const createUser = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   name: string,
   // eslint-disable-next-line: variable-name
   group_ids?: User["group_ids"],
   local_only?: boolean
 ) =>
-  hass.callWS<{ user: User }>({
+  menuai.callWS<{ user: User }>({
     type: "config/auth/create",
     name,
     group_ids,
@@ -52,18 +52,18 @@ export const createUser = async (
   });
 
 export const updateUser = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   userId: string,
   params: UpdateUserParams
 ) =>
-  hass.callWS<{ user: User }>({
+  menuai.callWS<{ user: User }>({
     ...params,
     type: "config/auth/update",
     user_id: userId,
   });
 
-export const deleteUser = async (hass: HomeAssistant, userId: string) =>
-  hass.callWS<undefined>({
+export const deleteUser = async (menuai: menuai, userId: string) =>
+  menuai.callWS<undefined>({
     type: "config/auth/delete",
     user_id: userId,
   });
@@ -90,7 +90,7 @@ const LOCAL_ICON = mdiHomeCircleOutline;
 const DISABLED_ICON = mdiCancel;
 
 export const computeUserBadges = (
-  hass: HomeAssistant,
+  menuai: menuai,
   user: User,
   includeSystem: boolean
 ) => {
@@ -100,7 +100,7 @@ export const computeUserBadges = (
       keyof TranslationDict["ui"]["panel"]["config"]["users"],
       `is_${string}`
     >
-  ) => hass.localize(`ui.panel.config.users.${key}`);
+  ) => menuai.localize(`ui.panel.config.users.${key}`);
 
   if (user.is_owner) {
     labels.push([OWNER_ICON, translate("is_owner")]);

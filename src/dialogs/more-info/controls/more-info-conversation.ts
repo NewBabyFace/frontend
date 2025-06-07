@@ -1,9 +1,9 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../components/ha-attributes";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../../components/ha-assist-chat";
 import "../../../components/ha-spinner";
 import "../../../components/ha-alert";
@@ -12,9 +12,9 @@ import { getAssistPipeline } from "../../../data/assist_pipeline";
 
 @customElement("more-info-conversation")
 class MoreInfoConversation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @state() public _pipeline?: AssistPipeline;
 
@@ -28,7 +28,7 @@ class MoreInfoConversation extends LitElement {
     }
 
     const oldStateObj = changedProperties.get("stateObj") as
-      | HassEntity
+      | menuaiEntity
       | undefined;
 
     if (!oldStateObj || oldStateObj.entity_id !== this.stateObj.entity_id) {
@@ -41,7 +41,7 @@ class MoreInfoConversation extends LitElement {
     this._errorLoadAssist = undefined;
     const pipelineId = this.stateObj!.entity_id;
     try {
-      const pipeline = await getAssistPipeline(this.hass, pipelineId);
+      const pipeline = await getAssistPipeline(this.menuai, pipelineId);
       // Verify the pipeline is still the same.
       if (this.stateObj && pipelineId === this.stateObj.entity_id) {
         this._pipeline = pipeline;
@@ -62,21 +62,21 @@ class MoreInfoConversation extends LitElement {
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
     return html`
       ${this._errorLoadAssist
         ? html`<ha-alert alert-type="error">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.voice_command.${this._errorLoadAssist}_error_load_assist`
             )}
           </ha-alert>`
         : this._pipeline
           ? html`
               <ha-assist-chat
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .pipeline=${this._pipeline}
                 disable-speech
               ></ha-assist-chat>

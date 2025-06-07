@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -9,7 +9,7 @@ import type {
   SchemaUnion,
   HaFormSchema,
 } from "../../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type {
   NumericStateCondition,
   StateCondition,
@@ -24,7 +24,7 @@ const numericStateConditionStruct = object({
 
 @customElement("ha-card-condition-numeric_state")
 export class HaCardConditionNumericState extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: NumericStateCondition;
 
@@ -39,7 +39,7 @@ export class HaCardConditionNumericState extends LitElement {
   }
 
   private _schema = memoizeOne(
-    (stateObj?: HassEntity) =>
+    (stateObj?: menuaiEntity) =>
       [
         { name: "entity", selector: { entity: {} } },
         {
@@ -73,12 +73,12 @@ export class HaCardConditionNumericState extends LitElement {
 
   protected render() {
     const stateObj = this.condition.entity
-      ? this.hass.states[this.condition.entity]
+      ? this.menuai.states[this.condition.entity]
       : undefined;
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this.condition}
         .schema=${this._schema(stateObj)}
         .disabled=${this.disabled}
@@ -99,10 +99,10 @@ export class HaCardConditionNumericState extends LitElement {
   ): string => {
     switch (schema.name) {
       case "entity":
-        return this.hass.localize("ui.components.entity.entity-picker.entity");
+        return this.menuai.localize("ui.components.entity.entity-picker.entity");
       case "below":
       case "above":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.lovelace.editor.condition-editor.condition.numeric_state.${schema.name}`
         );
       default:

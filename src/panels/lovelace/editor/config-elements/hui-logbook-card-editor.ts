@@ -9,14 +9,14 @@ import {
   optional,
   string,
 } from "superstruct";
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/entity/ha-entities-picker";
 import "../../../../components/ha-target-picker";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
 import { filterLogbookCompatibleEntities } from "../../../../data/logbook";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LogbookCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -55,7 +55,7 @@ export class HuiLogbookCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: LogbookCardConfig;
 
@@ -64,7 +64,7 @@ export class HuiLogbookCardEditor
     this._config = config;
   }
 
-  get _targetPicker(): HassServiceTarget {
+  get _targetPicker(): menuaiServiceTarget {
     const entities = this._config!.entities || [];
     if (this._config!.entities) {
       this._config = {
@@ -81,13 +81,13 @@ export class HuiLogbookCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -95,7 +95,7 @@ export class HuiLogbookCardEditor
       ></ha-form>
 
       <ha-target-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityFilter=${filterLogbookCompatibleEntities}
         .value=${this._targetPicker}
         add-on-top
@@ -116,13 +116,13 @@ export class HuiLogbookCardEditor
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) => {
     switch (schema.name) {
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

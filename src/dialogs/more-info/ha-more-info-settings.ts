@@ -9,12 +9,12 @@ import type {
 } from "../../data/entity_registry";
 import { PLATFORMS_WITH_SETTINGS_TAB } from "../../panels/config/entities/const";
 import "../../panels/config/entities/entity-registry-settings";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 
 @customElement("ha-more-info-settings")
 export class HaMoreInfoSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -33,13 +33,13 @@ export class HaMoreInfoSettings extends LitElement {
       return html`
         <div class="content">
           <ha-alert alert-type="warning">
-            ${this.hass.localize("ui.dialogs.entity_registry.no_unique_id", {
+            ${this.menuai.localize("ui.dialogs.entity_registry.no_unique_id", {
               entity_id: this.entityId,
               faq_link: html`<a
-                href=${documentationUrl(this.hass, "/faq/unique_id")}
+                href=${documentationUrl(this.menuai, "/faq/unique_id")}
                 target="_blank"
                 rel="noreferrer"
-                >${this.hass.localize("ui.dialogs.entity_registry.faq")}</a
+                >${this.menuai.localize("ui.dialogs.entity_registry.faq")}</a
               >`,
             })}
           </ha-alert>
@@ -53,7 +53,7 @@ export class HaMoreInfoSettings extends LitElement {
 
     return html`
       ${dynamicElement(this._settingsElementTag, {
-        hass: this.hass,
+        menuai: this.menuai,
         entry: this.entry,
         entityId: this.entityId,
       })}

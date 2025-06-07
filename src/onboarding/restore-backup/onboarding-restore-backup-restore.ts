@@ -56,7 +56,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
       new Date(this.backup.date)
     );
 
-    const onlyHomeAssistantBackup =
+    const onlymenuaiBackup =
       this.backup.addons.length === 0 && this.backup.folders.length === 0;
 
     return html`
@@ -70,7 +70,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
         )}
       </h1>
 
-      ${this.backup.homeassistant_included
+      ${this.backup.menuai_included
         ? html`<div class="description">
             ${this.localize(
               "ui.panel.page-onboarding.restore.confirm_restore_full_backup_text"
@@ -101,7 +101,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
           </span>
           <span slot="supporting-text">${formattedDate}</span>
         </ha-md-list-item>
-        ${onlyHomeAssistantBackup
+        ${onlymenuaiBackup
           ? html`<ha-md-list-item>
               <span slot="headline">
                 ${this.localize(
@@ -110,7 +110,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
               </span>
               <ha-backup-formfield-label
                 slot="supporting-text"
-                .version=${this.backup.homeassistant_version}
+                .version=${this.backup.menuai_version}
                 .label=${this.localize(
                   `ui.panel.page-onboarding.restore.data_picker.${this.backup.database_included ? "settings_and_history" : "settings"}`
                 )}
@@ -119,12 +119,12 @@ class OnboardingRestoreBackupRestore extends LitElement {
           : nothing}
       </ha-md-list>
 
-      ${!onlyHomeAssistantBackup
+      ${!onlymenuaiBackup
         ? html`<h2>
             ${this.localize("ui.panel.page-onboarding.restore.select_type")}
           </h2>`
         : nothing}
-      ${this.backup.homeassistant_included &&
+      ${this.backup.menuai_included &&
       !this.supervisor &&
       this.backup.addons.length > 0
         ? html`<ha-alert class="supervisor-warning">
@@ -145,7 +145,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
             </a>
           </ha-alert>`
         : nothing}
-      ${!onlyHomeAssistantBackup
+      ${!onlymenuaiBackup
         ? html`<ha-backup-data-picker
             translation-key-panel="page-onboarding.restore"
             .localize=${this.localize}
@@ -202,7 +202,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
           .progress=${this._loading}
           .disabled=${this._loading ||
           (backupProtected && this._encryptionKey === "") ||
-          !this.backup.homeassistant_included}
+          !this.backup.menuai_included}
           @click=${this._startRestore}
         >
           ${this.localize(
@@ -216,10 +216,10 @@ class OnboardingRestoreBackupRestore extends LitElement {
   protected willUpdate() {
     if (!this.hasUpdated) {
       this._selectedData = {
-        homeassistant_included: true,
+        menuai_included: true,
         folders: [],
         addons: [],
-        homeassistant_version: this.backup.homeassistant_version,
+        menuai_version: this.backup.menuai_version,
         database_included: this.backup.database_included,
       };
     }
@@ -251,7 +251,7 @@ class OnboardingRestoreBackupRestore extends LitElement {
     if (
       this._loading ||
       (backupProtected && this._encryptionKey === "") ||
-      !this.backup.homeassistant_included ||
+      !this.backup.menuai_included ||
       !this._selectedData
     ) {
       return;
@@ -378,7 +378,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "onboarding-restore-backup-restore": OnboardingRestoreBackupRestore;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "restore-started";
     "restore-backup-back";
   }

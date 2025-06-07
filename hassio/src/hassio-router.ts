@@ -1,25 +1,25 @@
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HassioPanelInfo } from "../../src/data/hassio/supervisor";
+import type { menuaiioPanelInfo } from "../../src/data/menuaiio/supervisor";
 import type { Supervisor } from "../../src/data/supervisor/supervisor";
-import type { RouterOptions } from "../../src/layouts/hass-router-page";
-import { HassRouterPage } from "../../src/layouts/hass-router-page";
-import type { HomeAssistant } from "../../src/types";
+import type { RouterOptions } from "../../src/layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../src/layouts/menuai-router-page";
+import type { menuai } from "../../src/types";
 // Don't codesplit it, that way the dashboard always loads fast.
-import "./hassio-panel";
+import "./menuaiio-panel";
 
-@customElement("hassio-router")
-class HassioRouter extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-router")
+class menuaiioRouter extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public panel!: HassioPanelInfo;
+  @property({ attribute: false }) public panel!: menuaiioPanelInfo;
 
   @property({ type: Boolean }) public narrow = false;
 
   protected routerOptions: RouterOptions = {
-    // Hass.io has a page with tabs, so we route all non-matching routes to it.
+    // menuai.io has a page with tabs, so we route all non-matching routes to it.
     defaultPage: "dashboard",
     beforeRender: (page: string) => {
       if (page === "snapshots") {
@@ -33,7 +33,7 @@ class HassioRouter extends HassRouterPage {
     showLoading: true,
     routes: {
       dashboard: {
-        tag: "hassio-panel",
+        tag: "menuaiio-panel",
         cache: true,
       },
       backups: "dashboard",
@@ -44,31 +44,31 @@ class HassioRouter extends HassRouterPage {
         load: () => import("./update-available/update-available-dashboard"),
       },
       addon: {
-        tag: "hassio-addon-dashboard",
-        load: () => import("./addon-view/hassio-addon-dashboard"),
+        tag: "menuaiio-addon-dashboard",
+        load: () => import("./addon-view/menuaiio-addon-dashboard"),
       },
       ingress: {
-        tag: "hassio-ingress-view",
-        load: () => import("./ingress-view/hassio-ingress-view"),
+        tag: "menuaiio-ingress-view",
+        load: () => import("./ingress-view/menuaiio-ingress-view"),
       },
       _my_redirect: {
-        tag: "hassio-my-redirect",
-        load: () => import("./hassio-my-redirect"),
+        tag: "menuaiio-my-redirect",
+        load: () => import("./menuaiio-my-redirect"),
       },
     },
   };
 
   protected updatePageEl(el) {
     // the tabs page does its own routing so needs full route.
-    const hassioPanel = el.localName === "hassio-panel";
-    const ingressPanel = el.localName === "hassio-ingress-view";
-    const route = hassioPanel
+    const menuaiioPanel = el.localName === "menuaiio-panel";
+    const ingressPanel = el.localName === "menuaiio-ingress-view";
+    const route = menuaiioPanel
       ? this.route
       : ingressPanel && this.panel.config?.ingress
         ? this._ingressRoute(this.panel.config?.ingress)
         : this.routeTail;
 
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.narrow = this.narrow;
     el.route = route;
     el.supervisor = this.supervisor;
@@ -79,13 +79,13 @@ class HassioRouter extends HassRouterPage {
   }
 
   private _ingressRoute = memoizeOne((ingress: string) => ({
-    prefix: "/hassio/ingress",
+    prefix: "/menuaiio/ingress",
     path: `/${ingress}`,
   }));
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-router": HassioRouter;
+    "menuaiio-router": menuaiioRouter;
   }
 }

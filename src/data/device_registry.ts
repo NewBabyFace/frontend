@@ -1,6 +1,6 @@
 import { computeStateName } from "../common/entity/compute_state_name";
 import { caseInsensitiveStringCompare } from "../common/string/compare";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { ConfigEntry } from "./config_entries";
 import type {
   EntityRegistryDisplayEntry,
@@ -52,12 +52,12 @@ export interface DeviceRegistryEntryMutableParams {
 }
 
 export const fallbackDeviceName = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entities: EntityRegistryEntry[] | EntityRegistryDisplayEntry[] | string[]
 ) => {
   for (const entity of entities || []) {
     const entityId = typeof entity === "string" ? entity : entity.entity_id;
-    const stateObj = hass.states[entityId];
+    const stateObj = menuai.states[entityId];
     if (stateObj) {
       return computeStateName(stateObj);
     }
@@ -69,22 +69,22 @@ export const devicesInArea = (devices: DeviceRegistryEntry[], areaId: string) =>
   devices.filter((device) => device.area_id === areaId);
 
 export const updateDeviceRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceId: string,
   updates: Partial<DeviceRegistryEntryMutableParams>
 ) =>
-  hass.callWS<DeviceRegistryEntry>({
+  menuai.callWS<DeviceRegistryEntry>({
     type: "config/device_registry/update",
     device_id: deviceId,
     ...updates,
   });
 
 export const removeConfigEntryFromDevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceId: string,
   configEntryId: string
 ) =>
-  hass.callWS<DeviceRegistryEntry>({
+  menuai.callWS<DeviceRegistryEntry>({
     type: "config/device_registry/remove_config_entry",
     device_id: deviceId,
     config_entry_id: configEntryId,

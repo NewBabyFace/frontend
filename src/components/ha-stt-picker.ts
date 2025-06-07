@@ -7,7 +7,7 @@ import { computeStateName } from "../common/entity/compute_state_name";
 import { debounce } from "../common/util/debounce";
 import type { STTEngine } from "../data/stt";
 import { listSTTEngines } from "../data/stt";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-select";
 import type { HaSelect } from "./ha-select";
@@ -23,7 +23,7 @@ export class HaSTTPicker extends LitElement {
 
   @property() public language?: string;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public disabled = false;
 
@@ -38,7 +38,7 @@ export class HaSTTPicker extends LitElement {
 
     let value = this.value;
     if (!value && this.required) {
-      for (const entity of Object.values(this.hass.entities)) {
+      for (const entity of Object.values(this.menuai.entities)) {
         if (
           entity.platform === "cloud" &&
           computeDomain(entity.entity_id) === "stt"
@@ -64,7 +64,7 @@ export class HaSTTPicker extends LitElement {
     return html`
       <ha-select
         .label=${this.label ||
-        this.hass!.localize("ui.components.stt-picker.stt")}
+        this.menuai!.localize("ui.components.stt-picker.stt")}
         .value=${value}
         .required=${this.required}
         .disabled=${this.disabled}
@@ -75,7 +75,7 @@ export class HaSTTPicker extends LitElement {
       >
         ${!this.required
           ? html`<ha-list-item .value=${NONE}>
-              ${this.hass!.localize("ui.components.stt-picker.none")}
+              ${this.menuai!.localize("ui.components.stt-picker.none")}
             </ha-list-item>`
           : nothing}
         ${this._engines.map((engine) => {
@@ -84,7 +84,7 @@ export class HaSTTPicker extends LitElement {
           }
           let label: string;
           if (engine.engine_id.includes(".")) {
-            const stateObj = this.hass!.states[engine.engine_id];
+            const stateObj = this.menuai!.states[engine.engine_id];
             label = stateObj ? computeStateName(stateObj) : engine.engine_id;
           } else {
             label = engine.name || engine.engine_id;
@@ -114,9 +114,9 @@ export class HaSTTPicker extends LitElement {
   private async _updateEngines() {
     this._engines = (
       await listSTTEngines(
-        this.hass,
+        this.menuai,
         this.language,
-        this.hass.config.country || undefined
+        this.menuai.config.country || undefined
       )
     ).providers;
 
@@ -147,7 +147,7 @@ export class HaSTTPicker extends LitElement {
   private _changed(ev): void {
     const target = ev.target as HaSelect;
     if (
-      !this.hass ||
+      !this.menuai ||
       target.value === "" ||
       target.value === this.value ||
       (this.value === undefined && target.value === NONE)

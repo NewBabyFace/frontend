@@ -966,8 +966,8 @@ export const demoLovelaceTeachingbirds: DemoConfig["lovelace"] = () => ({
             {
               entities: [
                 {
-                  name: "Hass RPi",
-                  entity: "sensor.system_hass_rpi",
+                  name: "menuai RPi",
+                  entity: "sensor.system_menuai_rpi",
                 },
                 {
                   name: "Dashboard RPi",

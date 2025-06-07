@@ -5,9 +5,9 @@ import { customElement, property, state } from "lit/decorators";
 import "../../../../../components/ha-spinner";
 import type { ZHADevice } from "../../../../../data/zha";
 import { DEVICE_MESSAGE_TYPES, LOG_OUTPUT } from "../../../../../data/zha";
-import "../../../../../layouts/hass-tabs-subpage";
+import "../../../../../layouts/menuai-tabs-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import { documentationUrl } from "../../../../../util/documentation-url";
 import { zhaTabs } from "./zha-config-dashboard";
 import "./zha-device-pairing-status-card";
@@ -15,7 +15,7 @@ import "../../../../../components/ha-textarea";
 
 @customElement("zha-add-devices-page")
 class ZHAAddDevicesPage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -64,9 +64,9 @@ class ZHAAddDevicesPage extends LitElement {
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
     if (
-      changedProps.has("hass") &&
+      changedProps.has("menuai") &&
       !this._active &&
-      !changedProps.get("hass")
+      !changedProps.get("menuai")
     ) {
       this._subscribe();
     }
@@ -74,8 +74,8 @@ class ZHAAddDevicesPage extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route!}
         .tabs=${zhaTabs}
@@ -87,7 +87,7 @@ class ZHAAddDevicesPage extends LitElement {
           ${this._active
             ? html`
                 <h1>
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.zha.add_device_page.spinner"
                   )}
                 </h1>
@@ -96,7 +96,7 @@ class ZHAAddDevicesPage extends LitElement {
             : html`
                 <div>
                   <mwc-button @click=${this._subscribe} class="search-button">
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.zha.add_device_page.search_again"
                     )}
                   </mwc-button>
@@ -109,7 +109,7 @@ class ZHAAddDevicesPage extends LitElement {
             ? html`
                 <div class="discovery-text">
                   <h4>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.zha.add_device_page.pairing_mode",
                       {
                         documentation_link: html`
@@ -117,11 +117,11 @@ class ZHAAddDevicesPage extends LitElement {
                             target="_blank"
                             rel="noopener noreferrer"
                             href=${documentationUrl(
-                              this.hass,
+                              this.menuai,
                               "/integrations/zha#adding-devices"
                             )}
                           >
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.zha.add_device_page.pairing_mode_link"
                             )}
                           </a>
@@ -130,7 +130,7 @@ class ZHAAddDevicesPage extends LitElement {
                     )}
                   </h4>
                   <h4>
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       this._active
                         ? "ui.panel.config.zha.add_device_page.discovered_text"
                         : "ui.panel.config.zha.add_device_page.no_devices_found"
@@ -143,7 +143,7 @@ class ZHAAddDevicesPage extends LitElement {
                   (device) => html`
                     <zha-device-pairing-status-card
                       class="card"
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .device=${device}
                       .narrow=${this.narrow}
                       .showHelp=${this._showHelp}
@@ -161,7 +161,7 @@ class ZHAAddDevicesPage extends LitElement {
             >
             </ha-textarea>`
           : ""}
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -199,7 +199,7 @@ class ZHAAddDevicesPage extends LitElement {
   }
 
   private _subscribe(): void {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._active = true;
@@ -207,7 +207,7 @@ class ZHAAddDevicesPage extends LitElement {
     if (this._ieeeAddress) {
       data.ieee = this._ieeeAddress;
     }
-    this._subscribed = this.hass.connection.subscribeMessage(
+    this._subscribed = this.menuai.connection.subscribeMessage(
       (message) => this._handleMessage(message),
       data
     );

@@ -16,7 +16,7 @@ import {
   showConfirmationDialog,
 } from "../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { showToast } from "../../util/toast";
 import type { Lovelace } from "./types";
 import "../../components/ha-top-app-bar-fixed";
@@ -36,7 +36,7 @@ const strategyStruct = type({
 
 @customElement("hui-editor")
 class LovelaceFullConfigEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -53,10 +53,10 @@ class LovelaceFullConfigEditor extends LitElement {
           slot="navigationIcon"
           .path=${mdiClose}
           @click=${this._closeEditor}
-          .label=${this.hass!.localize("ui.common.close")}
+          .label=${this.menuai!.localize("ui.common.close")}
         ></ha-icon-button>
         <div slot="title">
-          ${this.hass!.localize("ui.panel.lovelace.editor.raw_editor.header")}
+          ${this.menuai!.localize("ui.panel.lovelace.editor.raw_editor.header")}
         </div>
         <div
           slot="actionItems"
@@ -66,17 +66,17 @@ class LovelaceFullConfigEditor extends LitElement {
           })}"
         >
           ${this._changed
-            ? this.hass!.localize(
+            ? this.menuai!.localize(
                 "ui.panel.lovelace.editor.raw_editor.unsaved_changes"
               )
-            : this.hass!.localize("ui.panel.lovelace.editor.raw_editor.saved")}
+            : this.menuai!.localize("ui.panel.lovelace.editor.raw_editor.saved")}
         </div>
         <mwc-button
           raised
           slot="actionItems"
           @click=${this._handleSave}
           .disabled=${!this._changed}
-          >${this.hass!.localize(
+          >${this.menuai!.localize(
             "ui.panel.lovelace.editor.raw_editor.save"
           )}</mwc-button
         >
@@ -86,7 +86,7 @@ class LovelaceFullConfigEditor extends LitElement {
             autofocus
             autocomplete-entities
             autocomplete-icons
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             @value-changed=${this._yamlChanged}
             @editor-save=${this._handleSave}
             dir="ltr"
@@ -112,14 +112,14 @@ class LovelaceFullConfigEditor extends LitElement {
       !deepEqual(oldLovelace.rawConfig, this.lovelace.rawConfig)
     ) {
       showToast(this, {
-        message: this.hass!.localize(
+        message: this.menuai!.localize(
           "ui.panel.lovelace.editor.raw_editor.lovelace_changed"
         ),
         action: {
           action: () => {
             this.yamlEditor.value = dump(this.lovelace!.rawConfig);
           },
-          text: this.hass!.localize(
+          text: this.menuai!.localize(
             "ui.panel.lovelace.editor.raw_editor.reload"
           ),
         },
@@ -181,11 +181,11 @@ class LovelaceFullConfigEditor extends LitElement {
     if (
       this._changed &&
       !(await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.confirm_unsaved_changes"
         ),
-        dismissText: this.hass!.localize("ui.common.stay"),
-        confirmText: this.hass!.localize("ui.common.leave"),
+        dismissText: this.menuai!.localize("ui.common.stay"),
+        confirmText: this.menuai!.localize("ui.common.leave"),
       }))
     ) {
       return;
@@ -202,7 +202,7 @@ class LovelaceFullConfigEditor extends LitElement {
       await this.lovelace!.deleteConfig();
     } catch (err: any) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.error_remove",
           { error: err }
         ),
@@ -221,14 +221,14 @@ class LovelaceFullConfigEditor extends LitElement {
 
     if (!value) {
       showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.confirm_delete_config_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.confirm_delete_config_text"
         ),
-        confirmText: this.hass.localize("ui.common.delete"),
-        dismissText: this.hass.localize("ui.common.cancel"),
+        confirmText: this.menuai.localize("ui.common.delete"),
+        dismissText: this.menuai.localize("ui.common.cancel"),
         confirm: () => this._removeConfig(),
         destructive: true,
       });
@@ -238,7 +238,7 @@ class LovelaceFullConfigEditor extends LitElement {
     if (this.yamlEditor.hasComments) {
       if (
         !confirm(
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.lovelace.editor.raw_editor.confirm_unsaved_comments"
           )
         )
@@ -252,7 +252,7 @@ class LovelaceFullConfigEditor extends LitElement {
       config = load(value) as LovelaceRawConfig;
     } catch (err: any) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.error_parse_yaml",
           { error: err }
         ),
@@ -268,7 +268,7 @@ class LovelaceFullConfigEditor extends LitElement {
       }
     } catch (err: any) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.error_invalid_config",
           { error: err }
         ),
@@ -278,7 +278,7 @@ class LovelaceFullConfigEditor extends LitElement {
     // @ts-ignore
     if (config.resources) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.resources_moved"
         ),
       });
@@ -287,7 +287,7 @@ class LovelaceFullConfigEditor extends LitElement {
       await this.lovelace!.saveConfig(config);
     } catch (err: any) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.lovelace.editor.raw_editor.error_save_yaml",
           { error: err }
         ),

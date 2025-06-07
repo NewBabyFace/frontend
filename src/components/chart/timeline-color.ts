@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { getGraphColorByIndex } from "../../common/color/colors";
 import { hex2rgb, lab2hex, rgb2lab } from "../../common/color/convert-color";
 import { labBrighten } from "../../common/color/lab";
@@ -20,7 +20,7 @@ const DOMAIN_STATE_SHADES: Record<string, Record<string, number>> = {
 function computeTimelineStateColor(
   state: string,
   computedStyles: CSSStyleDeclaration,
-  stateObj?: HassEntity
+  stateObj?: menuaiEntity
 ): string | undefined {
   if (!stateObj || state === UNAVAILABLE) {
     return computeCssValue("--history-unavailable-color", computedStyles);
@@ -67,7 +67,7 @@ function computeTimeLineGenericColor(
 export function computeTimelineColor(
   state: string,
   computedStyles: CSSStyleDeclaration,
-  stateObj?: HassEntity
+  stateObj?: menuaiEntity
 ): string {
   return (
     computeTimelineStateColor(state, computedStyles, stateObj) ||

@@ -2,12 +2,12 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../../../components/ha-textarea";
 import type { TemplateCondition } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { handleChangeEvent } from "../ha-automation-condition-row";
 
 @customElement("ha-automation-condition-template")
 export class HaTemplateCondition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: TemplateCondition;
 
@@ -21,7 +21,7 @@ export class HaTemplateCondition extends LitElement {
     const { value_template } = this.condition;
     return html`
       <p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.automation.editor.conditions.type.template.value_template"
         )}
         *
@@ -29,7 +29,7 @@ export class HaTemplateCondition extends LitElement {
       <ha-code-editor
         .name=${"value_template"}
         mode="jinja2"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${value_template}
         .readOnly=${this.disabled}
         autocomplete-entities

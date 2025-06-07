@@ -1,20 +1,20 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "./common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "./common";
 import type { CreateSessionResponse } from "./supervisor";
 
 function setIngressCookie(session: string): string {
-  document.cookie = `ingress_session=${session};path=/api/hassio_ingress/;SameSite=Strict${
+  document.cookie = `ingress_session=${session};path=/api/menuaiio_ingress/;SameSite=Strict${
     location.protocol === "https:" ? ";Secure" : ""
   }`;
   return session;
 }
 
-export const createHassioSession = async (
-  hass: HomeAssistant
+export const createmenuaiioSession = async (
+  menuai: menuai
 ): Promise<string> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    const wsResponse: { session: string } = await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    const wsResponse: { session: string } = await menuai.callWS({
       type: "supervisor/api",
       endpoint: "/ingress/session",
       method: "post",
@@ -22,18 +22,18 @@ export const createHassioSession = async (
     return setIngressCookie(wsResponse.session);
   }
 
-  const restResponse: { data: { session: string } } = await hass.callApi<
-    HassioResponse<CreateSessionResponse>
-  >("POST", "hassio/ingress/session");
+  const restResponse: { data: { session: string } } = await menuai.callApi<
+    menuaiioResponse<CreateSessionResponse>
+  >("POST", "menuaiio/ingress/session");
   return setIngressCookie(restResponse.data.session);
 };
 
-export const validateHassioSession = async (
-  hass: HomeAssistant,
+export const validatemenuaiioSession = async (
+  menuai: menuai,
   session: string
 ): Promise<void> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: "/ingress/validate_session",
       method: "post",
@@ -42,9 +42,9 @@ export const validateHassioSession = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "POST",
-    "hassio/ingress/validate_session",
+    "menuaiio/ingress/validate_session",
     { session }
   );
 };

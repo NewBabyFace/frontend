@@ -1,14 +1,14 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-formfield";
 import "../ha-switch";
 import "../ha-input-helper-text";
 
 @customElement("ha-selector-boolean")
 export class HaBooleanSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public value = false;
 

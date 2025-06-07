@@ -5,12 +5,12 @@ import { classMap } from "lit/directives/class-map";
 import { supportsFeature } from "../common/entity/supports-feature";
 import type { ValveEntity } from "../data/valve";
 import { ValveEntityFeature, canClose, canOpen, canStop } from "../data/valve";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 
 @customElement("ha-valve-controls")
 class HaValveControls extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: ValveEntity;
 
@@ -25,7 +25,7 @@ class HaValveControls extends LitElement {
           class=${classMap({
             hidden: !supportsFeature(this.stateObj, ValveEntityFeature.OPEN),
           })}
-          .label=${this.hass.localize("ui.card.valve.open_valve")}
+          .label=${this.menuai.localize("ui.card.valve.open_valve")}
           @click=${this._onOpenTap}
           .disabled=${!canOpen(this.stateObj)}
           .path=${mdiValveOpen}
@@ -35,7 +35,7 @@ class HaValveControls extends LitElement {
           class=${classMap({
             hidden: !supportsFeature(this.stateObj, ValveEntityFeature.STOP),
           })}
-          .label=${this.hass.localize("ui.card.valve.stop_valve")}
+          .label=${this.menuai.localize("ui.card.valve.stop_valve")}
           @click=${this._onStopTap}
           .disabled=${!canStop(this.stateObj)}
           .path=${mdiStop}
@@ -44,7 +44,7 @@ class HaValveControls extends LitElement {
           class=${classMap({
             hidden: !supportsFeature(this.stateObj, ValveEntityFeature.CLOSE),
           })}
-          .label=${this.hass.localize("ui.card.valve.close_valve")}
+          .label=${this.menuai.localize("ui.card.valve.close_valve")}
           @click=${this._onCloseTap}
           .disabled=${!canClose(this.stateObj)}
           .path=${mdiValveClosed}
@@ -56,21 +56,21 @@ class HaValveControls extends LitElement {
 
   private _onOpenTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("valve", "open_valve", {
+    this.menuai.callService("valve", "open_valve", {
       entity_id: this.stateObj.entity_id,
     });
   }
 
   private _onCloseTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("valve", "close_valve", {
+    this.menuai.callService("valve", "close_valve", {
       entity_id: this.stateObj.entity_id,
     });
   }
 
   private _onStopTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("valve", "stop_valve", {
+    this.menuai.callService("valve", "stop_valve", {
       entity_id: this.stateObj.entity_id,
     });
   }

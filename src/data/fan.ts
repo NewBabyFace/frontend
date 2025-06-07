@@ -6,11 +6,11 @@ import {
   mdiFanSpeed3,
 } from "@mdi/js";
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { stateActive } from "../common/entity/state_active";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const enum FanEntityFeature {
   SET_SPEED = 1,
@@ -21,7 +21,7 @@ export const enum FanEntityFeature {
   TURN_ON = 32,
 }
 
-interface FanEntityAttributes extends HassEntityAttributeBase {
+interface FanEntityAttributes extends menuaiEntityAttributeBase {
   direction?: string;
   oscillating?: boolean;
   percentage?: number;
@@ -30,7 +30,7 @@ interface FanEntityAttributes extends HassEntityAttributeBase {
   preset_modes?: string[];
 }
 
-export interface FanEntity extends HassEntityBase {
+export interface FanEntity extends menuaiEntityBase {
   attributes: FanEntityAttributes;
 }
 
@@ -98,7 +98,7 @@ export const FAN_SPEED_COUNT_MAX_FOR_BUTTONS = 4;
 
 export function computeFanSpeedStateDisplay(
   stateObj: FanEntity,
-  hass: HomeAssistant,
+  menuai: menuai,
   speed?: number
 ) {
   const percentage = stateActive(stateObj)
@@ -107,7 +107,7 @@ export function computeFanSpeedStateDisplay(
   const currentSpeed = speed ?? percentage;
 
   return currentSpeed
-    ? hass.formatEntityAttributeValue(
+    ? menuai.formatEntityAttributeValue(
         stateObj,
         "percentage",
         Math.round(currentSpeed)

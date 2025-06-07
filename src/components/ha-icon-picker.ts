@@ -9,7 +9,7 @@ import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../common/dom/fire_event";
 import { customIcons } from "../data/custom_icons";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import "./ha-combo-box";
 import "./ha-icon";
 import "./ha-combo-box-item";
@@ -76,7 +76,7 @@ const rowRenderer: ComboBoxLitRenderer<IconItem | RankedIcon> = (item) => html`
 
 @customElement("ha-icon-picker")
 export class HaIconPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property() public value?: string;
 
@@ -97,7 +97,7 @@ export class HaIconPicker extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-combo-box
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         item-value-path="icon"
         item-label-path="icon"
         .value=${this._value}

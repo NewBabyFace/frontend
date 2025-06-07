@@ -2,16 +2,16 @@ import { html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { mockHistory } from "../../../../demo/src/stubs/history";
 import type { LovelaceConfig } from "../../../../src/data/lovelace/config/types";
-import type { MockHomeAssistant } from "../../../../src/fake_data/provide_hass";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import { HassElement } from "../../../../src/state/hass-element";
-import type { HomeAssistant } from "../../../../src/types";
+import type { Mockmenuai } from "../../../../src/fake_data/provide_menuai";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import { menuaiElement } from "../../../../src/state/menuai-element";
+import type { menuai } from "../../../../src/types";
 import { castDemoEntities } from "../demo/cast-demo-entities";
 import { castDemoLovelace } from "../demo/cast-demo-lovelace";
 import "./hc-lovelace";
 
 @customElement("hc-demo")
-class HcDemo extends HassElement {
+class HcDemo extends menuaiElement {
   @property({ attribute: false }) public lovelacePath!: string;
 
   @state() private _lovelaceConfig?: LovelaceConfig;
@@ -22,7 +22,7 @@ class HcDemo extends HassElement {
     }
     return html`
       <hc-lovelace
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .lovelaceConfig=${this._lovelaceConfig}
         .viewPath=${this.lovelacePath}
       ></hc-lovelace>
@@ -31,21 +31,21 @@ class HcDemo extends HassElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    this._initializeHass();
+    this._initializemenuai();
   }
 
-  private async _initializeHass() {
-    const initial: Partial<MockHomeAssistant> = {
-      // Override updateHass so that the correct hass lifecycle methods are called
-      updateHass: (hassUpdate: Partial<HomeAssistant>) =>
-        this._updateHass(hassUpdate),
+  private async _initializemenuai() {
+    const initial: Partial<Mockmenuai> = {
+      // Override updatemenuai so that the correct menuai lifecycle methods are called
+      updatemenuai: (menuaiUpdate: Partial<menuai>) =>
+        this._updatemenuai(menuaiUpdate),
     };
 
-    const hass = (this.hass = provideHass(this, initial));
+    const menuai = (this.menuai = providemenuai(this, initial));
 
-    mockHistory(hass);
+    mockHistory(menuai);
 
-    hass.addEntities(castDemoEntities());
+    menuai.addEntities(castDemoEntities());
     this._lovelaceConfig = castDemoLovelace();
   }
 }

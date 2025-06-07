@@ -5,13 +5,13 @@ import "../../../../../components/ha-textfield";
 import "../../../../../components/ha-yaml-editor";
 import "../../../../../components/user/ha-users-picker";
 import type { EventTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 import { handleChangeEvent } from "../ha-automation-trigger-row";
 
 @customElement("ha-automation-trigger-event")
 export class HaEventTrigger extends LitElement implements TriggerElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: EventTrigger;
 
@@ -25,7 +25,7 @@ export class HaEventTrigger extends LitElement implements TriggerElement {
     const { event_type, event_data, context } = this.trigger;
     return html`
       <ha-textfield
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.event.event_type"
         )}
         name="event_type"
@@ -34,8 +34,8 @@ export class HaEventTrigger extends LitElement implements TriggerElement {
         @change=${this._valueChanged}
       ></ha-textfield>
       <ha-yaml-editor
-        .hass=${this.hass}
-        .label=${this.hass.localize(
+        .menuai=${this.menuai}
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.event.event_data"
         )}
         .name=${"event_data"}
@@ -44,11 +44,11 @@ export class HaEventTrigger extends LitElement implements TriggerElement {
         @value-changed=${this._dataChanged}
       ></ha-yaml-editor>
       <br />
-      ${this.hass.localize(
+      ${this.menuai.localize(
         "ui.panel.config.automation.editor.triggers.type.event.context_users"
       )}
       <ha-users-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .value=${this._wrapUsersInArray(context?.user_id)}
         @value-changed=${this._usersChanged}

@@ -4,7 +4,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import "../../../components/ha-badge";
 import "../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showAlertDialog } from "../custom-card-helpers";
 import type { LovelaceBadge } from "../types";
 import type { ErrorBadgeConfig } from "./types";
@@ -22,7 +22,7 @@ export const createErrorHeadingBadgeConfig = (error) => ({
 
 @customElement("hui-error-heading-badge")
 export class HuiErrorHeadingBadge extends LitElement implements LovelaceBadge {
-  public hass?: HomeAssistant;
+  public menuai?: menuai;
 
   @state() private _config?: ErrorBadgeConfig;
 

@@ -1,12 +1,12 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface WakeWord {
   id: string;
   name: string;
 }
 
-export const fetchWakeWordInfo = (hass: HomeAssistant, entity_id: string) =>
-  hass.callWS<{ wake_words: WakeWord[] }>({
+export const fetchWakeWordInfo = (menuai: menuai, entity_id: string) =>
+  menuai.callWS<{ wake_words: WakeWord[] }>({
     type: "wake_word/info",
     entity_id,
   });

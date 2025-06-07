@@ -12,13 +12,13 @@ import "../../../src/components/ha-password-field";
 import "../../../src/components/ha-radio";
 import type { HaRadio } from "../../../src/components/ha-radio";
 import type {
-  HassioBackupDetail,
-  HassioFullBackupCreateParams,
-  HassioPartialBackupCreateParams,
-} from "../../../src/data/hassio/backup";
+  menuaiioBackupDetail,
+  menuaiioFullBackupCreateParams,
+  menuaiioPartialBackupCreateParams,
+} from "../../../src/data/menuaiio/backup";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
-import { mdiHomeAssistant } from "../../../src/resources/home-assistant-logo-svg";
-import type { HomeAssistant } from "../../../src/types";
+import { mdimenuai } from "../../../src/resources/home-assistant-logo-svg";
+import type { menuai } from "../../../src/types";
 import "./supervisor-formfield-label";
 import type { HaTextField } from "../../../src/components/ha-textfield";
 
@@ -61,20 +61,20 @@ const _computeAddons = (addons): AddonCheckboxItem[] =>
 
 @customElement("supervisor-backup-content")
 export class SupervisorBackupContent extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public supervisor?: Supervisor;
 
-  @property({ attribute: false }) public backup?: HassioBackupDetail;
+  @property({ attribute: false }) public backup?: menuaiioBackupDetail;
 
   @property({ attribute: false })
-  public backupType: HassioBackupDetail["type"] = "full";
+  public backupType: menuaiioBackupDetail["type"] = "full";
 
   @property({ attribute: false }) public folders?: CheckboxItem[];
 
   @property({ attribute: false }) public addons?: AddonCheckboxItem[];
 
-  @property({ attribute: false }) public homeAssistant = false;
+  @property({ attribute: false }) public menuai = false;
 
   @property({ attribute: false }) public backupHasPassword = false;
 
@@ -125,11 +125,11 @@ export class SupervisorBackupContent extends LitElement {
               ? this.supervisor?.localize("backup.full_backup")
               : this.supervisor?.localize("backup.partial_backup")}
             (${Math.ceil(this.backup.size * 10) / 10 + " MB"})<br />
-            ${this.hass
+            ${this.menuai
               ? formatDateTime(
                   new Date(this.backup.date),
-                  this.hass.locale,
-                  this.hass.config
+                  this.menuai.locale,
+                  this.menuai.config
                 )
               : this.backup.date}
           </div>`
@@ -173,21 +173,21 @@ export class SupervisorBackupContent extends LitElement {
         : ""}
       ${this.backupType === "partial"
         ? html`<div class="partial-picker">
-            ${!this.backup || this.backup.homeassistant
+            ${!this.backup || this.backup.menuai
               ? html`<ha-formfield
                   .label=${html`<supervisor-formfield-label
-                    label="Home Assistant"
-                    .iconPath=${mdiHomeAssistant}
+                    label="MenuAI"
+                    .iconPath=${mdimenuai}
                     .version=${this.backup
-                      ? this.backup.homeassistant
-                      : this.hass?.config.version}
+                      ? this.backup.menuai
+                      : this.menuai?.config.version}
                   >
                   </supervisor-formfield-label>`}
                 >
                   <ha-checkbox
-                    .checked=${this.onboarding || this.homeAssistant}
+                    .checked=${this.onboarding || this.menuai}
                     .disabled=${this.onboarding}
-                    @change=${this._toggleHomeAssistant}
+                    @change=${this._togglemenuai}
                   >
                   </ha-checkbox>
                 </ha-formfield>`
@@ -273,8 +273,8 @@ export class SupervisorBackupContent extends LitElement {
     `;
   }
 
-  private _toggleHomeAssistant() {
-    this.homeAssistant = !this.homeAssistant;
+  private _togglemenuai() {
+    this.menuai = !this.menuai;
   }
 
   static styles = css`
@@ -323,14 +323,14 @@ export class SupervisorBackupContent extends LitElement {
   `;
 
   public backupDetails():
-    | HassioPartialBackupCreateParams
-    | HassioFullBackupCreateParams {
+    | menuaiioPartialBackupCreateParams
+    | menuaiioFullBackupCreateParams {
     const data: any = {};
 
-    if (!this.backup && this.hass) {
+    if (!this.backup && this.menuai) {
       data.name =
         this.backupName ||
-        formatDate(new Date(), this.hass.locale, this.hass.config);
+        formatDate(new Date(), this.menuai.locale, this.menuai.config);
     }
 
     if (this.backupHasPassword) {
@@ -358,8 +358,8 @@ export class SupervisorBackupContent extends LitElement {
       data.folders = folders;
     }
 
-    // onboarding needs at least homeassistant to restore
-    data.homeassistant = this.onboarding || this.homeAssistant;
+    // onboarding needs at least menuai to restore
+    data.menuai = this.onboarding || this.menuai;
 
     return data;
   }
@@ -381,10 +381,10 @@ export class SupervisorBackupContent extends LitElement {
             .iconPath=${section === "addons" ? mdiPuzzle : mdiFolder}
             .imageUrl=${section === "addons" &&
             !this.onboarding &&
-            this.hass &&
-            atLeastVersion(this.hass.config.version, 0, 105) &&
+            this.menuai &&
+            atLeastVersion(this.menuai.config.version, 0, 105) &&
             addons?.get(item.slug)?.icon
-              ? `/api/hassio/addons/${item.slug}/icon`
+              ? `/api/menuaiio/addons/${item.slug}/icon`
               : undefined}
             .version=${item.version}
           >

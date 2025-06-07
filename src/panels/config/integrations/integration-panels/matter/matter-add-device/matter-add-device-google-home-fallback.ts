@@ -5,12 +5,12 @@ import "../../../../../../components/ha-icon-next";
 import "../../../../../../components/ha-md-list-item";
 import "../../../../../../components/ha-md-list";
 import "../../../../../../components/ha-textfield";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 
 @customElement("matter-add-device-google-home-fallback")
 class MatterAddDeviceGoogleHomeFallback extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _code = "";
 
@@ -19,16 +19,16 @@ class MatterAddDeviceGoogleHomeFallback extends LitElement {
       <div class="content">
         <ol>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home_fallback.step_1`
             )}
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home_fallback.step_2`,
               {
                 linked_matter_apps_services: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.dialogs.matter-add-device.google_home_fallback.linked_matter_apps_services`
                   )}</b
                 >`,
@@ -36,16 +36,16 @@ class MatterAddDeviceGoogleHomeFallback extends LitElement {
             )}
           </li>
           <li>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.dialogs.matter-add-device.google_home_fallback.step_3`,
               {
                 link_apps_services: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.dialogs.matter-add-device.google_home_fallback.link_apps_services`
                   )}</b
                 >`,
                 use_pairing_code: html`<b
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.dialogs.matter-add-device.google_home_fallback.use_pairing_code`
                   )}</b
                 >`,
@@ -55,12 +55,12 @@ class MatterAddDeviceGoogleHomeFallback extends LitElement {
         </ol>
         <br />
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.dialogs.matter-add-device.google_home_fallback.code_instructions`
           )}
         </p>
         <ha-textfield
-          label=${this.hass.localize(
+          label=${this.menuai.localize(
             `ui.dialogs.matter-add-device.google_home_fallback.pairing_code`
           )}
           .value=${this._code}

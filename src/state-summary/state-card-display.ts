@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -9,13 +9,13 @@ import { isUnavailableState } from "../data/entity";
 import { SENSOR_DEVICE_CLASS_TIMESTAMP } from "../data/sensor";
 import "../panels/lovelace/components/hui-timestamp-display";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-display")
 class StateCardDisplay extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -26,7 +26,7 @@ class StateCardDisplay extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         >
@@ -42,12 +42,12 @@ class StateCardDisplay extends LitElement {
             SENSOR_DEVICE_CLASS_TIMESTAMP &&
           !isUnavailableState(this.stateObj.state)
             ? html`<hui-timestamp-display
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .ts=${new Date(this.stateObj.state)}
                 format="datetime"
                 capitalize
               ></hui-timestamp-display>`
-            : this.hass.formatEntityState(this.stateObj)}
+            : this.menuai.formatEntityState(this.stateObj)}
         </div>
       </div>
     `;

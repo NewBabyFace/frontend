@@ -1,6 +1,6 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   computeShowHistoryComponent,
   computeShowLogBookComponent,
@@ -11,14 +11,14 @@ import { getSensorNumericDeviceClasses } from "../../data/sensor";
 
 @customElement("ha-more-info-history-and-logbook")
 export class MoreInfoHistoryAndLogbook extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
   @state() private _sensorNumericDeviceClasses?: string[] = [];
 
   private async _loadNumericDeviceClasses() {
-    const deviceClasses = await getSensorNumericDeviceClasses(this.hass);
+    const deviceClasses = await getSensorNumericDeviceClasses(this.menuai);
     this._sensorNumericDeviceClasses = deviceClasses.numeric_device_classes;
   }
 
@@ -29,22 +29,22 @@ export class MoreInfoHistoryAndLogbook extends LitElement {
 
   protected render() {
     return html`
-      ${computeShowHistoryComponent(this.hass, this.entityId)
+      ${computeShowHistoryComponent(this.menuai, this.entityId)
         ? html`
             <ha-more-info-history
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .entityId=${this.entityId}
             ></ha-more-info-history>
           `
         : ""}
       ${computeShowLogBookComponent(
-        this.hass,
+        this.menuai,
         this.entityId,
         this._sensorNumericDeviceClasses
       )
         ? html`
             <ha-more-info-logbook
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .entityId=${this.entityId}
             ></ha-more-info-logbook>
           `

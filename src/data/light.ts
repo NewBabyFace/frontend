@@ -1,6 +1,6 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { temperature2rgb } from "../common/color/convert-light-color";
 
@@ -71,7 +71,7 @@ export const getLightCurrentModeRgbColor = (
       ? entity.attributes.rgbw_color
       : entity.attributes.rgb_color;
 
-interface LightEntityAttributes extends HassEntityAttributeBase {
+interface LightEntityAttributes extends menuaiEntityAttributeBase {
   min_color_temp_kelvin?: number;
   max_color_temp_kelvin?: number;
   min_mireds?: number;
@@ -90,7 +90,7 @@ interface LightEntityAttributes extends HassEntityAttributeBase {
   color_mode?: LightColorMode;
 }
 
-export interface LightEntity extends HassEntityBase {
+export interface LightEntity extends menuaiEntityBase {
   attributes: LightEntityAttributes;
 }
 

@@ -12,9 +12,9 @@ import {
   energyStatisticHelpUrl,
 } from "../../../../data/energy";
 import { getSensorDeviceClassConvertibleUnits } from "../../../../data/sensor";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { EnergySettingsBatteryDialogParams } from "./show-dialogs-energy";
 
 const energyUnitClasses = ["energy"];
@@ -22,9 +22,9 @@ const energyUnitClasses = ["energy"];
 @customElement("dialog-energy-battery-settings")
 export class DialogEnergyBatterySettings
   extends LitElement
-  implements HassDialog<EnergySettingsBatteryDialogParams>
+  implements menuaiDialog<EnergySettingsBatteryDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: EnergySettingsBatteryDialogParams;
 
@@ -44,7 +44,7 @@ export class DialogEnergyBatterySettings
       ? { ...params.source }
       : emptyBatteryEnergyPreference();
     this._energy_units = (
-      await getSensorDeviceClassConvertibleUnits(this.hass, "energy")
+      await getSensorDeviceClassConvertibleUnits(this.menuai, "energy")
     ).units;
     const allSources: string[] = [];
     this._params.battery_sources.forEach((entry) => {
@@ -81,23 +81,23 @@ export class DialogEnergyBatterySettings
             .path=${mdiBatteryHigh}
             style="--mdc-icon-size: 32px;"
           ></ha-svg-icon>
-          ${this.hass.localize("ui.panel.config.energy.battery.dialog.header")}`}
+          ${this.menuai.localize("ui.panel.config.energy.battery.dialog.header")}`}
         @closed=${this.closeDialog}
       >
         ${this._error ? html`<p class="error">${this._error}</p>` : ""}
         <div>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.battery.dialog.entity_para",
             { unit: pickableUnit }
           )}
         </div>
 
         <ha-statistic-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .helpMissingEntityUrl=${energyStatisticHelpUrl}
           .includeUnitClass=${energyUnitClasses}
           .value=${this._source.stat_energy_to}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.energy.battery.dialog.energy_into_battery"
           )}
           .excludeStatistics=${[
@@ -109,11 +109,11 @@ export class DialogEnergyBatterySettings
         ></ha-statistic-picker>
 
         <ha-statistic-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .helpMissingEntityUrl=${energyStatisticHelpUrl}
           .includeUnitClass=${energyUnitClasses}
           .value=${this._source.stat_energy_from}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.energy.battery.dialog.energy_out_of_battery"
           )}
           .excludeStatistics=${[
@@ -124,7 +124,7 @@ export class DialogEnergyBatterySettings
         ></ha-statistic-picker>
 
         <mwc-button @click=${this.closeDialog} slot="secondaryAction">
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           @click=${this._save}
@@ -132,7 +132,7 @@ export class DialogEnergyBatterySettings
           !this._source.stat_energy_to}
           slot="primaryAction"
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </mwc-button>
       </ha-dialog>
     `;

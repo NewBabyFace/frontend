@@ -60,28 +60,28 @@ export const demoPanels: Panels = {
   // Uncomment when we are ready to stub the history API
   // history: {
   //   component_name: "history",
-  //   icon: "hass:poll-box",
+  //   icon: "menuai:poll-box",
   //   title: "history",
   //   config: null,
   //   url_path: "history",
   // },
   map: {
     component_name: "lovelace",
-    icon: "hass:tooltip-account",
+    icon: "menuai:tooltip-account",
     title: "map",
     config: { mode: "storage" },
     url_path: "map",
   },
   energy: {
     component_name: "energy",
-    icon: "hass:lightning-bolt",
+    icon: "menuai:lightning-bolt",
     title: "energy",
     config: null,
     url_path: "energy",
   },
   // config: {
   //   component_name: "config",
-  //   icon: "hass:cog",
+  //   icon: "menuai:cog",
   //   title: "config",
   //   config: null,
   //   url_path: "config",

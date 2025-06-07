@@ -27,14 +27,14 @@ import {
 import { forwardHaptic } from "../../../data/haptics";
 import "../../../state-control/fan/ha-state-control-fan-speed";
 import "../../../state-control/ha-state-control-toggle";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-control-select-container";
 import "../components/ha-more-info-state-header";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
 @customElement("more-info-fan")
 class MoreInfoFan extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: FanEntity;
 
@@ -43,7 +43,7 @@ class MoreInfoFan extends LitElement {
   private _toggle = () => {
     const service = this.stateObj?.state === "on" ? "turn_off" : "turn_on";
     forwardHaptic("light");
-    this.hass.callService("fan", service, {
+    this.menuai.callService("fan", service, {
       entity_id: this.stateObj!.entity_id,
     });
   };
@@ -54,7 +54,7 @@ class MoreInfoFan extends LitElement {
 
     if (!newVal || oldVal === newVal) return;
 
-    this.hass.callService("fan", "set_direction", {
+    this.menuai.callService("fan", "set_direction", {
       entity_id: this.stateObj!.entity_id,
       direction: newVal,
     });
@@ -67,7 +67,7 @@ class MoreInfoFan extends LitElement {
     if (!newVal || oldVal === newVal) return;
 
     this._presetMode = newVal;
-    this.hass.callService("fan", "set_preset_mode", {
+    this.menuai.callService("fan", "set_preset_mode", {
       entity_id: this.stateObj!.entity_id,
       preset_mode: newVal,
     });
@@ -79,7 +79,7 @@ class MoreInfoFan extends LitElement {
 
     if (oldVal === newVal) return;
 
-    this.hass.callService("fan", "oscillate", {
+    this.menuai.callService("fan", "oscillate", {
       entity_id: this.stateObj!.entity_id,
       oscillating: newVal,
     });
@@ -92,11 +92,11 @@ class MoreInfoFan extends LitElement {
   }
 
   private get _stateOverride() {
-    const stateDisplay = this.hass.formatEntityState(this.stateObj!);
+    const stateDisplay = this.menuai.formatEntityState(this.stateObj!);
 
     const positionStateDisplay = computeFanSpeedStateDisplay(
       this.stateObj!,
-      this.hass
+      this.menuai
     );
 
     if (positionStateDisplay && stateActive(this.stateObj!)) {
@@ -106,7 +106,7 @@ class MoreInfoFan extends LitElement {
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -134,7 +134,7 @@ class MoreInfoFan extends LitElement {
 
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .stateOverride=${this._stateOverride}
       ></ha-more-info-state-header>
@@ -143,14 +143,14 @@ class MoreInfoFan extends LitElement {
           ? html`
               <ha-state-control-fan-speed
                 .stateObj=${this.stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               >
               </ha-state-control-fan-speed>
             `
           : html`
               <ha-state-control-toggle
                 .stateObj=${this.stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .iconPathOn=${mdiFan}
                 .iconPathOff=${mdiFanOff}
               ></ha-state-control-toggle>
@@ -176,7 +176,7 @@ class MoreInfoFan extends LitElement {
         ${supportsPresetMode && this.stateObj.attributes.preset_modes
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   this.stateObj,
                   "preset_mode"
                 )}
@@ -190,7 +190,7 @@ class MoreInfoFan extends LitElement {
                 ${this.stateObj.attributes.preset_mode
                   ? html`<ha-attribute-icon
                       slot="icon"
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${this.stateObj}
                       attribute="preset_mode"
                       .attributeValue=${this.stateObj.attributes.preset_mode}
@@ -206,12 +206,12 @@ class MoreInfoFan extends LitElement {
                     <ha-list-item .value=${mode} graphic="icon">
                       <ha-attribute-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${this.stateObj}
                         attribute="preset_mode"
                         .attributeValue=${mode}
                       ></ha-attribute-icon>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         this.stateObj!,
                         "preset_mode",
                         mode
@@ -225,7 +225,7 @@ class MoreInfoFan extends LitElement {
         ${supportsDirection
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   this.stateObj,
                   "direction"
                 )}
@@ -238,7 +238,7 @@ class MoreInfoFan extends LitElement {
               >
                 <ha-attribute-icon
                   slot="icon"
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .stateObj=${this.stateObj}
                   attribute="direction"
                   .attributeValue=${this.stateObj.attributes.direction}
@@ -246,12 +246,12 @@ class MoreInfoFan extends LitElement {
                 <ha-list-item value="forward" graphic="icon">
                   <ha-attribute-icon
                     slot="graphic"
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .stateObj=${this.stateObj}
                     attribute="direction"
                     attributeValue="forward"
                   ></ha-attribute-icon>
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "direction",
                     "forward"
@@ -260,12 +260,12 @@ class MoreInfoFan extends LitElement {
                 <ha-list-item value="reverse" graphic="icon">
                   <ha-attribute-icon
                     slot="graphic"
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .stateObj=${this.stateObj}
                     attribute="direction"
                     attributeValue="reverse"
                   ></ha-attribute-icon>
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "direction",
                     "reverse"
@@ -277,7 +277,7 @@ class MoreInfoFan extends LitElement {
         ${supportsOscillate
           ? html`
               <ha-control-select-menu
-                .label=${this.hass.formatEntityAttributeName(
+                .label=${this.menuai.formatEntityAttributeName(
                   this.stateObj,
                   "oscillating"
                 )}
@@ -299,7 +299,7 @@ class MoreInfoFan extends LitElement {
                     slot="graphic"
                     .path=${mdiArrowOscillating}
                   ></ha-svg-icon>
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "oscillating",
                     true
@@ -310,7 +310,7 @@ class MoreInfoFan extends LitElement {
                     slot="graphic"
                     .path=${mdiArrowOscillatingOff}
                   ></ha-svg-icon>
-                  ${this.hass.formatEntityAttributeValue(
+                  ${this.menuai.formatEntityAttributeValue(
                     this.stateObj,
                     "oscillating",
                     false

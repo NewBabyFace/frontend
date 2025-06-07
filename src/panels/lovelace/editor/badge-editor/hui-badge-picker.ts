@@ -21,7 +21,7 @@ import {
   customBadges,
   getCustomBadgeEntry,
 } from "../../../../data/lovelace_custom_cards";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   calcUnusedEntities,
   computeUsedEntities,
@@ -39,7 +39,7 @@ interface BadgeElement {
 
 @customElement("hui-badge-picker")
 export class HuiBadgePicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public suggestedBadges?: string[];
 
@@ -116,7 +116,7 @@ export class HuiBadgePicker extends LitElement {
 
   protected render() {
     if (
-      !this.hass ||
+      !this.menuai ||
       !this.lovelace ||
       !this._unusedEntities ||
       !this._usedEntities
@@ -130,10 +130,10 @@ export class HuiBadgePicker extends LitElement {
 
     return html`
       <search-input
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .filter=${this._filter}
         @value-changed=${this._handleSearchChange}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.lovelace.editor.edit_badge.search_badgess"
         )}
       ></search-input>
@@ -153,7 +153,7 @@ export class HuiBadgePicker extends LitElement {
                 ${suggestedBadges.length > 0
                   ? html`
                       <div class="badges-container-header">
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.badge.generic.suggested_badges`
                         )}
                       </div>
@@ -166,7 +166,7 @@ export class HuiBadgePicker extends LitElement {
                 ${suggestedBadges.length > 0
                   ? html`
                       <div class="badges-container-header">
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.badge.generic.other_badges`
                         )}
                       </div>
@@ -178,7 +178,7 @@ export class HuiBadgePicker extends LitElement {
                 ${customBadgesItems.length > 0
                   ? html`
                       <div class="badges-container-header">
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.panel.lovelace.editor.badge.generic.custom_badges`
                         )}
                       </div>
@@ -196,12 +196,12 @@ export class HuiBadgePicker extends LitElement {
             .config=${{ type: "" }}
           >
             <div class="badge-header">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.badge.generic.manual`
               )}
             </div>
             <div class="preview description">
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 `ui.panel.lovelace.editor.badge.generic.manual_description`
               )}
             </div>
@@ -212,12 +212,12 @@ export class HuiBadgePicker extends LitElement {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    if (!oldHass) {
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    if (!oldmenuai) {
       return true;
     }
 
-    if (oldHass.locale !== this.hass!.locale) {
+    if (oldmenuai.locale !== this.menuai!.locale) {
       return true;
     }
 
@@ -225,22 +225,22 @@ export class HuiBadgePicker extends LitElement {
   }
 
   protected firstUpdated(): void {
-    if (!this.hass || !this.lovelace) {
+    if (!this.menuai || !this.lovelace) {
       return;
     }
 
     const usedEntities = computeUsedEntities(this.lovelace);
-    const unusedEntities = calcUnusedEntities(this.hass, usedEntities);
+    const unusedEntities = calcUnusedEntities(this.menuai, usedEntities);
 
     this._usedEntities = [...usedEntities].filter(
       (eid) =>
-        this.hass!.states[eid] &&
-        !isUnavailableState(this.hass!.states[eid].state)
+        this.menuai!.states[eid] &&
+        !isUnavailableState(this.menuai!.states[eid].state)
     );
     this._unusedEntities = [...unusedEntities].filter(
       (eid) =>
-        this.hass!.states[eid] &&
-        !isUnavailableState(this.hass!.states[eid].state)
+        this.menuai!.states[eid] &&
+        !isUnavailableState(this.menuai!.states[eid].state)
     );
 
     this._loadBages();
@@ -248,10 +248,10 @@ export class HuiBadgePicker extends LitElement {
 
   private _loadBages() {
     let badges = coreBadges.map<Badge>((badge) => ({
-      name: this.hass!.localize(
+      name: this.menuai!.localize(
         `ui.panel.lovelace.editor.badge.${badge.type}.name`
       ),
-      description: this.hass!.localize(
+      description: this.menuai!.localize(
         `ui.panel.lovelace.editor.badge.${badge.type}.description`
       ),
       isSuggested: this.suggestedBadges?.includes(badge.type) || false,
@@ -268,7 +268,7 @@ export class HuiBadgePicker extends LitElement {
       return stringCompare(
         a.name || a.type,
         b.name || b.type,
-        this.hass?.language
+        this.menuai?.language
       );
     });
 
@@ -286,7 +286,7 @@ export class HuiBadgePicker extends LitElement {
             stringCompare(
               a.name || a.type,
               b.name || b.type,
-              this.hass?.language
+              this.menuai?.language
             )
           )
       );
@@ -315,10 +315,10 @@ export class HuiBadgePicker extends LitElement {
           type: this._clipboard.type,
           showElement: true,
           isCustom: false,
-          name: this.hass!.localize(
+          name: this.menuai!.localize(
             "ui.panel.lovelace.editor.badge.generic.paste"
           ),
-          description: `${this.hass!.localize(
+          description: `${this.menuai!.localize(
             "ui.panel.lovelace.editor.badge.generic.paste_description",
             {
               type: this._clipboard.type,
@@ -371,7 +371,7 @@ export class HuiBadgePicker extends LitElement {
 
   private _tryCreateBadgeElement(badge: LovelaceBadgeConfig) {
     const element = tryCreateBadgeElement(badge) as LovelaceBadge;
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.addEventListener(
       "ll-rebuild",
       (ev) => {
@@ -415,10 +415,10 @@ export class HuiBadgePicker extends LitElement {
     let element: LovelaceBadge | undefined;
     let badgeConfig: LovelaceBadgeConfig = config ?? { type };
 
-    if (this.hass && this.lovelace) {
+    if (this.menuai && this.lovelace) {
       if (!config) {
         badgeConfig = await getBadgeStubConfig(
-          this.hass,
+          this.menuai,
           type,
           this._unusedEntities!,
           this._usedEntities!
@@ -443,7 +443,7 @@ export class HuiBadgePicker extends LitElement {
         ></div>
         <div class="badge-header">
           ${customBadge
-            ? `${this.hass!.localize(
+            ? `${this.menuai!.localize(
                 "ui.panel.lovelace.editor.badge_picker.custom_badge"
               )}: ${customBadge.name || customBadge.type}`
             : name}
@@ -457,7 +457,7 @@ export class HuiBadgePicker extends LitElement {
             ? element
             : customBadge
               ? customBadge.description ||
-                this.hass!.localize(
+                this.menuai!.localize(
                   `ui.panel.lovelace.editor.badge_picker.no_description`
                 )
               : description}

@@ -1,19 +1,19 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 import "../../../../../../components/ha-spinner";
 
 @customElement("matter-add-device-commissioning")
 class MatterAddDeviceCommissioning extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   render() {
     return html`
       <div class="content">
         <ha-spinner size="medium"></ha-spinner>
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.dialogs.matter-add-device.commissioning.note"
           )}
         </p>

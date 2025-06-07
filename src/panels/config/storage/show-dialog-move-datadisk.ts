@@ -1,8 +1,8 @@
 import { fireEvent } from "../../../common/dom/fire_event";
-import type { HassioHostInfo } from "../../../data/hassio/host";
+import type { menuaiioHostInfo } from "../../../data/menuaiio/host";
 
 export interface MoveDatadiskDialogParams {
-  hostInfo: HassioHostInfo;
+  hostInfo: menuaiioHostInfo;
 }
 
 export const showMoveDatadiskDialog = (

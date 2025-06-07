@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -9,7 +9,7 @@ import "../../../components/ha-control-number-buttons";
 import "../../../components/ha-control-slider";
 import "../../../components/ha-icon";
 import { isUnavailableState } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -18,11 +18,11 @@ import type {
 } from "./types";
 
 export const supportsNumericInputCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -34,7 +34,7 @@ class HuiNumericInputCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -50,10 +50,10 @@ class HuiNumericInputCardFeature
   }
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as HassEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as menuaiEntity | undefined;
   }
 
   public static async getConfigElement(): Promise<LovelaceCardFeatureEditor> {
@@ -73,11 +73,11 @@ class HuiNumericInputCardFeature
   protected willUpdate(changedProp: PropertyValues): void {
     super.willUpdate(changedProp);
     if (
-      (changedProp.has("hass") || changedProp.has("context")) &&
+      (changedProp.has("menuai") || changedProp.has("context")) &&
       this._stateObj
     ) {
-      const oldHass = changedProp.get("hass") as HomeAssistant | undefined;
-      const oldStateObj = oldHass?.states[this.context!.entity_id!];
+      const oldmenuai = changedProp.get("menuai") as menuai | undefined;
+      const oldStateObj = oldmenuai?.states[this.context!.entity_id!];
       if (oldStateObj !== this._stateObj) {
         this._currentState = this._stateObj.state;
       }
@@ -89,7 +89,7 @@ class HuiNumericInputCardFeature
 
     const domain = computeDomain(stateObj.entity_id);
 
-    await this.hass!.callService(domain, "set_value", {
+    await this.menuai!.callService(domain, "set_value", {
       entity_id: stateObj.entity_id,
       value: ev.detail.value,
     });
@@ -98,10 +98,10 @@ class HuiNumericInputCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsNumericInputCardFeature(this.hass, this.context)
+      !supportsNumericInputCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -121,7 +121,7 @@ class HuiNumericInputCardFeature
           @value-changed=${this._setValue}
           .disabled=${isUnavailableState(stateObj.state)}
           .unit=${stateObj.attributes.unit_of_measurement}
-          .locale=${this.hass.locale}
+          .locale=${this.menuai.locale}
         ></ha-control-number-buttons>
       `;
     }
@@ -134,7 +134,7 @@ class HuiNumericInputCardFeature
         @value-changed=${this._setValue}
         .disabled=${isUnavailableState(stateObj.state)}
         .unit=${stateObj.attributes.unit_of_measurement}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       ></ha-control-slider>
     `;
   }

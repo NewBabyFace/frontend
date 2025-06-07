@@ -22,7 +22,7 @@ import {
   getFormattedBackupTime,
 } from "../../../../../data/backup";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { showAlertDialog } from "../../../../lovelace/custom-card-helpers";
 import "../ha-backup-summary-card";
 
@@ -30,7 +30,7 @@ const OVERDUE_MARGIN_HOURS = 3;
 
 @customElement("ha-backup-overview-summary")
 class HaBackupOverviewBackups extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public backups: BackupContent[] = [];
 
@@ -102,7 +102,7 @@ class HaBackupOverviewBackups extends LitElement {
 
     if (this.fetching) {
       return this._renderSummaryCard(
-        this.hass.localize("ui.panel.config.backup.overview.summary.loading"),
+        this.menuai.localize("ui.panel.config.backup.overview.summary.loading"),
         "loading",
         null,
         null
@@ -124,8 +124,8 @@ class HaBackupOverviewBackups extends LitElement {
       : undefined;
 
     const backupTime = getFormattedBackupTime(
-      this.hass.locale,
-      this.hass.config,
+      this.menuai.locale,
+      this.menuai.config,
       nextAutomaticDate || this.config.schedule.time
     );
 
@@ -137,25 +137,25 @@ class HaBackupOverviewBackups extends LitElement {
       (this.config.schedule.recurrence ===
         BackupScheduleRecurrence.CUSTOM_DAYS &&
         this.config.schedule.days.length === 0)
-        ? this.hass.localize(
+        ? this.menuai.localize(
             `ui.panel.config.backup.overview.summary.no_automatic_backup`
           )
         : nextAutomaticDate
-          ? this.hass.localize(
+          ? this.menuai.localize(
               `ui.panel.config.backup.overview.summary.next_automatic_backup`,
               {
                 day: isTomorrow(nextAutomaticDate)
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.backup.overview.summary.tomorrow"
                     )
                   : isToday(nextAutomaticDate)
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         "ui.panel.config.backup.overview.summary.today"
                       )
                     : formatDateWeekday(
                         nextAutomaticDate,
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       ),
                 time: backupTime,
               }
@@ -167,16 +167,16 @@ class HaBackupOverviewBackups extends LitElement {
       const lastUploadedBackup = this._lastUploadedBackup(this.backups);
 
       return this._renderSummaryCard(
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.backup.overview.summary.last_backup_failed_heading"
         ),
         "error",
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.backup.overview.summary.last_backup_failed_description",
           {
             relative_time: relativeTime(
               lastAttemptDate,
-              this.hass.locale,
+              this.menuai.locale,
               now,
               true
             ),
@@ -184,12 +184,12 @@ class HaBackupOverviewBackups extends LitElement {
         ),
         lastUploadedBackup || nextBackupDescription
           ? lastUploadedBackup
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.backup.overview.summary.last_successful_backup_description",
                 {
                   relative_time: relativeTime(
                     new Date(lastUploadedBackup.date),
-                    this.hass.locale,
+                    this.menuai.locale,
                     now,
                     true
                   ),
@@ -204,11 +204,11 @@ class HaBackupOverviewBackups extends LitElement {
     // If no backups yet, show warning
     if (!lastBackup) {
       return this._renderSummaryCard(
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.backup.overview.summary.no_backup_heading"
         ),
         "warning",
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.backup.overview.summary.no_backup_description"
         ),
         nextBackupDescription,
@@ -241,28 +241,28 @@ class HaBackupOverviewBackups extends LitElement {
       const type = failedTypes.join("_");
 
       return this._renderSummaryCard(
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.backup.overview.summary.last_backup_failed_heading"
         ),
         "error",
-        this.hass.localize(
+        this.menuai.localize(
           `ui.panel.config.backup.overview.summary.last_backup_failed_${type}_description` as LocalizeKeys,
           {
             relative_time: relativeTime(
               lastAttemptDate,
-              this.hass.locale,
+              this.menuai.locale,
               now,
               true
             ),
           }
         ),
         lastUploadedBackup
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.panel.config.backup.overview.summary.last_successful_backup_description",
               {
                 relative_time: relativeTime(
                   new Date(lastUploadedBackup.date),
-                  this.hass.locale,
+                  this.menuai.locale,
                   now,
                   true
                 ),
@@ -274,12 +274,12 @@ class HaBackupOverviewBackups extends LitElement {
       );
     }
 
-    const lastSuccessfulBackupDescription = this.hass.localize(
+    const lastSuccessfulBackupDescription = this.menuai.localize(
       "ui.panel.config.backup.overview.summary.last_successful_backup_description",
       {
         relative_time: relativeTime(
           new Date(lastBackup.date),
-          this.hass.locale,
+          this.menuai.locale,
           now,
           true
         ),
@@ -299,7 +299,7 @@ class HaBackupOverviewBackups extends LitElement {
       numberOfDays >= 7;
 
     return this._renderSummaryCard(
-      this.hass.localize(
+      this.menuai.localize(
         `ui.panel.config.backup.overview.summary.${isOverdue ? "backup_too_old_heading" : "backup_success_heading"}`,
         { count: numberOfDays }
       ),
@@ -313,13 +313,13 @@ class HaBackupOverviewBackups extends LitElement {
   private _createAdditionalBackupDescription =
     (lastCompletedDate: Date) => () => {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.backup.overview.summary.additional_backup_description",
           {
             date: formatDate(
               lastCompletedDate,
-              this.hass.locale,
-              this.hass.config
+              this.menuai.locale,
+              this.menuai.config
             ),
           }
         ),

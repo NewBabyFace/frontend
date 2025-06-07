@@ -4,7 +4,7 @@ import { customElement, state, property } from "lit/decorators";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import "../../../components/entity/state-badge";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntitiesCardEntityConfig } from "../cards/types";
 import { computeTooltip } from "../common/compute-tooltip";
 import { actionHandler } from "../common/directives/action-handler-directive";
@@ -16,7 +16,7 @@ import { haStyleScrollbar } from "../../../resources/styles";
 
 @customElement("hui-buttons-base")
 export class HuiButtonsBase extends LitElement {
-  @state() public hass!: HomeAssistant;
+  @state() public menuai!: menuai;
 
   @property({ attribute: false })
   public configEntities?: EntitiesCardEntityConfig[];
@@ -25,7 +25,7 @@ export class HuiButtonsBase extends LitElement {
     return html`
       <ha-chip-set class="ha-scrollbar">
         ${(this.configEntities || []).map((entityConf) => {
-          const stateObj = this.hass.states[entityConf.entity];
+          const stateObj = this.menuai.states[entityConf.entity];
 
           const name =
             (entityConf.show_name && stateObj) ||
@@ -48,8 +48,8 @@ export class HuiButtonsBase extends LitElement {
               ${entityConf.show_icon !== false
                 ? html`
                     <state-badge
-                      title=${computeTooltip(this.hass, entityConf)}
-                      .hass=${this.hass}
+                      title=${computeTooltip(this.menuai, entityConf)}
+                      .menuai=${this.menuai}
                       .stateObj=${stateObj}
                       .overrideIcon=${entityConf.icon}
                       .overrideImage=${entityConf.image}
@@ -67,7 +67,7 @@ export class HuiButtonsBase extends LitElement {
 
   private _handleAction(ev: ActionHandlerEvent) {
     const config = (ev.currentTarget as any).config as EntitiesCardEntityConfig;
-    handleAction(this, this.hass, config, ev.detail.action!);
+    handleAction(this, this.menuai, config, ev.detail.action!);
   }
 
   static get styles(): CSSResultGroup {

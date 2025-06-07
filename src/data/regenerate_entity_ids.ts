@@ -3,7 +3,7 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import {
   getAutomaticEntityIds,
   updateEntityRegistryEntry,
@@ -12,10 +12,10 @@ import "../components/ha-expansion-panel";
 
 export const regenerateEntityIds = async (
   element: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   entities: string[]
 ): Promise<void> => {
-  const entityIdsMapping = await getAutomaticEntityIds(hass, entities);
+  const entityIdsMapping = await getAutomaticEntityIds(menuai, entities);
 
   const entityIdsEntries = Object.entries(entityIdsMapping);
 
@@ -36,23 +36,23 @@ export const regenerateEntityIds = async (
     .map(([oldId]) => html`<li>${oldId}</li>`);
   if (dialogRename.length) {
     showConfirmationDialog(element, {
-      title: hass.localize(
+      title: menuai.localize(
         "ui.dialogs.recreate_entity_ids.confirm_rename_title"
       ),
-      text: html`${hass.localize(
+      text: html`${menuai.localize(
           "ui.dialogs.recreate_entity_ids.confirm_rename_warning"
         )} <br /><br />
         <ha-expansion-panel outlined>
           <span slot="header"
-            >${hass.localize("ui.dialogs.recreate_entity_ids.will_rename", {
+            >${menuai.localize("ui.dialogs.recreate_entity_ids.will_rename", {
               count: dialogRename.length,
             })}</span
           >
           <div style="overflow: auto;">
             <table style="width: 100%; text-align: var(--float-start);">
               <tr>
-                <th>${hass.localize("ui.dialogs.recreate_entity_ids.old")}</th>
-                <th>${hass.localize("ui.dialogs.recreate_entity_ids.new")}</th>
+                <th>${menuai.localize("ui.dialogs.recreate_entity_ids.old")}</th>
+                <th>${menuai.localize("ui.dialogs.recreate_entity_ids.new")}</th>
               </tr>
               ${dialogRename}
             </table>
@@ -61,7 +61,7 @@ export const regenerateEntityIds = async (
         ${dialogCantRename.length
           ? html`<ha-expansion-panel outlined style="margin-top: 8px;">
               <span slot="header"
-                >${hass.localize("ui.dialogs.recreate_entity_ids.cant_rename", {
+                >${menuai.localize("ui.dialogs.recreate_entity_ids.cant_rename", {
                   count: dialogCantRename.length,
                 })}</span
               >
@@ -71,25 +71,25 @@ export const regenerateEntityIds = async (
         ${dialogNoRename.length
           ? html`<ha-expansion-panel outlined style="margin-top: 8px;">
               <span slot="header"
-                >${hass.localize("ui.dialogs.recreate_entity_ids.wont_change", {
+                >${menuai.localize("ui.dialogs.recreate_entity_ids.wont_change", {
                   count: dialogNoRename.length,
                 })}</span
               >
               ${dialogNoRename}
             </ha-expansion-panel>`
           : nothing}`,
-      confirmText: hass.localize("ui.common.update"),
-      dismissText: hass.localize("ui.common.cancel"),
+      confirmText: menuai.localize("ui.common.update"),
+      dismissText: menuai.localize("ui.common.cancel"),
       destructive: true,
       confirm: () => {
         entityIdsEntries
           .filter(([oldId, newId]) => newId && oldId !== newId)
           .forEach(([oldEntityId, newEntityId]) =>
-            updateEntityRegistryEntry(hass, oldEntityId, {
+            updateEntityRegistryEntry(menuai, oldEntityId, {
               new_entity_id: newEntityId!,
             }).catch((err: any) => {
               showAlertDialog(element, {
-                title: hass.localize(
+                title: menuai.localize(
                   "ui.dialogs.recreate_entity_ids.update_entity_error",
                   { entityId: oldEntityId }
                 ),
@@ -101,13 +101,13 @@ export const regenerateEntityIds = async (
     });
   } else {
     showAlertDialog(element, {
-      title: hass.localize(
+      title: menuai.localize(
         "ui.dialogs.recreate_entity_ids.confirm_no_renamable_entity_ids"
       ),
       text: html`${dialogCantRename.length
         ? html`<ha-expansion-panel outlined style="margin-top: 8px;">
             <span slot="header"
-              >${hass.localize("ui.dialogs.recreate_entity_ids.cant_rename", {
+              >${menuai.localize("ui.dialogs.recreate_entity_ids.cant_rename", {
                 count: dialogCantRename.length,
               })}</span
             >
@@ -117,7 +117,7 @@ export const regenerateEntityIds = async (
       ${dialogNoRename.length
         ? html`<ha-expansion-panel outlined style="margin-top: 8px;">
             <span slot="header"
-              >${hass.localize("ui.dialogs.recreate_entity_ids.wont_change", {
+              >${menuai.localize("ui.dialogs.recreate_entity_ids.wont_change", {
                 count: dialogNoRename.length,
               })}</span
             >

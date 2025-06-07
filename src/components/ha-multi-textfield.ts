@@ -4,7 +4,7 @@ import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-button";
 import "./ha-icon-button";
 import "./ha-textfield";
@@ -13,7 +13,7 @@ import type { HaTextField } from "./ha-textfield";
 
 @customElement("ha-multi-textfield")
 class HaMultiTextField extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -64,7 +64,7 @@ class HaMultiTextField extends LitElement {
               .index=${index}
               slot="navigationIcon"
               .label=${this.removeLabel ??
-              this.hass?.localize("ui.common.remove") ??
+              this.menuai?.localize("ui.common.remove") ??
               "Remove"}
               @click=${this._removeItem}
               .path=${mdiDeleteOutline}
@@ -76,10 +76,10 @@ class HaMultiTextField extends LitElement {
         <ha-button @click=${this._addItem} .disabled=${this.disabled}>
           ${this.addLabel ??
           (this.label
-            ? this.hass?.localize("ui.components.multi-textfield.add_item", {
+            ? this.menuai?.localize("ui.components.multi-textfield.add_item", {
                 item: this.label,
               })
-            : this.hass?.localize("ui.common.add")) ??
+            : this.menuai?.localize("ui.common.add")) ??
           "Add"}
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-button>

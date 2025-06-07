@@ -12,7 +12,7 @@ import {
   canUnlock,
   type LockEntity,
 } from "../../../data/lock";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -21,11 +21,11 @@ import type {
 } from "./types";
 
 export const supportsLockCommandsCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -37,17 +37,17 @@ class HuiLockCommandsCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: LockCommandsCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as LockEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as LockEntity | undefined;
   }
 
   static getStubConfig(): LockCommandsCardFeatureConfig {
@@ -66,20 +66,20 @@ class HuiLockCommandsCardFeature
   private _onTap(ev): void {
     ev.stopPropagation();
     const service = ev.target.dataset.service;
-    if (!this.hass || !this._stateObj || !service) {
+    if (!this.menuai || !this._stateObj || !service) {
       return;
     }
     forwardHaptic("light");
-    callProtectedLockService(this, this.hass, this._stateObj, service);
+    callProtectedLockService(this, this.menuai, this._stateObj, service);
   }
 
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsLockCommandsCardFeature(this.hass, this.context)
+      !supportsLockCommandsCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -87,7 +87,7 @@ class HuiLockCommandsCardFeature
     return html`
       <ha-control-button-group>
         <ha-control-button
-          .label=${this.hass.localize("ui.card.lock.lock")}
+          .label=${this.menuai.localize("ui.card.lock.lock")}
           .disabled=${!canLock(this._stateObj)}
           @click=${this._onTap}
           data-service="lock"
@@ -95,7 +95,7 @@ class HuiLockCommandsCardFeature
           <ha-svg-icon .path=${mdiLock}></ha-svg-icon>
         </ha-control-button>
         <ha-control-button
-          .label=${this.hass.localize("ui.card.lock.unlock")}
+          .label=${this.menuai.localize("ui.card.lock.unlock")}
           .disabled=${!canUnlock(this._stateObj)}
           @click=${this._onTap}
           data-service="unlock"

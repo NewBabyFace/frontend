@@ -1,5 +1,5 @@
-import type { HomeAssistant } from "../../types";
-import type { AddonRole, AddonStage } from "../hassio/addon";
+import type { menuai } from "../../types";
+import type { AddonRole, AddonStage } from "../menuaiio/addon";
 import { supervisorApiCall } from "./common";
 import type { SupervisorArch } from "./supervisor";
 
@@ -8,7 +8,7 @@ export interface StoreAddon {
   available: boolean;
   build: boolean;
   description: string;
-  homeassistant: string | null;
+  menuai: string | null;
   icon: boolean;
   installed: boolean;
   logo: boolean;
@@ -30,9 +30,9 @@ export interface StoreAddonDetails extends StoreAddon {
   docker_api: boolean;
   documentation: boolean;
   full_access: boolean;
-  hassio_api: boolean;
-  hassio_role: AddonRole;
-  homeassistant_api: boolean;
+  menuaiio_api: boolean;
+  menuaiio_role: AddonRole;
+  menuai_api: boolean;
   host_network: boolean;
   host_pid: boolean;
   ingress: boolean;
@@ -55,26 +55,26 @@ export interface SupervisorStore {
 }
 
 export const fetchSupervisorStore = async (
-  hass: HomeAssistant
-): Promise<SupervisorStore> => supervisorApiCall(hass, "/store");
+  menuai: menuai
+): Promise<SupervisorStore> => supervisorApiCall(menuai, "/store");
 
 export const fetchStoreRepositories = async (
-  hass: HomeAssistant
-): Promise<StoreRepository[]> => supervisorApiCall(hass, "/store/repositories");
+  menuai: menuai
+): Promise<StoreRepository[]> => supervisorApiCall(menuai, "/store/repositories");
 
 export const addStoreRepository = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   repository: string
 ): Promise<void> =>
-  supervisorApiCall(hass, "/store/repositories", {
+  supervisorApiCall(menuai, "/store/repositories", {
     method: "post",
     data: { repository },
   });
 
 export const removeStoreRepository = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   repository: string
 ): Promise<void> =>
-  supervisorApiCall(hass, `/store/repositories/${repository}`, {
+  supervisorApiCall(menuai, `/store/repositories/${repository}`, {
     method: "delete",
   });

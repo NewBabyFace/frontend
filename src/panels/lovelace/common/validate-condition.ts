@@ -3,7 +3,7 @@ import type { MediaQueriesListener } from "../../../common/dom/media_query";
 import { listenMediaQuery } from "../../../common/dom/media_query";
 import { isValidEntityId } from "../../../common/entity/valid_entity_id";
 import { UNKNOWN } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 export type Condition =
   | NumericStateCondition
@@ -59,33 +59,33 @@ export interface AndCondition extends BaseCondition {
 }
 
 function getValueFromEntityId(
-  hass: HomeAssistant,
+  menuai: menuai,
   value: string
 ): string | undefined {
-  if (isValidEntityId(value) && hass.states[value]) {
-    return hass.states[value]?.state;
+  if (isValidEntityId(value) && menuai.states[value]) {
+    return menuai.states[value]?.state;
   }
   return undefined;
 }
 
 function checkStateCondition(
   condition: StateCondition | LegacyCondition,
-  hass: HomeAssistant
+  menuai: menuai
 ) {
   const state =
-    condition.entity && hass.states[condition.entity]
-      ? hass.states[condition.entity].state
+    condition.entity && menuai.states[condition.entity]
+      ? menuai.states[condition.entity].state
       : UNKNOWN;
   let value = condition.state ?? condition.state_not;
 
   // Handle entity_id, UI should be updated for conditional card (filters does not have UI for now)
   if (Array.isArray(value)) {
     const entityValues = value
-      .map((v) => getValueFromEntityId(hass, v))
+      .map((v) => getValueFromEntityId(menuai, v))
       .filter((v): v is string => v !== undefined);
     value = [...value, ...entityValues];
   } else if (typeof value === "string") {
-    const entityValue = getValueFromEntityId(hass, value);
+    const entityValue = getValueFromEntityId(menuai, value);
     value = [value];
     if (entityValue) {
       value.push(entityValue);
@@ -99,19 +99,19 @@ function checkStateCondition(
 
 function checkStateNumericCondition(
   condition: NumericStateCondition,
-  hass: HomeAssistant
+  menuai: menuai
 ) {
-  const state = (condition.entity ? hass.states[condition.entity] : undefined)
+  const state = (condition.entity ? menuai.states[condition.entity] : undefined)
     ?.state;
   let above = condition.above;
   let below = condition.below;
 
   // Handle entity_id, UI should be updated for conditional card (filters does not have UI for now)
   if (typeof above === "string") {
-    above = getValueFromEntityId(hass, above) ?? above;
+    above = getValueFromEntityId(menuai, above) ?? above;
   }
   if (typeof below === "string") {
-    below = getValueFromEntityId(hass, below) ?? below;
+    below = getValueFromEntityId(menuai, below) ?? below;
   }
 
   const numericState = Number(state);
@@ -132,56 +132,56 @@ function checkStateNumericCondition(
   );
 }
 
-function checkScreenCondition(condition: ScreenCondition, _: HomeAssistant) {
+function checkScreenCondition(condition: ScreenCondition, _: menuai) {
   return condition.media_query
     ? matchMedia(condition.media_query).matches
     : false;
 }
 
-function checkUserCondition(condition: UserCondition, hass: HomeAssistant) {
-  return condition.users && hass.user?.id
-    ? condition.users.includes(hass.user.id)
+function checkUserCondition(condition: UserCondition, menuai: menuai) {
+  return condition.users && menuai.user?.id
+    ? condition.users.includes(menuai.user.id)
     : false;
 }
 
-function checkAndCondition(condition: AndCondition, hass: HomeAssistant) {
+function checkAndCondition(condition: AndCondition, menuai: menuai) {
   if (!condition.conditions) return true;
-  return checkConditionsMet(condition.conditions, hass);
+  return checkConditionsMet(condition.conditions, menuai);
 }
 
-function checkOrCondition(condition: OrCondition, hass: HomeAssistant) {
+function checkOrCondition(condition: OrCondition, menuai: menuai) {
   if (!condition.conditions) return true;
-  return condition.conditions.some((c) => checkConditionsMet([c], hass));
+  return condition.conditions.some((c) => checkConditionsMet([c], menuai));
 }
 
 /**
  * Return the result of applying conditions
  * @param conditions conditions to apply
- * @param hass Home Assistant object
+ * @param menuai MenuAI object
  * @returns true if conditions are respected
  */
 export function checkConditionsMet(
   conditions: (Condition | LegacyCondition)[],
-  hass: HomeAssistant
+  menuai: menuai
 ): boolean {
   return conditions.every((c) => {
     if ("condition" in c) {
       switch (c.condition) {
         case "screen":
-          return checkScreenCondition(c, hass);
+          return checkScreenCondition(c, menuai);
         case "user":
-          return checkUserCondition(c, hass);
+          return checkUserCondition(c, menuai);
         case "numeric_state":
-          return checkStateNumericCondition(c, hass);
+          return checkStateNumericCondition(c, menuai);
         case "and":
-          return checkAndCondition(c, hass);
+          return checkAndCondition(c, menuai);
         case "or":
-          return checkOrCondition(c, hass);
+          return checkOrCondition(c, menuai);
         default:
-          return checkStateCondition(c, hass);
+          return checkStateCondition(c, menuai);
       }
     }
-    return checkStateCondition(c, hass);
+    return checkStateCondition(c, menuai);
   });
 }
 

@@ -2,11 +2,11 @@ import { customElement, property } from "lit/decorators";
 
 import { mdiAccount, mdiLock } from "@mdi/js";
 import type { PropertyValues } from "lit";
-import type { RouterOptions } from "../../layouts/hass-router-page";
-import { HassRouterPage } from "../../layouts/hass-router-page";
-import type { PageNavigation } from "../../layouts/hass-tabs-subpage";
+import type { RouterOptions } from "../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../layouts/menuai-router-page";
+import type { PageNavigation } from "../../layouts/menuai-tabs-subpage";
 import { SubscribeMixin } from "../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export const profileSections: PageNavigation[] = [
   {
@@ -22,8 +22,8 @@ export const profileSections: PageNavigation[] = [
 ];
 
 @customElement("ha-panel-profile")
-class HaPanelProfile extends SubscribeMixin(HassRouterPage) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaPanelProfile extends SubscribeMixin(menuaiRouterPage) {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -43,7 +43,7 @@ class HaPanelProfile extends SubscribeMixin(HassRouterPage) {
 
   protected updatePageEl(el) {
     el.route = this.routeTail;
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.narrow = this.narrow;
   }
 

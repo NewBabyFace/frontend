@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators";
 import "@shoelace-style/shoelace/dist/components/animation/animation";
 import { css, html, LitElement, nothing } from "lit";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { SecurityClass } from "../../../../../../data/zwave_js";
 import type { HaCheckbox } from "../../../../../../components/ha-checkbox";
 import { fireEvent } from "../../../../../../common/dom/fire_event";
@@ -12,7 +12,7 @@ import "../../../../../../components/ha-checkbox";
 
 @customElement("zwave-js-add-node-grant-security-classes")
 export class ZWaveJsAddNodeGrantSecurityClasses extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public error?: string;
 
@@ -27,7 +27,7 @@ export class ZWaveJsAddNodeGrantSecurityClasses extends LitElement {
         ? html`<ha-alert alert-type="error"> ${this.error} </ha-alert>`
         : nothing}
       <p>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.zwave_js.add_node.grant_security_classes.description"
         )}
       </p>
@@ -43,12 +43,12 @@ export class ZWaveJsAddNodeGrantSecurityClasses extends LitElement {
             (securityClass) =>
               html`<ha-formfield
                 .label=${html`<b
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       `ui.panel.config.zwave_js.security_classes.${SecurityClass[securityClass]}.title`
                     )}</b
                   >
                   <div class="secondary">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.zwave_js.security_classes.${SecurityClass[securityClass]}.description`
                     )}
                   </div>`}

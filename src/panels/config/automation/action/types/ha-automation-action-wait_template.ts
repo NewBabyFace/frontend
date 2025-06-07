@@ -1,7 +1,7 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { WaitAction } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ActionElement } from "../ha-automation-action-row";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
@@ -28,7 +28,7 @@ const SCHEMA = [
 
 @customElement("ha-automation-action-wait_template")
 export class HaWaitAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public action!: WaitAction;
 
@@ -41,7 +41,7 @@ export class HaWaitAction extends LitElement implements ActionElement {
   protected render() {
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this.action}
         .schema=${SCHEMA}
         .disabled=${this.disabled}
@@ -53,7 +53,7 @@ export class HaWaitAction extends LitElement implements ActionElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<typeof SCHEMA>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.actions.type.wait_template.${
         schema.name === "continue_on_timeout" ? "continue_timeout" : schema.name
       }`

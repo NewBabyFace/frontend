@@ -1,38 +1,38 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "./common";
-import { hassioApiResultExtractor } from "./common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "./common";
+import { menuaiioApiResultExtractor } from "./common";
 
-type HassioDockerRegistries = Record<
+type menuaiioDockerRegistries = Record<
   string,
   { username: string; password?: string }
 >;
 
-export const fetchHassioDockerRegistries = async (
-  hass: HomeAssistant
-): Promise<HassioDockerRegistries> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+export const fetchmenuaiioDockerRegistries = async (
+  menuai: menuai
+): Promise<menuaiioDockerRegistries> => {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/docker/registries`,
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<HassioDockerRegistries>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<menuaiioDockerRegistries>>(
       "GET",
-      "hassio/docker/registries"
+      "menuaiio/docker/registries"
     )
   );
 };
 
-export const addHassioDockerRegistry = async (
-  hass: HomeAssistant,
-  data: HassioDockerRegistries
+export const addmenuaiioDockerRegistry = async (
+  menuai: menuai,
+  data: menuaiioDockerRegistries
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/docker/registries`,
       method: "post",
@@ -41,19 +41,19 @@ export const addHassioDockerRegistry = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<HassioDockerRegistries>>(
+  await menuai.callApi<menuaiioResponse<menuaiioDockerRegistries>>(
     "POST",
-    "hassio/docker/registries",
+    "menuaiio/docker/registries",
     data
   );
 };
 
-export const removeHassioDockerRegistry = async (
-  hass: HomeAssistant,
+export const removemenuaiioDockerRegistry = async (
+  menuai: menuai,
   registry: string
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/docker/registries/${registry}`,
       method: "delete",
@@ -61,8 +61,8 @@ export const removeHassioDockerRegistry = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<void>>(
+  await menuai.callApi<menuaiioResponse<void>>(
     "DELETE",
-    `hassio/docker/registries/${registry}`
+    `menuaiio/docker/registries/${registry}`
   );
 };

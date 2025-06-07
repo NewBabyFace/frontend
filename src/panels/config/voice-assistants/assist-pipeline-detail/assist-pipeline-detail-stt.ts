@@ -3,12 +3,12 @@ import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import type { LocalizeKeys } from "../../../../common/translations/localize";
 import type { AssistPipeline } from "../../../../data/assist_pipeline";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../../../components/ha-form/ha-form";
 
 @customElement("assist-pipeline-detail-stt")
 export class AssistPipelineDetailSTT extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data?: Partial<AssistPipeline>;
 
@@ -45,7 +45,7 @@ export class AssistPipelineDetailSTT extends LitElement {
 
   private _computeLabel = (schema): string =>
     schema.name
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.panel.config.voice_assistants.assistants.pipeline.detail.form.${schema.name}` as LocalizeKeys
         )
       : "";
@@ -55,12 +55,12 @@ export class AssistPipelineDetailSTT extends LitElement {
       <div class="section">
         <div class="intro">
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.stt.title`
             )}
           </h3>
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.stt.description`
             )}
           </p>
@@ -68,7 +68,7 @@ export class AssistPipelineDetailSTT extends LitElement {
         <ha-form
           .schema=${this._schema(this.data?.language, this._supportedLanguages)}
           .data=${this.data}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .computeLabel=${this._computeLabel}
           @supported-languages-changed=${this._supportedLanguagesChanged}
         ></ha-form>

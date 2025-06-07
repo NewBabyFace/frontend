@@ -6,23 +6,23 @@ import { fireEvent } from "../../../../src/common/dom/fire_event";
 import "../../../../src/components/ha-header-bar";
 import "../../../../src/components/ha-icon-button";
 import "../../../../src/components/ha-dialog";
-import type { HassDialog } from "../../../../src/dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../src/dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import "../../components/hassio-upload-backup";
-import type { HassioBackupUploadDialogParams } from "./show-dialog-backup-upload";
+import type { menuai } from "../../../../src/types";
+import "../../components/menuaiio-upload-backup";
+import type { menuaiioBackupUploadDialogParams } from "./show-dialog-backup-upload";
 
-@customElement("dialog-hassio-backup-upload")
-export class DialogHassioBackupUpload
+@customElement("dialog-menuaiio-backup-upload")
+export class DialogmenuaiioBackupUpload
   extends LitElement
-  implements HassDialog<HassioBackupUploadDialogParams>
+  implements menuaiDialog<menuaiioBackupUploadDialogParams>
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
-  @state() private _dialogParams?: HassioBackupUploadDialogParams;
+  @state() private _dialogParams?: menuaiioBackupUploadDialogParams;
 
   public async showDialog(
-    dialogParams: HassioBackupUploadDialogParams
+    dialogParams: menuaiioBackupUploadDialogParams
   ): Promise<void> {
     this._dialogParams = dialogParams;
     await this.updateComplete;
@@ -50,7 +50,7 @@ export class DialogHassioBackupUpload
         scrimClickAction
         escapeKeyAction
         hideActions
-        .heading=${this.hass?.localize(
+        .heading=${this.menuai?.localize(
           "ui.panel.page-onboarding.restore.upload_backup"
         ) || "Upload backup"}
         @closed=${this.closeDialog}
@@ -58,12 +58,12 @@ export class DialogHassioBackupUpload
         <div slot="heading">
           <ha-header-bar>
             <span slot="title"
-              >${this.hass?.localize(
+              >${this.menuai?.localize(
                 "ui.panel.page-onboarding.restore.upload_backup"
               ) || "Upload backup"}</span
             >
             <ha-icon-button
-              .label=${this.hass?.localize("ui.common.close") || "Close"}
+              .label=${this.menuai?.localize("ui.common.close") || "Close"}
               .path=${mdiClose}
               slot="actionItems"
               dialogAction="cancel"
@@ -71,10 +71,10 @@ export class DialogHassioBackupUpload
             ></ha-icon-button>
           </ha-header-bar>
         </div>
-        <hassio-upload-backup
-          @hassio-backup-uploaded=${this._backupUploaded}
-          .hass=${this.hass}
-        ></hassio-upload-backup>
+        <menuaiio-upload-backup
+          @menuaiio-backup-uploaded=${this._backupUploaded}
+          .menuai=${this.menuai}
+        ></menuaiio-upload-backup>
       </ha-dialog>
     `;
   }
@@ -108,6 +108,6 @@ export class DialogHassioBackupUpload
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-backup-upload": DialogHassioBackupUpload;
+    "dialog-menuaiio-backup-upload": DialogmenuaiioBackupUpload;
   }
 }

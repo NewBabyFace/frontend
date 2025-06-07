@@ -1,4 +1,4 @@
-export default class FakeHass {
+export default class Fakemenuai {
   constructor(states = {}) {
     this.states = states;
     this._wsCommands = {};

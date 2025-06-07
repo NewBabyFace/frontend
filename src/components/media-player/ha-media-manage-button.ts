@@ -8,19 +8,19 @@ import {
   isLocalMediaSourceContentId,
   isImageUploadMediaSourceContentId,
 } from "../../data/media_source";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-svg-icon";
 import { showMediaManageDialog } from "./show-media-manage-dialog";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "media-refresh": unknown;
   }
 }
 
 @customElement("ha-media-manage-button")
 class MediaManageButton extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) currentItem?: MediaPlayerItem;
 
@@ -31,7 +31,7 @@ class MediaManageButton extends LitElement {
       !this.currentItem ||
       !(
         isLocalMediaSourceContentId(this.currentItem.media_content_id || "") ||
-        (this.hass!.user?.is_admin &&
+        (this.menuai!.user?.is_admin &&
           isImageUploadMediaSourceContentId(this.currentItem.media_content_id))
       )
     ) {
@@ -39,7 +39,7 @@ class MediaManageButton extends LitElement {
     }
     return html`
       <mwc-button
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.components.media-browser.file_management.manage"
         )}
         @click=${this._manage}

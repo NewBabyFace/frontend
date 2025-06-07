@@ -1,12 +1,12 @@
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 let changeFunction;
 
-export const mockFrontend = (hass: MockHomeAssistant) => {
-  hass.mockWS("frontend/get_user_data", () => ({
+export const mockFrontend = (menuai: Mockmenuai) => {
+  menuai.mockWS("frontend/get_user_data", () => ({
     value: null,
   }));
-  hass.mockWS("frontend/set_user_data", ({ key, value }) => {
+  menuai.mockWS("frontend/set_user_data", ({ key, value }) => {
     if (key === "sidebar") {
       changeFunction?.({
         value: {
@@ -16,7 +16,7 @@ export const mockFrontend = (hass: MockHomeAssistant) => {
       });
     }
   });
-  hass.mockWS("frontend/subscribe_user_data", (_msg, _hass, onChange) => {
+  menuai.mockWS("frontend/subscribe_user_data", (_msg, _menuai, onChange) => {
     changeFunction = onChange;
     onChange?.({
       value: {

@@ -9,7 +9,7 @@ import {
   mdiPencilOff,
   mdiPencilOutline,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -49,7 +49,7 @@ import { SearchableDomains } from "../../data/search";
 import { getSensorNumericDeviceClasses } from "../../data/sensor";
 import { haStyleDialog } from "../../resources/styles";
 import "../../state-summary/state-card-content";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   DOMAINS_WITH_MORE_INFO,
   EDITABLE_DOMAINS_WITH_ID,
@@ -80,10 +80,10 @@ interface ChildView {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "show-child-view": ChildView;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "toggle-edit-mode": boolean;
   }
 }
@@ -92,7 +92,7 @@ const DEFAULT_VIEW: View = "info";
 
 @customElement("ha-more-info-dialog")
 export class MoreInfoDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public large = false;
 
@@ -131,7 +131,7 @@ export class MoreInfoDialog extends LitElement {
     }
     try {
       this._entry = await getExtendedEntityRegistryEntry(
-        this.hass,
+        this.menuai,
         this._entityId
       );
     } catch (_e) {
@@ -153,7 +153,7 @@ export class MoreInfoDialog extends LitElement {
 
   private _shouldShowEditIcon(
     domain: string,
-    stateObj: HassEntity | undefined
+    stateObj: menuaiEntity | undefined
   ): boolean {
     if (__DEMO__ || !stateObj) {
       return false;
@@ -174,9 +174,9 @@ export class MoreInfoDialog extends LitElement {
   private _shouldShowHistory(domain: string): boolean {
     return (
       DOMAINS_WITH_MORE_INFO.includes(domain) &&
-      (computeShowHistoryComponent(this.hass, this._entityId!) ||
+      (computeShowHistoryComponent(this.menuai, this._entityId!) ||
         computeShowLogBookComponent(
-          this.hass,
+          this.menuai,
           this._entityId!,
           this._sensorNumericDeviceClasses
         ))
@@ -184,7 +184,7 @@ export class MoreInfoDialog extends LitElement {
   }
 
   private _getDeviceId(): string | null {
-    const entity = this.hass.entities[this._entityId!] as
+    const entity = this.menuai.entities[this._entityId!] as
       | EntityRegistryEntry
       | undefined;
     return entity?.device_id ?? null;
@@ -245,7 +245,7 @@ export class MoreInfoDialog extends LitElement {
 
   private _goToEdit(ev) {
     if (!shouldHandleRequestSelectedEvent(ev)) return;
-    const stateObj = this.hass.states[this._entityId!];
+    const stateObj = this.menuai.states[this._entityId!];
     const domain = computeDomain(this._entityId!);
     let idToPassThroughUrl = stateObj.entity_id;
     if (EDITABLE_DOMAINS_WITH_ID.includes(domain) || domain === "person") {
@@ -282,7 +282,7 @@ export class MoreInfoDialog extends LitElement {
   }
 
   private async _loadNumericDeviceClasses() {
-    const deviceClasses = await getSensorNumericDeviceClasses(this.hass);
+    const deviceClasses = await getSensorNumericDeviceClasses(this.menuai);
     this._sensorNumericDeviceClasses = deviceClasses.numeric_device_classes;
   }
 
@@ -291,11 +291,11 @@ export class MoreInfoDialog extends LitElement {
       return nothing;
     }
     const entityId = this._entityId;
-    const stateObj = this.hass.states[entityId] as HassEntity | undefined;
+    const stateObj = this.menuai.states[entityId] as menuaiEntity | undefined;
 
     const domain = computeDomain(entityId);
 
-    const isAdmin = this.hass.user!.is_admin;
+    const isAdmin = this.menuai.user!.is_admin;
 
     const deviceId = this._getDeviceId();
 
@@ -305,15 +305,15 @@ export class MoreInfoDialog extends LitElement {
     const showCloseIcon = isDefaultView || isSpecificInitialView;
 
     const context = stateObj
-      ? getEntityContext(stateObj, this.hass)
+      ? getEntityContext(stateObj, this.menuai)
       : this._entry
-        ? getEntityEntryContext(this._entry, this.hass)
+        ? getEntityEntryContext(this._entry, this.menuai)
         : undefined;
 
     const entityName = stateObj
-      ? computeEntityName(stateObj, this.hass)
+      ? computeEntityName(stateObj, this.menuai)
       : this._entry
-        ? computeEntityEntryName(this._entry, this.hass)
+        ? computeEntityEntryName(this._entry, this.menuai)
         : entityId;
 
     const deviceName = context?.device
@@ -342,7 +342,7 @@ export class MoreInfoDialog extends LitElement {
                 <ha-icon-button
                   slot="navigationIcon"
                   dialogAction="cancel"
-                  .label=${this.hass.localize("ui.common.close")}
+                  .label=${this.menuai.localize("ui.common.close")}
                   .path=${mdiClose}
                 ></ha-icon-button>
               `
@@ -350,7 +350,7 @@ export class MoreInfoDialog extends LitElement {
                 <ha-icon-button-prev
                   slot="navigationIcon"
                   @click=${this._goBack}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.dialogs.more_info_control.back_to_info"
                   )}
                 ></ha-icon-button-prev>
@@ -381,7 +381,7 @@ export class MoreInfoDialog extends LitElement {
                   ? html`
                       <ha-icon-button
                         slot="actionItems"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.more_info_control.history"
                         )}
                         .path=${mdiChartBoxOutline}
@@ -393,7 +393,7 @@ export class MoreInfoDialog extends LitElement {
                   ? html`
                       <ha-icon-button
                         slot="actionItems"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.more_info_control.settings"
                         )}
                         .path=${mdiCogOutline}
@@ -408,7 +408,7 @@ export class MoreInfoDialog extends LitElement {
                       >
                         <ha-icon-button
                           slot="trigger"
-                          .label=${this.hass.localize("ui.common.menu")}
+                          .label=${this.menuai.localize("ui.common.menu")}
                           .path=${mdiDotsVertical}
                         ></ha-icon-button>
 
@@ -418,7 +418,7 @@ export class MoreInfoDialog extends LitElement {
                                 graphic="icon"
                                 @request-selected=${this._goToDevice}
                               >
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.dialogs.more_info_control.device_info"
                                 )}
                                 <ha-svg-icon
@@ -434,7 +434,7 @@ export class MoreInfoDialog extends LitElement {
                                 graphic="icon"
                                 @request-selected=${this._goToEdit}
                               >
-                                ${this.hass.localize(
+                                ${this.menuai.localize(
                                   "ui.dialogs.more_info_control.edit"
                                 )}
                                 <ha-svg-icon
@@ -454,10 +454,10 @@ export class MoreInfoDialog extends LitElement {
                                 @request-selected=${this._toggleInfoEditMode}
                               >
                                 ${this._infoEditMode
-                                  ? this.hass.localize(
+                                  ? this.menuai.localize(
                                       `ui.dialogs.more_info_control.exit_edit_mode`
                                     )
-                                  : this.hass.localize(
+                                  : this.menuai.localize(
                                       `ui.dialogs.more_info_control.${domain}.edit_mode`
                                     )}
                                 <ha-svg-icon
@@ -473,7 +473,7 @@ export class MoreInfoDialog extends LitElement {
                           graphic="icon"
                           @request-selected=${this._goToRelated}
                         >
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.dialogs.more_info_control.related"
                           )}
                           <ha-svg-icon
@@ -496,7 +496,7 @@ export class MoreInfoDialog extends LitElement {
                   >
                     <ha-icon-button
                       slot="trigger"
-                      .label=${this.hass.localize("ui.common.menu")}
+                      .label=${this.menuai.localize("ui.common.menu")}
                       .path=${mdiDotsVertical}
                     ></ha-icon-button>
 
@@ -504,7 +504,7 @@ export class MoreInfoDialog extends LitElement {
                       graphic="icon"
                       @request-selected=${this._resetInitialView}
                     >
-                      ${this.hass.localize("ui.dialogs.more_info_control.info")}
+                      ${this.menuai.localize("ui.dialogs.more_info_control.info")}
                       <ha-svg-icon
                         slot="graphic"
                         .path=${mdiInformationOutline}
@@ -527,7 +527,7 @@ export class MoreInfoDialog extends LitElement {
               ? html`
                   <div class="child-view">
                     ${dynamicElement(this._childView.viewTag, {
-                      hass: this.hass,
+                      menuai: this.menuai,
                       entry: this._entry,
                       params: this._childView.viewParams,
                     })}
@@ -537,7 +537,7 @@ export class MoreInfoDialog extends LitElement {
                 ? html`
                     <ha-more-info-info
                       dialogInitialFocus
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .entityId=${this._entityId}
                       .entry=${this._entry}
                       .editMode=${this._infoEditMode}
@@ -546,14 +546,14 @@ export class MoreInfoDialog extends LitElement {
                 : this._currView === "history"
                   ? html`
                       <ha-more-info-history-and-logbook
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .entityId=${this._entityId}
                       ></ha-more-info-history-and-logbook>
                     `
                   : this._currView === "settings"
                     ? html`
                         <ha-more-info-settings
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .entityId=${this._entityId}
                           .entry=${this._entry}
                         ></ha-more-info-settings>
@@ -561,7 +561,7 @@ export class MoreInfoDialog extends LitElement {
                     : this._currView === "related"
                       ? html`
                           <ha-related-items
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .itemId=${entityId}
                             .itemType=${SearchableDomains.has(domain)
                               ? (domain as ItemType)

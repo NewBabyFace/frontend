@@ -2,13 +2,13 @@ import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
-import "../../../src/layouts/hass-subpage";
-import type { HomeAssistant, Route } from "../../../src/types";
+import "../../../src/layouts/menuai-subpage";
+import type { menuai, Route } from "../../../src/types";
 import "./update-available-card";
 
 @customElement("update-available-dashboard")
 class UpdateAvailableDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -18,19 +18,19 @@ class UpdateAvailableDashboard extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
       >
         <update-available-card
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .supervisor=${this.supervisor}
           .route=${this.route}
           .narrow=${this.narrow}
           @update-complete=${this._updateComplete}
         ></update-available-card>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -39,7 +39,7 @@ class UpdateAvailableDashboard extends LitElement {
   }
 
   static styles = css`
-    hass-subpage {
+    menuai-subpage {
       --app-header-background-color: var(--primary-background-color);
       --app-header-text-color: var(--sidebar-text-color);
     }

@@ -14,7 +14,7 @@ import {
   mdiPlaylistEdit,
   mdiTag,
 } from "@mdi/js";
-import type { HassEvent } from "home-assistant-js-websocket";
+import type { menuaiEvent } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -66,11 +66,11 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { KeyboardShortcutMixin } from "../../../mixins/keyboard-shortcut-mixin";
 import { PreventUnsavedMixin } from "../../../mixins/prevent-unsaved-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { showToast } from "../../../util/toast";
 import { showAssignCategoryDialog } from "../category/show-dialog-assign-category";
 import "../ha-config-section";
@@ -87,7 +87,7 @@ type DeviceEntitiesLookup = Record<string, string[]>;
 export class HaSceneEditor extends PreventUnsavedMixin(
   KeyboardShortcutMixin(LitElement)
 ) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -176,7 +176,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
           outputDevices.push({
             name: computeDeviceNameDisplay(
               device,
-              this.hass,
+              this.menuai,
               this._deviceEntityLookup[device.id]
             ),
             id: device.id,
@@ -214,18 +214,18 @@ export class HaSceneEditor extends PreventUnsavedMixin(
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .backCallback=${this._backTapped}
         .header=${this._scene
           ? computeStateName(this._scene)
-          : this.hass.localize("ui.panel.config.scene.editor.default_name")}
+          : this.menuai.localize("ui.panel.config.scene.editor.default_name")}
       >
         <ha-button-menu
           slot="toolbar-icon"
@@ -234,7 +234,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
         >
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
@@ -242,32 +242,32 @@ export class HaSceneEditor extends PreventUnsavedMixin(
             graphic="icon"
             .disabled=${!this.sceneId || this._mode === "live"}
           >
-            ${this.hass.localize("ui.panel.config.scene.picker.apply")}
+            ${this.menuai.localize("ui.panel.config.scene.picker.apply")}
             <ha-svg-icon slot="graphic" .path=${mdiPlay}></ha-svg-icon>
           </ha-list-item>
           <ha-list-item graphic="icon" .disabled=${!this.sceneId}>
-            ${this.hass.localize("ui.panel.config.scene.picker.show_info")}
+            ${this.menuai.localize("ui.panel.config.scene.picker.show_info")}
             <ha-svg-icon
               slot="graphic"
               .path=${mdiInformationOutline}
             ></ha-svg-icon>
           </ha-list-item>
           <ha-list-item graphic="icon" .disabled=${!this.sceneId}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.automation.picker.show_settings"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiCog}></ha-svg-icon>
           </ha-list-item>
 
           <ha-list-item graphic="icon" .disabled=${!this.sceneId}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.scene.picker.${this._getCategory(this._entityRegistryEntries, this._scene?.entity_id) ? "edit_category" : "assign_category"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiTag}></ha-svg-icon>
           </ha-list-item>
 
           <ha-list-item graphic="icon">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.automation.editor.edit_${this._mode !== "yaml" ? "yaml" : "ui"}`
             )}
             <ha-svg-icon slot="graphic" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -276,7 +276,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
           <li divider role="separator"></li>
 
           <ha-list-item .disabled=${!this.sceneId} graphic="icon">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.scene.picker.duplicate_scene"
             )}
             <ha-svg-icon
@@ -290,7 +290,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
             class=${classMap({ warning: Boolean(this.sceneId) })}
             graphic="icon"
           >
-            ${this.hass.localize("ui.panel.config.scene.picker.delete_scene")}
+            ${this.menuai.localize("ui.panel.config.scene.picker.delete_scene")}
             <ha-svg-icon
               class=${classMap({ warning: Boolean(this.sceneId) })}
               slot="graphic"
@@ -303,7 +303,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
         ${this._mode === "yaml" ? this._renderYamlMode() : this._renderUiMode()}
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize("ui.panel.config.scene.editor.save")}
+          .label=${this.menuai.localize("ui.panel.config.scene.editor.save")}
           extended
           .disabled=${this._saving}
           @click=${this._saveScene}
@@ -311,13 +311,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
         >
           <ha-svg-icon slot="icon" .path=${mdiContentSave}></ha-svg-icon>
         </ha-fab>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private _renderYamlMode() {
     return html` <ha-yaml-editor
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .defaultValue=${this._config}
       @value-changed=${this._yamlChanged}
     ></ha-yaml-editor>`;
@@ -328,12 +328,12 @@ export class HaSceneEditor extends PreventUnsavedMixin(
       this._entities,
       this._devices,
       this._deviceEntityLookup,
-      Object.values(this.hass.devices)
+      Object.values(this.menuai.devices)
     );
     return html` <div
       id="root"
       class=${classMap({
-        rtl: computeRTL(this.hass),
+        rtl: computeRTL(this.menuai),
       })}
     >
       ${this._config
@@ -347,11 +347,11 @@ export class HaSceneEditor extends PreventUnsavedMixin(
               <ha-alert
                 alert-type="info"
                 .narrow=${this.narrow}
-                .title=${this.hass.localize(
+                .title=${this.menuai.localize(
                   `ui.panel.config.scene.editor.${this._mode === "live" ? "live_edit" : "review_mode"}`
                 )}
               >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.scene.editor.${this._mode === "live" ? "live_edit_detail" : "review_mode_detail"}`
                 )}
                 <span slot="icon">
@@ -362,7 +362,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                   ></ha-svg-icon>
                 </span>
                 <ha-button slot="action" @click=${this._toggleLiveMode}>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.scene.editor.${this._mode === "live" ? "switch_to_review_mode" : "live_edit"}`
                   )}
                 </ha-button>
@@ -373,13 +373,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                     .value=${this._config.name}
                     .name=${"name"}
                     @change=${this._valueChanged}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.scene.editor.name"
                     )}
                   ></ha-textfield>
                   <ha-icon-picker
-                    .hass=${this.hass}
-                    .label=${this.hass.localize(
+                    .menuai=${this.menuai}
+                    .label=${this.menuai.localize(
                       "ui.panel.config.scene.editor.icon"
                     )}
                     .name=${"icon"}
@@ -388,8 +388,8 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                   >
                   </ha-icon-picker>
                   <ha-area-picker
-                    .hass=${this.hass}
-                    .label=${this.hass.localize(
+                    .menuai=${this.menuai}
+                    .label=${this.menuai.localize(
                       "ui.panel.config.scene.editor.area"
                     )}
                     .name=${"area"}
@@ -403,13 +403,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
 
             <ha-config-section vertical .isWide=${this.isWide}>
               <div slot="header">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.scene.editor.devices.header"
                 )}
               </div>
               ${this._mode === "live" || devices.length === 0
                 ? html`<div slot="introduction">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.scene.editor.devices.introduction${this._mode === "review" ? "_review" : ""}`
                     )}
                   </div>`
@@ -421,7 +421,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                       ${device.name}
                       <ha-icon-button
                         .path=${mdiDelete}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.scene.editor.devices.delete"
                         )}
                         .device=${device.id}
@@ -430,7 +430,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                     </h1>
                     <ha-list>
                       ${device.entities.map((entityId) => {
-                        const entityStateObj = this.hass.states[entityId];
+                        const entityStateObj = this.menuai.states[entityId];
                         if (!entityStateObj) {
                           return nothing;
                         }
@@ -449,7 +449,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                             ${this._mode === "live"
                               ? html`
                                   <state-badge
-                                    .hass=${this.hass}
+                                    .menuai=${this.menuai}
                                     .stateObj=${entityStateObj}
                                     slot="graphic"
                                   ></state-badge>
@@ -467,15 +467,15 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                 ? html`
                     <ha-card
                       outlined
-                      .header=${this.hass.localize(
+                      .header=${this.menuai.localize(
                         "ui.panel.config.scene.editor.devices.add"
                       )}
                     >
                       <div class="card-content">
                         <ha-device-picker
                           @value-changed=${this._devicePicked}
-                          .hass=${this.hass}
-                          .label=${this.hass.localize(
+                          .menuai=${this.menuai}
+                          .label=${this.menuai.localize(
                             "ui.panel.config.scene.editor.devices.add"
                           )}
                         ></ha-device-picker>
@@ -487,13 +487,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
 
             <ha-config-section vertical .isWide=${this.isWide}>
               <div slot="header">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.scene.editor.entities.header"
                 )}
               </div>
               ${this._mode === "live" || entities.length === 0
                 ? html`<div slot="introduction">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.scene.editor.entities.introduction${this._mode === "review" ? "_review" : ""}`
                     )}
                   </div>`
@@ -503,7 +503,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                     <ha-card outlined class="entities">
                       <ha-list>
                         ${entities.map((entityId) => {
-                          const entityStateObj = this.hass.states[entityId];
+                          const entityStateObj = this.menuai.states[entityId];
                           if (!entityStateObj) {
                             return nothing;
                           }
@@ -522,7 +522,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                             >
                               ${this._mode === "live"
                                 ? html` <state-badge
-                                    .hass=${this.hass}
+                                    .menuai=${this.menuai}
                                     .stateObj=${entityStateObj}
                                     slot="graphic"
                                   ></state-badge>`
@@ -532,7 +532,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                                 <ha-icon-button
                                   .path=${mdiDelete}
                                   .entityId=${entityId}
-                                  .label=${this.hass.localize(
+                                  .label=${this.menuai.localize(
                                     "ui.panel.config.scene.editor.entities.delete"
                                   )}
                                   @click=${this._deleteEntity}
@@ -548,7 +548,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
               ${this._mode === "live"
                 ? html` <ha-card
                     outlined
-                    header=${this.hass.localize(
+                    header=${this.menuai.localize(
                       "ui.panel.config.scene.editor.entities.add"
                     )}
                   >
@@ -556,8 +556,8 @@ export class HaSceneEditor extends PreventUnsavedMixin(
                       <ha-entity-picker
                         @value-changed=${this._entityPicked}
                         .excludeDomains=${SCENE_IGNORED_DOMAINS}
-                        .hass=${this.hass}
-                        label=${this.hass.localize(
+                        .menuai=${this.menuai}
+                        label=${this.menuai.localize(
                           "ui.panel.config.scene.editor.entities.add"
                         )}
                       ></ha-entity-picker>
@@ -578,18 +578,18 @@ export class HaSceneEditor extends PreventUnsavedMixin(
     if (
       changedProps.has("sceneId") &&
       this.sceneId &&
-      this.hass &&
+      this.menuai &&
       // Only refresh config if we picked a new scene. If same ID, don't fetch it.
       (!oldscene || oldscene !== this.sceneId)
     ) {
       this._loadConfig();
     }
 
-    if (changedProps.has("sceneId") && !this.sceneId && this.hass) {
+    if (changedProps.has("sceneId") && !this.sceneId && this.menuai) {
       this._dirty = false;
       const initData = getSceneEditorInitData();
       this._config = {
-        name: this.hass.localize("ui.panel.config.scene.editor.default_name"),
+        name: this.menuai.localize("ui.panel.config.scene.editor.default_name"),
         entities: {},
         ...initData?.config,
       };
@@ -630,13 +630,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
       this._scenesSet();
     }
 
-    if (changedProps.has("hass")) {
+    if (changedProps.has("menuai")) {
       if (this._scene) {
-        if (this.hass.states[this._scene.entity_id] !== this._scene) {
-          this._scene = this.hass.states[this._scene.entity_id];
+        if (this.menuai.states[this._scene.entity_id] !== this._scene) {
+          this._scene = this.menuai.states[this._scene.entity_id];
         }
       } else if (this.sceneId) {
-        this._scene = Object.values(this.hass.states).find(
+        this._scene = Object.values(this.menuai.states).find(
           (stateObj) =>
             stateObj.entity_id.startsWith("scene") &&
             stateObj.attributes?.id === this.sceneId
@@ -648,10 +648,10 @@ export class HaSceneEditor extends PreventUnsavedMixin(
   private async _handleMenuAction(ev: CustomEvent<ActionDetail>) {
     switch (ev.detail.index) {
       case 0:
-        activateScene(this.hass, this._scene!.entity_id);
+        activateScene(this.menuai, this._scene!.entity_id);
         break;
       case 1:
-        fireEvent(this, "hass-more-info", { entityId: this._scene!.entity_id });
+        fireEvent(this, "menuai-more-info", { entityId: this._scene!.entity_id });
         break;
       case 2:
         showMoreInfoDialog(this, {
@@ -682,12 +682,12 @@ export class HaSceneEditor extends PreventUnsavedMixin(
   private async _exitYamlMode() {
     if (this._yamlErrors) {
       const result = await showConfirmationDialog(this, {
-        text: html`${this.hass.localize(
+        text: html`${this.menuai.localize(
             "ui.panel.config.automation.editor.switch_ui_yaml_error"
           )}<br /><br />${this._yamlErrors}`,
-        confirmText: this.hass!.localize("ui.common.continue"),
+        confirmText: this.menuai!.localize("ui.common.continue"),
         destructive: true,
-        dismissText: this.hass!.localize("ui.common.cancel"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
       });
       if (!result) {
         return;
@@ -704,7 +704,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
         this._unsubscribeEvents();
         this._unsubscribeEvents = undefined;
       }
-      applyScene(this.hass, this._storedStates);
+      applyScene(this.menuai, this._storedStates);
     }
     this._mode = "yaml";
   }
@@ -720,13 +720,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
   private async _enterLiveMode() {
     if (this._dirty) {
       const result = await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.scene.editor.enter_live_mode_unsaved"
         ),
-        confirmText: this.hass!.localize(
+        confirmText: this.menuai!.localize(
           "ui.panel.config.scene.editor.save_before_live"
         ),
-        dismissText: this.hass!.localize("ui.common.cancel"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
       });
       if (!result) {
         return;
@@ -746,7 +746,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
       this._unsubscribeEvents();
       this._unsubscribeEvents = undefined;
     }
-    applyScene(this.hass, this._storedStates);
+    applyScene(this.menuai, this._storedStates);
     this._mode = "review";
   }
 
@@ -766,13 +766,13 @@ export class HaSceneEditor extends PreventUnsavedMixin(
     if (!this._scene) {
       return;
     }
-    const { context } = await activateScene(this.hass, this._scene.entity_id);
+    const { context } = await activateScene(this.menuai, this._scene.entity_id);
     this._activateContextId = context.id;
   }
 
   private async _subscribeEvents() {
     this._unsubscribeEvents =
-      await this.hass!.connection.subscribeEvents<HassEvent>(
+      await this.menuai!.connection.subscribeEvents<menuaiEvent>(
         (event) => this._stateChanged(event),
         "state_changed"
       );
@@ -780,21 +780,21 @@ export class HaSceneEditor extends PreventUnsavedMixin(
 
   private _showMoreInfo(ev: Event) {
     const entityId = (ev.currentTarget as any).entityId;
-    fireEvent(this, "hass-more-info", { entityId });
+    fireEvent(this, "menuai-more-info", { entityId });
   }
 
   private async _loadConfig() {
     let config: SceneConfig;
     try {
-      config = await getSceneConfig(this.hass, this.sceneId!);
+      config = await getSceneConfig(this.menuai, this.sceneId!);
     } catch (err: any) {
       await showAlertDialog(this, {
         text:
           err.status_code === 404
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.scene.editor.load_error_not_editable"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.scene.editor.load_error_unknown",
                 { err_no: err.status_code }
               ),
@@ -961,7 +961,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
     }
   }
 
-  private _stateChanged(event: HassEvent) {
+  private _stateChanged(event: menuaiEvent) {
     if (
       event.context.id !== this._activateContextId &&
       this._entities.includes(event.data.entity_id)
@@ -979,31 +979,31 @@ export class HaSceneEditor extends PreventUnsavedMixin(
 
   private _goBack(): void {
     if (this._mode === "live") {
-      applyScene(this.hass, this._storedStates);
+      applyScene(this.menuai, this._storedStates);
     }
     afterNextRender(() => history.back());
   }
 
   private _deleteTapped(): void {
     showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.config.scene.picker.delete_confirm_title"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.config.scene.picker.delete_confirm_text",
         { name: this._config?.name }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       confirm: () => this._delete(),
       destructive: true,
     });
   }
 
   private async _delete(): Promise<void> {
-    await deleteScene(this.hass, this.sceneId!);
+    await deleteScene(this.menuai, this.sceneId!);
     if (this._mode === "live") {
-      applyScene(this.hass, this._storedStates);
+      applyScene(this.menuai, this._storedStates);
     }
     history.back();
   }
@@ -1011,14 +1011,14 @@ export class HaSceneEditor extends PreventUnsavedMixin(
   private async _confirmUnsavedChanged(): Promise<boolean> {
     if (this._dirty) {
       return showConfirmationDialog(this, {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.config.scene.editor.unsaved_confirm_title"
         ),
-        text: this.hass!.localize(
+        text: this.menuai!.localize(
           "ui.panel.config.scene.editor.unsaved_confirm_text"
         ),
-        confirmText: this.hass!.localize("ui.common.leave"),
-        dismissText: this.hass!.localize("ui.common.stay"),
+        confirmText: this.menuai!.localize("ui.common.leave"),
+        dismissText: this.menuai!.localize("ui.common.stay"),
         destructive: true,
       });
     }
@@ -1032,7 +1032,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
         {
           ...this._config,
           id: undefined,
-          name: `${this._config?.name} (${this.hass.localize(
+          name: `${this._config?.name} (${this.menuai.localize(
             "ui.panel.config.scene.picker.duplicate"
           )})`,
         },
@@ -1082,7 +1082,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
   }
 
   private _getCurrentState(entityId: string) {
-    const stateObj = this.hass.states[entityId];
+    const stateObj = this.menuai.states[entityId];
     if (!stateObj) {
       return undefined;
     }
@@ -1111,7 +1111,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
     }
     try {
       this._saving = true;
-      await saveScene(this.hass, id, this._config!);
+      await saveScene(this.menuai, id, this._config!);
 
       if (this._updatedAreaId !== undefined) {
         let scene =
@@ -1137,7 +1137,7 @@ export class HaSceneEditor extends PreventUnsavedMixin(
         }
 
         if (scene) {
-          await updateEntityRegistryEntry(this.hass, scene.entity_id, {
+          await updateEntityRegistryEntry(this.menuai, scene.entity_id, {
             area_id: this._updatedAreaId,
           });
         }
@@ -1188,10 +1188,10 @@ export class HaSceneEditor extends PreventUnsavedMixin(
     );
     if (!entityReg) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_support"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_entity_reg"
         ),
       });

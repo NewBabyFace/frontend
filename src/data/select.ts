@@ -1,23 +1,23 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-interface SelectEntityAttributes extends HassEntityAttributeBase {
+interface SelectEntityAttributes extends menuaiEntityAttributeBase {
   options: string[];
 }
 
-export interface SelectEntity extends HassEntityBase {
+export interface SelectEntity extends menuaiEntityBase {
   attributes: SelectEntityAttributes;
 }
 
 export const setSelectOption = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity: string,
   option: string
 ) =>
-  hass.callService(
+  menuai.callService(
     "select",
     "select_option",
     { option },

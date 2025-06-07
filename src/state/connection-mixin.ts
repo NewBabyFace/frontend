@@ -1,4 +1,4 @@
-import type { Auth, Connection, HassConfig } from "home-assistant-js-websocket";
+import type { Auth, Connection, menuaiConfig } from "home-assistant-js-websocket";
 import {
   callService,
   ERR_CONNECTION_LOST,
@@ -27,23 +27,23 @@ import { subscribeEntityRegistryDisplay } from "../data/ws-entity_registry_displ
 import { subscribeFloorRegistry } from "../data/ws-floor_registry";
 import { subscribePanels } from "../data/ws-panels";
 import { translationMetadata } from "../resources/translations-metadata";
-import type { Constructor, HomeAssistant, ServiceCallResponse } from "../types";
+import type { Constructor, menuai, ServiceCallResponse } from "../types";
 import { getLocalLanguage } from "../util/common-translation";
 import { fetchWithAuth } from "../util/fetch-with-auth";
 import { getState } from "../util/ha-pref-storage";
-import hassCallApi, { hassCallApiRaw } from "../util/hass-call-api";
-import type { HassBaseEl } from "./hass-base-mixin";
+import menuaiCallApi, { menuaiCallApiRaw } from "../util/menuai-call-api";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
-export const connectionMixin = <T extends Constructor<HassBaseEl>>(
+export const connectionMixin = <T extends Constructor<menuaiBaseEl>>(
   superClass: T
 ) =>
   class extends superClass {
     private __backendPingInterval?: ReturnType<typeof setInterval>;
 
-    protected initializeHass(auth: Auth, conn: Connection) {
+    protected initializemenuai(auth: Auth, conn: Connection) {
       const language = getLocalLanguage();
 
-      this.hass = {
+      this.menuai = {
         auth,
         connection: conn,
         connected: true,
@@ -80,7 +80,7 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
         suspendWhenHidden: true,
         enableShortcuts: true,
         moreInfoEntityId: null,
-        hassUrl: (path = "") => new URL(path, auth.data.hassUrl).toString(),
+        menuaiUrl: (path = "") => new URL(path, auth.data.menuaiUrl).toString(),
         callService: async (
           domain,
           service,
@@ -89,7 +89,7 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
           notifyOnError = true,
           returnResponse = false
         ) => {
-          if (this.hass?.debugConnection) {
+          if (this.menuai?.debugConnection) {
             // eslint-disable-next-line no-console
             console.log(
               "Calling service",
@@ -115,7 +115,7 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
             ) {
               return { context: { id: "" } };
             }
-            if (this.hass?.debugConnection) {
+            if (this.menuai?.debugConnection) {
               // eslint-disable-next-line no-console
               console.error(
                 "Error calling service",
@@ -127,7 +127,7 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
             }
             if (notifyOnError) {
               forwardHaptic("failure");
-              const lokalize = await this.hass!.loadBackendTranslation(
+              const lokalize = await this.menuai!.loadBackendTranslation(
                 "exceptions",
                 err.translation_domain
               );
@@ -137,7 +137,7 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
               );
               const message =
                 localizedErrorMessage ||
-                (this as any).hass.localize(
+                (this as any).menuai.localize(
                   "ui.notification_toast.action_failed",
                   "service",
                   `${domain}/${service}`
@@ -148,7 +148,7 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
                       ? "connection lost"
                       : "unknown error")
                   }`;
-              fireEvent(this as any, "hass-notification", {
+              fireEvent(this as any, "menuai-notification", {
                 message,
                 duration: 10000,
               });
@@ -157,17 +157,17 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
           }
         },
         callApi: async (method, path, parameters, headers) =>
-          hassCallApi(auth, method, path, parameters, headers),
+          menuaiCallApi(auth, method, path, parameters, headers),
         // callApiRaw introduced in 2024.11
         callApiRaw: async (method, path, parameters, headers, signal) =>
-          hassCallApiRaw(auth, method, path, parameters, headers, signal),
+          menuaiCallApiRaw(auth, method, path, parameters, headers, signal),
         fetchWithAuth: (
           path: string,
           init: Parameters<typeof fetchWithAuth>[2]
-        ) => fetchWithAuth(auth, `${auth.data.hassUrl}${path}`, init),
+        ) => fetchWithAuth(auth, `${auth.data.menuaiUrl}${path}`, init),
         // For messages that do not get a response
         sendWS: (msg) => {
-          if (this.hass?.debugConnection) {
+          if (this.menuai?.debugConnection) {
             // eslint-disable-next-line no-console
             console.log("Sending", msg);
           }
@@ -175,14 +175,14 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
         },
         // For messages that expect a response
         callWS: <R>(msg) => {
-          if (this.hass?.debugConnection) {
+          if (this.menuai?.debugConnection) {
             // eslint-disable-next-line no-console
             console.log("Sending", msg);
           }
 
           const resp = conn.sendMessagePromise<R>(msg);
 
-          if (this.hass?.debugConnection) {
+          if (this.menuai?.debugConnection) {
             resp.then(
               // eslint-disable-next-line no-console
               (result) => console.log("Received", result),
@@ -194,36 +194,36 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
         },
         loadBackendTranslation: (category, integration?, configFlow?) =>
           // @ts-ignore
-          this._loadHassTranslations(
-            this.hass?.language,
+          this._loadmenuaiTranslations(
+            this.menuai?.language,
             category,
             integration,
             configFlow
           ),
         loadFragmentTranslation: (fragment) =>
           // @ts-ignore
-          this._loadFragmentTranslations(this.hass?.language, fragment),
+          this._loadFragmentTranslations(this.menuai?.language, fragment),
         formatEntityState: (stateObj, state) =>
           (state != null ? state : stateObj.state) ?? "",
         formatEntityAttributeName: (_stateObj, attribute) => attribute,
         formatEntityAttributeValue: (stateObj, attribute, value) =>
           value != null ? value : (stateObj.attributes[attribute] ?? ""),
         ...getState(),
-        ...this._pendingHass,
+        ...this._pendingmenuai,
       };
 
-      this.hassConnected();
+      this.menuaiConnected();
     }
 
-    protected hassConnected() {
-      super.hassConnected();
+    protected menuaiConnected() {
+      super.menuaiConnected();
 
-      const conn = this.hass!.connection;
+      const conn = this.menuai!.connection;
 
       broadcastConnectionStatus("connected");
 
-      conn.addEventListener("ready", () => this.hassReconnected());
-      conn.addEventListener("disconnected", () => this.hassDisconnected());
+      conn.addEventListener("ready", () => this.menuaiReconnected());
+      conn.addEventListener("disconnected", () => this.menuaiDisconnected());
       // If we reconnect after losing connection and auth is no longer valid.
       conn.addEventListener("reconnect-error", (_conn, err) => {
         if (err === ERR_INVALID_AUTH) {
@@ -232,9 +232,9 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
         }
       });
 
-      subscribeEntities(conn, (states) => this._updateHass({ states }));
+      subscribeEntities(conn, (states) => this._updatemenuai({ states }));
       subscribeEntityRegistryDisplay(conn, (entityReg) => {
-        const entities: HomeAssistant["entities"] = {};
+        const entities: menuai["entities"] = {};
         for (const entity of entityReg.entities) {
           entities[entity.ei] = {
             entity_id: entity.ei,
@@ -254,76 +254,76 @@ export const connectionMixin = <T extends Constructor<HassBaseEl>>(
             display_precision: entity.dp,
           };
         }
-        this._updateHass({ entities });
+        this._updatemenuai({ entities });
       });
       subscribeDeviceRegistry(conn, (deviceReg) => {
-        const devices: HomeAssistant["devices"] = {};
+        const devices: menuai["devices"] = {};
         for (const device of deviceReg) {
           devices[device.id] = device;
         }
-        this._updateHass({ devices });
+        this._updatemenuai({ devices });
       });
       subscribeAreaRegistry(conn, (areaReg) => {
-        const areas: HomeAssistant["areas"] = {};
+        const areas: menuai["areas"] = {};
         for (const area of areaReg) {
           areas[area.area_id] = area;
         }
-        this._updateHass({ areas });
+        this._updatemenuai({ areas });
       });
       subscribeFloorRegistry(conn, (floorReg) => {
-        const floors: HomeAssistant["floors"] = {};
+        const floors: menuai["floors"] = {};
         for (const floor of floorReg) {
           floors[floor.floor_id] = floor;
         }
-        this._updateHass({ floors });
+        this._updatemenuai({ floors });
       });
-      subscribeConfig(conn, (config) => this._updateHass({ config }));
-      subscribeServices(conn, (services) => this._updateHass({ services }));
-      subscribePanels(conn, (panels) => this._updateHass({ panels }));
+      subscribeConfig(conn, (config) => this._updatemenuai({ config }));
+      subscribeServices(conn, (services) => this._updatemenuai({ services }));
+      subscribePanels(conn, (panels) => this._updatemenuai({ panels }));
       subscribeFrontendUserData(conn, "core", ({ value: userData }) => {
-        this._updateHass({ userData });
+        this._updatemenuai({ userData });
       });
 
       clearInterval(this.__backendPingInterval);
       this.__backendPingInterval = setInterval(() => {
-        if (this.hass?.connected) {
+        if (this.menuai?.connected) {
           // If the backend is busy, or the connection is latent,
           // it can take more than 10 seconds for the ping to return.
           // We give it a 15 second timeout to be safe.
-          promiseTimeout(15000, this.hass?.connection.ping()).catch(() => {
-            if (!this.hass?.connected) {
+          promiseTimeout(15000, this.menuai?.connection.ping()).catch(() => {
+            if (!this.menuai?.connected) {
               return;
             }
 
             // eslint-disable-next-line no-console
             console.log("Websocket died, forcing reconnect...");
-            this.hass?.connection.reconnect(true);
+            this.menuai?.connection.reconnect(true);
           });
         }
       }, 30000);
     }
 
-    protected hassReconnected() {
-      super.hassReconnected();
+    protected menuaiReconnected() {
+      super.menuaiReconnected();
 
-      this._updateHass({ connected: true });
+      this._updatemenuai({ connected: true });
       broadcastConnectionStatus("connected");
 
       // on reconnect always fetch config as we might miss an update while we were disconnected
       // @ts-ignore
-      this.hass!.callWS({ type: "get_config" }).then((config: HassConfig) => {
+      this.menuai!.callWS({ type: "get_config" }).then((config: menuaiConfig) => {
         if (config.safe_mode) {
           // @ts-ignore Firefox supports forceGet
           location.reload(true);
         }
-        this._updateHass({ config });
+        this._updatemenuai({ config });
         this.checkDataBaseMigration();
       });
     }
 
-    protected hassDisconnected() {
-      super.hassDisconnected();
-      this._updateHass({ connected: false });
+    protected menuaiDisconnected() {
+      super.menuaiDisconnected();
+      this._updatemenuai({ connected: false });
       broadcastConnectionStatus("disconnected");
       clearInterval(this.__backendPingInterval);
     }

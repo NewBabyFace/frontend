@@ -1,15 +1,15 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { ReactiveElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeDisplayTimer, timerTimeRemaining } from "../data/timer";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-timer-remaining-time")
 class HaTimerRemainingTime extends ReactiveElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @state() private timeRemaining?: number;
 
@@ -22,7 +22,7 @@ class HaTimerRemainingTime extends ReactiveElement {
   protected update(changedProps: PropertyValues) {
     super.update(changedProps);
     this.innerHTML =
-      computeDisplayTimer(this.hass, this.stateObj, this.timeRemaining) ?? "-";
+      computeDisplayTimer(this.menuai, this.stateObj, this.timeRemaining) ?? "-";
   }
 
   connectedCallback() {
@@ -51,7 +51,7 @@ class HaTimerRemainingTime extends ReactiveElement {
     }
   }
 
-  private _startInterval(stateObj: HassEntity) {
+  private _startInterval(stateObj: menuaiEntity) {
     this._clearInterval();
     this._calculateRemaining(stateObj);
 
@@ -63,7 +63,7 @@ class HaTimerRemainingTime extends ReactiveElement {
     }
   }
 
-  private _calculateRemaining(stateObj: HassEntity) {
+  private _calculateRemaining(stateObj: menuaiEntity) {
     this.timeRemaining = timerTimeRemaining(stateObj);
   }
 }

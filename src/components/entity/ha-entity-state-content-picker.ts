@@ -1,5 +1,5 @@
 import { mdiDrag } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
@@ -12,7 +12,7 @@ import {
   STATE_DISPLAY_SPECIAL_CONTENT,
   STATE_DISPLAY_SPECIAL_CONTENT_DOMAINS,
 } from "../../state-display/state-display";
-import type { HomeAssistant, ValueChangedEvent } from "../../types";
+import type { menuai, ValueChangedEvent } from "../../types";
 import "../ha-combo-box";
 import "../ha-sortable";
 import "../chips/ha-input-chip";
@@ -75,7 +75,7 @@ const HIDDEN_ATTRIBUTES = [
 
 @customElement("ha-entity-state-content-picker")
 class HaEntityStatePicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId?: string;
 
@@ -104,17 +104,17 @@ class HaEntityStatePicker extends LitElement {
   }
 
   private options = memoizeOne(
-    (entityId?: string, stateObj?: HassEntity, allowName?: boolean) => {
+    (entityId?: string, stateObj?: menuaiEntity, allowName?: boolean) => {
       const domain = entityId ? computeDomain(entityId) : undefined;
       return [
         {
-          label: this.hass.localize("ui.components.state-content-picker.state"),
+          label: this.menuai.localize("ui.components.state-content-picker.state"),
           value: "state",
         },
         ...(allowName
           ? [
               {
-                label: this.hass.localize(
+                label: this.menuai.localize(
                   "ui.components.state-content-picker.name"
                 ),
                 value: "name",
@@ -122,13 +122,13 @@ class HaEntityStatePicker extends LitElement {
             ]
           : []),
         {
-          label: this.hass.localize(
+          label: this.menuai.localize(
             "ui.components.state-content-picker.last_changed"
           ),
           value: "last_changed",
         },
         {
-          label: this.hass.localize(
+          label: this.menuai.localize(
             "ui.components.state-content-picker.last_updated"
           ),
           value: "last_updated",
@@ -137,7 +137,7 @@ class HaEntityStatePicker extends LitElement {
           ? STATE_DISPLAY_SPECIAL_CONTENT.filter((content) =>
               STATE_DISPLAY_SPECIAL_CONTENT_DOMAINS[domain]?.includes(content)
             ).map((content) => ({
-              label: this.hass.localize(
+              label: this.menuai.localize(
                 `ui.components.state-content-picker.${content}`
               ),
               value: content,
@@ -147,7 +147,7 @@ class HaEntityStatePicker extends LitElement {
           .filter((a) => !HIDDEN_ATTRIBUTES.includes(a))
           .map((attribute) => ({
             value: attribute,
-            label: this.hass.formatEntityAttributeName(stateObj!, attribute),
+            label: this.menuai.formatEntityAttributeName(stateObj!, attribute),
           })),
       ];
     }
@@ -156,14 +156,14 @@ class HaEntityStatePicker extends LitElement {
   private _filter = "";
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     const value = this._value;
 
     const stateObj = this.entityId
-      ? this.hass.states[this.entityId]
+      ? this.menuai.states[this.entityId]
       : undefined;
 
     const options = this.options(this.entityId, stateObj, this.allowName);
@@ -209,7 +209,7 @@ class HaEntityStatePicker extends LitElement {
       <ha-combo-box
         item-value-path="value"
         item-label-path="label"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .label=${this.label}
         .helper=${this.helper}
         .disabled=${this.disabled}

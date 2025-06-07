@@ -330,11 +330,11 @@ export const demoEntitiesTeachingbirds: DemoConfig["entities"] = () =>
         hs_color: [0, 0],
       },
     },
-    "sensor.system_hass_rpi": {
-      entity_id: "sensor.system_hass_rpi",
+    "sensor.system_menuai_rpi": {
+      entity_id: "sensor.system_menuai_rpi",
       state: "Online",
       attributes: {
-        friendly_name: "Hass RPi",
+        friendly_name: "menuai RPi",
         custom_ui_state_card: "state-card-custom-ui",
         templates: {
           hs_color:
@@ -1582,7 +1582,7 @@ export const demoEntitiesTeachingbirds: DemoConfig["entities"] = () =>
             disable_animations: false,
             enabled: false,
             id: "ded82243c49f41adbdb0ea11cca1b7b1",
-            name: "Hass.io",
+            name: "menuai.io",
             picture: "/local/images/ha.png",
           },
           {
@@ -1590,7 +1590,7 @@ export const demoEntitiesTeachingbirds: DemoConfig["entities"] = () =>
             disable_animations: false,
             enabled: false,
             id: "abc561cfafcf410a86ca25a0d9460533",
-            name: "Hass.io",
+            name: "menuai.io",
             picture: "/local/images/ha.png",
           },
           {
@@ -1614,7 +1614,7 @@ export const demoEntitiesTeachingbirds: DemoConfig["entities"] = () =>
             disable_animations: false,
             enabled: false,
             id: "52ff3b9ce9a14a9bb3c33212bcffe936",
-            name: "homeassistant",
+            name: "menuai",
             picture: "/local/images/ha.png",
           },
           {

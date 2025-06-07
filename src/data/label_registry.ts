@@ -3,7 +3,7 @@ import { createCollection } from "home-assistant-js-websocket";
 import type { Store } from "home-assistant-js-websocket/dist/store";
 import { stringCompare } from "../common/string/compare";
 import { debounce } from "../common/util/debounce";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { RegistryEntry } from "./registry";
 
 export interface LabelRegistryEntry extends RegistryEntry {
@@ -61,30 +61,30 @@ export const subscribeLabelRegistry = (
   );
 
 export const createLabelRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: LabelRegistryEntryMutableParams
 ) =>
-  hass.callWS<LabelRegistryEntry>({
+  menuai.callWS<LabelRegistryEntry>({
     type: "config/label_registry/create",
     ...values,
   });
 
 export const updateLabelRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   labelId: string,
   updates: Partial<LabelRegistryEntryMutableParams>
 ) =>
-  hass.callWS<LabelRegistryEntry>({
+  menuai.callWS<LabelRegistryEntry>({
     type: "config/label_registry/update",
     label_id: labelId,
     ...updates,
   });
 
 export const deleteLabelRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   labelId: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/label_registry/delete",
     label_id: labelId,
   });

@@ -1,6 +1,6 @@
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 import type { ActionConfig } from "../../../data/lovelace/config/action";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { Condition } from "../common/validate-condition";
 import type { HuiImage } from "../components/hui-image";
 
@@ -19,7 +19,7 @@ export type LovelaceElementConfig =
   | StateLabelElementConfig;
 
 export interface LovelaceElement extends HTMLElement {
-  hass?: HomeAssistant;
+  menuai?: menuai;
   setConfig(config: LovelaceElementConfig): void;
 }
 
@@ -62,7 +62,7 @@ export interface ServiceButtonElementConfig extends LovelaceElementConfigBase {
   /* @deprecated "service" is kept for backwards compatibility. Replaced by "action". */
   service?: string;
   action?: string;
-  target?: HassServiceTarget;
+  target?: menuaiServiceTarget;
   /* @deprecated "service_data" is kept for backwards compatibility. Replaced by "data". */
   service_data?: Record<string, unknown>;
   data?: Record<string, unknown>;

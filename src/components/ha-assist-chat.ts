@@ -3,7 +3,7 @@ import { css, LitElement, html, nothing } from "lit";
 import { mdiAlertCircle, mdiMicrophone, mdiSend } from "@mdi/js";
 import { customElement, property, query, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import {
   type PipelineRunEvent,
   runAssistPipeline,
@@ -28,7 +28,7 @@ interface AssistMessage {
 
 @customElement("ha-assist-chat")
 export class HaAssistChat extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public pipeline?: AssistPipeline;
 
@@ -62,8 +62,8 @@ export class HaAssistChat extends LitElement {
     if (!this.hasUpdated || changedProperties.has("pipeline")) {
       this._conversation = [
         {
-          who: "hass",
-          text: this.hass.localize("ui.dialogs.voice_command.how_can_i_help"),
+          who: "menuai",
+          text: this.menuai.localize("ui.dialogs.voice_command.how_can_i_help"),
         },
       ];
     }
@@ -102,9 +102,9 @@ export class HaAssistChat extends LitElement {
     const controlHA = !this.pipeline
       ? false
       : this.pipeline.prefer_local_intents ||
-        (this.hass.states[this.pipeline.conversation_engine]
+        (this.menuai.states[this.pipeline.conversation_engine]
           ? supportsFeature(
-              this.hass.states[this.pipeline.conversation_engine],
+              this.menuai.states[this.pipeline.conversation_engine],
               ConversationEntityFeature.CONTROL
             )
           : true);
@@ -117,7 +117,7 @@ export class HaAssistChat extends LitElement {
           ? nothing
           : html`
               <ha-alert>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.dialogs.voice_command.conversation_no_control"
                 )}
               </ha-alert>
@@ -136,7 +136,7 @@ export class HaAssistChat extends LitElement {
           id="message-input"
           @keyup=${this._handleKeyUp}
           @input=${this._handleInput}
-          .label=${this.hass.localize(`ui.dialogs.voice_command.input_label`)}
+          .label=${this.menuai.localize(`ui.dialogs.voice_command.input_label`)}
           .iconTrailing=${true}
         >
           <div slot="trailingIcon">
@@ -147,7 +147,7 @@ export class HaAssistChat extends LitElement {
                     .path=${mdiSend}
                     @click=${this._handleSendMessage}
                     .disabled=${this._processing}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.dialogs.voice_command.send_text"
                     )}
                   >
@@ -168,7 +168,7 @@ export class HaAssistChat extends LitElement {
                       .path=${mdiMicrophone}
                       @click=${this._handleListeningButton}
                       .disabled=${this._processing}
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.dialogs.voice_command.start_listening"
                       )}
                     >
@@ -248,25 +248,25 @@ export class HaAssistChat extends LitElement {
 
   private async _showNotSupportedMessage() {
     this._addMessage({
-      who: "hass",
+      who: "menuai",
       text:
         // New lines matter for messages
         // prettier-ignore
-        html`${this.hass.localize(
+        html`${this.menuai.localize(
           "ui.dialogs.voice_command.not_supported_microphone_browser"
         )}
 
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.dialogs.voice_command.not_supported_microphone_documentation",
           {
             documentation_link: html`<a
                 target="_blank"
                 rel="noopener noreferrer"
                 href=${documentationUrl(
-                  this.hass,
+                  this.menuai,
                   "/docs/configuration/securing/#remote-access"
                 )}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                   "ui.dialogs.voice_command.not_supported_microphone_documentation_link"
                 )}</a>`,
           }
@@ -296,11 +296,11 @@ export class HaAssistChat extends LitElement {
 
     this._addMessage(userMessage);
 
-    const hassMessageProcesser = this._createAddHassMessageProcessor();
+    const menuaiMessageProcesser = this._createAddmenuaiMessageProcessor();
 
     try {
       const unsub = await runAssistPipeline(
-        this.hass,
+        this.menuai,
         (event: PipelineRunEvent) => {
           if (event.type === "run-start") {
             this._stt_binary_handler_id =
@@ -309,7 +309,7 @@ export class HaAssistChat extends LitElement {
             this._audio.play();
             this._audio.addEventListener("ended", () => {
               this._unloadAudio();
-              if (hassMessageProcesser.continueConversation) {
+              if (menuaiMessageProcesser.continueConversation) {
                 this._startListening();
               }
             });
@@ -339,9 +339,9 @@ export class HaAssistChat extends LitElement {
             userMessage.text = event.data.stt_output.text;
             this.requestUpdate("_conversation");
             // Add the response message placeholder to the chat when we know the STT is done
-            hassMessageProcesser.addMessage();
+            menuaiMessageProcesser.addMessage();
           } else if (event.type.startsWith("intent-")) {
-            hassMessageProcesser.processEvent(event);
+            menuaiMessageProcesser.processEvent(event);
           } else if (event.type === "run-end") {
             this._stt_binary_handler_id = undefined;
             unsub();
@@ -352,7 +352,7 @@ export class HaAssistChat extends LitElement {
               userMessage.text = event.data.message;
               userMessage.error = true;
             } else {
-              hassMessageProcesser.setError(event.data.message);
+              menuaiMessageProcesser.setError(event.data.message);
             }
             this._stopListening();
             this.requestUpdate("_conversation");
@@ -396,7 +396,7 @@ export class HaAssistChat extends LitElement {
   }
 
   private _sendAudioChunk(chunk: Int16Array) {
-    this.hass.connection.socket!.binaryType = "arraybuffer";
+    this.menuai.connection.socket!.binaryType = "arraybuffer";
 
     // eslint-disable-next-line eqeqeq
     if (this._stt_binary_handler_id == undefined) {
@@ -407,7 +407,7 @@ export class HaAssistChat extends LitElement {
     data[0] = this._stt_binary_handler_id;
     data.set(new Uint8Array(chunk.buffer), 1);
 
-    this.hass.connection.socket!.send(data);
+    this.menuai.connection.socket!.send(data);
   }
 
   private _unloadAudio = () => {
@@ -423,20 +423,20 @@ export class HaAssistChat extends LitElement {
     this._unloadAudio();
     this._processing = true;
     this._addMessage({ who: "user", text });
-    const hassMessageProcesser = this._createAddHassMessageProcessor();
-    hassMessageProcesser.addMessage();
+    const menuaiMessageProcesser = this._createAddmenuaiMessageProcessor();
+    menuaiMessageProcesser.addMessage();
     try {
       const unsub = await runAssistPipeline(
-        this.hass,
+        this.menuai,
         (event) => {
           if (event.type.startsWith("intent-")) {
-            hassMessageProcesser.processEvent(event);
+            menuaiMessageProcesser.processEvent(event);
           }
           if (event.type === "intent-end") {
             unsub();
           }
           if (event.type === "error") {
-            hassMessageProcesser.setError(event.data.message);
+            menuaiMessageProcesser.setError(event.data.message);
             unsub();
           }
         },
@@ -449,32 +449,32 @@ export class HaAssistChat extends LitElement {
         }
       );
     } catch {
-      hassMessageProcesser.setError(
-        this.hass.localize("ui.dialogs.voice_command.error")
+      menuaiMessageProcesser.setError(
+        this.menuai.localize("ui.dialogs.voice_command.error")
       );
     } finally {
       this._processing = false;
     }
   }
 
-  private _createAddHassMessageProcessor() {
+  private _createAddmenuaiMessageProcessor() {
     let currentDeltaRole = "";
 
     const progressToNextMessage = () => {
-      if (progress.hassMessage.text === "…") {
+      if (progress.menuaiMessage.text === "…") {
         return;
       }
-      progress.hassMessage.text = progress.hassMessage.text.substring(
+      progress.menuaiMessage.text = progress.menuaiMessage.text.substring(
         0,
-        progress.hassMessage.text.length - 1
+        progress.menuaiMessage.text.length - 1
       );
 
-      progress.hassMessage = {
-        who: "hass",
+      progress.menuaiMessage = {
+        who: "menuai",
         text: "…",
         error: false,
       };
-      this._addMessage(progress.hassMessage);
+      this._addMessage(progress.menuaiMessage);
     };
 
     const isAssistantDelta = (
@@ -494,18 +494,18 @@ export class HaAssistChat extends LitElement {
 
     const progress = {
       continueConversation: false,
-      hassMessage: {
-        who: "hass",
+      menuaiMessage: {
+        who: "menuai",
         text: "…",
         error: false,
       },
       addMessage: () => {
-        this._addMessage(progress.hassMessage);
+        this._addMessage(progress.menuaiMessage);
       },
       setError: (error: string) => {
         progressToNextMessage();
-        progress.hassMessage.text = error;
-        progress.hassMessage.error = true;
+        progress.menuaiMessage.text = error;
+        progress.menuaiMessage.error = true;
         this.requestUpdate("_conversation");
       },
       processEvent: (event: PipelineRunEvent) => {
@@ -520,10 +520,10 @@ export class HaAssistChat extends LitElement {
 
           if (isAssistantDelta(delta)) {
             if (delta.content) {
-              progress.hassMessage.text =
-                progress.hassMessage.text.substring(
+              progress.menuaiMessage.text =
+                progress.menuaiMessage.text.substring(
                   0,
-                  progress.hassMessage.text.length - 1
+                  progress.menuaiMessage.text.length - 1
                 ) +
                 delta.content +
                 "…";
@@ -551,7 +551,7 @@ export class HaAssistChat extends LitElement {
           if (event.data.intent_output.response.response_type === "error") {
             progress.setError(response);
           } else {
-            progress.hassMessage.text = response;
+            progress.menuaiMessage.text = response;
             this.requestUpdate("_conversation");
           }
         }
@@ -622,14 +622,14 @@ export class HaAssistChat extends LitElement {
       direction: var(--direction);
     }
 
-    .message.hass {
+    .message.menuai {
       margin-right: 24px;
       margin-inline-end: 24px;
       margin-inline-start: initial;
       align-self: flex-start;
       border-bottom-left-radius: 0px;
       background-color: var(
-        --chat-background-color-hass,
+        --chat-background-color-menuai,
         var(--secondary-background-color)
       );
 
@@ -641,7 +641,7 @@ export class HaAssistChat extends LitElement {
       color: var(--text-primary-color);
     }
 
-    .message.hass a {
+    .message.menuai a {
       color: var(--primary-text-color);
     }
 

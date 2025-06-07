@@ -1,9 +1,9 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { timeCacheEntityPromiseFunc } from "../common/util/time-cache-entity-promise-func";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { getSignedPath } from "./auth";
 
 export const CAMERA_ORIENTATIONS = [1, 2, 3, 4, 6, 8];
@@ -15,7 +15,7 @@ export const STREAM_TYPE_WEB_RTC = "web_rtc";
 
 export type StreamType = typeof STREAM_TYPE_HLS | typeof STREAM_TYPE_WEB_RTC;
 
-interface CameraEntityAttributes extends HassEntityAttributeBase {
+interface CameraEntityAttributes extends menuaiEntityAttributeBase {
   model_name: string;
   access_token: string;
   brand: string;
@@ -23,7 +23,7 @@ interface CameraEntityAttributes extends HassEntityAttributeBase {
   frontend_stream_type: string;
 }
 
-export interface CameraEntity extends HassEntityBase {
+export interface CameraEntity extends menuaiEntityBase {
   attributes: CameraEntityAttributes;
 }
 
@@ -82,7 +82,7 @@ export const computeMJPEGStreamUrl = (entity: CameraEntity) =>
   `/api/camera_proxy_stream/${entity.entity_id}?token=${entity.attributes.access_token}`;
 
 export const fetchThumbnailUrlWithCache = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   width: number,
   height: number
@@ -91,22 +91,22 @@ export const fetchThumbnailUrlWithCache = async (
     "_cameraTmbUrl",
     9000,
     fetchThumbnailUrl,
-    hass,
+    menuai,
     entityId
   );
   return cameraUrlWithWidthHeight(base_url, width, height);
 };
 
 export const fetchThumbnailUrl = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ) => {
-  const path = await getSignedPath(hass, `/api/camera_proxy/${entityId}`);
-  return hass.hassUrl(path.path);
+  const path = await getSignedPath(menuai, `/api/camera_proxy/${entityId}`);
+  return menuai.menuaiUrl(path.path);
 };
 
 export const fetchStreamUrl = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   format?: "hls"
 ) => {
@@ -118,52 +118,52 @@ export const fetchStreamUrl = async (
     // @ts-ignore
     data.format = format;
   }
-  const stream = await hass.callWS<Stream>(data);
-  stream.url = hass.hassUrl(stream.url);
+  const stream = await menuai.callWS<Stream>(data);
+  stream.url = menuai.menuaiUrl(stream.url);
   return stream;
 };
 
 export const webRtcOffer = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   offer: string,
   callback: (event: WebRtcOfferEvent) => void
 ) =>
-  hass.connection.subscribeMessage<WebRtcOfferEvent>(callback, {
+  menuai.connection.subscribeMessage<WebRtcOfferEvent>(callback, {
     type: "camera/webrtc/offer",
     entity_id,
     offer,
   });
 
 export const addWebRtcCandidate = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   session_id: string,
   candidate: RTCIceCandidateInit
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "camera/webrtc/candidate",
     entity_id,
     session_id,
     candidate: candidate,
   });
 
-export const fetchCameraPrefs = (hass: HomeAssistant, entityId: string) =>
-  hass.callWS<CameraPreferences>({
+export const fetchCameraPrefs = (menuai: menuai, entityId: string) =>
+  menuai.callWS<CameraPreferences>({
     type: "camera/get_prefs",
     entity_id: entityId,
   });
 
 type ValueOf<T extends any[]> = T[number];
 export const updateCameraPrefs = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   prefs: {
     preload_stream?: boolean;
     orientation?: ValueOf<typeof CAMERA_ORIENTATIONS>;
   }
 ) =>
-  hass.callWS<CameraPreferences>({
+  menuai.callWS<CameraPreferences>({
     type: "camera/update_prefs",
     entity_id: entityId,
     ...prefs,
@@ -182,10 +182,10 @@ export interface CameraCapabilities {
 }
 
 export const fetchCameraCapabilities = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string
 ) =>
-  hass.callWS<CameraCapabilities>({ type: "camera/capabilities", entity_id });
+  menuai.callWS<CameraCapabilities>({ type: "camera/capabilities", entity_id });
 
 export interface WebRTCClientConfiguration {
   configuration: RTCConfiguration;
@@ -193,10 +193,10 @@ export interface WebRTCClientConfiguration {
 }
 
 export const fetchWebRtcClientConfiguration = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ) =>
-  hass.callWS<WebRTCClientConfiguration>({
+  menuai.callWS<WebRTCClientConfiguration>({
     type: "camera/webrtc/get_client_config",
     entity_id: entityId,
   });

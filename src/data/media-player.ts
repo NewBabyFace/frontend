@@ -29,17 +29,17 @@ import {
   mdiWeb,
 } from "@mdi/js";
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { supportsFeature } from "../common/entity/supports-feature";
 import { stateActive } from "../common/entity/state_active";
 import type { MediaPlayerItemId } from "../components/media-player/ha-media-player-browse";
-import type { HomeAssistant, TranslationDict } from "../types";
+import type { menuai, TranslationDict } from "../types";
 import { isUnavailableState } from "./entity";
 import { isTTSMediaSource } from "./tts";
 
-interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
+interface MediaPlayerEntityAttributes extends menuaiEntityAttributeBase {
   media_content_id?: string;
   media_content_type?: string;
   media_artist?: string;
@@ -66,7 +66,7 @@ interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   group_members?: string[];
 }
 
-export interface MediaPlayerEntity extends HassEntityBase {
+export interface MediaPlayerEntity extends menuaiEntityBase {
   attributes: MediaPlayerEntityAttributes;
   state:
     | "playing"
@@ -208,12 +208,12 @@ export interface MediaPlayerItem {
 }
 
 export const browseMediaPlayer = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   mediaContentId?: string,
   mediaContentType?: string
 ): Promise<MediaPlayerItem> =>
-  hass.callWS<MediaPlayerItem>({
+  menuai.callWS<MediaPlayerItem>({
     type: "media_player/browse_media",
     entity_id: entityId,
     media_content_id: mediaContentId,
@@ -446,24 +446,24 @@ export const cleanupMediaTitle = (title?: string): string | undefined => {
 
 /**
  * Set volume of a media player entity.
- * @param hass Home Assistant object
+ * @param menuai MenuAI object
  * @param entity_id entity ID of media player
  * @param volume_level number between 0..1
  * @returns
  */
 export const setMediaPlayerVolume = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   volume_level: number
 ) =>
-  hass.callService("media_player", "volume_set", { entity_id, volume_level });
+  menuai.callService("media_player", "volume_set", { entity_id, volume_level });
 
 export const handleMediaControlClick = (
-  hass: HomeAssistant,
+  menuai: menuai,
   stateObj: MediaPlayerEntity,
   action: string
 ) =>
-  hass!.callService(
+  menuai!.callService(
     "media_player",
     action,
     action === "shuffle_set"
@@ -487,7 +487,7 @@ export const handleMediaControlClick = (
   );
 
 export const mediaPlayerPlayMedia = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   media_content_id: string,
   media_content_type: string,
@@ -504,7 +504,7 @@ export const mediaPlayerPlayMedia = (
   ) {
     extra.announce = true;
   }
-  return hass.callService("media_player", "play_media", {
+  return menuai.callService("media_player", "play_media", {
     entity_id,
     media_content_id,
     media_content_type,
@@ -513,10 +513,10 @@ export const mediaPlayerPlayMedia = (
 };
 
 export const mediaPlayerJoin = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   group_members: string[]
-) => hass.callService("media_player", "join", { group_members }, { entity_id });
+) => menuai.callService("media_player", "join", { group_members }, { entity_id });
 
-export const mediaPlayerUnjoin = (hass: HomeAssistant, entity_id: string) =>
-  hass.callService("media_player", "unjoin", {}, { entity_id });
+export const mediaPlayerUnjoin = (menuai: menuai, entity_id: string) =>
+  menuai.callService("media_player", "unjoin", {}, { entity_id });

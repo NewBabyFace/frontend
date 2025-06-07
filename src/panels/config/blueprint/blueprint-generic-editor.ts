@@ -18,11 +18,11 @@ import type {
 } from "../../../data/blueprint";
 import type { BlueprintScriptConfig } from "../../../data/script";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("blueprint-generic-editor")
 export abstract class HaBlueprintGenericEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -55,7 +55,7 @@ export abstract class HaBlueprintGenericEditor extends LitElement {
       <ha-card
         outlined
         class="blueprint"
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.automation.editor.blueprint.header"
         )}
       >
@@ -64,8 +64,8 @@ export abstract class HaBlueprintGenericEditor extends LitElement {
             ? Object.keys(this._blueprints).length
               ? html`
                   <ha-blueprint-picker
-                    .hass=${this.hass}
-                    .label=${this.hass.localize(
+                    .menuai=${this.menuai}
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.editor.blueprint.blueprint_to_use"
                     )}
                     .blueprints=${this._blueprints}
@@ -74,7 +74,7 @@ export abstract class HaBlueprintGenericEditor extends LitElement {
                     @value-changed=${this._blueprintChanged}
                   ></ha-blueprint-picker>
                 `
-              : this.hass.localize(
+              : this.menuai.localize(
                   "ui.panel.config.automation.editor.blueprint.no_blueprints"
                 )
             : html`<ha-spinner></ha-spinner>`}
@@ -107,7 +107,7 @@ export abstract class HaBlueprintGenericEditor extends LitElement {
                     }
                   )
                 : html`<p class="padding">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.automation.editor.blueprint.no_inputs"
                     )}
                   </p>`}`
@@ -173,7 +173,7 @@ export abstract class HaBlueprintGenericEditor extends LitElement {
         .content=${value?.description}
       ></ha-markdown>
       ${html`<ha-selector
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .selector=${selector}
         .key=${key}
         .disabled=${this.disabled}

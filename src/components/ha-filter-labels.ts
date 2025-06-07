@@ -14,7 +14,7 @@ import type { LabelRegistryEntry } from "../data/label_registry";
 import { subscribeLabelRegistry } from "../data/label_registry";
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-expansion-panel";
 import "./ha-icon";
@@ -26,7 +26,7 @@ import "./search-input-outlined";
 
 @customElement("ha-filter-labels")
 export class HaFilterLabels extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -40,9 +40,9 @@ export class HaFilterLabels extends SubscribeMixin(LitElement) {
 
   @state() private _filter?: string;
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
     ];
@@ -62,7 +62,7 @@ export class HaFilterLabels extends SubscribeMixin(LitElement) {
           stringCompare(
             a.name || a.label_id,
             b.name || b.label_id,
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         )
   );
@@ -76,7 +76,7 @@ export class HaFilterLabels extends SubscribeMixin(LitElement) {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize("ui.panel.config.labels.caption")}
+          ${this.menuai.localize("ui.panel.config.labels.caption")}
           ${this.value?.length
             ? html`<div class="badge">${this.value?.length}</div>
                 <ha-icon-button
@@ -87,7 +87,7 @@ export class HaFilterLabels extends SubscribeMixin(LitElement) {
         </div>
         ${this._shouldRender
           ? html`<search-input-outlined
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .filter=${this._filter}
                 @value-changed=${this._handleSearchChange}
               >
@@ -131,7 +131,7 @@ export class HaFilterLabels extends SubscribeMixin(LitElement) {
             class="add"
           >
             <ha-svg-icon slot="graphic" .path=${mdiCog}></ha-svg-icon>
-            ${this.hass.localize("ui.panel.config.labels.manage_labels")}
+            ${this.menuai.localize("ui.panel.config.labels.manage_labels")}
           </ha-list-item>`
         : nothing}
     `;

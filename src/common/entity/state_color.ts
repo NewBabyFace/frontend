@@ -1,5 +1,5 @@
 /** Return a color representing a state. */
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { UNAVAILABLE } from "../../data/entity";
 import type { GroupEntity } from "../../data/group";
 import { computeGroupDomain } from "../../data/group";
@@ -42,7 +42,7 @@ const STATE_COLORED_DOMAIN = new Set([
   "water_heater",
 ]);
 
-export const stateColorCss = (stateObj: HassEntity, state?: string) => {
+export const stateColorCss = (stateObj: menuaiEntity, state?: string) => {
   const compareState = state !== undefined ? state : stateObj?.state;
   if (compareState === UNAVAILABLE) {
     return `var(--state-unavailable-color)`;
@@ -58,7 +58,7 @@ export const stateColorCss = (stateObj: HassEntity, state?: string) => {
 
 export const domainStateColorProperties = (
   domain: string,
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   state?: string
 ): string[] => {
   const compareState = state !== undefined ? state : stateObj.state;
@@ -85,7 +85,7 @@ export const domainStateColorProperties = (
 };
 
 export const stateColorProperties = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   state?: string
 ): string[] | undefined => {
   const compareState = state !== undefined ? state : stateObj?.state;
@@ -115,7 +115,7 @@ export const stateColorProperties = (
   return undefined;
 };
 
-export const stateColorBrightness = (stateObj: HassEntity): string => {
+export const stateColorBrightness = (stateObj: menuaiEntity): string => {
   if (
     stateObj.attributes.brightness &&
     computeDomain(stateObj.entity_id) !== "plant"

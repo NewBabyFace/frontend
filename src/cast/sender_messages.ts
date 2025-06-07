@@ -1,13 +1,13 @@
 import type { BaseCastMessage } from "./types";
 
-// Messages to be processed inside the Home Assistant UI
+// Messages to be processed inside the MenuAI UI
 
 export interface ReceiverStatusMessage extends BaseCastMessage {
   type: "receiver_status";
   connected: boolean;
   showDemo: boolean;
-  hassUrl?: string;
-  hassUUID?: string;
+  menuaiUrl?: string;
+  menuaiUUID?: string;
   lovelacePath?: string | number | null;
   urlPath?: string | null;
 }
@@ -22,7 +22,7 @@ export const enum ReceiverErrorCode {
   CONNECTION_FAILED = 1,
   AUTHENTICATION_FAILED = 2,
   CONNECTION_LOST = 3,
-  HASS_URL_MISSING = 4,
+  menuai_URL_MISSING = 4,
   NO_HTTPS = 5,
   WRONG_INSTANCE = 20,
   NOT_CONNECTED = 21,

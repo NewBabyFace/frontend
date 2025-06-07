@@ -1,7 +1,7 @@
 import type {
-  HassConfig,
-  HassEntity,
-  HassEntityBase,
+  menuaiConfig,
+  menuaiEntity,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { describe, it, expect } from "vitest";
 import {
@@ -9,7 +9,7 @@ import {
   computeAttributeNameDisplay,
 } from "../../../src/common/entity/compute_attribute_display";
 import type { FrontendLocaleData } from "../../../src/data/translation";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
 export const localizeMock = (key: string) => {
   const translations = {
@@ -31,7 +31,7 @@ export const stateObjMock = {
   attributes: {
     device_class: "temperature",
   },
-} as HassEntityBase;
+} as menuaiEntityBase;
 
 export const localeMock = {
   language: "en",
@@ -41,7 +41,7 @@ export const configMock = {
   unit_system: {
     temperature: "°C",
   },
-} as HassConfig;
+} as menuaiConfig;
 
 export const entitiesMock = {
   "sensor.test": {
@@ -51,7 +51,7 @@ export const entitiesMock = {
   "media_player.test": {
     platform: "media_player",
   },
-} as unknown as HomeAssistant["entities"];
+} as unknown as menuai["entities"];
 
 describe("computeAttributeValueDisplay", () => {
   it("should return unknown state for null value", () => {
@@ -87,7 +87,7 @@ describe("computeAttributeValueDisplay", () => {
         device_class: "media_player",
         volume_level: 0.42,
       },
-    } as unknown as HassEntityBase;
+    } as unknown as menuaiEntityBase;
     const result = computeAttributeValueDisplay(
       localizeMock,
       stateObj,
@@ -157,7 +157,7 @@ describe("computeAttributeValueDisplay", () => {
       attributes: {
         temperature: 42,
       },
-    } as unknown as HassEntityBase;
+    } as unknown as menuaiEntityBase;
     const result = computeAttributeValueDisplay(
       localizeMock,
       stateObj,
@@ -175,7 +175,7 @@ describe("computeAttributeValueDisplay", () => {
       attributes: {
         temperature: 42,
       },
-    } as unknown as HassEntityBase;
+    } as unknown as menuaiEntityBase;
     const result = computeAttributeValueDisplay(
       localizeMock,
       stateObj,
@@ -207,7 +207,7 @@ describe("computeAttributeValueDisplay", () => {
         device_class: "media_player",
         volume_level: 0.42,
       },
-    } as unknown as HassEntityBase;
+    } as unknown as menuaiEntityBase;
     const result = computeAttributeValueDisplay(
       localizeMock,
       stateObj,
@@ -226,7 +226,7 @@ describe("computeAttributeValueDisplay", () => {
       attributes: {
         volume_level: 0.42,
       },
-    } as unknown as HassEntityBase;
+    } as unknown as menuaiEntityBase;
     const result = computeAttributeValueDisplay(
       localizeMock,
       stateObj,
@@ -245,7 +245,7 @@ describe("computeAttributeValueDisplay", () => {
       attributes: {
         volume_level: 0.42,
       },
-    } as unknown as HassEntityBase;
+    } as unknown as menuaiEntityBase;
     const result = computeAttributeValueDisplay(
       localizeMock,
       stateObj,
@@ -276,14 +276,14 @@ describe("computeAttributeNameDisplay", () => {
       attributes: {
         device_class: "light",
       },
-    } as HassEntity;
+    } as menuaiEntity;
 
     const entities = {
       "light.test": {
         translation_key: "entity_translation_key",
         platform: "light",
       },
-    } as unknown as HomeAssistant["entities"];
+    } as unknown as menuai["entities"];
 
     const result = computeAttributeNameDisplay(
       localize,
@@ -310,9 +310,9 @@ describe("computeAttributeNameDisplay", () => {
       attributes: {
         device_class: "light",
       },
-    } as HassEntity;
+    } as menuaiEntity;
 
-    const entities = {} as unknown as HomeAssistant["entities"];
+    const entities = {} as unknown as menuai["entities"];
 
     const result = computeAttributeNameDisplay(
       localize,
@@ -337,9 +337,9 @@ describe("computeAttributeNameDisplay", () => {
     const stateObj = {
       entity_id: "light.test",
       attributes: {},
-    } as HassEntity;
+    } as menuaiEntity;
 
-    const entities = {} as unknown as HomeAssistant["entities"];
+    const entities = {} as unknown as menuai["entities"];
 
     const result = computeAttributeNameDisplay(
       localize,
@@ -356,9 +356,9 @@ describe("computeAttributeNameDisplay", () => {
     const stateObj = {
       entity_id: "light.test",
       attributes: {},
-    } as HassEntity;
+    } as menuaiEntity;
 
-    const entities = {} as unknown as HomeAssistant["entities"];
+    const entities = {} as unknown as menuai["entities"];
 
     const result = computeAttributeNameDisplay(
       localize,

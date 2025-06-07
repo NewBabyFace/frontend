@@ -15,8 +15,8 @@ import {
   listAssistDevices,
   listAssistPipelines,
 } from "../../../../data/assist_pipeline";
-import "../../../../layouts/hass-subpage";
-import type { HomeAssistant } from "../../../../types";
+import "../../../../layouts/menuai-subpage";
+import type { menuai } from "../../../../types";
 
 interface AssistDeviceExtra extends AssistDevice {
   name: string;
@@ -26,7 +26,7 @@ interface AssistDeviceExtra extends AssistDevice {
 
 @customElement("ha-config-voice-assistants-assist-devices")
 class AssistDevicesPage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -70,9 +70,9 @@ class AssistDevicesPage extends LitElement {
   private _data = memoizeOne(
     (
       localize: LocalizeFunc,
-      deviceReg: HomeAssistant["devices"],
-      areaReg: HomeAssistant["areas"],
-      states: HomeAssistant["states"],
+      deviceReg: menuai["devices"],
+      areaReg: menuai["areas"],
+      states: menuai["states"],
       pipelines: Record<string, AssistPipeline>,
       preferred: string | null,
       assistDevices: AssistDevice[]
@@ -87,7 +87,7 @@ class AssistDevicesPage extends LitElement {
 
         return {
           ...assistDevice,
-          name: device ? computeDeviceNameDisplay(device, this.hass) : "",
+          name: device ? computeDeviceNameDisplay(device, this.menuai) : "",
           pipeline: isPreferred
             ? localize("ui.components.pipeline-picker.preferred", {
                 preferred: pipelineName,
@@ -102,7 +102,7 @@ class AssistDevicesPage extends LitElement {
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
 
-    listAssistPipelines(this.hass).then((pipelines) => {
+    listAssistPipelines(this.menuai).then((pipelines) => {
       const lookup: Record<string, AssistPipeline> = {};
       for (const pipeline of pipelines.pipelines) {
         lookup[pipeline.id] = pipeline;
@@ -112,30 +112,30 @@ class AssistDevicesPage extends LitElement {
       this._preferred = pipelines.preferred_pipeline;
     });
 
-    listAssistDevices(this.hass).then((devices) => {
+    listAssistDevices(this.menuai).then((devices) => {
       this._devices = devices;
     });
   }
 
   render() {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.voice_assistants.assistants.pipeline.devices.title"
         )}
       >
         <ha-data-table
           clickable
           id="device_id"
-          .hass=${this.hass}
-          .columns=${this._columns(this.hass.localize)}
+          .menuai=${this.menuai}
+          .columns=${this._columns(this.menuai.localize)}
           .data=${this._data(
-            this.hass.localize,
-            this.hass.devices,
-            this.hass.areas,
-            this.hass.states,
+            this.menuai.localize,
+            this.menuai.devices,
+            this.menuai.areas,
+            this.menuai.states,
             this._pipelines,
             this._preferred,
             this._devices || []
@@ -143,7 +143,7 @@ class AssistDevicesPage extends LitElement {
           auto-height
           @row-click=${this._handleRowClicked}
         ></ha-data-table>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

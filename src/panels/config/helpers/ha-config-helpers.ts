@@ -13,7 +13,7 @@ import {
   mdiTag,
   mdiTrashCan,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -21,7 +21,7 @@ import memoizeOne from "memoize-one";
 import { debounce } from "../../../common/util/debounce";
 import { computeCssColor } from "../../../common/color/compute-color";
 import { storage } from "../../../common/decorators/storage";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { computeStateDomain } from "../../../common/entity/compute_state_domain";
 import { navigate } from "../../../common/navigate";
 import type {
@@ -96,11 +96,11 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { showAssignCategoryDialog } from "../category/show-dialog-assign-category";
 import { showCategoryRegistryDetailDialog } from "../category/show-dialog-category-registry-detail";
 import { configSections } from "../ha-panel-config";
@@ -118,7 +118,7 @@ interface HelperItem {
   editable?: boolean;
   type: string;
   configEntry?: ConfigEntry;
-  entity?: HassEntity;
+  entity?: menuaiEntity;
   category: string | undefined;
   label_entries: LabelRegistryEntry[];
   disabled?: boolean;
@@ -147,7 +147,7 @@ const getConfigEntry = (
 
 @customElement("ha-config-helpers")
 export class HaConfigHelpers extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -191,7 +191,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
   })
   private _activeHiddenColumns?: string[];
 
-  @state() private _stateItems: HassEntity[] = [];
+  @state() private _stateItems: menuaiEntity[] = [];
 
   @state() private _disabledEntityEntries?: EntityRegistryEntry[];
 
@@ -241,10 +241,10 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
     false
   );
 
-  public hassSubscribe() {
+  public menuaiSubscribe() {
     return [
       subscribeConfigEntries(
-        this.hass,
+        this.menuai,
         async (messages) => {
           const newEntries = this._configEntries
             ? { ...this._configEntries }
@@ -270,14 +270,14 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
         },
         { type: ["helper"] }
       ),
-      subscribeEntityRegistry(this.hass.connection!, (entries) => {
+      subscribeEntityRegistry(this.menuai.connection!, (entries) => {
         this._entityEntries = groupByOne(entries, (entry) => entry.entity_id);
       }),
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
       subscribeCategoryRegistry(
-        this.hass.connection,
+        this.menuai.connection,
         "helpers",
         (categories) => {
           this._categories = categories;
@@ -297,7 +297,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
         template: (helper) =>
           helper.entity
             ? html`<ha-state-icon
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${helper.entity}
               ></ha-state-icon>`
             : html`<ha-svg-icon
@@ -362,7 +362,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 >
                   <ha-tooltip
                     placement="left"
-                    .content=${this.hass.localize(
+                    .content=${this.menuai.localize(
                       "ui.panel.config.entities.picker.status.unmanageable"
                     )}
                   >
@@ -375,14 +375,14 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
       },
       actions: {
         title: "",
-        label: this.hass.localize("ui.panel.config.generic.headers.actions"),
+        label: this.menuai.localize("ui.panel.config.generic.headers.actions"),
         type: "overflow-menu",
         hideable: false,
         moveable: false,
         showNarrow: true,
         template: (helper) => html`
           <ha-icon-overflow-menu
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             narrow
             .items=${[
               ...(helper.configEntry &&
@@ -390,7 +390,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 ? [
                     {
                       path: mdiAlertCircle,
-                      label: this.hass.localize(
+                      label: this.menuai.localize(
                         "ui.panel.config.helpers.picker.error_information"
                       ),
                       warning: true,
@@ -400,14 +400,14 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 : []),
               {
                 path: mdiCog,
-                label: this.hass.localize(
+                label: this.menuai.localize(
                   "ui.panel.config.automation.picker.show_settings"
                 ),
                 action: () => this._openSettings(helper),
               },
               {
                 path: mdiTag,
-                label: this.hass.localize(
+                label: this.menuai.localize(
                   `ui.panel.config.automation.picker.${helper.category ? "edit_category" : "assign_category"}`
                 ),
                 action: () => this._editCategory(helper),
@@ -419,7 +419,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 ? [
                     {
                       path: mdiTrashCan,
-                      label: this.hass.localize("ui.common.delete"),
+                      label: this.menuai.localize("ui.common.delete"),
                       warning: true,
                       action: () => this._deleteEntry(helper),
                     },
@@ -436,7 +436,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
   private _getItems = memoizeOne(
     (
       localize: LocalizeFunc,
-      stateItems: HassEntity[],
+      stateItems: menuaiEntity[],
       disabledEntries: EntityRegistryEntry[],
       entityEntries: Record<string, EntityRegistryEntry>,
       configEntries: Record<string, ConfigEntry>,
@@ -546,7 +546,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
 
   private _labelsForEntity(entityId: string): string[] {
     return (
-      this.hass.entities[entityId]?.labels ||
+      this.menuai.entities[entityId]?.labels ||
       this._entityReg.find((e) => e.entity_id === entityId)?.labels ||
       []
     );
@@ -554,12 +554,12 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
 
   protected render(): TemplateResult {
     if (
-      !this.hass ||
+      !this.menuai ||
       this._stateItems === undefined ||
       this._entityEntries === undefined ||
       this._configEntries === undefined
     ) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
 
     const categoryItems = html`${this._categories?.map(
@@ -576,7 +576,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
       )}
       <ha-md-menu-item .value=${null} .clickAction=${this._handleBulkCategory}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.picker.bulk_actions.no_category"
           )}
         </div>
@@ -584,7 +584,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateCategory}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.category.editor.add")}
+          ${this.menuai.localize("ui.panel.config.category.editor.add")}
         </div>
       </ha-md-menu-item>`;
     const labelItems = html`${this._labels?.map((label) => {
@@ -619,14 +619,14 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
       })}<ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateLabel}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.labels.add_label")}
+          ${this.menuai.localize("ui.panel.config.labels.add_label")}
         </div>
       </ha-md-menu-item>`;
     const labelsInOverflow =
       (this._sizeController.value && this._sizeController.value < 700) ||
-      (!this._sizeController.value && this.hass.dockedSidebar === "docked");
+      (!this._sizeController.value && this.menuai.dockedSidebar === "docked");
     const helpers = this._getItems(
-      this.hass.localize,
+      this.menuai.localize,
       this._stateItems,
       this._disabledEntityEntries || [],
       this._entityEntries,
@@ -637,13 +637,13 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
       this._filteredStateItems
     );
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${configSections.devices}
-        .searchLabel=${this.hass.localize(
+        .searchLabel=${this.menuai.localize(
           "ui.panel.config.helpers.picker.search",
           { number: helpers.length }
         )}
@@ -659,7 +659,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 Array.isArray(val) ? val.length : val
               )
         ).length}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${helpers}
         .initialGroupColumn=${this._activeGrouping ?? "category"}
         .initialCollapsedGroups=${this._activeCollapsed}
@@ -677,13 +677,13 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
         @search-changed=${this._handleSearchChange}
         has-fab
         clickable
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.helpers.picker.no_helpers"
         )}
         class=${this.narrow ? "narrow" : ""}
       >
         <ha-filter-floor-areas
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"entity"}
           .value=${this._filters["ha-filter-floor-areas"]}
           @data-table-filter-changed=${this._filterChanged}
@@ -693,7 +693,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-floor-areas>
         <ha-filter-devices
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"entity"}
           .value=${this._filters["ha-filter-devices"]}
           @data-table-filter-changed=${this._filterChanged}
@@ -703,7 +703,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-devices>
         <ha-filter-labels
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._filters["ha-filter-labels"]}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
@@ -712,7 +712,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-labels>
         <ha-filter-categories
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           scope="helpers"
           .value=${this._filters["ha-filter-categories"]}
           @data-table-filter-changed=${this._filterChanged}
@@ -726,7 +726,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
           ? html`<ha-md-button-menu slot="selection-bar">
                 <ha-assist-chip
                   slot="trigger"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.automation.picker.bulk_actions.move_category"
                   )}
                 >
@@ -742,7 +742,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 : html`<ha-md-button-menu slot="selection-bar">
                     <ha-assist-chip
                       slot="trigger"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.automation.picker.bulk_actions.add_label"
                       )}
                     >
@@ -760,7 +760,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
             ${
               this.narrow
                 ? html`<ha-assist-chip
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.picker.bulk_action"
                     )}
                     slot="trigger"
@@ -772,7 +772,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                   </ha-assist-chip>`
                 : html`<ha-icon-button
                     .path=${mdiDotsVertical}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.picker.bulk_action"
                     )}
                     slot="trigger"
@@ -788,7 +788,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.picker.bulk_actions.move_category"
                         )}
                       </div>
@@ -802,11 +802,11 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
                 : nothing
             }
             ${
-              this.narrow || this.hass.dockedSidebar === "docked"
+              this.narrow || this.menuai.dockedSidebar === "docked"
                 ? html` <ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.picker.bulk_actions.add_label"
                         )}
                       </div>
@@ -823,12 +823,12 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
           : nothing}
 
         <ha-integration-overflow-menu
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           slot="toolbar-icon"
         ></ha-integration-overflow-menu>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.helpers.picker.create_helper"
           )}
           extended
@@ -836,7 +836,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -948,10 +948,10 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
     );
     if (!entityReg) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.automation.picker.no_category_support"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.automation.picker.no_category_entity_reg"
         ),
       });
@@ -972,7 +972,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           categories: { helpers: category },
         })
       );
@@ -981,7 +981,7 @@ export class HaConfigHelpers extends SubscribeMixin(LitElement) {
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1004,7 +1004,7 @@ ${rejected
     this._selected.forEach((entityId) => {
       const labels = this._labelsForEntity(entityId);
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           labels:
             action === "add"
               ? labels.concat(label)
@@ -1016,7 +1016,7 @@ ${rejected
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1029,7 +1029,7 @@ ${rejected
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
@@ -1046,8 +1046,8 @@ ${rejected
 
   private async _fetchEntitySources() {
     const [entitySources, fetchedManifests] = await Promise.all([
-      fetchEntitySourcesWithCache(this.hass),
-      fetchIntegrationManifests(this.hass),
+      fetchEntitySourcesWithCache(this.menuai),
+      fetchIntegrationManifests(this.menuai),
     ]);
 
     const manifests: Record<string, IntegrationManifest> = {};
@@ -1073,7 +1073,7 @@ ${rejected
     }
 
     if (domains.size) {
-      this.hass.loadBackendTranslation("title", [...domains]);
+      this.menuai.loadBackendTranslation("title", [...domains]);
     }
 
     this._entitySource = entityDomains;
@@ -1091,10 +1091,10 @@ ${rejected
       });
       return;
     }
-    const handlers = await getConfigFlowHandlers(this.hass, ["helper"]);
+    const handlers = await getConfigFlowHandlers(this.menuai, ["helper"]);
 
     if (!handlers.includes(domain)) {
-      const integrations = await getConfigFlowHandlers(this.hass, [
+      const integrations = await getConfigFlowHandlers(this.menuai, [
         "device",
         "hub",
         "service",
@@ -1106,23 +1106,23 @@ ${rejected
         return;
       }
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.error"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.no_config_flow"
         ),
       });
       return;
     }
-    const localize = await this.hass.loadBackendTranslation(
+    const localize = await this.menuai.loadBackendTranslation(
       "title",
       domain,
       true
     );
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.integrations.confirm_new", {
+        title: this.menuai.localize("ui.panel.config.integrations.confirm_new", {
           integration: domainToName(localize, domain),
         }),
       }))
@@ -1131,8 +1131,8 @@ ${rejected
     }
     showConfigFlowDialog(this, {
       startFlowHandler: domain,
-      manifest: await fetchIntegrationManifest(this.hass, domain),
-      showAdvanced: this.hass.userData?.showAdvanced,
+      manifest: await fetchIntegrationManifest(this.menuai, domain),
+      showAdvanced: this.menuai.userData?.showAdvanced,
     });
   }
 
@@ -1163,9 +1163,9 @@ ${rejected
       changedProps.has("_configEntries") ||
       changedProps.has("_entitySource");
 
-    if (!changed && changedProps.has("hass")) {
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-      changed = !oldHass || oldHass.states !== this.hass.states;
+    if (!changed && changedProps.has("menuai")) {
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+      changed = !oldmenuai || oldmenuai.states !== this.menuai.states;
     }
     if (!changed) {
       return;
@@ -1173,7 +1173,7 @@ ${rejected
 
     const entityIds = Object.keys(this._entitySource);
 
-    const newStates = Object.values(this.hass!.states).filter(
+    const newStates = Object.values(this.menuai!.states).filter(
       (entity) =>
         entityIds.includes(entity.entity_id) ||
         isHelperDomain(computeStateDomain(entity))
@@ -1198,30 +1198,30 @@ ${rejected
 
   private _showError(helper: HelperItem) {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.errors.config.configuration_error"),
-      text: renderConfigEntryError(this.hass, helper.configEntry!),
+      title: this.menuai.localize("ui.errors.config.configuration_error"),
+      text: renderConfigEntryError(this.menuai, helper.configEntry!),
       warning: true,
     });
   }
 
   private async _deleteEntry(helper: HelperItem) {
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.delete_confirm_title",
         { title: helper.configEntry!.title }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.integrations.config_entry.delete_confirm_text"
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       destructive: true,
     });
 
     if (!confirmed) {
       return;
     }
-    deleteConfigEntry(this.hass, helper.id);
+    deleteConfigEntry(this.menuai, helper.id);
   }
 
   private _openSettings(helper: HelperItem) {
@@ -1244,7 +1244,7 @@ ${rejected
       scope: "helpers",
       createEntry: async (values) => {
         const category = await createCategoryRegistryEntry(
-          this.hass,
+          this.menuai,
           "helpers",
           values
         );
@@ -1257,7 +1257,7 @@ ${rejected
   private _bulkCreateLabel = () => {
     showLabelDetailDialog(this, {
       createEntry: async (values) => {
-        const label = await createLabelRegistryEntry(this.hass, values);
+        const label = await createLabelRegistryEntry(this.menuai, values);
         this._bulkLabel(label.label_id, "add");
       },
     });
@@ -1291,10 +1291,10 @@ ${rejected
         :host {
           display: block;
         }
-        hass-tabs-subpage-data-table {
+        menuai-tabs-subpage-data-table {
           --data-table-row-height: 60px;
         }
-        hass-tabs-subpage-data-table.narrow {
+        menuai-tabs-subpage-data-table.narrow {
           --data-table-row-height: 72px;
         }
         ha-assist-chip {

@@ -3,13 +3,13 @@ import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../common/dom/fire_event";
 import { isValidEntityId } from "../../common/entity/valid_entity_id";
-import type { HomeAssistant, ValueChangedEvent } from "../../types";
+import type { menuai, ValueChangedEvent } from "../../types";
 import "./ha-entity-picker";
 import type { HaEntityPickerEntityFilterFunc } from "./ha-entity-picker";
 
 @customElement("ha-entities-picker")
 class HaEntitiesPicker extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Array }) public value?: string[];
 
@@ -77,7 +77,7 @@ class HaEntitiesPicker extends LitElement {
   @property({ attribute: false, type: Array }) public createDomains?: string[];
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -90,7 +90,7 @@ class HaEntitiesPicker extends LitElement {
             <ha-entity-picker
               allow-custom-entity
               .curValue=${entityId}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .includeDomains=${this.includeDomains}
               .excludeDomains=${this.excludeDomains}
               .includeEntities=${this.includeEntities}
@@ -109,7 +109,7 @@ class HaEntitiesPicker extends LitElement {
       <div>
         <ha-entity-picker
           allow-custom-entity
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .includeDomains=${this.includeDomains}
           .excludeDomains=${this.excludeDomains}
           .includeEntities=${this.includeEntities}

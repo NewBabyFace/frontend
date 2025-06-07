@@ -14,15 +14,15 @@ import "../../../../components/ha-md-list";
 import "../../../../components/ha-md-list-item";
 import "../../../../components/ha-password-field";
 import { downloadEmergencyKit } from "../../../../data/backup";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 import type { ShowBackupEncryptionKeyDialogParams } from "./show-dialog-show-backup-encryption-key";
 
 @customElement("ha-dialog-show-backup-encryption-key")
-class DialogShowBackupEncryptionKey extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogShowBackupEncryptionKey extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: ShowBackupEncryptionKeyDialogParams;
 
@@ -52,19 +52,19 @@ class DialogShowBackupEncryptionKey extends LitElement implements HassDialog {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             @click=${this._closeDialog}
           ></ha-icon-button>
           <span slot="title">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.show_encryption_key.title"
             )}
           </span>
         </ha-dialog-header>
         <div slot="content">
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.dialogs.show_encryption_key.description"
             )}
           </p>
@@ -78,18 +78,18 @@ class DialogShowBackupEncryptionKey extends LitElement implements HassDialog {
           <ha-md-list>
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit"
                 )}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit_description"
                 )}
               </span>
               <ha-button slot="end" @click=${this._download}>
                 <ha-svg-icon .path=${mdiDownload} slot="icon"></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.encryption_key.download_emergency_kit_action"
                 )}
               </ha-button>
@@ -98,7 +98,7 @@ class DialogShowBackupEncryptionKey extends LitElement implements HassDialog {
         </div>
         <div slot="actions">
           <ha-button @click=${this._closeDialog}>
-            ${this.hass.localize("ui.common.close")}
+            ${this.menuai.localize("ui.common.close")}
           </ha-button>
         </div>
       </ha-md-dialog>
@@ -114,7 +114,7 @@ class DialogShowBackupEncryptionKey extends LitElement implements HassDialog {
       this.renderRoot.querySelector("div")!
     );
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -122,7 +122,7 @@ class DialogShowBackupEncryptionKey extends LitElement implements HassDialog {
     if (!this._params?.currentKey) {
       return;
     }
-    downloadEmergencyKit(this.hass, this._params.currentKey, "old");
+    downloadEmergencyKit(this.menuai, this._params.currentKey, "old");
   }
 
   static get styles(): CSSResultGroup {

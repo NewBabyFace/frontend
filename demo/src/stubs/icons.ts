@@ -1,9 +1,9 @@
 import type { IconCategory } from "../../../src/data/icons";
 import { ENTITY_COMPONENT_ICONS } from "../../../src/fake_data/entity_component_icons";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockIcons = (hass: MockHomeAssistant) => {
-  hass.mockWS(
+export const mockIcons = (menuai: Mockmenuai) => {
+  menuai.mockWS(
     "frontend/get_icons",
     async ({
       category,
@@ -15,7 +15,7 @@ export const mockIcons = (hass: MockHomeAssistant) => {
       if (integration) {
         try {
           const response = await fetch(
-            `https://raw.githubusercontent.com/home-assistant/core/dev/homeassistant/components/${integration}/icons.json`
+            `https://raw.githubusercontent.com/home-assistant/core/dev/menuai/components/${integration}/icons.json`
           ).then((resp) => resp.json());
           return { resources: { [integration]: response[category] || {} } };
         } catch {

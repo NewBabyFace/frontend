@@ -3,7 +3,7 @@ import type { PropertyValues } from "lit";
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../common/translations/localize";
 import type {
   DataTableColumnContainer,
@@ -21,8 +21,8 @@ import {
   updateUser,
 } from "../../../data/user";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage-data-table";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-tabs-subpage-data-table";
+import type { menuai, Route } from "../../../types";
 import { configSections } from "../ha-panel-config";
 import { showAddUserDialog } from "./show-dialog-add-user";
 import { showUserDetailDialog } from "./show-dialog-user-detail";
@@ -30,7 +30,7 @@ import { storage } from "../../../common/decorators/storage";
 
 @customElement("ha-config-users")
 export class HaConfigUsers extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -101,7 +101,7 @@ export class HaConfigUsers extends LitElement {
           direction: "asc",
         },
         is_active: {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.users.picker.headers.is_active"
           ),
           type: "icon",
@@ -114,7 +114,7 @@ export class HaConfigUsers extends LitElement {
               : "",
         },
         system_generated: {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.users.picker.headers.system"
           ),
           type: "icon",
@@ -127,7 +127,7 @@ export class HaConfigUsers extends LitElement {
               : "",
         },
         local_only: {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.users.picker.headers.local"
           ),
           type: "icon",
@@ -141,7 +141,7 @@ export class HaConfigUsers extends LitElement {
         },
         icons: {
           title: "",
-          label: this.hass.localize(
+          label: this.menuai.localize(
             "ui.panel.config.users.picker.headers.icon"
           ),
           type: "icon",
@@ -151,7 +151,7 @@ export class HaConfigUsers extends LitElement {
           hidden: !narrow,
           showNarrow: true,
           template: (user) => {
-            const badges = computeUserBadges(this.hass, user, false);
+            const badges = computeUserBadges(this.menuai, user, false);
             return html`${badges.map(
               ([icon, tooltip]) =>
                 html`<ha-data-table-icon
@@ -174,14 +174,14 @@ export class HaConfigUsers extends LitElement {
 
   protected render() {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         back-path="/config"
         .tabs=${configSections.persons}
-        .columns=${this._columns(this.narrow, this.hass.localize)}
-        .data=${this._userData(this._users, this.hass.localize)}
+        .columns=${this._columns(this.narrow, this.menuai.localize)}
+        .data=${this._userData(this._users, this.menuai.localize)}
         .columnOrder=${this._activeColumnOrder}
         .hiddenColumns=${this._activeHiddenColumns}
         @columns-changed=${this._handleColumnsChanged}
@@ -199,13 +199,13 @@ export class HaConfigUsers extends LitElement {
       >
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize("ui.panel.config.users.picker.add_user")}
+          .label=${this.menuai.localize("ui.panel.config.users.picker.add_user")}
           extended
           @click=${this._addUser}
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -218,7 +218,7 @@ export class HaConfigUsers extends LitElement {
   );
 
   private async _fetchUsers() {
-    this._users = await fetchUsers(this.hass);
+    this._users = await fetchUsers(this.menuai);
 
     this._users.forEach((user) => {
       if (user.is_owner) {
@@ -227,7 +227,7 @@ export class HaConfigUsers extends LitElement {
     });
   }
 
-  private _editUser(ev: HASSDomEvent<RowClickedEvent>) {
+  private _editUser(ev: menuaiDomEvent<RowClickedEvent>) {
     const id = ev.detail.id;
     const entry = this._users.find((user) => user.id === id);
 
@@ -243,7 +243,7 @@ export class HaConfigUsers extends LitElement {
         );
       },
       updateEntry: async (values) => {
-        const updated = await updateUser(this.hass!, entry!.id, values);
+        const updated = await updateUser(this.menuai!, entry!.id, values);
         this._users = this._users!.map((ent) =>
           ent === entry ? updated.user : ent
         );
@@ -251,15 +251,15 @@ export class HaConfigUsers extends LitElement {
       removeEntry: async () => {
         if (
           !(await showConfirmationDialog(this, {
-            title: this.hass!.localize(
+            title: this.menuai!.localize(
               "ui.panel.config.users.editor.confirm_user_deletion_title",
               { name: entry.name }
             ),
-            text: this.hass!.localize(
+            text: this.menuai!.localize(
               "ui.panel.config.users.editor.confirm_user_deletion_text"
             ),
-            dismissText: this.hass!.localize("ui.common.cancel"),
-            confirmText: this.hass!.localize("ui.common.delete"),
+            dismissText: this.menuai!.localize("ui.common.cancel"),
+            confirmText: this.menuai!.localize("ui.common.delete"),
             destructive: true,
           }))
         ) {
@@ -267,7 +267,7 @@ export class HaConfigUsers extends LitElement {
         }
 
         try {
-          await deleteUser(this.hass!, entry!.id);
+          await deleteUser(this.menuai!, entry!.id);
           this._users = this._users!.filter((ent) => ent !== entry);
           return true;
         } catch (_err: any) {

@@ -7,12 +7,12 @@ import { hasTemplate } from "../../../../../common/string/has-template";
 import "../../../../../components/ha-service-control";
 import type { ServiceAction } from "../../../../../data/script";
 import { serviceActionStruct } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ActionElement } from "../ha-automation-action-row";
 
 @customElement("ha-automation-action-service")
 export class HaServiceAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public action!: ServiceAction;
 
@@ -48,7 +48,7 @@ export class HaServiceAction extends LitElement implements ActionElement {
       fireEvent(
         this,
         "ui-mode-not-available",
-        Error(this.hass.localize("ui.errors.config.no_template_editor_support"))
+        Error(this.menuai.localize("ui.errors.config.no_template_editor_support"))
       );
       return;
     }
@@ -73,16 +73,16 @@ export class HaServiceAction extends LitElement implements ActionElement {
     return html`
       <ha-service-control
         .narrow=${this.narrow}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._action}
         .disabled=${this.disabled}
-        .showAdvanced=${this.hass.userData?.showAdvanced}
+        .showAdvanced=${this.menuai.userData?.showAdvanced}
         .hidePicker=${!!this._action.metadata}
         @value-changed=${this._actionChanged}
       ></ha-service-control>
-      ${domain && service && this.hass.services[domain]?.[service]?.response
+      ${domain && service && this.menuai.services[domain]?.[service]?.response
         ? html`<ha-settings-row .narrow=${this.narrow}>
-            ${this.hass.services[domain][service].response!.optional
+            ${this.menuai.services[domain][service].response!.optional
               ? html`<ha-checkbox
                   .checked=${this._action.response_variable ||
                   this._responseChecked}
@@ -92,25 +92,25 @@ export class HaServiceAction extends LitElement implements ActionElement {
                 ></ha-checkbox>`
               : html`<div slot="prefix" class="checkbox-spacer"></div>`}
             <span slot="heading"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.service.response_variable"
               )}</span
             >
             <span slot="description">
-              ${this.hass.services[domain][service].response!.optional
-                ? this.hass.localize(
+              ${this.menuai.services[domain][service].response!.optional
+                ? this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.type.service.has_optional_response"
                   )
-                : this.hass.localize(
+                : this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.type.service.has_response"
                   )}
             </span>
             <ha-textfield
               .value=${this._action.response_variable || ""}
-              .required=${!this.hass.services[domain][service].response!
+              .required=${!this.menuai.services[domain][service].response!
                 .optional}
               .disabled=${this.disabled ||
-              (this.hass.services[domain][service].response!.optional &&
+              (this.menuai.services[domain][service].response!.optional &&
                 !this._action.response_variable &&
                 !this._responseChecked)}
               @change=${this._responseVariableChanged}
@@ -132,8 +132,8 @@ export class HaServiceAction extends LitElement implements ActionElement {
       if (
         domain &&
         service &&
-        this.hass.services[domain]?.[service] &&
-        !("response" in this.hass.services[domain][service])
+        this.menuai.services[domain]?.[service] &&
+        !("response" in this.menuai.services[domain][service])
       ) {
         delete value.response_variable;
         this._responseChecked = false;

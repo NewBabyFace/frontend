@@ -11,24 +11,24 @@ import "../../../components/ha-spinner";
 import {
   extractApiErrorMessage,
   ignoreSupervisorError,
-} from "../../../data/hassio/common";
+} from "../../../data/menuaiio/common";
 import type {
   DatadiskList,
-  HassioHassOSInfo,
-  HassioHostInfo,
-} from "../../../data/hassio/host";
+  menuaiiomenuaiOSInfo,
+  menuaiioHostInfo,
+} from "../../../data/menuaiio/host";
 import {
-  fetchHassioHassOsInfo,
+  fetchmenuaiiomenuaiOsInfo,
   listDatadisks,
   moveDatadisk,
-} from "../../../data/hassio/host";
+} from "../../../data/menuaiio/host";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { bytesToString } from "../../../util/bytes-to-string";
 import type { MoveDatadiskDialogParams } from "./show-dialog-move-datadisk";
 
-const calculateMoveTime = memoizeOne((hostInfo: HassioHostInfo): number => {
+const calculateMoveTime = memoizeOne((hostInfo: menuaiioHostInfo): number => {
   const speed = hostInfo.disk_life_time !== "" ? 30 : 10;
   const moveTime = (hostInfo.disk_used * 1000) / 60 / speed;
   const rebootTime = (hostInfo.startup_time * 4) / 60;
@@ -37,15 +37,15 @@ const calculateMoveTime = memoizeOne((hostInfo: HassioHostInfo): number => {
 
 @customElement("dialog-move-datadisk")
 class MoveDatadiskDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private _hostInfo?: HassioHostInfo;
+  @state() private _hostInfo?: menuaiioHostInfo;
 
   @state() private _selectedDevice?: string;
 
   @state() private _disks?: DatadiskList["disks"];
 
-  @state() private _osInfo?: HassioHassOSInfo;
+  @state() private _osInfo?: menuaiiomenuaiOSInfo;
 
   @state() private _moving = false;
 
@@ -55,18 +55,18 @@ class MoveDatadiskDialog extends LitElement {
     this._hostInfo = dialogParams.hostInfo;
 
     try {
-      this._osInfo = await fetchHassioHassOsInfo(this.hass);
+      this._osInfo = await fetchmenuaiiomenuaiOsInfo(this.menuai);
 
-      const data = await listDatadisks(this.hass);
+      const data = await listDatadisks(this.menuai);
       if (data.devices.length > 0) {
         this._disks = data.disks;
       } else {
         this.closeDialog();
         await showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.storage.datadisk.no_devices_title"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.storage.datadisk.no_devices_text"
           ),
         });
@@ -74,7 +74,7 @@ class MoveDatadiskDialog extends LitElement {
     } catch (err: any) {
       this.closeDialog();
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.hardware.available_hardware.failed_to_get"
         ),
         text: extractApiErrorMessage(err),
@@ -102,8 +102,8 @@ class MoveDatadiskDialog extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${this._moving
-          ? this.hass.localize("ui.panel.config.storage.datadisk.moving")
-          : this.hass.localize("ui.panel.config.storage.datadisk.title")}
+          ? this.menuai.localize("ui.panel.config.storage.datadisk.moving")
+          : this.menuai.localize("ui.panel.config.storage.datadisk.title")}
         @closed=${this.closeDialog}
         ?hideActions=${this._moving}
       >
@@ -111,13 +111,13 @@ class MoveDatadiskDialog extends LitElement {
           ? html`
               <ha-spinner aria-label="Moving" size="large"> </ha-spinner>
               <p class="progress-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.storage.datadisk.moving_desc"
                 )}
               </p>
             `
           : html`
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.storage.datadisk.description",
                 {
                   current_path: this._osInfo.data_disk,
@@ -127,7 +127,7 @@ class MoveDatadiskDialog extends LitElement {
               <br /><br />
 
               <ha-select
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.storage.datadisk.select_device"
                 )}
                 @selected=${this._selectDevice}
@@ -140,7 +140,7 @@ class MoveDatadiskDialog extends LitElement {
                     html`<ha-list-item twoline .value=${disk.id}>
                       <span>${disk.vendor} ${disk.model}</span>
                       <span slot="secondary">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.storage.datadisk.extra_information",
                           {
                             size: bytesToString(disk.size),
@@ -157,7 +157,7 @@ class MoveDatadiskDialog extends LitElement {
                 @click=${this.closeDialog}
                 dialogInitialFocus
               >
-                ${this.hass.localize("ui.panel.config.storage.datadisk.cancel")}
+                ${this.menuai.localize("ui.panel.config.storage.datadisk.cancel")}
               </mwc-button>
 
               <mwc-button
@@ -165,7 +165,7 @@ class MoveDatadiskDialog extends LitElement {
                 slot="primaryAction"
                 @click=${this._moveDatadisk}
               >
-                ${this.hass.localize("ui.panel.config.storage.datadisk.move")}
+                ${this.menuai.localize("ui.panel.config.storage.datadisk.move")}
               </mwc-button>
             `}
       </ha-dialog>
@@ -179,11 +179,11 @@ class MoveDatadiskDialog extends LitElement {
   private async _moveDatadisk() {
     this._moving = true;
     try {
-      await moveDatadisk(this.hass, this._selectedDevice!);
+      await moveDatadisk(this.menuai, this._selectedDevice!);
     } catch (err: any) {
-      if (this.hass.connection.connected && !ignoreSupervisorError(err)) {
+      if (this.menuai.connection.connected && !ignoreSupervisorError(err)) {
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.storage.datadisk.failed_to_move"
           ),
           text: extractApiErrorMessage(err),

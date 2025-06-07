@@ -7,23 +7,23 @@ import "../../../src/components/buttons/ha-progress-button";
 import "../../../src/components/ha-card";
 import "../../../src/components/ha-settings-row";
 import "../../../src/components/ha-svg-icon";
-import type { HassioHassOSInfo } from "../../../src/data/hassio/host";
+import type { menuaiiomenuaiOSInfo } from "../../../src/data/menuaiio/host";
 import type {
-  HassioHomeAssistantInfo,
-  HassioSupervisorInfo,
-} from "../../../src/data/hassio/supervisor";
+  menuaiiomenuaiInfo,
+  menuaiioSupervisorInfo,
+} from "../../../src/data/menuaiio/supervisor";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
-import { mdiHomeAssistant } from "../../../src/resources/home-assistant-logo-svg";
+import { mdimenuai } from "../../../src/resources/home-assistant-logo-svg";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant } from "../../../src/types";
-import { hassioStyle } from "../resources/hassio-style";
+import type { menuai } from "../../../src/types";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
 const computeVersion = (key: string, version: string): string =>
   key === "os" ? version : `${key}-${version}`;
 
-@customElement("hassio-update")
-export class HassioUpdate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-update")
+export class menuaiioUpdate extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -54,7 +54,7 @@ export class HassioUpdate extends LitElement {
         </h1>
         <div class="card-group">
           ${this._renderUpdateCard(
-            "Home Assistant Core",
+            "MenuAI Core",
             "core",
             this.supervisor.core
           )}
@@ -78,7 +78,7 @@ export class HassioUpdate extends LitElement {
   private _renderUpdateCard(
     name: string,
     key: string,
-    object: HassioHomeAssistantInfo | HassioSupervisorInfo | HassioHassOSInfo
+    object: menuaiiomenuaiInfo | menuaiioSupervisorInfo | menuaiiomenuaiOSInfo
   ) {
     if (!object.update_available) {
       return nothing;
@@ -87,7 +87,7 @@ export class HassioUpdate extends LitElement {
       <ha-card outlined>
         <div class="card-content">
           <div class="icon">
-            <ha-svg-icon .path=${mdiHomeAssistant}></ha-svg-icon>
+            <ha-svg-icon .path=${mdimenuai}></ha-svg-icon>
           </div>
           <div class="update-heading">${name}</div>
           <ha-settings-row two-line>
@@ -109,7 +109,7 @@ export class HassioUpdate extends LitElement {
           </ha-settings-row>
         </div>
         <div class="card-actions">
-          <a href="/hassio/update-available/${key}">
+          <a href="/menuaiio/update-available/${key}">
             <mwc-button .label=${this.supervisor.localize("common.show")}>
             </mwc-button>
           </a>
@@ -121,7 +121,7 @@ export class HassioUpdate extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         .icon {
           --mdc-icon-size: 48px;
@@ -155,6 +155,6 @@ export class HassioUpdate extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-update": HassioUpdate;
+    "menuaiio-update": menuaiioUpdate;
   }
 }

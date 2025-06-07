@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export type SystemLogLevel =
   | "critical"
@@ -19,8 +19,8 @@ export interface LoggedError {
   first_occurred: number;
 }
 
-export const fetchSystemLog = async (hass: HomeAssistant) => {
-  const log = await hass.callWS<LoggedError[]>({ type: "system_log/list" });
+export const fetchSystemLog = async (menuai: menuai) => {
+  const log = await menuai.callWS<LoggedError[]>({ type: "system_log/list" });
   for (const error of log) {
     error.level = error.level.toLowerCase() as LoggedError["level"];
   }
@@ -29,7 +29,7 @@ export const fetchSystemLog = async (hass: HomeAssistant) => {
 
 export const getLoggedErrorIntegration = (item: LoggedError) => {
   // Try to derive from logger name
-  if (item.name.startsWith("homeassistant.components.")) {
+  if (item.name.startsWith("menuai.components.")) {
     return item.name.split(".")[2];
   }
   if (item.name.startsWith("custom_components.")) {
@@ -41,7 +41,7 @@ export const getLoggedErrorIntegration = (item: LoggedError) => {
     return item.source[0].split("/")[1];
   }
 
-  if (item.source[0].startsWith("homeassistant/components/")) {
+  if (item.source[0].startsWith("menuai/components/")) {
     return item.source[0].split("/")[2];
   }
 

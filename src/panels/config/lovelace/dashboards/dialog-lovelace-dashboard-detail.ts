@@ -15,12 +15,12 @@ import type {
 } from "../../../../data/lovelace/dashboard";
 import { DEFAULT_PANEL, setDefaultPanel } from "../../../../data/panel";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceDashboardDetailsDialogParams } from "./show-dialog-lovelace-dashboard-detail";
 
 @customElement("dialog-lovelace-dashboard-detail")
 export class DialogLovelaceDashboardDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: LovelaceDashboardDetailsDialogParams;
 
@@ -59,7 +59,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
     if (!this._params || !this._data) {
       return nothing;
     }
-    const defaultPanelUrlPath = this.hass.defaultPanel;
+    const defaultPanelUrlPath = this.menuai.defaultPanel;
     const titleInvalid = !this._data.title || !this._data.title.trim();
 
     return html`
@@ -69,31 +69,31 @@ export class DialogLovelaceDashboardDetail extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._params.urlPath
             ? this._data.title ||
-                this.hass.localize(
+                this.menuai.localize(
                   "ui.panel.config.lovelace.dashboards.detail.edit_dashboard"
                 )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.lovelace.dashboards.detail.new_dashboard"
               )
         )}
       >
         <div>
           ${this._params.dashboard && !this._params.dashboard.id
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.lovelace.dashboards.cant_edit_yaml"
               )
             : this._params.urlPath === "lovelace"
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.config.lovelace.dashboards.cant_edit_default"
                 )
               : html`
                   <ha-form
                     .schema=${this._schema(this._params)}
                     .data=${this._data}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .error=${this._error}
                     .computeLabel=${this._computeLabel}
                     @value-changed=${this._valueChanged}
@@ -110,7 +110,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
                       @click=${this._deleteDashboard}
                       .disabled=${this._submitting}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.lovelace.dashboards.detail.delete"
                       )}
                     </mwc-button>
@@ -123,10 +123,10 @@ export class DialogLovelaceDashboardDetail extends LitElement {
                 defaultPanelUrlPath === "lovelace"}
               >
                 ${this._params.urlPath === defaultPanelUrlPath
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.lovelace.dashboards.detail.remove_default"
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       "ui.panel.config.lovelace.dashboards.detail.set_default"
                     )}
               </mwc-button>
@@ -142,11 +142,11 @@ export class DialogLovelaceDashboardDetail extends LitElement {
         >
           ${this._params.urlPath
             ? this._params.dashboard?.id
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.config.lovelace.dashboards.detail.update"
                 )
-              : this.hass.localize("ui.common.close")
-            : this.hass.localize(
+              : this.menuai.localize("ui.common.close")
+            : this.menuai.localize(
                 "ui.panel.config.lovelace.dashboards.detail.create"
               )}
         </mwc-button>
@@ -200,7 +200,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
   private _computeLabel = (
     entry: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.lovelace.dashboards.detail.${
         entry.name === "show_in_sidebar"
           ? "show_sidebar"
@@ -221,7 +221,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
         !/^[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+$/.test(value.url_path)
       ) {
         this._error = {
-          url_path: this.hass.localize(
+          url_path: this.menuai.localize(
             "ui.panel.config.lovelace.dashboards.detail.url_error_msg"
           ),
         };
@@ -236,7 +236,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
   }
 
   private _fillUrlPath(title: string) {
-    if ((this.hass.userData?.showAdvanced && this._urlPathChanged) || !title) {
+    if ((this.menuai.userData?.showAdvanced && this._urlPathChanged) || !title) {
       return;
     }
 
@@ -256,7 +256,7 @@ export class DialogLovelaceDashboardDetail extends LitElement {
     }
     setDefaultPanel(
       this,
-      urlPath === this.hass.defaultPanel ? DEFAULT_PANEL : urlPath
+      urlPath === this.menuai.defaultPanel ? DEFAULT_PANEL : urlPath
     );
   }
 

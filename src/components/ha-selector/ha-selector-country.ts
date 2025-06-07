@@ -1,12 +1,12 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { CountrySelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-country-picker";
 
 @customElement("ha-selector-country")
 export class HaCountrySelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: CountrySelector;
 
@@ -23,7 +23,7 @@ export class HaCountrySelector extends LitElement {
   protected render() {
     return html`
       <ha-country-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .label=${this.label}
         .helper=${this.helper}

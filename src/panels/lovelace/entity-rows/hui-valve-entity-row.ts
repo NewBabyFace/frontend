@@ -3,7 +3,7 @@ import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../components/entity/ha-entity-toggle";
 import { isUnavailableState } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -11,7 +11,7 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-valve-entity-row")
 class HuiValveEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -27,16 +27,16 @@ class HuiValveEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -48,20 +48,20 @@ class HuiValveEntityRow extends LitElement implements LovelaceRow {
 
     return html`
       <hui-generic-entity-row
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this._config}
         .catchInteraction=${!showToggle}
       >
         ${showToggle
           ? html`
               <ha-entity-toggle
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-entity-toggle>
             `
           : html`
               <div class="text-content">
-                ${this.hass.formatEntityState(stateObj)}
+                ${this.menuai.formatEntityState(stateObj)}
               </div>
             `}
       </hui-generic-entity-row>

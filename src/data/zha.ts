@@ -1,8 +1,8 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { HaFormSchema } from "../components/ha-form/types";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-export interface ZHAEntityReference extends HassEntity {
+export interface ZHAEntityReference extends menuaiEntity {
   name: string;
   original_name?: string;
 }
@@ -210,11 +210,11 @@ export interface ZHAGroupMember {
 }
 
 export const reconfigureNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   ieeeAddress: string,
   callbackFunction: (message: ClusterConfigurationEvent) => void
 ) =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: ClusterConfigurationEvent) => callbackFunction(message),
     {
       type: "zha/devices/reconfigure",
@@ -222,19 +222,19 @@ export const reconfigureNode = (
     }
   );
 
-export const refreshTopology = (hass: HomeAssistant): Promise<void> =>
-  hass.callWS({
+export const refreshTopology = (menuai: menuai): Promise<void> =>
+  menuai.callWS({
     type: "zha/topology/update",
   });
 
 export const fetchAttributesForCluster = (
-  hass: HomeAssistant,
+  menuai: menuai,
   ieeeAddress: string,
   endpointId: number,
   clusterId: number,
   clusterType: string
 ): Promise<Attribute[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/clusters/attributes",
     ieee: ieeeAddress,
     endpoint_id: endpointId,
@@ -242,58 +242,58 @@ export const fetchAttributesForCluster = (
     cluster_type: clusterType,
   });
 
-export const fetchDevices = (hass: HomeAssistant): Promise<ZHADevice[]> =>
-  hass.callWS({
+export const fetchDevices = (menuai: menuai): Promise<ZHADevice[]> =>
+  menuai.callWS({
     type: "zha/devices",
   });
 
 export const fetchZHADevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   ieeeAddress: string
 ): Promise<ZHADevice> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/device",
     ieee: ieeeAddress,
   });
 
 export const fetchBindableDevices = (
-  hass: HomeAssistant,
+  menuai: menuai,
   ieeeAddress: string
 ): Promise<ZHADevice[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/bindable",
     ieee: ieeeAddress,
   });
 
 export const bindDevices = (
-  hass: HomeAssistant,
+  menuai: menuai,
   sourceIEEE: string,
   targetIEEE: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/bind",
     source_ieee: sourceIEEE,
     target_ieee: targetIEEE,
   });
 
 export const unbindDevices = (
-  hass: HomeAssistant,
+  menuai: menuai,
   sourceIEEE: string,
   targetIEEE: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/unbind",
     source_ieee: sourceIEEE,
     target_ieee: targetIEEE,
   });
 
 export const bindDeviceToGroup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceIEEE: string,
   groupId: number,
   clusters: Cluster[]
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/groups/bind",
     source_ieee: deviceIEEE,
     group_id: groupId,
@@ -301,12 +301,12 @@ export const bindDeviceToGroup = (
   });
 
 export const unbindDeviceFromGroup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceIEEE: string,
   groupId: number,
   clusters: Cluster[]
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/groups/unbind",
     source_ieee: deviceIEEE,
     group_id: groupId,
@@ -314,22 +314,22 @@ export const unbindDeviceFromGroup = (
   });
 
 export const readAttributeValue = (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: ReadAttributeServiceData
 ): Promise<string> =>
-  hass.callWS({
+  menuai.callWS({
     ...data,
     type: "zha/devices/clusters/attributes/value",
   });
 
 export const fetchCommandsForCluster = (
-  hass: HomeAssistant,
+  menuai: menuai,
   ieeeAddress: string,
   endpointId: number,
   clusterId: number,
   clusterType: string
 ): Promise<Command[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/clusters/commands",
     ieee: ieeeAddress,
     endpoint_id: endpointId,
@@ -338,73 +338,73 @@ export const fetchCommandsForCluster = (
   });
 
 export const fetchClustersForZhaDevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   ieeeAddress: string
 ): Promise<Cluster[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/clusters",
     ieee: ieeeAddress,
   });
 
-export const fetchGroups = (hass: HomeAssistant): Promise<ZHAGroup[]> =>
-  hass.callWS({
+export const fetchGroups = (menuai: menuai): Promise<ZHAGroup[]> =>
+  menuai.callWS({
     type: "zha/groups",
   });
 
 export const removeGroups = (
-  hass: HomeAssistant,
+  menuai: menuai,
   groupIdsToRemove: number[]
 ): Promise<ZHAGroup[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/group/remove",
     group_ids: groupIdsToRemove,
   });
 
 export const fetchGroup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   groupId: number
 ): Promise<ZHAGroup> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/group",
     group_id: groupId,
   });
 
 export const fetchGroupableDevices = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<ZHADeviceEndpoint[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/devices/groupable",
   });
 
 export const addMembersToGroup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   groupId: number,
   membersToAdd: ZHAGroupMember[]
 ): Promise<ZHAGroup> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/group/members/add",
     group_id: groupId,
     members: membersToAdd,
   });
 
 export const removeMembersFromGroup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   groupId: number,
   membersToRemove: ZHAGroupMember[]
 ): Promise<ZHAGroup> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/group/members/remove",
     group_id: groupId,
     members: membersToRemove,
   });
 
 export const addGroup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   groupName: string,
   groupId?: number,
   membersToAdd?: ZHAGroupMember[]
 ): Promise<ZHAGroup> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/group/add",
     group_name: groupName,
     group_id: groupId,
@@ -412,58 +412,58 @@ export const addGroup = (
   });
 
 export const fetchZHAConfiguration = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<ZHAConfiguration> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/configuration",
   });
 
 export const updateZHAConfiguration = (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: any
 ): Promise<any> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/configuration/update",
     data: data,
   });
 
 export const fetchZHANetworkSettings = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<ZHANetworkSettings> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/network/settings",
   });
 
 export const createZHANetworkBackup = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<ZHANetworkBackupAndMetadata> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/network/backups/create",
   });
 
 export const restoreZHANetworkBackup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   backup: ZHANetworkBackup,
   ezspForceWriteEUI64 = false
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/network/backups/restore",
     backup: backup,
     ezsp_force_write_eui64: ezspForceWriteEUI64,
   });
 
 export const listZHANetworkBackups = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<ZHANetworkBackup[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/network/backups/list",
   });
 
 export const changeZHANetworkChannel = (
-  hass: HomeAssistant,
+  menuai: menuai,
   newChannel: "auto" | number
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zha/network/change_channel",
     new_channel: newChannel,
   });

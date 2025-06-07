@@ -6,7 +6,7 @@ import { computeDomain } from "../common/entity/compute_domain";
 import { computeStateName } from "../common/entity/compute_state_name";
 import { caseInsensitiveStringCompare } from "../common/string/compare";
 import { debounce } from "../common/util/debounce";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { LightColor } from "./light";
 import type { RegistryEntry } from "./registry";
 
@@ -152,14 +152,14 @@ export interface EntityRegistryEntryUpdateParams {
 
 const batteryPriorities = ["sensor", "binary_sensor"];
 export const findBatteryEntity = <T extends { entity_id: string }>(
-  hass: HomeAssistant,
+  menuai: menuai,
   entities: T[]
 ): T | undefined => {
   const batteryEntities = entities
     .filter(
       (entity) =>
-        hass.states[entity.entity_id] &&
-        hass.states[entity.entity_id].attributes.device_class === "battery" &&
+        menuai.states[entity.entity_id] &&
+        menuai.states[entity.entity_id].attributes.device_class === "battery" &&
         batteryPriorities.includes(computeDomain(entity.entity_id))
     )
     .sort(
@@ -175,24 +175,24 @@ export const findBatteryEntity = <T extends { entity_id: string }>(
 };
 
 export const findBatteryChargingEntity = <T extends { entity_id: string }>(
-  hass: HomeAssistant,
+  menuai: menuai,
   entities: T[]
 ): T | undefined =>
   entities.find(
     (entity) =>
-      hass.states[entity.entity_id] &&
-      hass.states[entity.entity_id].attributes.device_class ===
+      menuai.states[entity.entity_id] &&
+      menuai.states[entity.entity_id].attributes.device_class ===
         "battery_charging"
   );
 
 export const computeEntityRegistryName = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry: EntityRegistryEntry
 ): string | null => {
   if (entry.name) {
     return entry.name;
   }
-  const state = hass.states[entry.entity_id];
+  const state = menuai.states[entry.entity_id];
   if (state) {
     return computeStateName(state);
   }
@@ -200,39 +200,39 @@ export const computeEntityRegistryName = (
 };
 
 export const getExtendedEntityRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ): Promise<ExtEntityRegistryEntry> =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/entity_registry/get",
     entity_id: entityId,
   });
 
 export const getExtendedEntityRegistryEntries = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityIds: string[]
 ): Promise<Record<string, ExtEntityRegistryEntry>> =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/entity_registry/get_entries",
     entity_ids: entityIds,
   });
 
 export const updateEntityRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   updates: Partial<EntityRegistryEntryUpdateParams>
 ): Promise<UpdateEntityRegistryEntryResult> =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/entity_registry/update",
     entity_id: entityId,
     ...updates,
   });
 
 export const removeEntityRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "config/entity_registry/remove",
     entity_id: entityId,
   });
@@ -317,10 +317,10 @@ export const getEntityPlatformLookup = (
 };
 
 export const getAutomaticEntityIds = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_ids: string[]
 ) =>
-  hass.callWS<Record<string, string | null>>({
+  menuai.callWS<Record<string, string | null>>({
     type: "config/entity_registry/get_automatic_entity_ids",
     entity_ids,
   });

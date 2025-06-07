@@ -5,7 +5,7 @@ import type {
   GridSourceTypeEnergyPreference,
 } from "../../../data/energy";
 import { getEnergyPreferences } from "../../../data/energy";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
 import type { LovelaceStrategyConfig } from "../../../data/lovelace/config/strategy";
 
@@ -25,14 +25,14 @@ const setupWizard = async (): Promise<LovelaceViewConfig> => {
 export class EnergyViewStrategy extends ReactiveElement {
   static async generate(
     _config: LovelaceStrategyConfig,
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<LovelaceViewConfig> {
     const view: LovelaceViewConfig = { cards: [] };
 
     let prefs: EnergyPreferences;
 
     try {
-      prefs = await getEnergyPreferences(hass);
+      prefs = await getEnergyPreferences(menuai);
     } catch (err: any) {
       if (err.code === "not_found") {
         return setupWizard();
@@ -60,7 +60,7 @@ export class EnergyViewStrategy extends ReactiveElement {
         (source.flow_from?.length || source.flow_to?.length)
     ) as GridSourceTypeEnergyPreference;
     const hasReturn = hasGrid && hasGrid.flow_to.length;
-    const hasSolar = prefs.energy_sources.some(
+    const menuaiolar = prefs.energy_sources.some(
       (source) => source.type === "solar"
     );
     const hasGas = prefs.energy_sources.some((source) => source.type === "gas");
@@ -77,16 +77,16 @@ export class EnergyViewStrategy extends ReactiveElement {
     // Only include if we have a grid source.
     if (hasGrid) {
       view.cards!.push({
-        title: hass.localize("ui.panel.energy.cards.energy_usage_graph_title"),
+        title: menuai.localize("ui.panel.energy.cards.energy_usage_graph_title"),
         type: "energy-usage-graph",
         collection_key: "energy_dashboard",
       });
     }
 
     // Only include if we have a solar source.
-    if (hasSolar) {
+    if (menuaiolar) {
       view.cards!.push({
-        title: hass.localize("ui.panel.energy.cards.energy_solar_graph_title"),
+        title: menuai.localize("ui.panel.energy.cards.energy_solar_graph_title"),
         type: "energy-solar-graph",
         collection_key: "energy_dashboard",
       });
@@ -95,7 +95,7 @@ export class EnergyViewStrategy extends ReactiveElement {
     // Only include if we have a gas source.
     if (hasGas) {
       view.cards!.push({
-        title: hass.localize("ui.panel.energy.cards.energy_gas_graph_title"),
+        title: menuai.localize("ui.panel.energy.cards.energy_gas_graph_title"),
         type: "energy-gas-graph",
         collection_key: "energy_dashboard",
       });
@@ -104,7 +104,7 @@ export class EnergyViewStrategy extends ReactiveElement {
     // Only include if we have a water source.
     if (hasWater) {
       view.cards!.push({
-        title: hass.localize("ui.panel.energy.cards.energy_water_graph_title"),
+        title: menuai.localize("ui.panel.energy.cards.energy_water_graph_title"),
         type: "energy-water-graph",
         collection_key: "energy_dashboard",
       });
@@ -113,16 +113,16 @@ export class EnergyViewStrategy extends ReactiveElement {
     // Only include if we have a grid.
     if (hasGrid) {
       view.cards!.push({
-        title: hass.localize("ui.panel.energy.cards.energy_distribution_title"),
+        title: menuai.localize("ui.panel.energy.cards.energy_distribution_title"),
         type: "energy-distribution",
         view_layout: { position: "sidebar" },
         collection_key: "energy_dashboard",
       });
     }
 
-    if (hasGrid || hasSolar || hasGas || hasWater) {
+    if (hasGrid || menuaiolar || hasGas || hasWater) {
       view.cards!.push({
-        title: hass.localize(
+        title: menuai.localize(
           "ui.panel.energy.cards.energy_sources_table_title"
         ),
         type: "energy-sources-table",
@@ -140,7 +140,7 @@ export class EnergyViewStrategy extends ReactiveElement {
     }
 
     // Only include if we have a solar source.
-    if (hasSolar) {
+    if (menuaiolar) {
       if (hasReturn) {
         view.cards!.push({
           type: "energy-solar-consumed-gauge",
@@ -169,14 +169,14 @@ export class EnergyViewStrategy extends ReactiveElement {
     // Only include if we have at least 1 device in the config.
     if (prefs.device_consumption.length) {
       view.cards!.push({
-        title: hass.localize(
+        title: menuai.localize(
           "ui.panel.energy.cards.energy_devices_detail_graph_title"
         ),
         type: "energy-devices-detail-graph",
         collection_key: "energy_dashboard",
       });
       view.cards!.push({
-        title: hass.localize(
+        title: menuai.localize(
           "ui.panel.energy.cards.energy_devices_graph_title"
         ),
         type: "energy-devices-graph",

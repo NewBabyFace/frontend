@@ -3,7 +3,7 @@ import {
   haFontSmoothing,
   haMozOsxFontSmoothing,
 } from "../../src/resources/theme/typography.globals";
-import "./hassio-main";
+import "./menuaiio-main";
 
 import("../../src/resources/append-ha-style");
 

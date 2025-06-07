@@ -1,6 +1,6 @@
 import { memoize } from "@fullcalendar/core/internal";
 import { setHours, setMinutes } from "date-fns";
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import memoizeOne from "memoize-one";
 import checkValidDate from "../common/datetime/check_valid_date";
 import {
@@ -9,9 +9,9 @@ import {
 } from "../common/datetime/format_date_time";
 import { formatTime } from "../common/datetime/format_time";
 import type { LocalizeFunc } from "../common/translations/localize";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { fileDownload } from "../util/file_download";
-import { handleFetchPromise } from "../util/hass-call-api";
+import { handleFetchPromise } from "../util/menuai-call-api";
 import type { BackupManagerState, ManagerStateEvent } from "./backup_manager";
 import { domainToName } from "./integration";
 import type { FrontendLocaleData } from "./translation";
@@ -127,8 +127,8 @@ export interface BackupData {
   addons: BackupAddon[];
   database_included: boolean;
   folders: string[];
-  homeassistant_version: string;
-  homeassistant_included: boolean;
+  menuai_version: string;
+  menuai_included: boolean;
 }
 
 export interface BackupAddon {
@@ -164,7 +164,7 @@ export interface GenerateBackupParams {
   include_all_addons?: boolean;
   include_database?: boolean;
   include_folders?: string[];
-  include_homeassistant?: boolean;
+  include_menuai?: boolean;
   name?: string;
   password?: string;
 }
@@ -176,16 +176,16 @@ export interface RestoreBackupParams {
   restore_addons?: string[];
   restore_database?: boolean;
   restore_folders?: string[];
-  restore_homeassistant?: boolean;
+  restore_menuai?: boolean;
 }
 
-export const fetchBackupConfig = (hass: HomeAssistant) =>
-  hass.callWS<{ config: BackupConfig }>({ type: "backup/config/info" });
+export const fetchBackupConfig = (menuai: menuai) =>
+  menuai.callWS<{ config: BackupConfig }>({ type: "backup/config/info" });
 
 export const updateBackupConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   config: BackupMutableConfig
-) => hass.callWS({ type: "backup/config/update", ...config });
+) => menuai.callWS({ type: "backup/config/update", ...config });
 
 export const getBackupDownloadUrl = (
   id: string,
@@ -194,60 +194,60 @@ export const getBackupDownloadUrl = (
 ) =>
   `/api/backup/download/${id}?agent_id=${agentId}${password ? `&password=${password}` : ""}`;
 
-export const fetchBackupInfo = (hass: HomeAssistant): Promise<BackupInfo> =>
-  hass.callWS({
+export const fetchBackupInfo = (menuai: menuai): Promise<BackupInfo> =>
+  menuai.callWS({
     type: "backup/info",
   });
 
 export const fetchBackupDetails = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string
 ): Promise<BackupDetails> =>
-  hass.callWS({
+  menuai.callWS({
     type: "backup/details",
     backup_id: id,
   });
 
 export const fetchBackupAgentsInfo = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<BackupAgentsInfo> =>
-  hass.callWS({
+  menuai.callWS({
     type: "backup/agents/info",
   });
 
-export const deleteBackup = (hass: HomeAssistant, id: string): Promise<void> =>
-  hass.callWS({
+export const deleteBackup = (menuai: menuai, id: string): Promise<void> =>
+  menuai.callWS({
     type: "backup/delete",
     backup_id: id,
   });
 
 export const generateBackup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   params: GenerateBackupParams
 ): Promise<{ backup_id: string }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "backup/generate",
     ...params,
   });
 
 export const generateBackupWithAutomaticSettings = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "backup/generate_with_automatic_settings",
   });
 
 export const restoreBackup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   params: RestoreBackupParams
 ): Promise<{ backup_id: string }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "backup/restore",
     ...params,
   });
 
 export const uploadBackup = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   file: File,
   agentIds: string[]
 ): Promise<{ backup_id: string }> => {
@@ -261,7 +261,7 @@ export const uploadBackup = async (
   });
 
   return handleFetchPromise(
-    hass.fetchWithAuth(`/api/backup/upload?${params.toString()}`, {
+    menuai.fetchWithAuth(`/api/backup/upload?${params.toString()}`, {
       method: "POST",
       body: fd,
     })
@@ -282,12 +282,12 @@ export const getPreferredAgentForDownload = (agents: string[]) => {
 };
 
 export const canDecryptBackupOnDownload = (
-  hass: HomeAssistant,
+  menuai: menuai,
   backup_id: string,
   agent_id: string,
   password: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "backup/can_decrypt_on_download",
     backup_id,
     agent_id,
@@ -295,15 +295,15 @@ export const canDecryptBackupOnDownload = (
   });
 
 export const CORE_LOCAL_AGENT = "backup.local";
-export const HASSIO_LOCAL_AGENT = "hassio.local";
+export const menuaiIO_LOCAL_AGENT = "menuaiio.local";
 export const CLOUD_AGENT = "cloud.cloud";
 
 export const isLocalAgent = (agentId: string) =>
-  [CORE_LOCAL_AGENT, HASSIO_LOCAL_AGENT].includes(agentId);
+  [CORE_LOCAL_AGENT, menuaiIO_LOCAL_AGENT].includes(agentId);
 
 export const isNetworkMountAgent = (agentId: string) => {
   const [domain, name] = agentId.split(".");
-  return domain === "hassio" && name !== "local";
+  return domain === "menuaiio" && name !== "local";
 };
 
 export const computeBackupAgentName = (
@@ -341,20 +341,20 @@ export type BackupType = "automatic" | "manual" | "addon_update";
 
 const BACKUP_TYPE_ORDER: BackupType[] = ["automatic", "manual", "addon_update"];
 
-export const getBackupTypes = memoize((isHassio: boolean) =>
-  isHassio
+export const getBackupTypes = memoize((ismenuaiio: boolean) =>
+  ismenuaiio
     ? BACKUP_TYPE_ORDER
     : BACKUP_TYPE_ORDER.filter((type) => type !== "addon_update")
 );
 
 export const computeBackupType = (
   backup: BackupContent,
-  isHassio: boolean
+  ismenuaiio: boolean
 ): BackupType => {
   if (backup.with_automatic_settings) {
     return "automatic";
   }
-  if (isHassio && backup.extra_metadata?.["supervisor.addon_update"] != null) {
+  if (ismenuaiio && backup.extra_metadata?.["supervisor.addon_update"] != null) {
     return "addon_update";
   }
   return "manual";
@@ -395,41 +395,41 @@ export const generateEncryptionKey = () => {
 };
 
 export const generateEmergencyKit = (
-  hass: HomeAssistant,
+  menuai: menuai,
   encryptionKey: string
 ) =>
   "data:text/plain;charset=utf-8," +
-  encodeURIComponent(`${hass.localize("ui.panel.config.backup.emergency_kit_file.title")}
+  encodeURIComponent(`${menuai.localize("ui.panel.config.backup.emergency_kit_file.title")}
 
-${hass.localize("ui.panel.config.backup.emergency_kit_file.description")}
+${menuai.localize("ui.panel.config.backup.emergency_kit_file.description")}
 
-${hass.localize("ui.panel.config.backup.emergency_kit_file.date")} ${formatDateTime(new Date(), hass.locale, hass.config)}
+${menuai.localize("ui.panel.config.backup.emergency_kit_file.date")} ${formatDateTime(new Date(), menuai.locale, menuai.config)}
 
-${hass.localize("ui.panel.config.backup.emergency_kit_file.instance")}
-${hass.config.location_name}
+${menuai.localize("ui.panel.config.backup.emergency_kit_file.instance")}
+${menuai.config.location_name}
 
-${hass.localize("ui.panel.config.backup.emergency_kit_file.url")}
-${hass.auth.data.hassUrl}
+${menuai.localize("ui.panel.config.backup.emergency_kit_file.url")}
+${menuai.auth.data.menuaiUrl}
 
-${hass.localize("ui.panel.config.backup.emergency_kit_file.encryption_key")}
+${menuai.localize("ui.panel.config.backup.emergency_kit_file.encryption_key")}
 ${encryptionKey}
 
-${hass.localize("ui.panel.config.backup.emergency_kit_file.more_info", { link: "https://www.home-assistant.io/more-info/backup-emergency-kit" })}`);
+${menuai.localize("ui.panel.config.backup.emergency_kit_file.more_info", { link: "https://www.home-assistant.io/more-info/backup-emergency-kit" })}`);
 
 export const geneateEmergencyKitFileName = (
-  hass: HomeAssistant,
+  menuai: menuai,
   append?: string
 ) =>
-  `home_assistant_backup_emergency_kit_${append ? `${append}_` : ""}${formatDateTimeNumeric(new Date(), hass.locale, hass.config).replace(",", "").replace(" ", "_")}.txt`;
+  `home_assistant_backup_emergency_kit_${append ? `${append}_` : ""}${formatDateTimeNumeric(new Date(), menuai.locale, menuai.config).replace(",", "").replace(" ", "_")}.txt`;
 
 export const downloadEmergencyKit = (
-  hass: HomeAssistant,
+  menuai: menuai,
   key: string,
   appendFileName?: string
 ) =>
   fileDownload(
-    generateEmergencyKit(hass, key),
-    geneateEmergencyKitFileName(hass, appendFileName)
+    generateEmergencyKit(menuai, key),
+    geneateEmergencyKitFileName(menuai, appendFileName)
   );
 
 export const DEFAULT_OPTIMIZED_BACKUP_START_TIME = setMinutes(
@@ -445,7 +445,7 @@ export const DEFAULT_OPTIMIZED_BACKUP_END_TIME = setMinutes(
 export const getFormattedBackupTime = memoizeOne(
   (
     locale: FrontendLocaleData,
-    config: HassConfig,
+    config: menuaiConfig,
     backupTime?: Date | string | null
   ) => {
     if (checkValidDate(backupTime as Date)) {

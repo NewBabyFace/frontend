@@ -17,16 +17,16 @@ import {
   severitySort,
   subscribeRepairsIssueRegistry,
 } from "../../../data/repairs";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./ha-config-repairs";
 import { showIntegrationStartupDialog } from "./show-integration-startup-dialog";
 import { showSystemInformationDialog } from "./show-system-information-dialog";
 
 @customElement("ha-config-repairs-dashboard")
 class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -52,9 +52,9 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
     }
   }
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeRepairsIssueRegistry(this.hass.connection!, (repairs) => {
+      subscribeRepairsIssueRegistry(this.menuai.connection!, (repairs) => {
         this._repairsIssues = repairs.issues.sort(
           (a, b) => severitySort[a.severity] - severitySort[b.severity]
         );
@@ -62,7 +62,7 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
         for (const issue of this._repairsIssues) {
           integrations.add(issue.domain);
         }
-        this.hass.loadBackendTranslation("issues", [...integrations]);
+        this.menuai.loadBackendTranslation("issues", [...integrations]);
       }),
     ];
   }
@@ -74,17 +74,17 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
     );
 
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.repairs.caption")}
+        .header=${this.menuai.localize("ui.panel.config.repairs.caption")}
       >
         <div slot="toolbar-icon">
           <ha-button-menu multi>
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-check-list-item
@@ -92,16 +92,16 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
               @request-selected=${this._toggleIgnored}
               .selected=${this._showIgnored}
             >
-              ${this.hass.localize("ui.panel.config.repairs.show_ignored")}
+              ${this.menuai.localize("ui.panel.config.repairs.show_ignored")}
             </ha-check-list-item>
             <li divider role="separator"></li>
-            ${isComponentLoaded(this.hass, "system_health") ||
-            isComponentLoaded(this.hass, "hassio")
+            ${isComponentLoaded(this.menuai, "system_health") ||
+            isComponentLoaded(this.menuai, "menuaiio")
               ? html`
                   <ha-list-item
                     @request-selected=${this._showSystemInformationDialog}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.repairs.system_information"
                     )}
                   </ha-list-item>
@@ -110,7 +110,7 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
             <ha-list-item
               @request-selected=${this._showIntegrationStartupDialog}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.repairs.integration_startup_time"
               )}
             </ha-list-item>
@@ -122,14 +122,14 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
               ${issues.length
                 ? html`
                     <ha-config-repairs
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .narrow=${this.narrow}
                       .repairsIssues=${issues}
                     ></ha-config-repairs>
                   `
                 : html`
                     <div class="no-repairs">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.repairs.no_repairs"
                       )}
                     </div>
@@ -137,7 +137,7 @@ class HaConfigRepairsDashboard extends SubscribeMixin(LitElement) {
             </div>
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 

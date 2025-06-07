@@ -10,14 +10,14 @@ import "../../../../src/components/ha-spinner";
 import {
   extractApiErrorMessage,
   ignoreSupervisorError,
-} from "../../../../src/data/hassio/common";
-import type { DatadiskList } from "../../../../src/data/hassio/host";
-import { listDatadisks, moveDatadisk } from "../../../../src/data/hassio/host";
+} from "../../../../src/data/menuaiio/common";
+import type { DatadiskList } from "../../../../src/data/menuaiio/host";
+import { listDatadisks, moveDatadisk } from "../../../../src/data/menuaiio/host";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { showAlertDialog } from "../../../../src/dialogs/generic/show-dialog-box";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import type { HassioDatatiskDialogParams } from "./show-dialog-hassio-datadisk";
+import type { menuai } from "../../../../src/types";
+import type { menuaiioDatatiskDialogParams } from "./show-dialog-menuaiio-datadisk";
 
 const calculateMoveTime = memoizeOne((supervisor: Supervisor): number => {
   const speed = supervisor.host.disk_life_time !== "" ? 30 : 10;
@@ -26,11 +26,11 @@ const calculateMoveTime = memoizeOne((supervisor: Supervisor): number => {
   return Math.ceil((moveTime + rebootTime) / 10) * 10;
 });
 
-@customElement("dialog-hassio-datadisk")
-class HassioDatadiskDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-datadisk")
+class menuaiioDatadiskDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private dialogParams?: HassioDatatiskDialogParams;
+  @state() private dialogParams?: menuaiioDatatiskDialogParams;
 
   @state() private selectedDevice?: string;
 
@@ -38,9 +38,9 @@ class HassioDatadiskDialog extends LitElement {
 
   @state() private moving = false;
 
-  public showDialog(params: HassioDatatiskDialogParams) {
+  public showDialog(params: menuaiioDatatiskDialogParams) {
     this.dialogParams = params;
-    listDatadisks(this.hass).then((data) => {
+    listDatadisks(this.menuai).then((data) => {
       this.devices = data.devices;
     });
   }
@@ -139,9 +139,9 @@ class HassioDatadiskDialog extends LitElement {
   private async _moveDatadisk() {
     this.moving = true;
     try {
-      await moveDatadisk(this.hass, this.selectedDevice!);
+      await moveDatadisk(this.menuai, this.selectedDevice!);
     } catch (err: any) {
-      if (this.hass.connection.connected && !ignoreSupervisorError(err)) {
+      if (this.menuai.connection.connected && !ignoreSupervisorError(err)) {
         showAlertDialog(this, {
           title: this.dialogParams!.supervisor.localize(
             "system.host.failed_to_move"
@@ -177,6 +177,6 @@ class HassioDatadiskDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-datadisk": HassioDatadiskDialog;
+    "dialog-menuaiio-datadisk": menuaiioDatadiskDialog;
   }
 }

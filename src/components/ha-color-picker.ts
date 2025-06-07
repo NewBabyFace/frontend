@@ -6,7 +6,7 @@ import { computeCssColor, THEME_COLORS } from "../common/color/compute-color";
 import { fireEvent } from "../common/dom/fire_event";
 import { stopPropagation } from "../common/dom/stop_propagation";
 import type { LocalizeKeys } from "../common/translations/localize";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-md-divider";
 import "./ha-select";
@@ -18,7 +18,7 @@ export class HaColorPicker extends LitElement {
 
   @property() public helper?: string;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: string;
 
@@ -89,9 +89,9 @@ export class HaColorPicker extends LitElement {
         ${this.includeNone
           ? html`
               <ha-list-item value="none" graphic="icon">
-                ${this.hass.localize("ui.components.color-picker.none")}
+                ${this.menuai.localize("ui.components.color-picker.none")}
                 ${this.defaultColor === "none"
-                  ? ` (${this.hass.localize("ui.components.color-picker.default")})`
+                  ? ` (${this.menuai.localize("ui.components.color-picker.default")})`
                   : nothing}
                 <ha-svg-icon
                   slot="graphic"
@@ -103,9 +103,9 @@ export class HaColorPicker extends LitElement {
         ${this.includeState
           ? html`
               <ha-list-item value="state" graphic="icon">
-                ${this.hass.localize("ui.components.color-picker.state")}
+                ${this.menuai.localize("ui.components.color-picker.state")}
                 ${this.defaultColor === "state"
-                  ? ` (${this.hass.localize("ui.components.color-picker.default")})`
+                  ? ` (${this.menuai.localize("ui.components.color-picker.default")})`
                   : nothing}
                 <ha-svg-icon slot="graphic" path=${mdiPalette}></ha-svg-icon>
               </ha-list-item>
@@ -117,11 +117,11 @@ export class HaColorPicker extends LitElement {
         ${Array.from(THEME_COLORS).map(
           (color) => html`
             <ha-list-item .value=${color} graphic="icon">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.components.color-picker.colors.${color}` as LocalizeKeys
               ) || color}
               ${this.defaultColor === color
-                ? ` (${this.hass.localize("ui.components.color-picker.default")})`
+                ? ` (${this.menuai.localize("ui.components.color-picker.default")})`
                 : nothing}
               <span slot="graphic">${this._renderColorCircle(color)}</span>
             </ha-list-item>

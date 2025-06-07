@@ -18,7 +18,7 @@ import {
   isJammed,
 } from "../../../data/lock";
 import "../../../state-control/lock/ha-state-control-lock-toggle";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-state-header";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
@@ -29,7 +29,7 @@ type ButtonState = "normal" | "confirm" | "done";
 
 @customElement("more-info-lock")
 class MoreInfoLock extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: LockEntity;
 
@@ -53,7 +53,7 @@ class MoreInfoLock extends LitElement {
       return;
     }
 
-    callProtectedLockService(this, this.hass, this.stateObj!, "open");
+    callProtectedLockService(this, this.menuai, this.stateObj!, "open");
 
     this._setButtonState("done", DONE_TIMEOUT_SECOND);
   }
@@ -68,15 +68,15 @@ class MoreInfoLock extends LitElement {
   }
 
   private async _lock() {
-    callProtectedLockService(this, this.hass, this.stateObj!, "lock");
+    callProtectedLockService(this, this.menuai, this.stateObj!, "lock");
   }
 
   private async _unlock() {
-    callProtectedLockService(this, this.hass, this.stateObj!, "unlock");
+    callProtectedLockService(this, this.menuai, this.stateObj!, "unlock");
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -89,7 +89,7 @@ class MoreInfoLock extends LitElement {
 
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
       ></ha-more-info-state-header>
       <div class="controls" style=${styleMap(style)}>
@@ -99,7 +99,7 @@ class MoreInfoLock extends LitElement {
                 <span></span>
                 <div class="icon">
                   <ha-state-icon
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .stateObj=${this.stateObj}
                   ></ha-state-icon>
                 </div>
@@ -109,7 +109,7 @@ class MoreInfoLock extends LitElement {
               <ha-state-control-lock-toggle
                 @lock-service-called=${this._resetButtonState}
                 .stateObj=${this.stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               >
               </ha-state-control-lock-toggle>
             `}
@@ -120,7 +120,7 @@ class MoreInfoLock extends LitElement {
                   ? html`
                       <p class="open-done">
                         <ha-svg-icon path=${mdiCheck}></ha-svg-icon>
-                        ${this.hass.localize("ui.card.lock.open_door_done")}
+                        ${this.menuai.localize("ui.card.lock.open_door_done")}
                       </p>
                     `
                   : html`
@@ -130,8 +130,8 @@ class MoreInfoLock extends LitElement {
                         @click=${this._open}
                       >
                         ${this._buttonState === "confirm"
-                          ? this.hass.localize("ui.card.lock.open_door_confirm")
-                          : this.hass.localize("ui.card.lock.open_door")}
+                          ? this.menuai.localize("ui.card.lock.open_door_confirm")
+                          : this.menuai.localize("ui.card.lock.open_door")}
                       </ha-control-button>
                     `}
               </div>
@@ -143,16 +143,16 @@ class MoreInfoLock extends LitElement {
           ? html`
               <ha-control-button-group class="jammed">
                 <ha-control-button @click=${this._unlock}>
-                  ${this.hass.localize("ui.card.lock.unlock")}
+                  ${this.menuai.localize("ui.card.lock.unlock")}
                 </ha-control-button>
                 <ha-control-button @click=${this._lock}>
-                  ${this.hass.localize("ui.card.lock.lock")}
+                  ${this.menuai.localize("ui.card.lock.lock")}
                 </ha-control-button>
               </ha-control-button-group>
             `
           : nothing}
         <ha-attributes
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           extra-filters="code_format"
         ></ha-attributes>

@@ -1,7 +1,7 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
 export const attributeClassNames = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   attributes: string[]
 ): string => {
   if (!stateObj) {

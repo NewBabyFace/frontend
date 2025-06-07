@@ -11,7 +11,7 @@ import type { HaProgressButton } from "../../../components/buttons/ha-progress-b
 import "../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../components/ha-form/types";
 import "../../../components/ha-icon-button";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
 import type { SupervisorMountRequestParams } from "../../../data/supervisor/mounts";
 import {
   createSupervisorMount,
@@ -21,7 +21,7 @@ import {
   updateSupervisorMount,
 } from "../../../data/supervisor/mounts";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import type { MountViewDialogParams } from "./show-dialog-view-mount";
 
@@ -151,7 +151,7 @@ const mountSchema = memoizeOne(
 
 @customElement("dialog-mount-view")
 class ViewMountDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _data?: SupervisorMountRequestParams;
 
@@ -206,10 +206,10 @@ class ViewMountDialog extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${this._existing
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.panel.config.storage.network_mounts.update_title"
             )
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.panel.config.storage.network_mounts.add_title"
             )}
         @closed=${this.closeDialog}
@@ -218,15 +218,15 @@ class ViewMountDialog extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title"
             >${this._existing
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.config.storage.network_mounts.update_title"
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   "ui.panel.config.storage.network_mounts.add_title"
                 )}
           </span>
@@ -234,15 +234,15 @@ class ViewMountDialog extends LitElement {
             slot="actionItems"
             class="header_button"
             href=${documentationUrl(
-              this.hass,
+              this.menuai,
               "/common-tasks/os#network-storage"
             )}
-            title=${this.hass.localize(
+            title=${this.menuai.localize(
               "ui.panel.config.storage.network_mounts.documentation"
             )}
             target="_blank"
             rel="noreferrer"
-            dir=${computeRTLDirection(this.hass)}
+            dir=${computeRTLDirection(this.menuai)}
           >
             <ha-icon-button .path=${mdiHelpCircle}></ha-icon-button>
           </a>
@@ -253,7 +253,7 @@ class ViewMountDialog extends LitElement {
         <ha-form
           .data=${this._data}
           .schema=${mountSchema(
-            this.hass.localize,
+            this.menuai.localize,
             this._existing,
             this._data?.type,
             this._showCIFSVersion
@@ -274,23 +274,23 @@ class ViewMountDialog extends LitElement {
               destructive
               slot="secondaryAction"
             >
-              ${this.hass.localize("ui.common.delete")}
+              ${this.menuai.localize("ui.common.delete")}
             </ha-button>`
           : nothing}
 
         <div slot="primaryAction">
           <ha-button @click=${this.closeDialog} dialogInitialFocus>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </ha-button>
           <ha-progress-button
             .progress=${this._waiting}
             @click=${this._connectMount}
           >
             ${this._existing
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.config.storage.network_mounts.update"
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   "ui.panel.config.storage.network_mounts.connect"
                 )}
           </ha-progress-button>
@@ -303,7 +303,7 @@ class ViewMountDialog extends LitElement {
     // @ts-ignore
     schema: SchemaUnion<ReturnType<typeof mountSchema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.storage.network_mounts.options.${schema.name}.title`
     );
 
@@ -311,18 +311,18 @@ class ViewMountDialog extends LitElement {
     // @ts-ignore
     schema: SchemaUnion<ReturnType<typeof mountSchema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.storage.network_mounts.options.${schema.name}.description`
     );
 
   private _computeErrorCallback = (error: string): string =>
-    this.hass.localize(
+    this.menuai.localize(
       // @ts-ignore
       `ui.panel.config.storage.network_mounts.errors.${error}`
     ) || error;
 
   private _computeWarningCallback = (warning: string): string =>
-    this.hass.localize(
+    this.menuai.localize(
       // @ts-ignore
       `ui.panel.config.storage.network_mounts.warnings.${warning}`
     ) || warning;
@@ -356,9 +356,9 @@ class ViewMountDialog extends LitElement {
     }
     try {
       if (this._existing) {
-        await updateSupervisorMount(this.hass, mountData);
+        await updateSupervisorMount(this.menuai, mountData);
       } else {
-        await createSupervisorMount(this.hass, mountData);
+        await createSupervisorMount(this.menuai, mountData);
       }
     } catch (err: any) {
       this._error = extractApiErrorMessage(err);
@@ -379,7 +379,7 @@ class ViewMountDialog extends LitElement {
     this._error = undefined;
     this._waiting = true;
     try {
-      await removeSupervisorMount(this.hass, this._data!.name);
+      await removeSupervisorMount(this.menuai, this._data!.name);
     } catch (err: any) {
       this._error = extractApiErrorMessage(err);
       this._waiting = false;

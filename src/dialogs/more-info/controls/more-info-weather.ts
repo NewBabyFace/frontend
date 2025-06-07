@@ -27,12 +27,12 @@ import {
   subscribeForecast,
   weatherSVGStyles,
 } from "../../../data/weather";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { DragScrollController } from "../../../common/controllers/drag-scroll-controller";
 
 @customElement("more-info-weather")
 class MoreInfoWeather extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: WeatherEntity;
 
@@ -59,7 +59,7 @@ class MoreInfoWeather extends LitElement {
     this._unsubscribeForecastEvents();
     if (
       !this.isConnected ||
-      !this.hass ||
+      !this.menuai ||
       !this.stateObj ||
       !this._forecastType
     ) {
@@ -67,7 +67,7 @@ class MoreInfoWeather extends LitElement {
     }
 
     this._subscribed = subscribeForecast(
-      this.hass!,
+      this.menuai!,
       this.stateObj!.entity_id,
       this._forecastType,
       (event) => {
@@ -93,11 +93,11 @@ class MoreInfoWeather extends LitElement {
       return true;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     if (
-      !oldHass ||
-      oldHass.locale !== this.hass.locale ||
-      oldHass.config.unit_system !== this.hass.config.unit_system
+      !oldmenuai ||
+      oldmenuai.locale !== this.menuai.locale ||
+      oldmenuai.config.unit_system !== this.menuai.config.unit_system
     ) {
       return true;
     }
@@ -129,7 +129,7 @@ class MoreInfoWeather extends LitElement {
   );
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -153,43 +153,43 @@ class MoreInfoWeather extends LitElement {
             <ha-state-icon
               class="weather-icon"
               .stateObj=${this.stateObj}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-state-icon>
           `}
         </div>
         <div class="info">
           <div class="name-state">
             <div class="state">
-              ${this.hass.formatEntityState(this.stateObj)}
+              ${this.menuai.formatEntityState(this.stateObj)}
             </div>
             <div class="time-ago">
               <ha-tooltip>
                 <ha-relative-time
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .datetime=${this.stateObj.last_changed}
                   capitalize
                 ></ha-relative-time>
                 <div slot="content">
                   <div class="row">
                     <span class="column-name">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.dialogs.more_info_control.last_changed"
                       )}:
                     </span>
                     <ha-relative-time
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .datetime=${this.stateObj.last_changed}
                       capitalize
                     ></ha-relative-time>
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.dialogs.more_info_control.last_updated"
                       )}:
                     </span>
                     <ha-relative-time
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .datetime=${this.stateObj.last_updated}
                       capitalize
                     ></ha-relative-time>
@@ -205,10 +205,10 @@ class MoreInfoWeather extends LitElement {
                 ? html`
                     ${formatNumber(
                       this.stateObj.attributes.temperature,
-                      this.hass.locale
+                      this.menuai.locale
                     )}&nbsp;<span
                       >${getWeatherUnit(
-                        this.hass.config,
+                        this.menuai.config,
                         this.stateObj,
                         "temperature"
                       )}</span
@@ -218,7 +218,7 @@ class MoreInfoWeather extends LitElement {
             </div>
             <div class="attribute">
               ${getSecondaryWeatherAttribute(
-                this.hass,
+                this.menuai,
                 this.stateObj,
                 forecast!
               )}
@@ -231,10 +231,10 @@ class MoreInfoWeather extends LitElement {
             <div class="flex">
               <ha-svg-icon .path=${mdiGauge}></ha-svg-icon>
               <div class="main">
-                ${this.hass.localize("ui.card.weather.attributes.air_pressure")}
+                ${this.menuai.localize("ui.card.weather.attributes.air_pressure")}
               </div>
               <div>
-                ${this.hass.formatEntityAttributeValue(
+                ${this.menuai.formatEntityAttributeValue(
                   this.stateObj,
                   "pressure"
                 )}
@@ -247,10 +247,10 @@ class MoreInfoWeather extends LitElement {
             <div class="flex">
               <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
               <div class="main">
-                ${this.hass.localize("ui.card.weather.attributes.humidity")}
+                ${this.menuai.localize("ui.card.weather.attributes.humidity")}
               </div>
               <div>
-                ${this.hass.formatEntityAttributeValue(
+                ${this.menuai.formatEntityAttributeValue(
                   this.stateObj,
                   "humidity"
                 )}
@@ -263,11 +263,11 @@ class MoreInfoWeather extends LitElement {
             <div class="flex">
               <ha-svg-icon .path=${mdiWeatherWindy}></ha-svg-icon>
               <div class="main">
-                ${this.hass.localize("ui.card.weather.attributes.wind_speed")}
+                ${this.menuai.localize("ui.card.weather.attributes.wind_speed")}
               </div>
               <div>
                 ${getWind(
-                  this.hass,
+                  this.menuai,
                   this.stateObj,
                   this.stateObj.attributes.wind_speed!,
                   this.stateObj.attributes.wind_bearing
@@ -281,10 +281,10 @@ class MoreInfoWeather extends LitElement {
             <div class="flex">
               <ha-svg-icon .path=${mdiEye}></ha-svg-icon>
               <div class="main">
-                ${this.hass.localize("ui.card.weather.attributes.visibility")}
+                ${this.menuai.localize("ui.card.weather.attributes.visibility")}
               </div>
               <div>
-                ${this.hass.formatEntityAttributeValue(
+                ${this.menuai.formatEntityAttributeValue(
                   this.stateObj,
                   "visibility"
                 )}
@@ -295,7 +295,7 @@ class MoreInfoWeather extends LitElement {
       ${forecast
         ? html`
             <div class="section">
-              ${this.hass.localize("ui.card.weather.forecast")}:
+              ${this.menuai.localize("ui.card.weather.forecast")}:
             </div>
             ${supportedForecasts.length > 1
               ? html`<sl-tab-group
@@ -308,7 +308,7 @@ class MoreInfoWeather extends LitElement {
                         .panel=${forecastType}
                         .active=${this._forecastType === forecastType}
                       >
-                        ${this.hass!.localize(
+                        ${this.menuai!.localize(
                           `ui.card.weather.${forecastType}`
                         )}
                       </sl-tab>`
@@ -326,13 +326,13 @@ class MoreInfoWeather extends LitElement {
                             ? html`
                                 ${formatDateWeekdayShort(
                                   new Date(item.datetime),
-                                  this.hass!.locale,
-                                  this.hass!.config
+                                  this.menuai!.locale,
+                                  this.menuai!.config
                                 )}
                                 <div class="daynight">
                                   ${item.is_daytime !== false
-                                    ? this.hass!.localize("ui.card.weather.day")
-                                    : this.hass!.localize(
+                                    ? this.menuai!.localize("ui.card.weather.day")
+                                    : this.menuai!.localize(
                                         "ui.card.weather.night"
                                       )}<br />
                                 </div>
@@ -341,15 +341,15 @@ class MoreInfoWeather extends LitElement {
                               ? html`
                                   ${formatTime(
                                     new Date(item.datetime),
-                                    this.hass!.locale,
-                                    this.hass!.config
+                                    this.menuai!.locale,
+                                    this.menuai!.config
                                   )}
                                 `
                               : html`
                                   ${formatDateWeekdayShort(
                                     new Date(item.datetime),
-                                    this.hass!.locale,
-                                    this.hass!.config
+                                    this.menuai!.locale,
+                                    this.menuai!.config
                                   )}
                                 `}
                         </div>
@@ -371,7 +371,7 @@ class MoreInfoWeather extends LitElement {
                           ${this._showValue(item.temperature)
                             ? html`${formatNumber(
                                 item.temperature,
-                                this.hass!.locale
+                                this.menuai!.locale
                               )}°`
                             : "—"}
                         </div>
@@ -379,7 +379,7 @@ class MoreInfoWeather extends LitElement {
                           ${this._showValue(item.templow)
                             ? html`${formatNumber(
                                 item.templow!,
-                                this.hass!.locale
+                                this.menuai!.locale
                               )}°`
                             : hourly
                               ? nothing

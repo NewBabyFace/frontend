@@ -3,13 +3,13 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-alert";
 import type { LovelaceCardConfig } from "../../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { Condition } from "../../common/validate-condition";
 import "../conditions/ha-card-conditions-editor";
 
 @customElement("hui-card-visibility-editor")
 export class HuiCardVisibilityEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public config!: LovelaceCardConfig;
 
@@ -17,12 +17,12 @@ export class HuiCardVisibilityEditor extends LitElement {
     const conditions = this.config.visibility ?? [];
     return html`
       <p class="intro">
-        ${this.hass.localize(
+        ${this.menuai.localize(
           `ui.panel.lovelace.editor.edit_card.visibility.explanation`
         )}
       </p>
       <ha-card-conditions-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .conditions=${conditions}
         @value-changed=${this._valueChanged}
       >

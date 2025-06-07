@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { describe, it, expect } from "vitest";
 import {
   batteryIcon,
@@ -7,12 +7,12 @@ import {
 
 describe("batteryIcon", () => {
   it("should return correct icon for battery level", () => {
-    const stateObj: HassEntity = { state: "50" } as HassEntity;
+    const stateObj: menuaiEntity = { state: "50" } as menuaiEntity;
     expect(batteryIcon(stateObj)).toBe("mdi:battery-50");
   });
 
   it("should return correct icon for battery level with state", () => {
-    const stateObj: HassEntity = { state: "50" } as HassEntity;
+    const stateObj: menuaiEntity = { state: "50" } as menuaiEntity;
     expect(batteryIcon(stateObj, "20")).toBe("mdi:battery-20");
   });
 });

@@ -5,7 +5,7 @@ import { fireEvent } from "../../../common/dom/fire_event";
 import type { MediaQueriesListener } from "../../../common/dom/media_query";
 import "../../../components/ha-svg-icon";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { migrateLayoutToGridOptions } from "../common/compute-card-grid-size";
 import { computeCardSize } from "../common/compute-card-size";
 import {
@@ -16,7 +16,7 @@ import { createCardElement } from "../create-element/create-card-element";
 import type { LovelaceCard, LovelaceGridOptions } from "../types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "card-visibility-changed": { value: boolean };
     "card-updated": undefined;
   }
@@ -28,7 +28,7 @@ export class HuiCard extends ReactiveElement {
 
   @property({ attribute: false }) public config?: LovelaceCardConfig;
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public layout?: string;
 
@@ -121,8 +121,8 @@ export class HuiCard extends ReactiveElement {
   private _loadElement(config: LovelaceCardConfig) {
     this._element = createCardElement(config);
     this._elementConfig = config;
-    if (this.hass) {
-      this._element.hass = this.hass;
+    if (this.menuai) {
+      this._element.menuai = this.menuai;
     }
     this._element.layout = this.layout;
     this._element.preview = this.preview;
@@ -137,8 +137,8 @@ export class HuiCard extends ReactiveElement {
       "ll-upgrade",
       (ev: Event) => {
         ev.stopPropagation();
-        if (this.hass) {
-          this._element!.hass = this.hass;
+        if (this.menuai) {
+          this._element!.menuai = this.menuai;
         }
         fireEvent(this, "card-updated");
       },
@@ -184,10 +184,10 @@ export class HuiCard extends ReactiveElement {
           }
         }
       }
-      if (changedProps.has("hass")) {
+      if (changedProps.has("menuai")) {
         try {
-          if (this.hass) {
-            this._element.hass = this.hass;
+          if (this.menuai) {
+            this._element.menuai = this.menuai;
           }
         } catch (e: any) {
           // eslint-disable-next-line no-console
@@ -219,7 +219,7 @@ export class HuiCard extends ReactiveElement {
       }
     }
 
-    if (changedProps.has("hass") || changedProps.has("preview")) {
+    if (changedProps.has("menuai") || changedProps.has("preview")) {
       this._updateVisibility();
     }
   }
@@ -249,7 +249,7 @@ export class HuiCard extends ReactiveElement {
   }
 
   private _updateVisibility(forceVisible?: boolean) {
-    if (!this._element || !this.hass) {
+    if (!this._element || !this.menuai) {
       return;
     }
 
@@ -262,7 +262,7 @@ export class HuiCard extends ReactiveElement {
       forceVisible ||
       this.preview ||
       !this.config?.visibility ||
-      checkConditionsMet(this.config.visibility, this.hass);
+      checkConditionsMet(this.config.visibility, this.menuai);
     this._setElementVisibility(visible);
   }
 

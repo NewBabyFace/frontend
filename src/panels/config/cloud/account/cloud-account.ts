@@ -23,10 +23,10 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
-import "../../../../layouts/hass-subpage";
+import "../../../../layouts/menuai-subpage";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "../../ha-config-section";
 import "./cloud-ice-servers-pref";
 import "./cloud-remote-pref";
@@ -36,7 +36,7 @@ import { showSupportPackageDialog } from "./show-dialog-cloud-support-package";
 
 @customElement("cloud-account")
 export class CloudAccount extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -48,26 +48,26 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
 
   protected render() {
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        header="Home Assistant Cloud"
+        header="MenuAI Cloud"
       >
         <ha-button-menu slot="toolbar-icon" @action=${this._handleMenuAction}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass.localize("ui.common.menu")}
+            .label=${this.menuai.localize("ui.common.menu")}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
 
           <ha-list-item graphic="icon">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.account.reset_cloud_data"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiDeleteForever}></ha-svg-icon>
           </ha-list-item>
           <ha-list-item graphic="icon">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.account.download_support_package"
             )}
             <ha-svg-icon slot="graphic" .path=${mdiDownload}></ha-svg-icon>
@@ -75,10 +75,10 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
         </ha-button-menu>
         <div class="content">
           <ha-config-section .isWide=${this.isWide}>
-            <span slot="header">Home Assistant Cloud</span>
+            <span slot="header">MenuAI Cloud</span>
             <div slot="introduction">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.thank_you_note"
                 )}
               </p>
@@ -86,7 +86,7 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
 
             <ha-card
               outlined
-              .header=${this.hass.localize(
+              .header=${this.menuai.localize(
                 "ui.panel.config.cloud.account.nabu_casa_account"
               )}
             >
@@ -105,12 +105,12 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
                                 new Date(
                                   this._subscription.plan_renewal_date * 1000
                                 ),
-                                this.hass.locale,
-                                this.hass.config
+                                this.menuai.locale,
+                                this.menuai.config
                               )
                             : ""
                         )
-                      : this.hass.localize(
+                      : this.menuai.localize(
                           "ui.panel.config.cloud.account.fetching_subscription"
                         )}
                   </span>
@@ -130,18 +130,18 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
 
               <div class="account-row">
                 <ha-list-item noninteractive>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.account.connection_status"
                   )}:
                   ${this.cloudStatus.cloud === "connected"
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         "ui.panel.config.cloud.account.connected"
                       )
                     : this.cloudStatus.cloud === "disconnected"
-                      ? this.hass.localize(
+                      ? this.menuai.localize(
                           "ui.panel.config.cloud.account.not_connected"
                         )
-                      : this.hass.localize(
+                      : this.menuai.localize(
                           "ui.panel.config.cloud.account.connecting"
                         )}
                 </ha-list-item>
@@ -154,13 +154,13 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
                   rel="noreferrer"
                 >
                   <mwc-button>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.cloud.account.manage_account"
                     )}
                   </mwc-button>
                 </a>
                 <mwc-button @click=${this._signOut} class="warning">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.account.sign_out"
                   )}
                 </mwc-button>
@@ -170,18 +170,18 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
 
           <ha-config-section .isWide=${this.isWide}>
             <span slot="header"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.cloud.account.integrations"
               )}</span
             >
             <div slot="introduction">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.integrations_introduction"
                 )}
               </p>
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.integrations_introduction2"
                 )}
                 <a
@@ -189,7 +189,7 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.account.integrations_link_all_features"
                   )}</a
                 >.
@@ -197,37 +197,37 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
             </div>
 
             <cloud-remote-pref
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               .cloudStatus=${this.cloudStatus}
             ></cloud-remote-pref>
 
             <cloud-tts-pref
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .cloudStatus=${this.cloudStatus}
             ></cloud-tts-pref>
 
             <cloud-ice-servers-pref
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .cloudStatus=${this.cloudStatus}
             ></cloud-ice-servers-pref>
 
-            <ha-tip .hass=${this.hass}>
+            <ha-tip .menuai=${this.menuai}>
               <a href="/config/voice-assistants">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.tip_moved_voice_assistants"
                 )}
               </a>
             </ha-tip>
 
             <cloud-webhooks
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               .cloudStatus=${this.cloudStatus}
             ></cloud-webhooks>
           </ha-config-section>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -235,7 +235,7 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
     this._fetchSubscriptionInfo();
   }
 
-  protected override hassSubscribe() {
+  protected override menuaiSubscribe() {
     const googleCheck = debounce(
       () => {
         if (this.cloudStatus && !this.cloudStatus.google_registered) {
@@ -246,20 +246,20 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
       true
     );
     return [
-      this.hass.connection.subscribeEvents(() => {
+      this.menuai.connection.subscribeEvents(() => {
         if (!this.cloudStatus?.alexa_registered) {
           fireEvent(this, "ha-refresh-cloud-status");
         }
       }, "alexa_smart_home"),
-      this.hass.connection.subscribeEvents(
+      this.menuai.connection.subscribeEvents(
         googleCheck,
         "google_assistant_command"
       ),
-      this.hass.connection.subscribeEvents(
+      this.menuai.connection.subscribeEvents(
         googleCheck,
         "google_assistant_query"
       ),
-      this.hass.connection.subscribeEvents(
+      this.menuai.connection.subscribeEvents(
         googleCheck,
         "google_assistant_sync"
       ),
@@ -267,7 +267,7 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
   }
 
   private async _fetchSubscriptionInfo() {
-    this._subscription = await fetchCloudSubscriptionInfo(this.hass);
+    this._subscription = await fetchCloudSubscriptionInfo(this.menuai);
     if (
       this._subscription.provider &&
       this.cloudStatus &&
@@ -279,17 +279,17 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
 
   private async _signOut() {
     showConfirmationDialog(this, {
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.cloud.account.sign_out_confirm"
       ),
-      confirmText: this.hass!.localize("ui.common.yes"),
-      dismissText: this.hass!.localize("ui.common.no"),
+      confirmText: this.menuai!.localize("ui.common.yes"),
+      dismissText: this.menuai!.localize("ui.common.no"),
       confirm: () => this._logoutFromCloud(),
     });
   }
 
   private async _logoutFromCloud() {
-    await cloudLogout(this.hass);
+    await cloudLogout(this.menuai);
     fireEvent(this, "ha-refresh-cloud-status");
   }
 
@@ -305,24 +305,24 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
 
   private async _deleteCloudData() {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.cloud.account.reset_data_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.cloud.account.reset_data_confirm_text"
       ),
-      confirmText: this.hass.localize("ui.panel.config.cloud.account.reset"),
+      confirmText: this.menuai.localize("ui.panel.config.cloud.account.reset"),
       destructive: true,
     });
     if (!confirm) {
       return;
     }
     try {
-      await cloudLogout(this.hass);
-      await removeCloudData(this.hass);
+      await cloudLogout(this.menuai);
+      await removeCloudData(this.menuai);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.cloud.account.reset_data_failed"
         ),
         text: err?.message,

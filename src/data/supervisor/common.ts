@@ -1,7 +1,7 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "../hassio/common";
-import { hassioApiResultExtractor } from "../hassio/common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "../menuaiio/common";
+import { menuaiioApiResultExtractor } from "../menuaiio/common";
 
 export interface SupervisorApiCallOptions {
   method?: "get" | "post" | "delete";
@@ -10,13 +10,13 @@ export interface SupervisorApiCallOptions {
 }
 
 export const supervisorApiCall = async <T>(
-  hass: HomeAssistant,
+  menuai: menuai,
   endpoint: string,
   options?: SupervisorApiCallOptions
 ): Promise<T> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
     // Websockets was added in 2021.2.4
-    return hass.callWS<T>({
+    return menuai.callWS<T>({
       type: "supervisor/api",
       endpoint,
       method: options?.method || "get",
@@ -24,11 +24,11 @@ export const supervisorApiCall = async <T>(
       data: options?.data,
     });
   }
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<T>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<T>>(
       // @ts-ignore
       (options.method || "get").toUpperCase(),
-      `hassio${endpoint}`,
+      `menuaiio${endpoint}`,
       options?.data
     )
   );

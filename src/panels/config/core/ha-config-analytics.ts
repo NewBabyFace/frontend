@@ -13,12 +13,12 @@ import {
   setAnalyticsPreferences,
 } from "../../../data/analytics";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 
 @customElement("ha-config-analytics")
 class ConfigAnalytics extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _analyticsDetails?: Analytics;
 
@@ -27,7 +27,7 @@ class ConfigAnalytics extends LitElement {
   protected render(): TemplateResult {
     const error = this._error
       ? this._error
-      : !isComponentLoaded(this.hass, "analytics")
+      : !isComponentLoaded(this.menuai, "analytics")
         ? "Analytics integration not loaded"
         : undefined;
 
@@ -35,17 +35,17 @@ class ConfigAnalytics extends LitElement {
       <ha-card outlined>
         <div class="card-content">
           ${error ? html`<div class="error">${error}</div>` : ""}
-          <p>${this.hass.localize("ui.panel.config.analytics.intro")}</p>
+          <p>${this.menuai.localize("ui.panel.config.analytics.intro")}</p>
           <ha-analytics
             translation_key_panel="config"
             @analytics-preferences-changed=${this._preferencesChanged}
-            .localize=${this.hass.localize}
+            .localize=${this.menuai.localize}
             .analytics=${this._analyticsDetails}
           ></ha-analytics>
         </div>
         <div class="card-actions">
           <mwc-button @click=${this._save}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.core.section.core.core_config.save_button"
             )}
           </mwc-button>
@@ -53,11 +53,11 @@ class ConfigAnalytics extends LitElement {
       </ha-card>
       <div class="footer">
         <a
-          href=${documentationUrl(this.hass, "/integrations/analytics/")}
+          href=${documentationUrl(this.menuai, "/integrations/analytics/")}
           target="_blank"
           rel="noreferrer"
         >
-          ${this.hass.localize("ui.panel.config.analytics.learn_more")}
+          ${this.menuai.localize("ui.panel.config.analytics.learn_more")}
         </a>
       </div>
     `;
@@ -65,7 +65,7 @@ class ConfigAnalytics extends LitElement {
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
-    if (isComponentLoaded(this.hass, "analytics")) {
+    if (isComponentLoaded(this.menuai, "analytics")) {
       this._load();
     }
   }
@@ -73,7 +73,7 @@ class ConfigAnalytics extends LitElement {
   private async _load() {
     this._error = undefined;
     try {
-      this._analyticsDetails = await getAnalyticsDetails(this.hass);
+      this._analyticsDetails = await getAnalyticsDetails(this.menuai);
     } catch (err: any) {
       this._error = err.message || err;
     }
@@ -83,7 +83,7 @@ class ConfigAnalytics extends LitElement {
     this._error = undefined;
     try {
       await setAnalyticsPreferences(
-        this.hass,
+        this.menuai,
         this._analyticsDetails?.preferences || {}
       );
     } catch (err: any) {

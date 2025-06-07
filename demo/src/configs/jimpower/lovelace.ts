@@ -197,7 +197,7 @@ export const demoLovelaceJimpower: DemoConfig["lovelace"] = () => ({
                       data: {
                         entity_id: "group.downstairs_lights",
                       },
-                      service: "homeassistant.toggle",
+                      service: "menuai.toggle",
                     },
                     entity: "binary_sensor.lights",
                   },
@@ -1236,7 +1236,7 @@ export const demoLovelaceJimpower: DemoConfig["lovelace"] = () => ({
         },
       ],
       path: "security",
-      icon: "hass:shield-home",
+      icon: "menuai:shield-home",
       name: "Security",
       background:
         'center / cover no-repeat url("/assets/jimpower/background-15.jpg") fixed',

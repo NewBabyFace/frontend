@@ -10,13 +10,13 @@ import type { HaSwitch } from "../../components/ha-switch";
 import type { ConfigEntryMutableParams } from "../../data/config_entries";
 import { updateConfigEntry } from "../../data/config_entries";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { showAlertDialog } from "../generic/show-dialog-box";
 import type { ConfigEntrySystemOptionsDialogParams } from "./show-dialog-config-entry-system-options";
 
 @customElement("dialog-config-entry-system-options")
 class DialogConfigEntrySystemOptions extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _disableNewEntities!: boolean;
 
@@ -53,10 +53,10 @@ class DialogConfigEntrySystemOptions extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.dialogs.config_entry_system_options.title", {
+          this.menuai,
+          this.menuai.localize("ui.dialogs.config_entry_system_options.title", {
             integration:
-              this.hass.localize(
+              this.menuai.localize(
                 `component.${this._params.entry.domain}.title`
               ) || this._params.entry.domain,
           })
@@ -65,16 +65,16 @@ class DialogConfigEntrySystemOptions extends LitElement {
         ${this._error ? html` <div class="error">${this._error}</div> ` : ""}
         <ha-formfield
           .label=${html`<p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.dialogs.config_entry_system_options.enable_new_entities_label"
               )}
             </p>
             <p class="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.dialogs.config_entry_system_options.enable_new_entities_description",
                 {
                   integration:
-                    this.hass.localize(
+                    this.menuai.localize(
                       `component.${this._params.entry.domain}.title`
                     ) || this._params.entry.domain,
                 }
@@ -91,16 +91,16 @@ class DialogConfigEntrySystemOptions extends LitElement {
 
         <ha-formfield
           .label=${html`<p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.dialogs.config_entry_system_options.enable_polling_label"
               )}
             </p>
             <p class="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.dialogs.config_entry_system_options.enable_polling_description",
                 {
                   integration:
-                    this.hass.localize(
+                    this.menuai.localize(
                       `component.${this._params.entry.domain}.title`
                     ) || this._params.entry.domain,
                 }
@@ -118,14 +118,14 @@ class DialogConfigEntrySystemOptions extends LitElement {
           @click=${this.closeDialog}
           .disabled=${this._submitting}
         >
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           slot="primaryAction"
           @click=${this._updateEntry}
           .disabled=${this._submitting}
         >
-          ${this.hass.localize("ui.dialogs.config_entry_system_options.update")}
+          ${this.menuai.localize("ui.dialogs.config_entry_system_options.update")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -149,13 +149,13 @@ class DialogConfigEntrySystemOptions extends LitElement {
     data.pref_disable_polling = this._disablePolling;
     try {
       const result = await updateConfigEntry(
-        this.hass,
+        this.menuai,
         this._params!.entry.entry_id,
         data
       );
       if (result.require_restart) {
         await showAlertDialog(this, {
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.dialogs.config_entry_system_options.restart_home_assistant"
           ),
         });

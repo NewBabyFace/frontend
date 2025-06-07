@@ -8,7 +8,7 @@ import { formatLanguageCode } from "../common/language/format_language";
 import { caseInsensitiveStringCompare } from "../common/string/compare";
 import type { FrontendLocaleData } from "../data/translation";
 import { translationMetadata } from "../resources/translations-metadata";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-select";
 import type { HaSelect } from "./ha-select";
@@ -64,7 +64,7 @@ export class HaLanguagePicker extends LitElement {
 
   @property({ type: Array }) public languages?: string[];
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean, reflect: true }) public disabled = false;
 
@@ -91,11 +91,11 @@ export class HaLanguagePicker extends LitElement {
     super.updated(changedProperties);
 
     const localeChanged =
-      changedProperties.has("hass") &&
-      this.hass &&
-      changedProperties.get("hass") &&
-      changedProperties.get("hass").locale.language !==
-        this.hass.locale.language;
+      changedProperties.has("menuai") &&
+      this.menuai &&
+      changedProperties.get("menuai") &&
+      changedProperties.get("menuai").locale.language !==
+        this.menuai.locale.language;
     if (
       changedProperties.has("languages") ||
       changedProperties.has("value") ||
@@ -112,7 +112,7 @@ export class HaLanguagePicker extends LitElement {
         this.languages ?? this._defaultLanguages,
         this.nativeName,
         this.noSort,
-        this.hass?.locale
+        this.menuai?.locale
       );
       const selectedItemIndex = languageOptions.findIndex(
         (option) => option.value === this.value
@@ -137,7 +137,7 @@ export class HaLanguagePicker extends LitElement {
       this.languages ?? this._defaultLanguages,
       this.nativeName,
       this.noSort,
-      this.hass?.locale
+      this.menuai?.locale
     );
 
     const value =
@@ -149,7 +149,7 @@ export class HaLanguagePicker extends LitElement {
     return html`
       <ha-select
         .label=${this.label ??
-        (this.hass?.localize("ui.components.language-picker.language") ||
+        (this.menuai?.localize("ui.components.language-picker.language") ||
           "Language")}
         .value=${value || ""}
         .required=${this.required}
@@ -162,7 +162,7 @@ export class HaLanguagePicker extends LitElement {
       >
         ${languageOptions.length === 0
           ? html`<ha-list-item value=""
-              >${this.hass?.localize(
+              >${this.menuai?.localize(
                 "ui.components.language-picker.no_languages"
               ) || "No languages"}</ha-list-item
             >`

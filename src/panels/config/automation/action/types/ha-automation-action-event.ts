@@ -8,13 +8,13 @@ import "../../../../../components/ha-textfield";
 import "../../../../../components/ha-yaml-editor";
 import type { HaYamlEditor } from "../../../../../components/ha-yaml-editor";
 import type { EventAction } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ActionElement } from "../ha-automation-action-row";
 import { handleChangeEvent } from "../ha-automation-action-row";
 
 @customElement("ha-automation-action-event")
 export class HaEventAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -45,7 +45,7 @@ export class HaEventAction extends LitElement implements ActionElement {
 
     return html`
       <ha-textfield
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.event.event"
         )}
         .value=${event}
@@ -53,8 +53,8 @@ export class HaEventAction extends LitElement implements ActionElement {
         @change=${this._eventChanged}
       ></ha-textfield>
       <ha-yaml-editor
-        .hass=${this.hass}
-        .label=${this.hass.localize(
+        .menuai=${this.menuai}
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.event.event_data"
         )}
         .name=${"event_data"}

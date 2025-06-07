@@ -2,7 +2,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { DateTimeSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-date-input";
 import type { HaDateInput } from "../ha-date-input";
 import "../ha-time-input";
@@ -11,7 +11,7 @@ import type { HaTimeInput } from "../ha-time-input";
 
 @customElement("ha-selector-datetime")
 export class HaDateTimeSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: DateTimeSelector;
 
@@ -37,7 +37,7 @@ export class HaDateTimeSelector extends LitElement {
       <div class="input">
         <ha-date-input
           .label=${this.label}
-          .locale=${this.hass.locale}
+          .locale=${this.menuai.locale}
           .disabled=${this.disabled}
           .required=${this.required}
           .value=${values?.[0]}
@@ -47,7 +47,7 @@ export class HaDateTimeSelector extends LitElement {
         <ha-time-input
           enable-second
           .value=${values?.[1] || "00:00:00"}
-          .locale=${this.hass.locale}
+          .locale=${this.menuai.locale}
           .disabled=${this.disabled}
           .required=${this.required}
           @value-changed=${this._valueChanged}

@@ -10,11 +10,11 @@ import "../../../components/ha-button-menu";
 import "../../../components/ha-list-item";
 import "../../../components/search-input";
 import type { LogProvider } from "../../../data/error_log";
-import { fetchHassioAddonsInfo } from "../../../data/hassio/addon";
+import { fetchmenuaiioAddonsInfo } from "../../../data/menuaiio/addon";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import "./error-log-card";
 import "./system-log-card";
 import type { SystemLogCard } from "./system-log-card";
@@ -22,7 +22,7 @@ import type { SystemLogCard } from "./system-log-card";
 const logProviders: LogProvider[] = [
   {
     key: "core",
-    name: "Home Assistant Core",
+    name: "MenuAI Core",
   },
   {
     key: "supervisor",
@@ -48,7 +48,7 @@ const logProviders: LogProvider[] = [
 
 @customElement("ha-config-logs")
 export class HaConfigLogs extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -90,9 +90,9 @@ export class HaConfigLogs extends LitElement {
             <search-input
               class="header"
               @value-changed=${this._filterChanged}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .filter=${this._filter}
-              .label=${this.hass.localize("ui.panel.config.logs.search")}
+              .label=${this.menuai.localize("ui.panel.config.logs.search")}
             ></search-input>
           </div>
         `
@@ -100,21 +100,21 @@ export class HaConfigLogs extends LitElement {
           <div class="search">
             <search-input
               @value-changed=${this._filterChanged}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .filter=${this._filter}
-              .label=${this.hass.localize("ui.panel.config.logs.search")}
+              .label=${this.menuai.localize("ui.panel.config.logs.search")}
             ></search-input>
           </div>
         `;
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.logs.caption")}
+        .header=${this.menuai.localize("ui.panel.config.logs.caption")}
         back-path="/config/system"
       >
-        ${isComponentLoaded(this.hass, "hassio")
+        ${isComponentLoaded(this.menuai, "menuaiio")
           ? html`
               <ha-button-menu slot="toolbar-icon">
                 <ha-button
@@ -147,7 +147,7 @@ export class HaConfigLogs extends LitElement {
           ${this._selectedLogProvider === "core" && !this._detail
             ? html`
                 <system-log-card
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .header=${this._logProviders.find(
                     (p) => p.key === this._selectedLogProvider
                   )!.name}
@@ -156,7 +156,7 @@ export class HaConfigLogs extends LitElement {
                 ></system-log-card>
               `
             : html`<error-log-card
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .header=${this._logProviders.find(
                   (p) => p.key === this._selectedLogProvider
                 )!.name}
@@ -166,7 +166,7 @@ export class HaConfigLogs extends LitElement {
                 allow-switch
               ></error-log-card>`}
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -181,13 +181,13 @@ export class HaConfigLogs extends LitElement {
   }
 
   private async _init() {
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       await this._getInstalledAddons();
     }
     const providerKey = extractSearchParam("provider");
     if (providerKey) {
       if (
-        isComponentLoaded(this.hass, "hassio") &&
+        isComponentLoaded(this.menuai, "menuaiio") &&
         this._logProviders.find((p) => p.key === providerKey)
       ) {
         this._selectedLogProvider = providerKey;
@@ -195,9 +195,9 @@ export class HaConfigLogs extends LitElement {
         navigate("/config/logs", { replace: true });
         showAlertDialog(this, {
           title:
-            this.hass.localize("ui.panel.config.logs.provider_not_found") ||
+            this.menuai.localize("ui.panel.config.logs.provider_not_found") ||
             "Log provider not found",
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.config.logs.provider_not_available",
             {
               provider:
@@ -212,7 +212,7 @@ export class HaConfigLogs extends LitElement {
 
   private async _getInstalledAddons() {
     try {
-      const addonsInfo = await fetchHassioAddonsInfo(this.hass);
+      const addonsInfo = await fetchmenuaiioAddonsInfo(this.menuai);
       this._logProviders = [
         ...this._logProviders,
         ...addonsInfo.addons

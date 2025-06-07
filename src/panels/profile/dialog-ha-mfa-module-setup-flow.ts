@@ -12,13 +12,13 @@ import type {
   DataEntryFlowStepForm,
 } from "../../data/data_entry_flow";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 let instance = 0;
 
 @customElement("ha-mfa-module-setup-flow")
 class HaMfaModuleSetupFlow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _dialogClosedCallback?: (params: {
     flowFinished: boolean;
@@ -42,11 +42,11 @@ class HaMfaModuleSetupFlow extends LitElement {
     this._opened = true;
 
     const fetchStep = continueFlowId
-      ? this.hass.callWS({
+      ? this.menuai.callWS({
           type: "auth/setup_mfa",
           flow_id: continueFlowId,
         })
-      : this.hass.callWS({
+      : this.menuai.callWS({
           type: "auth/setup_mfa",
           mfa_module_id: mfaModuleId,
         });
@@ -90,13 +90,13 @@ class HaMfaModuleSetupFlow extends LitElement {
                 ? html` <ha-markdown
                     allow-svg
                     breaks
-                    .content=${this.hass.localize(
+                    .content=${this.menuai.localize(
                       `component.auth.mfa_setup.${this._step.handler}.abort.${this._step.reason}`
                     )}
                   ></ha-markdown>`
                 : this._step.type === "create_entry"
                   ? html`<p>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.profile.mfa_setup.step_done",
                         { step: this._step.title || this._step.handler }
                       )}
@@ -105,7 +105,7 @@ class HaMfaModuleSetupFlow extends LitElement {
                     ? html`<ha-markdown
                           allow-svg
                           breaks
-                          .content=${this.hass.localize(
+                          .content=${this.menuai.localize(
                             `component.auth.mfa_setup.${
                               this._step!.handler
                             }.step.${
@@ -115,7 +115,7 @@ class HaMfaModuleSetupFlow extends LitElement {
                           )}
                         ></ha-markdown>
                         <ha-form
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .data=${this._stepData}
                           .schema=${autocompleteLoginFields(
                             this._step.data_schema
@@ -129,7 +129,7 @@ class HaMfaModuleSetupFlow extends LitElement {
         </div>
         ${["abort", "create_entry"].includes(this._step?.type || "")
           ? html`<mwc-button slot="primaryAction" @click=${this.closeDialog}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.profile.mfa_setup.close"
               )}</mwc-button
             >`
@@ -139,7 +139,7 @@ class HaMfaModuleSetupFlow extends LitElement {
               slot="primaryAction"
               .disabled=${this._loading}
               @click=${this._submitStep}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.profile.mfa_setup.submit"
               )}</mwc-button
             >`
@@ -191,7 +191,7 @@ class HaMfaModuleSetupFlow extends LitElement {
 
   protected firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
-    this.hass.loadBackendTranslation("mfa_setup", "auth");
+    this.menuai.loadBackendTranslation("mfa_setup", "auth");
     this.addEventListener("keypress", (ev) => {
       if (ev.key === "Enter") {
         this._submitStep();
@@ -209,7 +209,7 @@ class HaMfaModuleSetupFlow extends LitElement {
 
     const curInstance = this._instance;
 
-    this.hass
+    this.menuai
       .callWS({
         type: "auth/setup_mfa",
         flow_id: this._step!.flow_id,
@@ -259,25 +259,25 @@ class HaMfaModuleSetupFlow extends LitElement {
 
   private _computeStepTitle() {
     return this._step?.type === "abort"
-      ? this.hass.localize("ui.panel.profile.mfa_setup.title_aborted")
+      ? this.menuai.localize("ui.panel.profile.mfa_setup.title_aborted")
       : this._step?.type === "create_entry"
-        ? this.hass.localize("ui.panel.profile.mfa_setup.title_success")
+        ? this.menuai.localize("ui.panel.profile.mfa_setup.title_success")
         : this._step?.type === "form"
-          ? this.hass.localize(
+          ? this.menuai.localize(
               `component.auth.mfa_setup.${this._step.handler}.step.${this._step.step_id}.title`
             )
           : "";
   }
 
   private _computeLabel = (schema) =>
-    this.hass.localize(
+    this.menuai.localize(
       `component.auth.mfa_setup.${this._step!.handler}.step.${
         (this._step! as DataEntryFlowStepForm).step_id
       }.data.${schema.name}`
     ) || schema.name;
 
   private _computeError = (error) =>
-    this.hass.localize(
+    this.menuai.localize(
       `component.auth.mfa_setup.${this._step!.handler}.error.${error}`
     ) || error;
 }

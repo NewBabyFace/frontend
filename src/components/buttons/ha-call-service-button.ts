@@ -1,15 +1,15 @@
 import type { TemplateResult } from "lit";
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 import { showConfirmationDialog } from "../../dialogs/generic/show-dialog-box";
 import "./ha-progress-button";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { fireEvent } from "../../common/dom/fire_event";
 
 @customElement("ha-call-service-button")
 class HaCallServiceButton extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -19,7 +19,7 @@ class HaCallServiceButton extends LitElement {
 
   @property() public service!: string;
 
-  @property({ type: Object }) public target!: HassServiceTarget;
+  @property({ type: Object }) public target!: menuaiServiceTarget;
 
   @property({ type: Object }) public data = {};
 
@@ -52,7 +52,7 @@ class HaCallServiceButton extends LitElement {
       this.shadowRoot!.querySelector("ha-progress-button")!;
 
     try {
-      await this.hass.callService(
+      await this.menuai.callService(
         this.domain,
         this.service,
         this.data,
@@ -67,7 +67,7 @@ class HaCallServiceButton extends LitElement {
       eventData.success = false;
       return;
     } finally {
-      fireEvent(this, "hass-service-called", eventData);
+      fireEvent(this, "menuai-service-called", eventData);
     }
   }
 
@@ -91,11 +91,11 @@ declare global {
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
-    "hass-service-called": {
+  interface menuaiDomEvents {
+    "menuai-service-called": {
       domain: string;
       service: string;
-      target: HassServiceTarget;
+      target: menuaiServiceTarget;
       data: object;
       success: boolean;
     };

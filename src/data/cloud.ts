@@ -1,5 +1,5 @@
 import type { EntityDomainFilter } from "../common/entity/entity_domain_filter";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 type StrictConnectionMode = "disabled" | "guard_page" | "drop_connection";
 
@@ -71,7 +71,7 @@ export interface CloudWebhook {
 }
 
 interface CloudLoginBase {
-  hass: HomeAssistant;
+  menuai: menuai;
   email: string;
   check_connection?: boolean;
 }
@@ -85,68 +85,68 @@ export interface CloudLoginMFA extends CloudLoginBase {
 }
 
 export const cloudLogin = ({
-  hass,
+  menuai,
   ...rest
 }: CloudLoginPassword | CloudLoginMFA) =>
-  hass.callApi<{ success: boolean; cloud_pipeline?: string }>(
+  menuai.callApi<{ success: boolean; cloud_pipeline?: string }>(
     "POST",
     "cloud/login",
     rest
   );
 
-export const cloudLogout = (hass: HomeAssistant) =>
-  hass.callApi("POST", "cloud/logout");
+export const cloudLogout = (menuai: menuai) =>
+  menuai.callApi("POST", "cloud/logout");
 
-export const cloudForgotPassword = (hass: HomeAssistant, email: string) =>
-  hass.callApi("POST", "cloud/forgot_password", {
+export const cloudForgotPassword = (menuai: menuai, email: string) =>
+  menuai.callApi("POST", "cloud/forgot_password", {
     email,
   });
 
 export const cloudRegister = (
-  hass: HomeAssistant,
+  menuai: menuai,
   email: string,
   password: string
 ) =>
-  hass.callApi("POST", "cloud/register", {
+  menuai.callApi("POST", "cloud/register", {
     email,
     password,
   });
 
-export const cloudResendVerification = (hass: HomeAssistant, email: string) =>
-  hass.callApi("POST", "cloud/resend_confirm", {
+export const cloudResendVerification = (menuai: menuai, email: string) =>
+  menuai.callApi("POST", "cloud/resend_confirm", {
     email,
   });
 
-export const fetchCloudStatus = (hass: HomeAssistant) =>
-  hass.callWS<CloudStatus>({ type: "cloud/status" });
+export const fetchCloudStatus = (menuai: menuai) =>
+  menuai.callWS<CloudStatus>({ type: "cloud/status" });
 
-export const createCloudhook = (hass: HomeAssistant, webhookId: string) =>
-  hass.callWS<CloudWebhook>({
+export const createCloudhook = (menuai: menuai, webhookId: string) =>
+  menuai.callWS<CloudWebhook>({
     type: "cloud/cloudhook/create",
     webhook_id: webhookId,
   });
 
-export const deleteCloudhook = (hass: HomeAssistant, webhookId: string) =>
-  hass.callWS({
+export const deleteCloudhook = (menuai: menuai, webhookId: string) =>
+  menuai.callWS({
     type: "cloud/cloudhook/delete",
     webhook_id: webhookId,
   });
 
-export const connectCloudRemote = (hass: HomeAssistant) =>
-  hass.callWS({
+export const connectCloudRemote = (menuai: menuai) =>
+  menuai.callWS({
     type: "cloud/remote/connect",
   });
 
-export const disconnectCloudRemote = (hass: HomeAssistant) =>
-  hass.callWS({
+export const disconnectCloudRemote = (menuai: menuai) =>
+  menuai.callWS({
     type: "cloud/remote/disconnect",
   });
 
-export const fetchCloudSubscriptionInfo = (hass: HomeAssistant) =>
-  hass.callWS<SubscriptionInfo>({ type: "cloud/subscription" });
+export const fetchCloudSubscriptionInfo = (menuai: menuai) =>
+  menuai.callWS<SubscriptionInfo>({ type: "cloud/subscription" });
 
 export const updateCloudPref = (
-  hass: HomeAssistant,
+  menuai: menuai,
   prefs: {
     google_enabled?: CloudPreferences["google_enabled"];
     alexa_enabled?: CloudPreferences["alexa_enabled"];
@@ -159,29 +159,29 @@ export const updateCloudPref = (
     cloud_ice_servers_enabled?: CloudPreferences["cloud_ice_servers_enabled"];
   }
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "cloud/update_prefs",
     ...prefs,
   });
 
-export const removeCloudData = (hass: HomeAssistant) =>
-  hass.callWS({
+export const removeCloudData = (menuai: menuai) =>
+  menuai.callWS({
     type: "cloud/remove_data",
   });
 
 export const updateCloudGoogleEntityConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   disable_2fa: boolean
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "cloud/google_assistant/entities/update",
     entity_id,
     disable_2fa,
   });
 
-export const cloudSyncGoogleAssistant = (hass: HomeAssistant) =>
-  hass.callApi("POST", "cloud/google_actions/sync");
+export const cloudSyncGoogleAssistant = (menuai: menuai) =>
+  menuai.callApi("POST", "cloud/google_actions/sync");
 
-export const fetchSupportPackage = (hass: HomeAssistant) =>
-  hass.callApi<string>("GET", "cloud/support_package");
+export const fetchSupportPackage = (menuai: menuai) =>
+  menuai.callApi<string>("GET", "cloud/support_package");

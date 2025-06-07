@@ -1,17 +1,17 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../components/ha-date-input";
 import "../../../components/ha-time-input";
 import { isUnavailableState, UNAVAILABLE } from "../../../data/entity";
 import { setTimeValue } from "../../../data/time";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-time")
 class MoreInfoTime extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected render() {
     if (!this.stateObj || this.stateObj.state === UNAVAILABLE) {
@@ -23,7 +23,7 @@ class MoreInfoTime extends LitElement {
         .value=${isUnavailableState(this.stateObj.state)
           ? undefined
           : this.stateObj.state}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
         .disabled=${this.stateObj.state === UNAVAILABLE}
         @value-changed=${this._timeChanged}
         @click=${this._stopEventPropagation}
@@ -37,7 +37,7 @@ class MoreInfoTime extends LitElement {
 
   private _timeChanged(ev: CustomEvent<{ value: string }>): void {
     if (ev.detail.value) {
-      setTimeValue(this.hass!, this.stateObj!.entity_id, ev.detail.value);
+      setTimeValue(this.menuai!, this.stateObj!.entity_id, ev.detail.value);
     }
   }
 

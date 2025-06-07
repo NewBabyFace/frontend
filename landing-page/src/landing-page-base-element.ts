@@ -7,9 +7,9 @@ import {
   type LocalizeFunc,
 } from "../../src/common/translations/localize";
 import { computeDirectionStyles } from "../../src/common/util/compute_rtl";
-import { ProvideHassLitMixin } from "../../src/mixins/provide-hass-lit-mixin";
+import { ProvidemenuaiLitMixin } from "../../src/mixins/provide-menuai-lit-mixin";
 import { translationMetadata } from "../../src/resources/translations-metadata";
-import type { HassBaseEl } from "../../src/state/hass-base-mixin";
+import type { menuaiBaseEl } from "../../src/state/menuai-base-mixin";
 import themesMixin from "../../src/state/themes-mixin";
 import type { Constructor, Resources } from "../../src/types";
 import {
@@ -18,7 +18,7 @@ import {
 } from "../../src/util/common-translation";
 
 export class LandingPageBaseElement extends themesMixin(
-  ProvideHassLitMixin(LitElement) as unknown as Constructor<HassBaseEl>
+  ProvidemenuaiLitMixin(LitElement) as unknown as Constructor<menuaiBaseEl>
 ) {
   // Initialized to empty will prevent undefined errors if called before connected to DOM.
   @property({ attribute: false })

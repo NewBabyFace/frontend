@@ -20,7 +20,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { STUB_IMAGE } from "../../cards/hui-picture-entity-card";
 import type { PictureEntityCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
@@ -52,7 +52,7 @@ export class HuiPictureEntityCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: PictureEntityCardConfig;
 
@@ -155,7 +155,7 @@ export class HuiPictureEntityCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -167,11 +167,11 @@ export class HuiPictureEntityCardEditor
       ...this._config,
     };
 
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -189,7 +189,7 @@ export class HuiPictureEntityCardEditor
       config.entity !== this._config?.entity &&
       (computeDomain(config.entity) === "image" ||
         (computeDomain(config.entity) === "person" &&
-          this.hass?.states[config.entity]?.attributes.entity_picture)) &&
+          this.menuai?.states[config.entity]?.attributes.entity_picture)) &&
       config.image === STUB_IMAGE
     ) {
       delete config.image;
@@ -206,13 +206,13 @@ export class HuiPictureEntityCardEditor
       case "tap_action":
       case "hold_action":
       case "double_tap_action":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }
@@ -224,7 +224,7 @@ export class HuiPictureEntityCardEditor
     switch (schema.name) {
       case "aspect_ratio":
         return typeof this._config?.grid_options?.rows === "number"
-          ? this.hass!.localize(
+          ? this.menuai!.localize(
               `ui.panel.lovelace.editor.card.generic.aspect_ratio_ignored`
             )
           : "";

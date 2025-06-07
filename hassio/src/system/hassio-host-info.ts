@@ -16,16 +16,16 @@ import "../../../src/components/ha-settings-row";
 import {
   extractApiErrorMessage,
   ignoreSupervisorError,
-} from "../../../src/data/hassio/common";
-import { fetchHassioHardwareInfo } from "../../../src/data/hassio/hardware";
+} from "../../../src/data/menuaiio/common";
+import { fetchmenuaiioHardwareInfo } from "../../../src/data/menuaiio/hardware";
 import {
   changeHostOptions,
   configSyncOS,
   rebootHost,
   shutdownHost,
-} from "../../../src/data/hassio/host";
-import type { NetworkInfo } from "../../../src/data/hassio/network";
-import { fetchNetworkInfo } from "../../../src/data/hassio/network";
+} from "../../../src/data/menuaiio/host";
+import type { NetworkInfo } from "../../../src/data/menuaiio/network";
+import { fetchNetworkInfo } from "../../../src/data/menuaiio/network";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import {
   showAlertDialog,
@@ -33,20 +33,20 @@ import {
   showPromptDialog,
 } from "../../../src/dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import {
   getValueInPercentage,
   roundWithOneDecimal,
 } from "../../../src/util/calculate";
 import "../components/supervisor-metric";
-import { showHassioDatadiskDialog } from "../dialogs/datadisk/show-dialog-hassio-datadisk";
-import { showHassioHardwareDialog } from "../dialogs/hardware/show-dialog-hassio-hardware";
+import { showmenuaiioDatadiskDialog } from "../dialogs/datadisk/show-dialog-menuaiio-datadisk";
+import { showmenuaiioHardwareDialog } from "../dialogs/hardware/show-dialog-menuaiio-hardware";
 import { showNetworkDialog } from "../dialogs/network/show-dialog-network";
-import { hassioStyle } from "../resources/hassio-style";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
-@customElement("hassio-host-info")
-class HassioHostInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-host-info")
+class menuaiioHostInfo extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -105,10 +105,10 @@ class HassioHostInfo extends LitElement {
               <span slot="description">
                 ${this.supervisor.host.operating_system}
               </span>
-              ${!atLeastVersion(this.hass.config.version, 2021, 12) &&
+              ${!atLeastVersion(this.menuai.config.version, 2021, 12) &&
               this.supervisor.os.update_available
                 ? html`
-                    <a href="/hassio/update-available/os">
+                    <a href="/menuaiio/update-available/os">
                       <mwc-button
                         .label=${this.supervisor.localize("common.show")}
                       >
@@ -254,7 +254,7 @@ class HassioHostInfo extends LitElement {
   }
 
   private _moveDatadisk(): void {
-    showHassioDatadiskDialog(this, {
+    showmenuaiioDatadiskDialog(this, {
       supervisor: this.supervisor,
     });
   }
@@ -262,7 +262,7 @@ class HassioHostInfo extends LitElement {
   private async _showHardware(): Promise<void> {
     let hardware;
     try {
-      hardware = await fetchHassioHardwareInfo(this.hass);
+      hardware = await fetchmenuaiioHardwareInfo(this.menuai);
     } catch (err: any) {
       await showAlertDialog(this, {
         title: this.supervisor.localize(
@@ -272,7 +272,7 @@ class HassioHostInfo extends LitElement {
       });
       return;
     }
-    showHassioHardwareDialog(this, { supervisor: this.supervisor, hardware });
+    showmenuaiioHardwareDialog(this, { supervisor: this.supervisor, hardware });
   }
 
   private async _hostReboot(ev: CustomEvent): Promise<void> {
@@ -292,10 +292,10 @@ class HassioHostInfo extends LitElement {
     }
 
     try {
-      await rebootHost(this.hass);
+      await rebootHost(this.menuai);
     } catch (err: any) {
       // Ignore connection errors, these are all expected
-      if (this.hass.connection.connected && !ignoreSupervisorError(err)) {
+      if (this.menuai.connection.connected && !ignoreSupervisorError(err)) {
         showAlertDialog(this, {
           title: this.supervisor.localize("system.host.failed_to_reboot"),
           text: extractApiErrorMessage(err),
@@ -322,10 +322,10 @@ class HassioHostInfo extends LitElement {
     }
 
     try {
-      await shutdownHost(this.hass);
+      await shutdownHost(this.menuai);
     } catch (err: any) {
       // Ignore connection errors, these are all expected
-      if (this.hass.connection.connected && !ignoreSupervisorError(err)) {
+      if (this.menuai.connection.connected && !ignoreSupervisorError(err)) {
         showAlertDialog(this, {
           title: this.supervisor.localize("system.host.failed_to_shutdown"),
           text: extractApiErrorMessage(err),
@@ -354,7 +354,7 @@ class HassioHostInfo extends LitElement {
 
     if (hostname && hostname !== curHostname) {
       try {
-        await changeHostOptions(this.hass, { hostname });
+        await changeHostOptions(this.menuai, { hostname });
         fireEvent(this, "supervisor-collection-refresh", {
           collection: "host",
         });
@@ -369,7 +369,7 @@ class HassioHostInfo extends LitElement {
 
   private async _importFromUSB(): Promise<void> {
     try {
-      await configSyncOS(this.hass);
+      await configSyncOS(this.menuai);
       fireEvent(this, "supervisor-collection-refresh", {
         collection: "host",
       });
@@ -384,12 +384,12 @@ class HassioHostInfo extends LitElement {
   }
 
   private async _loadData(): Promise<void> {
-    if (atLeastVersion(this.hass.config.version, 2021, 2, 4)) {
+    if (atLeastVersion(this.menuai.config.version, 2021, 2, 4)) {
       fireEvent(this, "supervisor-collection-refresh", {
         collection: "network",
       });
     } else {
-      const network = await fetchNetworkInfo(this.hass);
+      const network = await fetchNetworkInfo(this.menuai);
       fireEvent(this, "supervisor-update", { network });
     }
   }
@@ -397,7 +397,7 @@ class HassioHostInfo extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           height: 100%;
@@ -452,6 +452,6 @@ class HassioHostInfo extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-host-info": HassioHostInfo;
+    "menuaiio-host-info": menuaiioHostInfo;
   }
 }

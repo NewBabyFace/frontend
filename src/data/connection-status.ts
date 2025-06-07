@@ -2,19 +2,19 @@
  * Broadcast connection status updates
  */
 
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import { fireEvent } from "../common/dom/fire_event";
 
 export type ConnectionStatus = "connected" | "auth-invalid" | "disconnected";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "connection-status": ConnectionStatus;
   }
 
   interface GlobalEventHandlersEventMap {
-    "connection-status": HASSDomEvent<ConnectionStatus>;
+    "connection-status": menuaiDomEvent<ConnectionStatus>;
   }
 }
 

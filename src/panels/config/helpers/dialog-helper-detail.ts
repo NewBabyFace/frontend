@@ -32,7 +32,7 @@ import { createSchedule } from "../../../data/schedule";
 import { createTimer } from "../../../data/timer";
 import { showConfigFlowDialog } from "../../../dialogs/config-flow/show-dialog-config-flow";
 import { haStyleDialog, haStyleScrollbar } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import type { Helper, HelperDomain } from "./const";
 import { isHelperDomain } from "./const";
@@ -42,7 +42,7 @@ type HelperCreators = Record<
   HelperDomain,
   {
     create: (
-      hass: HomeAssistant,
+      menuai: menuai,
       // Not properly typed because there is currently a mismatch for this._item between:
       // 1. Type passed to form should be Helper
       // 2. Type received by creator should be MutableParams version
@@ -98,7 +98,7 @@ const HELPERS: HelperCreators = {
 
 @customElement("dialog-helper-detail")
 export class DialogHelperDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _item?: Helper;
 
@@ -129,9 +129,9 @@ export class DialogHelperDetail extends LitElement {
     }
     this._opened = true;
     await this.updateComplete;
-    this.hass.loadFragmentTranslation("config");
-    const flows = await getConfigFlowHandlers(this.hass, ["helper"]);
-    await this.hass.loadBackendTranslation("title", flows, true);
+    this.menuai.loadFragmentTranslation("config");
+    const flows = await getConfigFlowHandlers(this.menuai, ["helper"]);
+    await this.menuai.loadBackendTranslation("title", flows, true);
     // Ensure the titles are loaded before we render the flows.
     this._helperFlows = flows;
   }
@@ -156,7 +156,7 @@ export class DialogHelperDetail extends LitElement {
         <div class="form" @value-changed=${this._valueChanged}>
           ${this._error ? html`<div class="error">${this._error}</div>` : ""}
           ${dynamicElement(`ha-${this._domain}-form`, {
-            hass: this.hass,
+            menuai: this.menuai,
             item: this._item,
             new: true,
           })}
@@ -166,7 +166,7 @@ export class DialogHelperDetail extends LitElement {
           @click=${this._createItem}
           .disabled=${this._submitting}
         >
-          ${this.hass!.localize("ui.panel.config.helpers.dialog.create")}
+          ${this.menuai!.localize("ui.panel.config.helpers.dialog.create")}
         </mwc-button>
         ${this._params?.domain
           ? nothing
@@ -175,7 +175,7 @@ export class DialogHelperDetail extends LitElement {
               @click=${this._goBack}
               .disabled=${this._submitting}
             >
-              ${this.hass!.localize("ui.common.back")}
+              ${this.menuai!.localize("ui.common.back")}
             </mwc-button>`}
       `;
     } else if (this._loading || this._helperFlows === undefined) {
@@ -189,11 +189,11 @@ export class DialogHelperDetail extends LitElement {
 
       content = html`
         <search-input
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           dialogInitialFocus="true"
           .filter=${this._filter}
           @value-changed=${this._filterChanged}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.integrations.search_helper"
           )}
         ></search-input>
@@ -201,7 +201,7 @@ export class DialogHelperDetail extends LitElement {
           class="ha-scrollbar"
           innerRole="listbox"
           itemRoles="option"
-          innerAriaLabel=${this.hass.localize(
+          innerAriaLabel=${this.menuai.localize(
             "ui.panel.config.helpers.dialog.create_helper"
           )}
           rootTabbable
@@ -210,7 +210,7 @@ export class DialogHelperDetail extends LitElement {
           ${items.map(([domain, label]) => {
             // Only OG helpers need to be loaded prior adding one
             const isLoaded =
-              !(domain in HELPERS) || isComponentLoaded(this.hass, domain);
+              !(domain in HELPERS) || isComponentLoaded(this.menuai, domain);
             return html`
               <ha-list-item
                 .disabled=${!isLoaded}
@@ -227,7 +227,7 @@ export class DialogHelperDetail extends LitElement {
                     domain,
                     type: "icon",
                     useFallback: true,
-                    darkOptimized: this.hass.themes?.darkMode,
+                    darkOptimized: this.menuai.themes?.darkMode,
                   })}
                   crossorigin="anonymous"
                   referrerpolicy="no-referrer"
@@ -238,7 +238,7 @@ export class DialogHelperDetail extends LitElement {
                   : html`<ha-tooltip
                       hoist
                       slot="meta"
-                      .content=${this.hass.localize(
+                      .content=${this.menuai.localize(
                         "ui.dialogs.helper_settings.platform_not_loaded",
                         { platform: domain }
                       )}
@@ -262,14 +262,14 @@ export class DialogHelperDetail extends LitElement {
         escapeKeyAction
         .hideActions=${!this._domain}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._domain
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.helpers.dialog.create_platform",
                 {
                   platform:
                     (isHelperDomain(this._domain) &&
-                      this.hass.localize(
+                      this.menuai.localize(
                         `ui.panel.config.helpers.types.${
                           this._domain as HelperDomain
                         }`
@@ -277,7 +277,7 @@ export class DialogHelperDetail extends LitElement {
                     this._domain,
                 }
               )
-            : this.hass.localize("ui.panel.config.helpers.dialog.create_helper")
+            : this.menuai.localize("ui.panel.config.helpers.dialog.create_helper")
         )}
       >
         ${content}
@@ -298,14 +298,14 @@ export class DialogHelperDetail extends LitElement {
       ) as (keyof typeof predefinedHelpers)[]) {
         items.push([
           helper,
-          this.hass.localize(`ui.panel.config.helpers.types.${helper}`) ||
+          this.menuai.localize(`ui.panel.config.helpers.types.${helper}`) ||
             helper,
         ]);
       }
 
       if (flowHelpers) {
         for (const domain of flowHelpers) {
-          items.push([domain, domainToName(this.hass.localize, domain)]);
+          items.push([domain, domainToName(this.menuai.localize, domain)]);
         }
       }
 
@@ -323,7 +323,7 @@ export class DialogHelperDetail extends LitElement {
           }
           return true;
         })
-        .sort((a, b) => stringCompare(a[1], b[1], this.hass.locale.language));
+        .sort((a, b) => stringCompare(a[1], b[1], this.menuai.locale.language));
     }
   );
 
@@ -343,7 +343,7 @@ export class DialogHelperDetail extends LitElement {
     this._error = "";
     try {
       const createdEntity = await HELPERS[this._domain].create(
-        this.hass,
+        this.menuai,
         this._item
       );
       if (this._params?.dialogClosedCallback && createdEntity.id) {
@@ -375,7 +375,7 @@ export class DialogHelperDetail extends LitElement {
     } else {
       showConfigFlowDialog(this, {
         startFlowHandler: domain,
-        manifest: await fetchIntegrationManifest(this.hass, domain),
+        manifest: await fetchIntegrationManifest(this.menuai, domain),
         dialogClosedCallback: this._params!.dialogClosedCallback,
       });
       this.closeDialog();

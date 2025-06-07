@@ -1,14 +1,14 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-interface InputSelectEntityAttributes extends HassEntityAttributeBase {
+interface InputSelectEntityAttributes extends menuaiEntityAttributeBase {
   options: string[];
 }
 
-export interface InputSelectEntity extends HassEntityBase {
+export interface InputSelectEntity extends menuaiEntityBase {
   attributes: InputSelectEntityAttributes;
 }
 
@@ -28,40 +28,40 @@ export interface InputSelectMutableParams {
 }
 
 export const setInputSelectOption = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity: string,
   option: string
 ) =>
-  hass.callService("input_select", "select_option", {
+  menuai.callService("input_select", "select_option", {
     option,
     entity_id: entity,
   });
 
-export const fetchInputSelect = (hass: HomeAssistant) =>
-  hass.callWS<InputSelect[]>({ type: "input_select/list" });
+export const fetchInputSelect = (menuai: menuai) =>
+  menuai.callWS<InputSelect[]>({ type: "input_select/list" });
 
 export const createInputSelect = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: InputSelectMutableParams
 ) =>
-  hass.callWS<InputSelect>({
+  menuai.callWS<InputSelect>({
     type: "input_select/create",
     ...values,
   });
 
 export const updateInputSelect = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<InputSelectMutableParams>
 ) =>
-  hass.callWS<InputSelect>({
+  menuai.callWS<InputSelect>({
     type: "input_select/update",
     input_select_id: id,
     ...updates,
   });
 
-export const deleteInputSelect = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteInputSelect = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "input_select/delete",
     input_select_id: id,
   });

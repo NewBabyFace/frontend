@@ -5,7 +5,7 @@ import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-button";
 import "./ha-icon-button";
 import { blankBeforePercent } from "../common/translations/blank_before_percent";
@@ -14,7 +14,7 @@ import { bytesToString } from "../util/bytes-to-string";
 import type { LocalizeFunc } from "../common/translations/localize";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "file-picked": { files: File[] };
     "files-cleared": undefined;
   }
@@ -22,7 +22,7 @@ declare global {
 
 @customElement("ha-file-upload")
 export class HaFileUpload extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public localize?: LocalizeFunc;
 
@@ -80,7 +80,7 @@ export class HaFileUpload extends LitElement {
   }
 
   public render(): TemplateResult {
-    const localize = this.localize || this.hass!.localize;
+    const localize = this.localize || this.menuai!.localize;
     return html`
       ${this.uploading
         ? html`<div class="container">
@@ -94,8 +94,8 @@ export class HaFileUpload extends LitElement {
               >
               ${this.progress
                 ? html`<div class="progress">
-                    ${this.progress}${this.hass &&
-                    blankBeforePercent(this.hass!.locale)}%
+                    ${this.progress}${this.menuai &&
+                    blankBeforePercent(this.menuai!.locale)}%
                   </div>`
                 : nothing}
             </div>

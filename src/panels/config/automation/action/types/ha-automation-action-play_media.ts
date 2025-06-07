@@ -5,12 +5,12 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-selector/ha-selector-media";
 import type { PlayMediaAction } from "../../../../../data/script";
 import type { MediaSelectorValue } from "../../../../../data/selector";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ActionElement } from "../ha-automation-action-row";
 
 @customElement("ha-automation-action-play_media")
 export class HaPlayMediaAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -39,7 +39,7 @@ export class HaPlayMediaAction extends LitElement implements ActionElement {
   protected render() {
     return html`
       <ha-selector-media
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .value=${this._getSelectorValue(this.action)}
         @value-changed=${this._valueChanged}

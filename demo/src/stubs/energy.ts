@@ -5,10 +5,10 @@ import type {
   EnergySolarForecasts,
   FossilEnergyConsumption,
 } from "../../../src/data/energy";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockEnergy = (hass: MockHomeAssistant) => {
-  hass.mockWS(
+export const mockEnergy = (menuai: Mockmenuai) => {
+  menuai.mockWS(
     "energy/get_prefs",
     (): EnergyPreferences => ({
       energy_sources: [
@@ -86,11 +86,11 @@ export const mockEnergy = (hass: MockHomeAssistant) => {
       ],
     })
   );
-  hass.mockWS(
+  menuai.mockWS(
     "energy/info",
     (): EnergyInfo => ({ cost_sensors: {}, solar_forecast_domains: [] })
   );
-  hass.mockWS(
+  menuai.mockWS(
     "energy/fossil_energy_consumption",
     ({ period }): FossilEnergyConsumption => ({
       start: period === "month" ? 250 : period === "day" ? 10 : 2,
@@ -98,7 +98,7 @@ export const mockEnergy = (hass: MockHomeAssistant) => {
   );
   const todayString = format(startOfToday(), "yyyy-MM-dd");
   const tomorrowString = format(startOfTomorrow(), "yyyy-MM-dd");
-  hass.mockWS(
+  menuai.mockWS(
     "energy/solar_forecast",
     (): EnergySolarForecasts => ({
       solar_forecast: {

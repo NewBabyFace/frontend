@@ -1,5 +1,5 @@
 import type { UnsubscribeFunc } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export enum InclusionState {
   /** The controller isn't doing anything regarding inclusion. */
@@ -453,7 +453,7 @@ export interface RequestedGrant {
 }
 
 export const invokeZWaveCCApi = <T = unknown>(
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   command_class: number,
   endpoint: number | undefined,
@@ -461,7 +461,7 @@ export const invokeZWaveCCApi = <T = unknown>(
   parameters: any[],
   wait_for_result?: boolean
 ): Promise<T> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/invoke_cc_api",
     device_id,
     command_class,
@@ -472,7 +472,7 @@ export const invokeZWaveCCApi = <T = unknown>(
   });
 
 export const fetchZwaveNetworkStatus = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_or_entry_id: {
     device_id?: string;
     entry_id?: string;
@@ -484,7 +484,7 @@ export const fetchZwaveNetworkStatus = (
   if (!device_or_entry_id.device_id && !device_or_entry_id.entry_id) {
     throw new Error("Either device or entry ID should be supplied.");
   }
-  return hass.callWS({
+  return menuai.callWS({
     type: "zwave_js/network_status",
     device_id: device_or_entry_id.device_id,
     entry_id: device_or_entry_id.entry_id,
@@ -492,36 +492,36 @@ export const fetchZwaveNetworkStatus = (
 };
 
 export const fetchZwaveDataCollectionStatus = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<ZWaveJSDataCollectionStatus> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/data_collection_status",
     entry_id,
   });
 
 export const setZwaveDataCollectionPreference = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   opted_in: boolean
 ): Promise<any> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/update_data_collection_preference",
     entry_id,
     opted_in,
   });
 
 export const fetchZwaveProvisioningEntries = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<ZwaveJSProvisioningEntry[]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/get_provisioning_entries",
     entry_id,
   });
 
 export const subscribeAddZwaveNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callbackFunction: (message: any) => void,
   qr_provisioning_information?: QRProvisioningInformation,
@@ -530,7 +530,7 @@ export const subscribeAddZwaveNode = (
   dsk?: string,
   inclusion_strategy: InclusionStrategy = InclusionStrategy.Default
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage((message) => callbackFunction(message), {
+  menuai.connection.subscribeMessage((message) => callbackFunction(message), {
     type: "zwave_js/add_node",
     entry_id: entry_id,
     inclusion_strategy,
@@ -540,25 +540,25 @@ export const subscribeAddZwaveNode = (
     dsk,
   });
 
-export const stopZwaveInclusion = (hass: HomeAssistant, entry_id: string) =>
-  hass.callWS({
+export const stopZwaveInclusion = (menuai: menuai, entry_id: string) =>
+  menuai.callWS({
     type: "zwave_js/stop_inclusion",
     entry_id,
   });
 
-export const stopZwaveExclusion = (hass: HomeAssistant, entry_id: string) =>
-  hass.callWS({
+export const stopZwaveExclusion = (menuai: menuai, entry_id: string) =>
+  menuai.callWS({
     type: "zwave_js/stop_exclusion",
     entry_id,
   });
 
 export const zwaveGrantSecurityClasses = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   securityClasses: SecurityClass[],
   clientSideAuth?: boolean
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/grant_security_classes",
     entry_id,
     securityClasses,
@@ -566,58 +566,58 @@ export const zwaveGrantSecurityClasses = (
   });
 
 export const zwaveTryParseDskFromQrCode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   qr_code_string: string
 ) =>
-  hass.callWS<string | null>({
+  menuai.callWS<string | null>({
     type: "zwave_js/try_parse_dsk_from_qr_code_string",
     entry_id,
     qr_code_string,
   });
 
 export const zwaveValidateDskAndEnterPin = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   pin: string | false
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/validate_dsk_and_enter_pin",
     entry_id,
     pin,
   });
 
 export const zwaveSupportsFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   feature: ZWaveFeature
 ): Promise<{ supported: boolean }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/supports_feature",
     entry_id,
     feature,
   });
 
 export const zwaveParseQrCode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   qr_code_string: string
 ): Promise<QRProvisioningInformation> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/parse_qr_code_string",
     entry_id,
     qr_code_string,
   });
 
 export const lookupZwaveDevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   manufacturerId: number,
   productType: number,
   productId: number,
   applicationVersion?: string
 ): Promise<DeviceConfig> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/lookup_device",
     entry_id,
     manufacturerId,
@@ -627,14 +627,14 @@ export const lookupZwaveDevice = (
   });
 
 export const provisionZwaveSmartStartNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   qr_provisioning_information?: QRProvisioningInformation,
   protocol?: Protocols,
   device_name?: string,
   area_id?: string
 ): Promise<string> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/provision_smart_start_node",
     entry_id,
     qr_provisioning_information,
@@ -644,12 +644,12 @@ export const provisionZwaveSmartStartNode = (
   });
 
 export const unprovisionZwaveSmartStartNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   dsk?: string,
   node_id?: number
 ): Promise<QRProvisioningInformation> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/unprovision_smart_start_node",
     entry_id,
     dsk,
@@ -657,39 +657,39 @@ export const unprovisionZwaveSmartStartNode = (
   });
 
 export const subscribeNewDevices = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callbackFunction: (message: any) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage((message) => callbackFunction(message), {
+  menuai.connection.subscribeMessage((message) => callbackFunction(message), {
     type: "zwave_js/subscribe_new_devices",
     entry_id: entry_id,
   });
 
 export const fetchZwaveNodeStatus = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<ZWaveJSNodeStatus> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/node_status",
     device_id,
   });
 
 export const fetchZwaveNodeCapabilities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<ZWaveJSNodeCapabilities> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/node_capabilities",
     device_id,
   });
 
 export const subscribeZwaveNodeStatus = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   callbackFunction: (message: ZWaveJSNodeStatusUpdatedMessage) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/subscribe_node_status",
@@ -698,34 +698,34 @@ export const subscribeZwaveNodeStatus = (
   );
 
 export const fetchZwaveNodeMetadata = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<ZwaveJSNodeMetadata> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/node_metadata",
     device_id,
   });
 
 export const fetchZwaveNodeAlerts = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<ZwaveJSNodeAlerts> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/node_alerts",
     device_id,
   });
 
 export const fetchZwaveNodeConfigParameters = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<ZWaveJSNodeConfigParams> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/get_config_parameters",
     device_id,
   });
 
 export const setZwaveNodeConfigParameter = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   property: number,
   endpoint: number,
@@ -740,11 +740,11 @@ export const setZwaveNodeConfigParameter = (
     value,
     property_key,
   };
-  return hass.callWS(data);
+  return menuai.callWS(data);
 };
 
 export const setZwaveNodeRawConfigParameter = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   property: number,
   value: number,
@@ -759,15 +759,15 @@ export const setZwaveNodeRawConfigParameter = (
     value_size,
     value_format,
   };
-  return hass.callWS(data);
+  return menuai.callWS(data);
 };
 
 export const getZwaveNodeRawConfigParameter = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   property: number
 ): Promise<number> =>
-  hass
+  menuai
     .callWS<{ value: number }>({
       type: "zwave_js/get_raw_config_parameter",
       device_id,
@@ -776,11 +776,11 @@ export const getZwaveNodeRawConfigParameter = (
     .then((res) => res.value);
 
 export const reinterviewZwaveNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   callbackFunction: (message: ZWaveJSRefreshNodeStatusMessage) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/refresh_node_info",
@@ -789,20 +789,20 @@ export const reinterviewZwaveNode = (
   );
 
 export const rebuildZwaveNodeRoutes = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<boolean> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/rebuild_node_routes",
     device_id,
   });
 
 export const removeFailedZwaveNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   callbackFunction: (message: any) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/remove_failed_node",
@@ -811,29 +811,29 @@ export const removeFailedZwaveNode = (
   );
 
 export const rebuildZwaveNetworkRoutes = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<UnsubscribeFunc> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/begin_rebuilding_routes",
     entry_id,
   });
 
 export const stopRebuildingZwaveNetworkRoutes = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<UnsubscribeFunc> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/stop_rebuilding_routes",
     entry_id,
   });
 
 export const subscribeRebuildZwaveNetworkRoutesProgress = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callbackFunction: (message: ZWaveJSRebuildRoutesStatusMessage) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/subscribe_rebuild_routes_progress",
@@ -842,11 +842,11 @@ export const subscribeRebuildZwaveNetworkRoutesProgress = (
   );
 
 export const subscribeZwaveControllerStatistics = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callbackFunction: (message: ZWaveJSControllerStatisticsUpdatedMessage) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/subscribe_controller_statistics",
@@ -855,11 +855,11 @@ export const subscribeZwaveControllerStatistics = (
   );
 
 export const subscribeZwaveNodeStatistics = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   callbackFunction: (message: ZWaveJSNodeStatisticsUpdatedMessage) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/subscribe_node_statistics",
@@ -868,13 +868,13 @@ export const subscribeZwaveNodeStatistics = (
   );
 
 export const subscribeS2Inclusion = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callbackFunction: (
     message: ZWaveJSS2InclusionValidateDskAndEnterPinMessage
   ) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/subscribe_s2_inclusion",
@@ -883,43 +883,43 @@ export const subscribeS2Inclusion = (
   );
 
 export const fetchZwaveIsNodeFirmwareUpdateInProgress = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<boolean> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/is_node_firmware_update_in_progress",
     device_id,
   });
 
 export const fetchZwaveIsAnyOTAFirmwareUpdateInProgress = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<boolean> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/is_any_ota_firmware_update_in_progress",
     entry_id,
   });
 
 export const fetchZwaveNodeFirmwareUpdateCapabilities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<ZWaveJSNodeFirmwareUpdateCapabilities> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/get_node_firmware_update_capabilities",
     device_id,
   });
 
 export const hardResetController = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<string> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/hard_reset_controller",
     entry_id,
   });
 
 export const uploadFirmwareAndBeginUpdate = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   file: File,
   target?: number
@@ -929,7 +929,7 @@ export const uploadFirmwareAndBeginUpdate = async (
   if (target !== undefined) {
     fd.append("target", target.toString());
   }
-  const resp = await hass.fetchWithAuth(
+  const resp = await menuai.fetchWithAuth(
     `/api/zwave_js/firmware/upload/${device_id}`,
     {
       method: "POST",
@@ -943,7 +943,7 @@ export const uploadFirmwareAndBeginUpdate = async (
 };
 
 export const subscribeZwaveNodeFirmwareUpdate = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   callbackFunction: (
     message:
@@ -952,7 +952,7 @@ export const subscribeZwaveNodeFirmwareUpdate = (
       | ZWaveJSNodeFirmwareUpdateFinishedMessage
   ) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(
+  menuai.connection.subscribeMessage(
     (message: any) => callbackFunction(message),
     {
       type: "zwave_js/subscribe_firmware_update_status",
@@ -961,31 +961,31 @@ export const subscribeZwaveNodeFirmwareUpdate = (
   );
 
 export const abortZwaveNodeFirmwareUpdate = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<UnsubscribeFunc> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/abort_firmware_update",
     device_id,
   });
 
 export const subscribeZwaveNVMBackup = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callbackFunction: (message: any) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(callbackFunction, {
+  menuai.connection.subscribeMessage(callbackFunction, {
     type: "zwave_js/backup_nvm",
     entry_id,
   });
 
 export const restoreZwaveNVM = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   data: string,
   callbackFunction: (message: any) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(callbackFunction, {
+  menuai.connection.subscribeMessage(callbackFunction, {
     type: "zwave_js/restore_nvm",
     entry_id,
     data,
@@ -1011,11 +1011,11 @@ export interface ZWaveJSLogMessage {
 }
 
 export const subscribeZWaveJSLogs = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   callback: (update: ZWaveJSLogUpdate) => void
 ) =>
-  hass.connection.subscribeMessage<ZWaveJSLogUpdate>(callback, {
+  menuai.connection.subscribeMessage<ZWaveJSLogUpdate>(callback, {
     type: "zwave_js/subscribe_log_updates",
     entry_id,
   });
@@ -1029,20 +1029,20 @@ export interface ZWaveJSLogConfig {
 }
 
 export const fetchZWaveJSLogConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<ZWaveJSLogConfig> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/get_log_config",
     entry_id,
   });
 
 export const setZWaveJSLogLevel = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string,
   level: string
 ): Promise<ZWaveJSLogConfig> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/update_log_config",
     entry_id,
     config: { level },
@@ -1053,17 +1053,17 @@ export interface ZWaveJSIntegrationSettings {
 }
 
 export const fetchZwaveIntegrationSettings = (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<ZWaveJSIntegrationSettings> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/get_integration_settings",
   });
 
 export const cancelSecureBootstrapS2 = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entry_id: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "zwave_js/cancel_secure_bootstrap_s2",
     entry_id,
   });

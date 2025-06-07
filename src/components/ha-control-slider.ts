@@ -10,7 +10,7 @@ import { formatNumber } from "../common/number/format_number";
 import { blankBeforeUnit } from "../common/translations/blank_before_unit";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "slider-moved": { value?: number };
   }
 }

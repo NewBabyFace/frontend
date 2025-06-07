@@ -10,12 +10,12 @@ import "../../components/ha-svg-icon";
 import "../../components/ha-button";
 import "../../components/ha-textfield";
 import type { HaTextField } from "../../components/ha-textfield";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { DialogBoxParams } from "./show-dialog-box";
 
 @customElement("dialog-box")
 class DialogBox extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DialogBoxParams;
 
@@ -57,7 +57,7 @@ class DialogBox extends LitElement {
     const dialogTitle =
       this._params.title ||
       (this._params.confirmation &&
-        this.hass.localize("ui.dialogs.generic.default_confirmation_title"));
+        this.menuai.localize("ui.dialogs.generic.default_confirmation_title"));
 
     return html`
       <ha-md-dialog
@@ -109,7 +109,7 @@ class DialogBox extends LitElement {
             >
               ${this._params.dismissText
                 ? this._params.dismissText
-                : this.hass.localize("ui.common.cancel")}
+                : this.menuai.localize("ui.common.cancel")}
             </ha-button>
           `}
           <ha-button
@@ -120,7 +120,7 @@ class DialogBox extends LitElement {
           >
             ${this._params.confirmText
               ? this._params.confirmText
-              : this.hass.localize("ui.common.ok")}
+              : this.menuai.localize("ui.common.ok")}
           </ha-button>
         </div>
       </ha-md-dialog>

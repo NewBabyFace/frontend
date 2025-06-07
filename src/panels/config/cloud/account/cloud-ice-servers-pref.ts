@@ -8,12 +8,12 @@ import "../../../../components/ha-switch";
 import type { HaSwitch } from "../../../../components/ha-switch";
 import type { CloudStatusLoggedIn } from "../../../../data/cloud";
 import { updateCloudPref } from "../../../../data/cloud";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 
 @customElement("cloud-ice-servers-pref")
 export class CloudICEServersPref extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatusLoggedIn;
 
@@ -28,7 +28,7 @@ export class CloudICEServersPref extends LitElement {
     return html`
       <ha-card
         outlined
-        header=${this.hass.localize(
+        header=${this.menuai.localize(
           "ui.panel.config.cloud.account.ice_servers.title"
         )}
       >
@@ -40,7 +40,7 @@ export class CloudICEServersPref extends LitElement {
             class="icon-link"
           >
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.cloud.account.ice_servers.link_learn_how_it_works"
               )}
               .path=${mdiHelpCircle}
@@ -54,7 +54,7 @@ export class CloudICEServersPref extends LitElement {
 
         <div class="card-content">
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.account.ice_servers.info"
             )}
           </p>
@@ -67,7 +67,7 @@ export class CloudICEServersPref extends LitElement {
     const toggle = ev.target as HaSwitch;
 
     try {
-      await updateCloudPref(this.hass, {
+      await updateCloudPref(this.menuai, {
         cloud_ice_servers_enabled: toggle.checked,
       });
       fireEvent(this, "ha-refresh-cloud-status");

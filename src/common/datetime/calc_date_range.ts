@@ -14,7 +14,7 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { calcDate } from "./calc_date";
 import { firstWeekdayIndex } from "./first_weekday";
 
@@ -33,83 +33,83 @@ export type DateRange =
   | "now-24h";
 
 export const calcDateRange = (
-  hass: HomeAssistant,
+  menuai: menuai,
   range: DateRange
 ): [Date, Date] => {
   const today = new Date();
-  const weekStartsOn = firstWeekdayIndex(hass.locale);
+  const weekStartsOn = firstWeekdayIndex(menuai.locale);
   switch (range) {
     case "today":
       return [
-        calcDate(today, startOfDay, hass.locale, hass.config, {
+        calcDate(today, startOfDay, menuai.locale, menuai.config, {
           weekStartsOn,
         }),
-        calcDate(today, endOfDay, hass.locale, hass.config, {
+        calcDate(today, endOfDay, menuai.locale, menuai.config, {
           weekStartsOn,
         }),
       ];
     case "yesterday":
       return [
-        calcDate(addDays(today, -1), startOfDay, hass.locale, hass.config, {
+        calcDate(addDays(today, -1), startOfDay, menuai.locale, menuai.config, {
           weekStartsOn,
         }),
-        calcDate(addDays(today, -1), endOfDay, hass.locale, hass.config, {
+        calcDate(addDays(today, -1), endOfDay, menuai.locale, menuai.config, {
           weekStartsOn,
         }),
       ];
     case "this_week":
       return [
-        calcDate(today, startOfWeek, hass.locale, hass.config, {
+        calcDate(today, startOfWeek, menuai.locale, menuai.config, {
           weekStartsOn,
         }),
-        calcDate(today, endOfWeek, hass.locale, hass.config, {
+        calcDate(today, endOfWeek, menuai.locale, menuai.config, {
           weekStartsOn,
         }),
       ];
     case "this_month":
       return [
-        calcDate(today, startOfMonth, hass.locale, hass.config),
-        calcDate(today, endOfMonth, hass.locale, hass.config),
+        calcDate(today, startOfMonth, menuai.locale, menuai.config),
+        calcDate(today, endOfMonth, menuai.locale, menuai.config),
       ];
     case "this_quarter":
       return [
-        calcDate(today, startOfQuarter, hass.locale, hass.config),
-        calcDate(today, endOfQuarter, hass.locale, hass.config),
+        calcDate(today, startOfQuarter, menuai.locale, menuai.config),
+        calcDate(today, endOfQuarter, menuai.locale, menuai.config),
       ];
     case "this_year":
       return [
-        calcDate(today, startOfYear, hass.locale, hass.config),
-        calcDate(today, endOfYear, hass.locale, hass.config),
+        calcDate(today, startOfYear, menuai.locale, menuai.config),
+        calcDate(today, endOfYear, menuai.locale, menuai.config),
       ];
     case "now-7d":
       return [
-        calcDate(today, subDays, hass.locale, hass.config, 7),
-        calcDate(today, subDays, hass.locale, hass.config, 0),
+        calcDate(today, subDays, menuai.locale, menuai.config, 7),
+        calcDate(today, subDays, menuai.locale, menuai.config, 0),
       ];
     case "now-30d":
       return [
-        calcDate(today, subDays, hass.locale, hass.config, 30),
-        calcDate(today, subDays, hass.locale, hass.config, 0),
+        calcDate(today, subDays, menuai.locale, menuai.config, 30),
+        calcDate(today, subDays, menuai.locale, menuai.config, 0),
       ];
     case "now-12m":
       return [
-        calcDate(subMonths(today, 12), startOfMonth, hass.locale, hass.config),
-        calcDate(subMonths(today, 1), endOfMonth, hass.locale, hass.config),
+        calcDate(subMonths(today, 12), startOfMonth, menuai.locale, menuai.config),
+        calcDate(subMonths(today, 1), endOfMonth, menuai.locale, menuai.config),
       ];
     case "now-1h":
       return [
-        calcDate(today, subHours, hass.locale, hass.config, 1),
-        calcDate(today, subHours, hass.locale, hass.config, 0),
+        calcDate(today, subHours, menuai.locale, menuai.config, 1),
+        calcDate(today, subHours, menuai.locale, menuai.config, 0),
       ];
     case "now-12h":
       return [
-        calcDate(today, subHours, hass.locale, hass.config, 12),
-        calcDate(today, subHours, hass.locale, hass.config, 0),
+        calcDate(today, subHours, menuai.locale, menuai.config, 12),
+        calcDate(today, subHours, menuai.locale, menuai.config, 0),
       ];
     case "now-24h":
       return [
-        calcDate(today, subHours, hass.locale, hass.config, 24),
-        calcDate(today, subHours, hass.locale, hass.config, 0),
+        calcDate(today, subHours, menuai.locale, menuai.config, 24),
+        calcDate(today, subHours, menuai.locale, menuai.config, 0),
       ];
   }
   return [today, today];

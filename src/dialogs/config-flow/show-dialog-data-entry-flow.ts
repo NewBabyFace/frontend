@@ -12,133 +12,133 @@ import type {
   FlowType,
 } from "../../data/data_entry_flow";
 import type { IntegrationManifest } from "../../data/integration";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export interface FlowConfig {
   flowType: FlowType;
 
   showDevices: boolean;
 
-  createFlow(hass: HomeAssistant, handler: string): Promise<DataEntryFlowStep>;
+  createFlow(menuai: menuai, handler: string): Promise<DataEntryFlowStep>;
 
-  fetchFlow(hass: HomeAssistant, flowId: string): Promise<DataEntryFlowStep>;
+  fetchFlow(menuai: menuai, flowId: string): Promise<DataEntryFlowStep>;
 
   handleFlowStep(
-    hass: HomeAssistant,
+    menuai: menuai,
     flowId: string,
     data: Record<string, any>
   ): Promise<DataEntryFlowStep>;
 
-  deleteFlow(hass: HomeAssistant, flowId: string): Promise<unknown>;
+  deleteFlow(menuai: menuai, flowId: string): Promise<unknown>;
 
-  renderAbortHeader?(hass: HomeAssistant, step: DataEntryFlowStepAbort): string;
+  renderAbortHeader?(menuai: menuai, step: DataEntryFlowStepAbort): string;
 
   renderAbortSubheader?(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepAbort
   ): string | TemplateResult;
 
   renderAbortDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepAbort
   ): TemplateResult | string;
 
   renderShowFormStepHeader(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm
   ): string;
 
   renderShowFormStepSubheader?(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm
   ): string | TemplateResult;
 
   renderShowFormStepDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm
   ): TemplateResult | "";
 
   renderShowFormStepFieldLabel(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm,
     field: HaFormSchema,
     options: { path?: string[]; [key: string]: any }
   ): string;
 
   renderShowFormStepFieldHelper(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm,
     field: HaFormSchema,
     options: { path?: string[]; [key: string]: any }
   ): TemplateResult | string;
 
   renderShowFormStepFieldError(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm,
     error: string
   ): string;
 
   renderShowFormStepFieldLocalizeValue(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm,
     key: string
   ): string;
 
   renderShowFormStepSubmitButton(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepForm
   ): string;
 
   renderExternalStepHeader(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepExternal
   ): string;
 
   renderExternalStepDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepExternal
   ): TemplateResult | "";
 
   renderCreateEntryDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepCreateEntry
   ): TemplateResult | "";
 
   renderShowFormProgressHeader(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepProgress
   ): string;
 
   renderShowFormProgressSubheader?(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepProgress
   ): string | TemplateResult;
 
   renderShowFormProgressDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepProgress
   ): TemplateResult | "";
 
-  renderMenuHeader(hass: HomeAssistant, step: DataEntryFlowStepMenu): string;
+  renderMenuHeader(menuai: menuai, step: DataEntryFlowStepMenu): string;
 
   renderMenuSubheader?(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepMenu
   ): string | TemplateResult;
 
   renderMenuDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepMenu
   ): TemplateResult | "";
 
   renderMenuOption(
-    hass: HomeAssistant,
+    menuai: menuai,
     step: DataEntryFlowStepMenu,
     option: string
   ): string;
 
   renderLoadingDescription(
-    hass: HomeAssistant,
+    menuai: menuai,
     loadingReason: LoadingReason,
     handler?: string,
     step?: DataEntryFlowStep | null

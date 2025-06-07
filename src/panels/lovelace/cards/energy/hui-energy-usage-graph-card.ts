@@ -1,5 +1,5 @@
 import { endOfToday, isToday, startOfToday } from "date-fns";
-import type { HassConfig, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiConfig, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -28,7 +28,7 @@ import type { Statistics, StatisticsMetaData } from "../../../../data/recorder";
 import { getStatisticLabel } from "../../../../data/recorder";
 import type { FrontendLocaleData } from "../../../../data/translation";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyUsageGraphCardConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -53,7 +53,7 @@ export class HuiEnergyUsageGraphCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyUsageGraphCardConfig;
 
@@ -67,11 +67,11 @@ export class HuiEnergyUsageGraphCard
 
   @state() private _compareEnd?: Date;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config?.collection_key,
       }).subscribe((data) => this._getStatistics(data)),
     ];
@@ -89,12 +89,12 @@ export class HuiEnergyUsageGraphCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -109,13 +109,13 @@ export class HuiEnergyUsageGraphCard
           })}"
         >
           <ha-chart-base
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._chartData}
             .options=${this._createOptions(
               this._start,
               this._end,
-              this.hass.locale,
-              this.hass.config,
+              this.menuai.locale,
+              this.menuai.config,
               this._compareStart,
               this._compareEnd
             )}
@@ -124,8 +124,8 @@ export class HuiEnergyUsageGraphCard
           ${!this._chartData.some((dataset) => dataset.data!.length)
             ? html`<div class="no-data">
                 ${isToday(this._start)
-                  ? this.hass.localize("ui.panel.lovelace.cards.energy.no_data")
-                  : this.hass.localize(
+                  ? this.menuai.localize("ui.panel.lovelace.cards.energy.no_data")
+                  : this.menuai.localize(
                       "ui.panel.lovelace.cards.energy.no_data_period"
                     )}
               </div>`
@@ -137,13 +137,13 @@ export class HuiEnergyUsageGraphCard
 
   private _formatTotal = (total: number) =>
     total > 0
-      ? this.hass.localize(
+      ? this.menuai.localize(
           "ui.panel.lovelace.cards.energy.energy_usage_graph.total_consumed",
-          { num: formatNumber(total, this.hass.locale) }
+          { num: formatNumber(total, this.menuai.locale) }
         )
-      : this.hass.localize(
+      : this.menuai.localize(
           "ui.panel.lovelace.cards.energy.energy_usage_graph.total_returned",
-          { num: formatNumber(-total, this.hass.locale) }
+          { num: formatNumber(-total, this.menuai.locale) }
         );
 
   private _createOptions = memoizeOne(
@@ -151,7 +151,7 @@ export class HuiEnergyUsageGraphCard
       start: Date,
       end: Date,
       locale: FrontendLocaleData,
-      config: HassConfig,
+      config: menuaiConfig,
       compareStart?: Date,
       compareEnd?: Date
     ): ECOption => {
@@ -270,13 +270,13 @@ export class HuiEnergyUsageGraphCard
     });
 
     const labels = {
-      used_grid: this.hass.localize(
+      used_grid: this.menuai.localize(
         "ui.panel.lovelace.cards.energy.energy_usage_graph.combined_from_grid"
       ),
-      used_solar: this.hass.localize(
+      used_solar: this.menuai.localize(
         "ui.panel.lovelace.cards.energy.energy_usage_graph.consumed_solar"
       ),
-      used_battery: this.hass.localize(
+      used_battery: this.menuai.localize(
         "ui.panel.lovelace.cards.energy.energy_usage_graph.consumed_battery"
       ),
     };
@@ -472,7 +472,7 @@ export class HuiEnergyUsageGraphCard
             type in labels
               ? labels[type]
               : getStatisticLabel(
-                  this.hass,
+                  this.menuai,
                   statId,
                   statisticsMetaData[statId]
                 ),
@@ -487,7 +487,7 @@ export class HuiEnergyUsageGraphCard
           itemStyle: {
             borderColor: getEnergyColor(
               computedStyles,
-              this.hass.themes.darkMode,
+              this.menuai.themes.darkMode,
               false,
               compare,
               colorPropertyMap[type],
@@ -496,7 +496,7 @@ export class HuiEnergyUsageGraphCard
           },
           color: getEnergyColor(
             computedStyles,
-            this.hass.themes.darkMode,
+            this.menuai.themes.darkMode,
             true,
             compare,
             colorPropertyMap[type],

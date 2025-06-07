@@ -9,17 +9,17 @@ import "../components/ha-select";
 import { UNAVAILABLE } from "../data/entity";
 import type { SelectEntity } from "../data/select";
 import { setSelectOption } from "../data/select";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-select")
 class StateCardSelect extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: SelectEntity;
 
   protected render(): TemplateResult {
     return html`
-      <state-badge .hass=${this.hass} .stateObj=${this.stateObj}></state-badge>
+      <state-badge .menuai=${this.menuai} .stateObj=${this.stateObj}></state-badge>
       <ha-select
         .value=${this.stateObj.state}
         .label=${computeStateName(this.stateObj)}
@@ -33,7 +33,7 @@ class StateCardSelect extends LitElement {
         ${this.stateObj.attributes.options.map(
           (option) => html`
             <ha-list-item .value=${option}>
-              ${this.hass.formatEntityState(this.stateObj, option)}
+              ${this.menuai.formatEntityState(this.stateObj, option)}
             </ha-list-item>
           `
         )}
@@ -46,7 +46,7 @@ class StateCardSelect extends LitElement {
     if (option === this.stateObj.state) {
       return;
     }
-    setSelectOption(this.hass, this.stateObj.entity_id, option);
+    setSelectOption(this.menuai, this.stateObj.entity_id, option);
   }
 
   static styles = css`

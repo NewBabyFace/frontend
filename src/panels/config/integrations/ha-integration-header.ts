@@ -6,12 +6,12 @@ import "../../../components/ha-icon-next";
 import "../../../components/ha-svg-icon";
 import type { IntegrationManifest } from "../../../data/integration";
 import { domainToName } from "../../../data/integration";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 
 @customElement("ha-integration-header")
 export class HaIntegrationHeader extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public error?: string;
 
@@ -26,7 +26,7 @@ export class HaIntegrationHeader extends LitElement {
   protected render(): TemplateResult {
     const domainName =
       this.localizedDomainName ||
-      domainToName(this.hass.localize, this.domain, this.manifest);
+      domainToName(this.menuai.localize, this.domain, this.manifest);
 
     return html`
       <div class="header">
@@ -35,7 +35,7 @@ export class HaIntegrationHeader extends LitElement {
           src=${brandsUrl({
             domain: this.domain,
             type: "icon",
-            darkOptimized: this.hass.themes?.darkMode,
+            darkOptimized: this.menuai.themes?.darkMode,
           })}
           crossorigin="anonymous"
           referrerpolicy="no-referrer"
@@ -68,7 +68,7 @@ export class HaIntegrationHeader extends LitElement {
         </div>
         <ha-icon-next
           class="header-button"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.integrations.config_entry.configure"
           )}
         ></ha-icon-next>

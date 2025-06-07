@@ -5,7 +5,7 @@ import { property, state } from "lit/decorators";
 import { fireEvent } from "../../../common/dom/fire_event";
 import type { LovelaceViewElement } from "../../../data/lovelace";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiBadge } from "../badges/hui-badge";
 import "../badges/hui-view-badges";
 import type { HuiCard } from "../cards/hui-card";
@@ -14,7 +14,7 @@ import { replaceCard } from "../editor/config-util";
 import type { Lovelace } from "../types";
 
 export class SideBarView extends LitElement implements LovelaceViewElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -84,7 +84,7 @@ export class SideBarView extends LitElement implements LovelaceViewElement {
   protected render(): TemplateResult {
     return html`
       <hui-view-badges
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .badges=${this.badges}
         .lovelace=${this.lovelace}
         .viewIndex=${this.index}
@@ -96,7 +96,7 @@ export class SideBarView extends LitElement implements LovelaceViewElement {
       ${this.lovelace?.editMode
         ? html`
             <ha-fab
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.lovelace.editor.edit_card.add"
               )}
               extended
@@ -153,7 +153,7 @@ export class SideBarView extends LitElement implements LovelaceViewElement {
         element = card;
       } else {
         element = document.createElement("hui-card-options");
-        element.hass = this.hass;
+        element.menuai = this.menuai;
         element.lovelace = this.lovelace;
         element.path = [this.index!, idx];
         card.preview = true;

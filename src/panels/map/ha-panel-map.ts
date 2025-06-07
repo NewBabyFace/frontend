@@ -9,11 +9,11 @@ import "../../components/ha-menu-button";
 import "../../components/ha-top-app-bar-fixed";
 import "../../components/map/ha-map";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-panel-map")
 class HaPanelMap extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -24,20 +24,20 @@ class HaPanelMap extends LitElement {
       <ha-top-app-bar-fixed>
         <ha-menu-button
           slot="navigationIcon"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
         ></ha-menu-button>
-        <div slot="title">${this.hass.localize("panel.map")}</div>
-        ${!__DEMO__ && this.hass.user?.is_admin
+        <div slot="title">${this.menuai.localize("panel.map")}</div>
+        ${!__DEMO__ && this.menuai.user?.is_admin
           ? html`<ha-icon-button
               slot="actionItems"
-              .label=${this.hass!.localize("ui.panel.map.edit_zones")}
+              .label=${this.menuai!.localize("ui.panel.map.edit_zones")}
               .path=${mdiPencil}
               @click=${this._openZonesEditor}
             ></ha-icon-button>`
           : ""}
         <ha-map
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entities=${this._entities}
           auto-fit
           interactive-zones
@@ -52,18 +52,18 @@ class HaPanelMap extends LitElement {
 
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
-    if (!changedProps.has("hass")) {
+    if (!changedProps.has("menuai")) {
       return;
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    this._getStates(oldHass);
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    this._getStates(oldmenuai);
   }
 
-  private _getStates(oldHass?: HomeAssistant) {
+  private _getStates(oldmenuai?: menuai) {
     let changed = false;
     const personSources = new Set<string>();
     const locationEntities: string[] = [];
-    Object.values(this.hass!.states).forEach((entity) => {
+    Object.values(this.menuai!.states).forEach((entity) => {
       if (
         entity.state === "home" ||
         !("latitude" in entity.attributes) ||
@@ -75,7 +75,7 @@ class HaPanelMap extends LitElement {
       if (computeStateDomain(entity) === "person" && entity.attributes.source) {
         personSources.add(entity.attributes.source);
       }
-      if (oldHass?.states[entity.entity_id] !== entity) {
+      if (oldmenuai?.states[entity.entity_id] !== entity) {
         changed = true;
       }
     });

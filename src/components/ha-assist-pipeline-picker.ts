@@ -6,7 +6,7 @@ import { stopPropagation } from "../common/dom/stop_propagation";
 import { formatLanguageCode } from "../common/language/format_language";
 import type { AssistPipeline } from "../data/assist_pipeline";
 import { listAssistPipelines } from "../data/assist_pipeline";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-list-item";
 import "./ha-select";
 import type { HaSelect } from "./ha-select";
@@ -20,7 +20,7 @@ export class HaAssistPipelinePicker extends LitElement {
 
   @property() public label?: string;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public disabled = false;
 
@@ -44,7 +44,7 @@ export class HaAssistPipelinePicker extends LitElement {
     return html`
       <ha-select
         .label=${this.label ||
-        this.hass!.localize("ui.components.pipeline-picker.pipeline")}
+        this.menuai!.localize("ui.components.pipeline-picker.pipeline")}
         .value=${value}
         .required=${this.required}
         .disabled=${this.disabled}
@@ -56,14 +56,14 @@ export class HaAssistPipelinePicker extends LitElement {
         ${this.includeLastUsed
           ? html`
               <ha-list-item .value=${LAST_USED}>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.components.pipeline-picker.last_used"
                 )}
               </ha-list-item>
             `
           : null}
         <ha-list-item .value=${PREFERRED}>
-          ${this.hass!.localize("ui.components.pipeline-picker.preferred", {
+          ${this.menuai!.localize("ui.components.pipeline-picker.preferred", {
             preferred: this._pipelines.find(
               (pipeline) => pipeline.id === this._preferredPipeline
             )?.name,
@@ -73,7 +73,7 @@ export class HaAssistPipelinePicker extends LitElement {
           (pipeline) =>
             html`<ha-list-item .value=${pipeline.id}>
               ${pipeline.name}
-              (${formatLanguageCode(pipeline.language, this.hass.locale)})
+              (${formatLanguageCode(pipeline.language, this.menuai.locale)})
             </ha-list-item>`
         )}
       </ha-select>
@@ -84,7 +84,7 @@ export class HaAssistPipelinePicker extends LitElement {
     changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(changedProperties);
-    listAssistPipelines(this.hass).then((pipelines) => {
+    listAssistPipelines(this.menuai).then((pipelines) => {
       this._pipelines = pipelines.pipelines;
       this._preferredPipeline = pipelines.preferred_pipeline;
     });
@@ -99,7 +99,7 @@ export class HaAssistPipelinePicker extends LitElement {
   private _changed(ev): void {
     const target = ev.target as HaSelect;
     if (
-      !this.hass ||
+      !this.menuai ||
       target.value === "" ||
       target.value === this.value ||
       (this.value === undefined && target.value === this._default)

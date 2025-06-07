@@ -7,7 +7,7 @@ import "../../../../src/components/chips/ha-assist-chip";
 import "../../../../src/components/chips/ha-input-chip";
 import "../../../../src/components/chips/ha-filter-chip";
 import "../../../../src/components/ha-svg-icon";
-import { mdiHomeAssistant } from "../../../../src/resources/home-assistant-logo-svg";
+import { mdimenuai } from "../../../../src/resources/home-assistant-logo-svg";
 
 const chips: {
   icon?: string;
@@ -17,7 +17,7 @@ const chips: {
     content: "Content",
   },
   {
-    icon: mdiHomeAssistant,
+    icon: mdimenuai,
     content: "Content",
   },
 ];

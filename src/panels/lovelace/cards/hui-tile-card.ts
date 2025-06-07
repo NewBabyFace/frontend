@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
@@ -23,7 +23,7 @@ import "../../../components/tile/ha-tile-info";
 import { cameraUrlWithWidthHeight } from "../../../data/camera";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
 import "../../../state-display/state-display";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../card-features/hui-card-features";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { findEntities } from "../common/find-entities";
@@ -61,14 +61,14 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): TileCardConfig {
     const includeDomains = ["sensor", "light", "switch"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -81,7 +81,7 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: TileCardConfig;
 
@@ -144,7 +144,7 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   private _handleIconAction(ev: CustomEvent) {
@@ -155,17 +155,17 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
       hold_action: this._config!.icon_hold_action,
       double_tap_action: this._config!.icon_double_tap_action,
     };
-    handleAction(this, this.hass!, config, ev.detail.action!);
+    handleAction(this, this.menuai!, config, ev.detail.action!);
   }
 
-  private _getImageUrl(entity: HassEntity): string | undefined {
+  private _getImageUrl(entity: menuaiEntity): string | undefined {
     const entityPicture =
       entity.attributes.entity_picture_local ||
       entity.attributes.entity_picture;
 
     if (!entityPicture) return undefined;
 
-    let imageUrl = this.hass!.hassUrl(entityPicture);
+    let imageUrl = this.menuai!.menuaiUrl(entityPicture);
     if (computeDomain(entity.entity_id) === "camera") {
       imageUrl = cameraUrlWithWidthHeight(imageUrl, 80, 80);
     }
@@ -174,7 +174,7 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
   }
 
   private _computeStateColor = memoizeOne(
-    (entity: HassEntity, color?: string) => {
+    (entity: menuaiEntity, color?: string) => {
       // Use custom color if active
       if (color) {
         return stateActive(entity) ? computeCssColor(color) : undefined;
@@ -245,18 +245,18 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
   });
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
     const entityId = this._config.entity;
-    const stateObj = entityId ? this.hass.states[entityId] : undefined;
+    const stateObj = entityId ? this.menuai.states[entityId] : undefined;
 
     const contentClasses = { vertical: Boolean(this._config.vertical) };
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -271,7 +271,7 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
       : html`
           <state-display
             .stateObj=${stateObj}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .content=${this._config.state_content}
             .name=${this._config.name}
           >
@@ -327,9 +327,9 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
                 slot="icon"
                 .icon=${this._config.icon}
                 .stateObj=${stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               ></ha-state-icon>
-              ${renderTileBadge(stateObj, this.hass)}
+              ${renderTileBadge(stateObj, this.menuai)}
             </ha-tile-icon>
             <ha-tile-info
               id="info"
@@ -340,7 +340,7 @@ export class HuiTileCard extends LitElement implements LovelaceCard {
           ${features.length > 0
             ? html`
                 <hui-card-features
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .context=${this._featureContext}
                   .color=${this._config.color}
                   .features=${features}

@@ -18,11 +18,11 @@ import { isStrategyView } from "../../../../data/lovelace/config/view";
 import type { LovelaceDashboard } from "../../../../data/lovelace/dashboard";
 import { fetchDashboards } from "../../../../data/lovelace/dashboard";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { SelectViewDialogParams } from "./show-select-view-dialog";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "view-selected": {
       view: number;
     };
@@ -31,7 +31,7 @@ declare global {
 
 @customElement("hui-dialog-select-view")
 export class HuiDialogSelectView extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _params?: SelectViewDialogParams;
 
@@ -66,18 +66,18 @@ export class HuiDialogSelectView extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._params.header ||
-            this.hass.localize("ui.panel.lovelace.editor.select_view.header")
+            this.menuai.localize("ui.panel.lovelace.editor.select_view.header")
         )}
       >
         ${this._params.allowDashboardChange
           ? html`<ha-select
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.lovelace.editor.select_view.dashboard_label"
               )}
               .disabled=${!this._dashboards.length}
-              .value=${this._urlPath || this.hass.defaultPanel}
+              .value=${this._urlPath || this.menuai.defaultPanel}
               @selected=${this._dashboardChanged}
               @closed=${stopPropagation}
               fixedMenuPosition
@@ -86,7 +86,7 @@ export class HuiDialogSelectView extends LitElement {
             >
               <ha-list-item
                 value="lovelace"
-                .disabled=${(this.hass.panels.lovelace?.config as any)?.mode ===
+                .disabled=${(this.menuai.panels.lovelace?.config as any)?.mode ===
                 "yaml"}
               >
                 Default
@@ -104,7 +104,7 @@ export class HuiDialogSelectView extends LitElement {
           : ""}
         ${!this._config || (this._config.views || []).length < 1
           ? html`<ha-alert alert-type="error"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 this._config
                   ? "ui.panel.lovelace.editor.select_view.no_views"
                   : "ui.panel.lovelace.editor.select_view.no_config"
@@ -129,7 +129,7 @@ export class HuiDialogSelectView extends LitElement {
                       >
                         <span>
                           ${view.title}${isStrategy
-                            ? ` (${this.hass.localize("ui.panel.lovelace.editor.select_view.strategy_type")})`
+                            ? ` (${this.menuai.localize("ui.panel.lovelace.editor.select_view.strategy_type")})`
                             : nothing}
                         </span>
 
@@ -145,14 +145,14 @@ export class HuiDialogSelectView extends LitElement {
           @click=${this.closeDialog}
           dialogInitialFocus
         >
-          ${this.hass!.localize("ui.common.cancel")}
+          ${this.menuai!.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           slot="primaryAction"
           .disabled=${!this._config || (this._config.views || []).length < 1}
           @click=${this._selectView}
         >
-          ${this._params.actionLabel || this.hass!.localize("ui.common.move")}
+          ${this._params.actionLabel || this.menuai!.localize("ui.common.move")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -160,7 +160,7 @@ export class HuiDialogSelectView extends LitElement {
 
   private async _getDashboards() {
     this._dashboards =
-      this._params!.dashboards || (await fetchDashboards(this.hass));
+      this._params!.dashboards || (await fetchDashboards(this.menuai));
   }
 
   private async _dashboardChanged(ev) {
@@ -175,7 +175,7 @@ export class HuiDialogSelectView extends LitElement {
     this._selectedViewIdx = 0;
     try {
       this._config = (await fetchConfig(
-        this.hass.connection,
+        this.menuai.connection,
         urlPath,
         false
       )) as LovelaceConfig;

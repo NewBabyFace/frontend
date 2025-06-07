@@ -5,7 +5,7 @@ import { DOMAINS_TOGGLE } from "../../../common/const";
 import { applyThemesOnElement } from "../../../common/dom/apply_themes_on_element";
 import { computeDomain } from "../../../common/entity/compute_domain";
 import "../../../components/ha-card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeCardSize } from "../common/compute-card-size";
 import { findEntities } from "../common/find-entities";
 import { processConfigEntities } from "../common/process-config-entities";
@@ -32,13 +32,13 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): EntitiesCardConfig {
     const maxEntities = 3;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -50,7 +50,7 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
 
   @state() private _config?: EntitiesCardConfig;
 
-  private _hass?: HomeAssistant;
+  private _menuai?: menuai;
 
   private _configEntities?: LovelaceRowConfig[];
 
@@ -60,24 +60,24 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
 
   private _footerElement?: LovelaceHeaderFooter;
 
-  set hass(hass: HomeAssistant) {
-    this._hass = hass;
+  set menuai(menuai: menuai) {
+    this._menuai = menuai;
     this.shadowRoot
       ?.querySelectorAll("#states > div > *")
       .forEach((element: unknown) => {
-        (element as LovelaceRow).hass = hass;
+        (element as LovelaceRow).menuai = menuai;
       });
     if (this._headerElement) {
-      this._headerElement.hass = hass;
+      this._headerElement.menuai = menuai;
     }
     if (this._footerElement) {
-      this._footerElement.hass = hass;
+      this._footerElement.menuai = menuai;
     }
     const entitiesToggle = this.shadowRoot?.querySelector(
       "hui-entities-toggle"
     );
     if (entitiesToggle) {
-      (entitiesToggle as any).hass = hass;
+      (entitiesToggle as any).menuai = menuai;
     }
   }
 
@@ -132,8 +132,8 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
         this._config.header
       ) as LovelaceHeaderFooter;
       this._headerElement.type = "header";
-      if (this._hass) {
-        this._headerElement.hass = this._hass;
+      if (this._menuai) {
+        this._headerElement.menuai = this._menuai;
       }
     } else {
       this._headerElement = undefined;
@@ -144,8 +144,8 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
         this._config.footer
       ) as LovelaceHeaderFooter;
       this._footerElement.type = "footer";
-      if (this._hass) {
-        this._footerElement.hass = this._hass;
+      if (this._menuai) {
+        this._footerElement.menuai = this._menuai;
       }
     } else {
       this._footerElement = undefined;
@@ -154,26 +154,26 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this._hass) {
+    if (!this._config || !this._menuai) {
       return;
     }
-    const oldHass = changedProps.get("_hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("_menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | EntitiesCardConfig
       | undefined;
 
     if (
-      (changedProps.has("_hass") &&
-        (!oldHass || oldHass.themes !== this._hass.themes)) ||
+      (changedProps.has("_menuai") &&
+        (!oldmenuai || oldmenuai.themes !== this._menuai.themes)) ||
       (changedProps.has("_config") &&
         (!oldConfig || oldConfig.theme !== this._config.theme))
     ) {
-      applyThemesOnElement(this, this._hass.themes, this._config.theme);
+      applyThemesOnElement(this, this._menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this._config || !this._hass) {
+    if (!this._config || !this._menuai) {
       return nothing;
     }
 
@@ -201,7 +201,7 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
                   ? nothing
                   : html`
                       <hui-entities-toggle
-                        .hass=${this._hass}
+                        .menuai=${this._menuai}
                         .entities=${(
                           this._configEntities!.filter(
                             (conf) => "entity" in conf
@@ -297,8 +297,8 @@ class HuiEntitiesCard extends LitElement implements LovelaceCard {
           ? { ...entityConf, type: "call-service" }
           : entityConf
     );
-    if (this._hass) {
-      element.hass = this._hass;
+    if (this._menuai) {
+      element.menuai = this._menuai;
     }
 
     return html`<div>${element}</div>`;

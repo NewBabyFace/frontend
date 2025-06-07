@@ -5,13 +5,13 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-textfield";
 import type { Action, SequenceAction } from "../../../../../data/script";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../ha-automation-action";
 import type { ActionElement } from "../ha-automation-action-row";
 
 @customElement("ha-automation-action-sequence")
 export class HaSequenceAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -31,7 +31,7 @@ export class HaSequenceAction extends LitElement implements ActionElement {
         .actions=${action.sequence}
         .disabled=${this.disabled}
         @value-changed=${this._actionsChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
       ></ha-automation-action>
     `;
   }

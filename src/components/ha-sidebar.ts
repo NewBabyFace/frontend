@@ -40,7 +40,7 @@ import { showEditSidebarDialog } from "../dialogs/sidebar/show-dialog-edit-sideb
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
 import { actionHandler } from "../panels/lovelace/common/directives/action-handler-directive";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant, PanelInfo, Route } from "../types";
+import type { menuai, PanelInfo, Route } from "../types";
 import "./ha-fade-in";
 import "./ha-icon";
 import "./ha-icon-button";
@@ -139,11 +139,11 @@ const defaultPanelSorter = (
 
 export const computePanels = memoizeOne(
   (
-    panels: HomeAssistant["panels"],
-    defaultPanel: HomeAssistant["defaultPanel"],
+    panels: menuai["panels"],
+    defaultPanel: menuai["defaultPanel"],
     panelsOrder: string[],
     hiddenPanels: string[],
-    locale: HomeAssistant["locale"]
+    locale: menuai["locale"]
   ): [PanelInfo[], PanelInfo[]] => {
     if (!panels) {
       return [[], []];
@@ -180,7 +180,7 @@ export const computePanels = memoizeOne(
 
 @customElement("ha-sidebar")
 class HaSidebar extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -207,10 +207,10 @@ class HaSidebar extends SubscribeMixin(LitElement) {
 
   @query(".tooltip") private _tooltip!: HTMLDivElement;
 
-  public hassSubscribe() {
+  public menuaiSubscribe() {
     return [
       subscribeFrontendUserData(
-        this.hass.connection,
+        this.menuai.connection,
         "sidebar",
         ({ value }) => {
           this._panelOrder = value?.panelOrder;
@@ -227,12 +227,12 @@ class HaSidebar extends SubscribeMixin(LitElement) {
           }
         }
       ),
-      subscribeNotifications(this.hass.connection, (notifications) => {
+      subscribeNotifications(this.menuai.connection, (notifications) => {
         this._notifications = notifications;
       }),
-      ...(this.hass.user?.is_admin
+      ...(this.menuai.user?.is_admin
         ? [
-            subscribeRepairsIssueRegistry(this.hass.connection!, (repairs) => {
+            subscribeRepairsIssueRegistry(this.menuai.connection!, (repairs) => {
               this._issuesCount = repairs.issues.filter(
                 (issue) => !issue.ignored
               ).length;
@@ -243,14 +243,14 @@ class HaSidebar extends SubscribeMixin(LitElement) {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
     // Show the supervisor as being part of configuration
-    const selectedPanel = this.route.path?.startsWith("/hassio/")
+    const selectedPanel = this.route.path?.startsWith("/menuaiio/")
       ? "config"
-      : this.hass.panelUrl;
+      : this.menuai.panelUrl;
 
     // prettier-ignore
     return html`
@@ -280,23 +280,23 @@ class HaSidebar extends SubscribeMixin(LitElement) {
     ) {
       return true;
     }
-    if (!this.hass || !changedProps.has("hass")) {
+    if (!this.menuai || !changedProps.has("menuai")) {
       return false;
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant;
-    if (!oldHass) {
+    const oldmenuai = changedProps.get("menuai") as menuai;
+    if (!oldmenuai) {
       return true;
     }
-    const hass = this.hass;
+    const menuai = this.menuai;
     return (
-      hass.panels !== oldHass.panels ||
-      hass.panelUrl !== oldHass.panelUrl ||
-      hass.user !== oldHass.user ||
-      hass.localize !== oldHass.localize ||
-      hass.locale !== oldHass.locale ||
-      hass.states !== oldHass.states ||
-      hass.defaultPanel !== oldHass.defaultPanel ||
-      hass.connected !== oldHass.connected
+      menuai.panels !== oldmenuai.panels ||
+      menuai.panelUrl !== oldmenuai.panelUrl ||
+      menuai.user !== oldmenuai.user ||
+      menuai.localize !== oldmenuai.localize ||
+      menuai.locale !== oldmenuai.locale ||
+      menuai.states !== oldmenuai.states ||
+      menuai.defaultPanel !== oldmenuai.defaultPanel ||
+      menuai.connected !== oldmenuai.connected
     );
   }
 
@@ -305,18 +305,18 @@ class HaSidebar extends SubscribeMixin(LitElement) {
     if (changedProps.has("alwaysExpand")) {
       toggleAttribute(this, "expanded", this.alwaysExpand);
     }
-    if (!changedProps.has("hass")) {
+    if (!changedProps.has("menuai")) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
     this._calculateCounts();
 
     if (!SUPPORT_SCROLL_IF_NEEDED) {
       return;
     }
-    if (oldHass?.panelUrl !== this.hass.panelUrl) {
+    if (oldmenuai?.panelUrl !== this.menuai.panelUrl) {
       const selectedEl = this.shadowRoot!.querySelector(".selected");
       if (selectedEl) {
         // @ts-ignore
@@ -328,11 +328,11 @@ class HaSidebar extends SubscribeMixin(LitElement) {
   private _calculateCounts = throttle(() => {
     let updateCount = 0;
 
-    for (const entityId of Object.keys(this.hass.states)) {
+    for (const entityId of Object.keys(this.menuai.states)) {
       if (
         entityId.startsWith("update.") &&
-        !this.hass.entities[entityId]?.hidden &&
-        updateCanInstall(this.hass.states[entityId] as UpdateEntity)
+        !this.menuai.entities[entityId]?.hidden &&
+        updateCanInstall(this.menuai.states[entityId] as UpdateEntity)
       ) {
         updateCount++;
       }
@@ -352,15 +352,15 @@ class HaSidebar extends SubscribeMixin(LitElement) {
       ${!this.narrow
         ? html`
             <ha-icon-button
-              .label=${this.hass.localize("ui.sidebar.sidebar_toggle")}
-              .path=${this.hass.dockedSidebar === "docked"
+              .label=${this.menuai.localize("ui.sidebar.sidebar_toggle")}
+              .path=${this.menuai.dockedSidebar === "docked"
                 ? mdiMenuOpen
                 : mdiMenu}
               @action=${this._toggleSidebar}
             ></ha-icon-button>
           `
         : ""}
-      <div class="title">Home Assistant</div>
+      <div class="title">MenuAI</div>
     </div>`;
   }
 
@@ -374,11 +374,11 @@ class HaSidebar extends SubscribeMixin(LitElement) {
     }
 
     const [beforeSpacer, afterSpacer] = computePanels(
-      this.hass.panels,
-      this.hass.defaultPanel,
+      this.menuai.panels,
+      this.menuai.defaultPanel,
       this._panelOrder,
       this._hiddenPanels,
-      this.hass.locale
+      this.menuai.locale
     );
 
     // prettier-ignore
@@ -402,11 +402,11 @@ class HaSidebar extends SubscribeMixin(LitElement) {
     return panels.map((panel) =>
       this._renderPanel(
         panel.url_path,
-        panel.url_path === this.hass.defaultPanel
-          ? panel.title || this.hass.localize("panel.states")
-          : this.hass.localize(`panel.${panel.title}`) || panel.title,
+        panel.url_path === this.menuai.defaultPanel
+          ? panel.title || this.menuai.localize("panel.states")
+          : this.menuai.localize(`panel.${panel.title}`) || panel.title,
         panel.icon,
-        panel.url_path === this.hass.defaultPanel && !panel.icon
+        panel.url_path === this.menuai.defaultPanel && !panel.icon
           ? PANEL_ICONS.lovelace
           : panel.url_path in PANEL_ICONS
             ? PANEL_ICONS[panel.url_path]
@@ -501,7 +501,7 @@ class HaSidebar extends SubscribeMixin(LitElement) {
             `
           : ""}
         <span class="item-text" slot="headline"
-          >${this.hass.localize("ui.notification_drawer.title")}</span
+          >${this.menuai.localize("ui.notification_drawer.title")}</span
         >
         ${this.alwaysExpand && notificationCount > 0
           ? html`<span class="badge" slot="end">${notificationCount}</span>`
@@ -521,20 +521,20 @@ class HaSidebar extends SubscribeMixin(LitElement) {
       >
         <ha-user-badge
           slot="start"
-          .user=${this.hass.user}
-          .hass=${this.hass}
+          .user=${this.menuai.user}
+          .menuai=${this.menuai}
         ></ha-user-badge>
 
         <span class="item-text" slot="headline"
-          >${this.hass.user ? this.hass.user.name : ""}</span
+          >${this.menuai.user ? this.menuai.user.name : ""}</span
         >
       </ha-md-list-item>
     `;
   }
 
   private _renderExternalConfiguration() {
-    return html`${!this.hass.user?.is_admin &&
-    this.hass.auth.external?.config.hasSettingsScreen
+    return html`${!this.menuai.user?.is_admin &&
+    this.menuai.auth.external?.config.menuaiettingsScreen
       ? html`
           <ha-md-list-item
             @click=${this._handleExternalAppConfiguration}
@@ -544,7 +544,7 @@ class HaSidebar extends SubscribeMixin(LitElement) {
           >
             <ha-svg-icon slot="start" .path=${mdiCellphoneCog}></ha-svg-icon>
             <span class="item-text" slot="headline">
-              ${this.hass.localize("ui.sidebar.external_app_configuration")}
+              ${this.menuai.localize("ui.sidebar.external_app_configuration")}
             </span>
           </ha-md-list-item>
         `
@@ -553,7 +553,7 @@ class HaSidebar extends SubscribeMixin(LitElement) {
 
   private _handleExternalAppConfiguration(ev: Event) {
     ev.preventDefault();
-    this.hass.auth.external!.fireMessage({
+    this.menuai.auth.external!.fireMessage({
       type: "config_screen/show",
     });
   }
@@ -655,14 +655,14 @@ class HaSidebar extends SubscribeMixin(LitElement) {
   }
 
   private _handleShowNotificationDrawer() {
-    fireEvent(this, "hass-show-notifications");
+    fireEvent(this, "menuai-show-notifications");
   }
 
   private _toggleSidebar(ev: CustomEvent) {
     if (ev.detail.action !== "tap") {
       return;
     }
-    fireEvent(this, "hass-toggle-menu");
+    fireEvent(this, "menuai-toggle-menu");
   }
 
   static get styles(): CSSResultGroup {

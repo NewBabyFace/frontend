@@ -17,7 +17,7 @@ import {
   disconnectCloudRemote,
   updateCloudPref,
 } from "../../../../data/cloud";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 import { showCloudCertificateDialog } from "../dialog-cloud-certificate/show-dialog-cloud-certificate";
 import { obfuscateUrl } from "../../../../util/url";
@@ -25,7 +25,7 @@ import "../../../../components/ha-copy-textfield";
 
 @customElement("cloud-remote-pref")
 export class CloudRemotePref extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatusLoggedIn;
 
@@ -50,24 +50,24 @@ export class CloudRemotePref extends LitElement {
       return html`
         <ha-card
           outlined
-          header=${this.hass.localize(
+          header=${this.menuai.localize(
             "ui.panel.config.cloud.account.remote.title"
           )}
         >
           <div class="preparing">
             ${remote_certificate_status === "error"
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   "ui.panel.config.cloud.account.remote.cerificate_error"
                 )
               : remote_certificate_status === "loading"
-                ? this.hass.localize(
+                ? this.menuai.localize(
                     "ui.panel.config.cloud.account.remote.cerificate_loading"
                   )
                 : remote_certificate_status === "loaded"
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.cloud.account.remote.cerificate_loaded"
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       "ui.panel.config.cloud.account.remote.access_is_being_prepared"
                     )}
           </div>
@@ -78,7 +78,7 @@ export class CloudRemotePref extends LitElement {
     return html`
       <ha-card
         outlined
-        header=${this.hass.localize(
+        header=${this.menuai.localize(
           "ui.panel.config.cloud.account.remote.title"
         )}
       >
@@ -90,7 +90,7 @@ export class CloudRemotePref extends LitElement {
             class="icon-link"
           >
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.cloud.account.remote.link_learn_how_it_works"
               )}
               .path=${mdiHelpCircle}
@@ -106,7 +106,7 @@ export class CloudRemotePref extends LitElement {
           ${!remote_connected && remote_enabled
             ? html`
                 <ha-alert
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     `ui.panel.config.cloud.account.remote.reconnecting`
                   )}
                 ></ha-alert>
@@ -114,48 +114,48 @@ export class CloudRemotePref extends LitElement {
             : strict_connection === "drop_connection"
               ? html`<ha-alert
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     `ui.panel.config.cloud.account.remote.drop_connection_warning_title`
                   )}
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.panel.config.cloud.account.remote.drop_connection_warning`
                   )}</ha-alert
                 >`
               : nothing}
           <p>
-            ${this.hass.localize("ui.panel.config.cloud.account.remote.info")}
+            ${this.menuai.localize("ui.panel.config.cloud.account.remote.info")}
           </p>
           ${remote_connected
             ? nothing
             : html`
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.account.remote.info_instance_will_be_available"
                   )}
                 </p>
               `}
 
           <ha-copy-textfield
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .value=${`https://${remote_domain}`}
             .maskedValue=${obfuscateUrl(`https://${remote_domain}`)}
-            .label=${this.hass!.localize("ui.panel.config.common.copy_link")}
+            .label=${this.menuai!.localize("ui.panel.config.common.copy_link")}
           ></ha-copy-textfield>
 
           <ha-expansion-panel
             outlined
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.cloud.account.remote.security_options"
             )}
           >
             <ha-settings-row wrap-heading>
               <span slot="heading"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.account.remote.external_activation"
                 )}</span
               >
               <span slot="description"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.account.remote.external_activation_secondary"
                 )}</span
               >
@@ -167,28 +167,28 @@ export class CloudRemotePref extends LitElement {
             <hr />
             <ha-settings-row .narrow=${this.narrow}>
               <span slot="heading"
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.cloud.account.remote.certificate_info"
                 )}</span
               >
               <span slot="description"
                 >${this.cloudStatus!.remote_certificate
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.cloud.account.remote.certificate_expire",
                       {
                         date: formatDate(
                           new Date(
                             this.cloudStatus.remote_certificate.expire_date
                           ),
-                          this.hass.locale,
-                          this.hass.config
+                          this.menuai.locale,
+                          this.menuai.config
                         ),
                       }
                     )
                   : nothing}</span
               >
               <ha-button @click=${this._openCertInfo}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.remote.more_info"
                 )}
               </ha-button>
@@ -210,9 +210,9 @@ export class CloudRemotePref extends LitElement {
 
     try {
       if (toggle.checked) {
-        await connectCloudRemote(this.hass);
+        await connectCloudRemote(this.menuai);
       } else {
-        await disconnectCloudRemote(this.hass);
+        await disconnectCloudRemote(this.menuai);
       }
       fireEvent(this, "ha-refresh-cloud-status");
     } catch (err: any) {
@@ -225,7 +225,7 @@ export class CloudRemotePref extends LitElement {
     const toggle = ev.target as HaSwitch;
 
     try {
-      await updateCloudPref(this.hass, {
+      await updateCloudPref(this.menuai, {
         remote_allow_remote_enable: toggle.checked,
       });
       fireEvent(this, "ha-refresh-cloud-status");

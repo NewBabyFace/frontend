@@ -31,7 +31,7 @@ import {
 } from "../../../data/light";
 import "../../../state-control/ha-state-control-toggle";
 import "../../../state-control/light/ha-state-control-light-brightness";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-control-select-container";
 import "../components/ha-more-info-state-header";
 import "../components/lights/ha-favorite-color-button";
@@ -44,7 +44,7 @@ type MainControl = "brightness" | "color_temp" | "color";
 
 @customElement("more-info-light")
 class MoreInfoLight extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: LightEntity;
 
@@ -74,13 +74,13 @@ class MoreInfoLight extends LitElement {
 
   private get _stateOverride() {
     if (this.stateObj?.attributes.brightness) {
-      return this.hass.formatEntityAttributeValue(this.stateObj!, "brightness");
+      return this.menuai.formatEntityAttributeValue(this.stateObj!, "brightness");
     }
     return undefined;
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -110,7 +110,7 @@ class MoreInfoLight extends LitElement {
 
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .stateOverride=${this._stateOverride}
       ></ha-more-info-state-header>
@@ -119,7 +119,7 @@ class MoreInfoLight extends LitElement {
           ? html`
               <ha-state-control-toggle
                 .stateObj=${this.stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .iconPathOn=${mdiLightbulbOn}
                 .iconPathOff=${mdiLightbulbOff}
               ></ha-state-control-toggle>
@@ -131,7 +131,7 @@ class MoreInfoLight extends LitElement {
                 ? html`
                     <ha-state-control-light-brightness
                       .stateObj=${this.stateObj}
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                     >
                     </ha-state-control-light-brightness>
                   `
@@ -139,7 +139,7 @@ class MoreInfoLight extends LitElement {
               ${supportsColor && this._mainControl === "color"
                 ? html`
                     <light-color-rgb-picker
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${this.stateObj}
                     >
                     </light-color-rgb-picker>
@@ -148,7 +148,7 @@ class MoreInfoLight extends LitElement {
               ${supportsColorTemp && this._mainControl === "color_temp"
                 ? html`
                     <light-color-temp-picker
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${this.stateObj}
                     >
                     </light-color-temp-picker>
@@ -159,7 +159,7 @@ class MoreInfoLight extends LitElement {
                   ? html`
                       <ha-icon-button
                         .disabled=${this.stateObj!.state === UNAVAILABLE}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.more_info_control.light.toggle"
                         )}
                         @click=${this._toggle}
@@ -174,7 +174,7 @@ class MoreInfoLight extends LitElement {
                       <ha-icon-button-toggle
                         .selected=${this._mainControl === "brightness"}
                         .disabled=${this.stateObj!.state === UNAVAILABLE}
-                        .label=${this.hass.formatEntityAttributeName(
+                        .label=${this.menuai.formatEntityAttributeName(
                           this.stateObj,
                           "brightness"
                         )}
@@ -191,7 +191,7 @@ class MoreInfoLight extends LitElement {
                         border-only
                         .selected=${this._mainControl === "color"}
                         .disabled=${this.stateObj!.state === UNAVAILABLE}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.more_info_control.light.color"
                         )}
                         .control=${"color"}
@@ -207,7 +207,7 @@ class MoreInfoLight extends LitElement {
                         border-only
                         .selected=${this._mainControl === "color_temp"}
                         .disabled=${this.stateObj!.state === UNAVAILABLE}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.more_info_control.light.color_temp"
                         )}
                         .control=${"color_temp"}
@@ -222,7 +222,7 @@ class MoreInfoLight extends LitElement {
                       <div class="separator"></div>
                       <ha-icon-button
                         .disabled=${this.stateObj!.state === UNAVAILABLE}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.more_info_control.light.set_white"
                         )}
                         @click=${this._setWhite}
@@ -237,7 +237,7 @@ class MoreInfoLight extends LitElement {
               (this.editMode || hasFavoriteColors)
                 ? html`
                     <ha-more-info-light-favorite-colors
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${this.stateObj}
                       .entry=${this.entry}
                       .editMode=${this.editMode}
@@ -254,7 +254,7 @@ class MoreInfoLight extends LitElement {
           ${supportsEffects && this.stateObj.attributes.effect_list
             ? html`
                 <ha-control-select-menu
-                  .label=${this.hass.formatEntityAttributeName(
+                  .label=${this.menuai.formatEntityAttributeName(
                     this.stateObj,
                     "effect"
                   )}
@@ -268,7 +268,7 @@ class MoreInfoLight extends LitElement {
                   ${this.stateObj.attributes.effect
                     ? html`<ha-attribute-icon
                         slot="icon"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .stateObj=${this.stateObj}
                         attribute="effect"
                         .attributeValue=${this.stateObj.attributes.effect}
@@ -282,12 +282,12 @@ class MoreInfoLight extends LitElement {
                       <ha-list-item .value=${effect} graphic="icon">
                         <ha-attribute-icon
                           slot="graphic"
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .stateObj=${this.stateObj}
                           attribute="effect"
                           .attributeValue=${effect}
                         ></ha-attribute-icon>
-                        ${this.hass.formatEntityAttributeValue(
+                        ${this.menuai.formatEntityAttributeValue(
                           this.stateObj!,
                           "effect",
                           effect
@@ -300,7 +300,7 @@ class MoreInfoLight extends LitElement {
             : nothing}
         </ha-more-info-control-select-container>
         <ha-attributes
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           extra-filters="brightness,color_temp,color_temp_kelvin,white_value,effect_list,effect,hs_color,rgb_color,rgbw_color,rgbww_color,xy_color,min_mireds,max_mireds,min_color_temp_kelvin,max_color_temp_kelvin,entity_id,supported_color_modes,color_mode"
         ></ha-attributes>
@@ -311,13 +311,13 @@ class MoreInfoLight extends LitElement {
   private _toggle = () => {
     const service = this.stateObj?.state === "on" ? "turn_off" : "turn_on";
     forwardHaptic("light");
-    this.hass.callService("light", service, {
+    this.menuai.callService("light", service, {
       entity_id: this.stateObj!.entity_id,
     });
   };
 
   private _setWhite = () => {
-    this.hass.callService("light", "turn_on", {
+    this.menuai.callService("light", "turn_on", {
       entity_id: this.stateObj!.entity_id,
       white: true,
     });
@@ -329,7 +329,7 @@ class MoreInfoLight extends LitElement {
 
     if (!newVal || oldVal === newVal) return;
 
-    this.hass.callService("light", "turn_on", {
+    this.menuai.callService("light", "turn_on", {
       entity_id: this.stateObj!.entity_id,
       effect: newVal,
     });

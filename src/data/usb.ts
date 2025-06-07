@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-export const scanUSBDevices = (hass: HomeAssistant) =>
-  hass.callWS({ type: "usb/scan" });
+export const scanUSBDevices = (menuai: menuai) =>
+  menuai.callWS({ type: "usb/scan" });

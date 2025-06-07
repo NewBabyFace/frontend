@@ -1,6 +1,6 @@
 import type { RequestSelectedDetail } from "@material/mwc-list/mwc-list-item";
 import { mdiDotsVertical, mdiRefresh } from "@mdi/js";
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -14,60 +14,60 @@ import "../../../components/ha-card";
 import "../../../components/ha-check-list-item";
 import "../../../components/ha-list-item";
 import "../../../components/ha-metric";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
 import type {
-  HassioSupervisorInfo,
+  menuaiioSupervisorInfo,
   SupervisorOptions,
-} from "../../../data/hassio/supervisor";
+} from "../../../data/menuaiio/supervisor";
 import {
-  fetchHassioSupervisorInfo,
+  fetchmenuaiioSupervisorInfo,
   reloadSupervisor,
   setSupervisorOption,
-} from "../../../data/hassio/supervisor";
+} from "../../../data/menuaiio/supervisor";
 import {
   checkForEntityUpdates,
   filterUpdateEntitiesWithInstall,
 } from "../../../data/update";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-subpage";
-import type { HomeAssistant } from "../../../types";
+import "../../../layouts/menuai-subpage";
+import type { menuai } from "../../../types";
 import "../dashboard/ha-config-updates";
 import { showJoinBetaDialog } from "./updates/show-dialog-join-beta";
 
 @customElement("ha-config-section-updates")
 class HaConfigSectionUpdates extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
   @state() private _showSkipped = false;
 
-  @state() private _supervisorInfo?: HassioSupervisorInfo;
+  @state() private _supervisorInfo?: menuaiioSupervisorInfo;
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
 
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       this._refreshSupervisorInfo();
     }
   }
 
   protected render(): TemplateResult {
     const canInstallUpdates = this._filterUpdateEntitiesWithInstall(
-      this.hass.states,
+      this.menuai.states,
       this._showSkipped
     );
 
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/system"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.updates.caption")}
+        .header=${this.menuai.localize("ui.panel.config.updates.caption")}
       >
         <div slot="toolbar-icon">
           <ha-icon-button
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.updates.check_updates"
             )}
             .path=${mdiRefresh}
@@ -76,7 +76,7 @@ class HaConfigSectionUpdates extends LitElement {
           <ha-button-menu multi>
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-check-list-item
@@ -84,7 +84,7 @@ class HaConfigSectionUpdates extends LitElement {
               @request-selected=${this._toggleSkipped}
               .selected=${this._showSkipped}
             >
-              ${this.hass.localize("ui.panel.config.updates.show_skipped")}
+              ${this.menuai.localize("ui.panel.config.updates.show_skipped")}
             </ha-check-list-item>
             ${this._supervisorInfo
               ? html`
@@ -94,8 +94,8 @@ class HaConfigSectionUpdates extends LitElement {
                     .disabled=${this._supervisorInfo.channel === "dev"}
                   >
                     ${this._supervisorInfo.channel === "stable"
-                      ? this.hass.localize("ui.panel.config.updates.join_beta")
-                      : this.hass.localize(
+                      ? this.menuai.localize("ui.panel.config.updates.join_beta")
+                      : this.menuai.localize(
                           "ui.panel.config.updates.leave_beta"
                         )}
                   </ha-list-item>
@@ -109,7 +109,7 @@ class HaConfigSectionUpdates extends LitElement {
               ${canInstallUpdates.length
                 ? html`
                     <ha-config-updates
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .narrow=${this.narrow}
                       .updateEntities=${canInstallUpdates}
                       showAll
@@ -117,7 +117,7 @@ class HaConfigSectionUpdates extends LitElement {
                   `
                 : html`
                     <div class="no-updates">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.updates.no_updates"
                       )}
                     </div>
@@ -125,12 +125,12 @@ class HaConfigSectionUpdates extends LitElement {
             </div>
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private async _refreshSupervisorInfo() {
-    this._supervisorInfo = await fetchHassioSupervisorInfo(this.hass);
+    this._supervisorInfo = await fetchmenuaiioSupervisorInfo(this.menuai);
   }
 
   private _toggleSkipped(ev: CustomEvent<RequestSelectedDetail>): void {
@@ -161,10 +161,10 @@ class HaConfigSectionUpdates extends LitElement {
     channel: SupervisorOptions["channel"]
   ): Promise<void> {
     try {
-      await setSupervisorOption(this.hass, {
+      await setSupervisorOption(this.menuai, {
         channel,
       });
-      await reloadSupervisor(this.hass);
+      await reloadSupervisor(this.menuai);
       await this._refreshSupervisorInfo();
     } catch (err: any) {
       showAlertDialog(this, {
@@ -174,11 +174,11 @@ class HaConfigSectionUpdates extends LitElement {
   }
 
   private async _checkUpdates(): Promise<void> {
-    checkForEntityUpdates(this, this.hass);
+    checkForEntityUpdates(this, this.menuai);
   }
 
   private _filterUpdateEntitiesWithInstall = memoizeOne(
-    (entities: HassEntities, showSkipped: boolean) =>
+    (entities: menuaiEntities, showSkipped: boolean) =>
       filterUpdateEntitiesWithInstall(entities, showSkipped)
   );
 

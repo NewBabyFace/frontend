@@ -12,7 +12,7 @@ import type {
 import type { TTSEngine } from "../../data/tts";
 import { getProviderFromTTSMediaSource, getTTSEngine } from "../../data/tts";
 import { buttonLinkStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-textarea";
 import "../ha-language-picker";
 import "../ha-tts-voice-picker";
@@ -26,14 +26,14 @@ export interface TtsMediaPickedEvent {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "tts-picked": TtsMediaPickedEvent;
   }
 }
 
 @customElement("ha-browse-media-tts")
 class BrowseMediaTTS extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public item!: MediaPlayerItem;
 
@@ -59,14 +59,14 @@ class BrowseMediaTTS extends LitElement {
         <div class="card-content">
           <ha-textarea
             autogrow
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.components.media-browser.tts.message"
             )}
             .value=${this._message ||
-            this.hass.localize(
+            this.menuai.localize(
               "ui.components.media-browser.tts.example_message",
               {
-                name: this.hass.user?.name || "Alice",
+                name: this.menuai.user?.name || "Alice",
               }
             )}
           >
@@ -74,14 +74,14 @@ class BrowseMediaTTS extends LitElement {
           ${this._provider?.supported_languages?.length
             ? html` <div class="options">
                 <ha-language-picker
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .languages=${this._provider.supported_languages}
                   .value=${this._language}
                   required
                   @value-changed=${this._languageChanged}
                 ></ha-language-picker>
                 <ha-tts-voice-picker
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .value=${this._voice}
                   .engineId=${this._provider.engine_id}
                   .language=${this._language}
@@ -93,7 +93,7 @@ class BrowseMediaTTS extends LitElement {
         </div>
         <div class="card-actions">
           <mwc-button @click=${this._ttsClicked}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.components.media-browser.tts.action_${this.action}`
             )}
           </mwc-button>
@@ -102,14 +102,14 @@ class BrowseMediaTTS extends LitElement {
       ${this._voice
         ? html`
             <div class="footer">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.components.media-browser.tts.selected_voice_id`
               )}
               <code>${this._voice || "-"}</code>
               <ha-icon-button
                 .path=${mdiContentCopy}
                 @click=${this._copyVoiceId}
-                title=${this.hass.localize(
+                title=${this.menuai.localize(
                   "ui.components.media-browser.tts.copy_voice_id"
                 )}
               ></ha-icon-button>
@@ -144,14 +144,14 @@ class BrowseMediaTTS extends LitElement {
         );
         if (provider !== this._provider?.engine_id) {
           this._provider = undefined;
-          getTTSEngine(this.hass, provider).then((engine) => {
+          getTTSEngine(this.menuai, provider).then((engine) => {
             this._provider = engine.provider;
             if (
               !this._language &&
               engine.provider.supported_languages?.length
             ) {
               const langRegionCode =
-                `${this.hass.config.language}-${this.hass.config.country}`.toLowerCase();
+                `${this.menuai.config.language}-${this.menuai.config.country}`.toLowerCase();
               const countryLang = engine.provider.supported_languages.find(
                 (lang) => lang.toLowerCase() === langRegionCode
               );
@@ -162,13 +162,13 @@ class BrowseMediaTTS extends LitElement {
               this._language = engine.provider.supported_languages?.find(
                 (lang) =>
                   lang.substring(0, 2) ===
-                  this.hass.config.language.substring(0, 2)
+                  this.menuai.config.language.substring(0, 2)
               );
             }
           });
 
           if (provider === "cloud") {
-            fetchCloudStatus(this.hass).then((status) => {
+            fetchCloudStatus(this.menuai).then((status) => {
               if (status.logged_in) {
                 this._language = status.prefs.tts_default_voice[0];
               }
@@ -224,7 +224,7 @@ class BrowseMediaTTS extends LitElement {
     ev.preventDefault();
     await copyToClipboard(this._voice);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 

@@ -20,14 +20,14 @@ import {
   isCustomIntegrationError,
 } from "../../../data/system_log";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { showToast } from "../../../util/toast";
 import type { SystemLogDetailDialogParams } from "./show-dialog-system-log-detail";
 import { formatSystemLogTime } from "./util";
 
 class DialogSystemLogDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: SystemLogDetailDialogParams;
 
@@ -69,9 +69,9 @@ class DialogSystemLogDetail extends LitElement {
         // Custom components with our official docs should not link to our docs
         !this._manifest.documentation.includes("://www.home-assistant.io"));
 
-    const title = this.hass.localize("ui.panel.config.logs.details", {
+    const title = this.menuai.localize("ui.panel.config.logs.details", {
       level: html`<span class=${item.level}
-        >${this.hass.localize(`ui.panel.config.logs.level.${item.level}`)}</span
+        >${this.menuai.localize(`ui.panel.config.logs.level.${item.level}`)}</span
       >`,
     });
 
@@ -81,7 +81,7 @@ class DialogSystemLogDetail extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">${title}</span>
@@ -89,30 +89,30 @@ class DialogSystemLogDetail extends LitElement {
             id="copy"
             @click=${this._copyLog}
             slot="actionItems"
-            .label=${this.hass.localize("ui.panel.config.logs.copy")}
+            .label=${this.menuai.localize("ui.panel.config.logs.copy")}
             .path=${mdiContentCopy}
           ></ha-icon-button>
         </ha-dialog-header>
         ${this.isCustomIntegration
           ? html`<ha-alert alert-type="warning">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.logs.error_from_custom_integration"
               )}
             </ha-alert>`
           : ""}
         <div class="contents" tabindex="-1" dialogInitialFocus>
           <p>
-            ${this.hass.localize("ui.panel.config.logs.detail.logger")}:
+            ${this.menuai.localize("ui.panel.config.logs.detail.logger")}:
             ${item.name}<br />
-            ${this.hass.localize("ui.panel.config.logs.detail.source")}:
+            ${this.menuai.localize("ui.panel.config.logs.detail.source")}:
             ${item.source.join(":")}
             ${integration
               ? html`
                   <br />
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.logs.detail.integration"
                   )}:
-                  ${domainToName(this.hass.localize, integration)}
+                  ${domainToName(this.menuai.localize, integration)}
                   ${!this._manifest ||
                   // Can happen with custom integrations
                   !showDocumentation
@@ -121,13 +121,13 @@ class DialogSystemLogDetail extends LitElement {
                         (<a
                           href=${this._manifest.is_built_in
                             ? documentationUrl(
-                                this.hass,
+                                this.menuai,
                                 `/integrations/${this._manifest.domain}`
                               )
                             : this._manifest.documentation}
                           target="_blank"
                           rel="noreferrer"
-                          >${this.hass.localize(
+                          >${this.menuai.localize(
                             "ui.panel.config.logs.detail.documentation"
                           )}</a
                         >${this._manifest.is_built_in ||
@@ -140,7 +140,7 @@ class DialogSystemLogDetail extends LitElement {
                                 )}
                                 target="_blank"
                                 rel="noreferrer"
-                                >${this.hass.localize(
+                                >${this.menuai.localize(
                                   "ui.panel.config.logs.detail.issues"
                                 )}</a
                               >`
@@ -151,15 +151,15 @@ class DialogSystemLogDetail extends LitElement {
             <br />
             ${item.count > 0
               ? html`
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.logs.detail.first_occurred"
                   )}:
                   ${formatSystemLogTime(
                     item.first_occurred,
-                    this.hass!.locale,
-                    this.hass!.config
+                    this.menuai!.locale,
+                    this.menuai!.config
                   )}
-                  (${this.hass.localize(
+                  (${this.menuai.localize(
                     "ui.panel.config.logs.detail.number_of_occurrences",
                     {
                       count: item.count,
@@ -167,11 +167,11 @@ class DialogSystemLogDetail extends LitElement {
                   )}) <br />
                 `
               : ""}
-            ${this.hass.localize("ui.panel.config.logs.detail.last_logged")}:
+            ${this.menuai.localize("ui.panel.config.logs.detail.last_logged")}:
             ${formatSystemLogTime(
               item.timestamp,
-              this.hass!.locale,
-              this.hass!.config
+              this.menuai!.locale,
+              this.menuai!.config
             )}
           </p>
           ${item.message.length > 1
@@ -195,7 +195,7 @@ class DialogSystemLogDetail extends LitElement {
 
   private async _fetchManifest(integration: string) {
     try {
-      this._manifest = await fetchIntegrationManifest(this.hass, integration);
+      this._manifest = await fetchIntegrationManifest(this.menuai, integration);
     } catch (_err: any) {
       // Ignore if loading manifest fails. Probably bad JSON in manifest
     }
@@ -210,7 +210,7 @@ class DialogSystemLogDetail extends LitElement {
 
     if (this.isCustomIntegration) {
       text =
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.logs.error_from_custom_integration"
         ) +
         "\n\n" +
@@ -219,7 +219,7 @@ class DialogSystemLogDetail extends LitElement {
 
     await copyToClipboard(text);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 

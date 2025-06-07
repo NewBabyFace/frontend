@@ -22,12 +22,12 @@ import {
   showConfirmationDialog,
 } from "../../../../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { MatterManageFabricsDialogParams } from "./show-dialog-matter-manage-fabrics";
 
 @customElement("dialog-matter-manage-fabrics")
 class DialogMatterManageFabrics extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device_id?: string;
 
@@ -51,12 +51,12 @@ class DialogMatterManageFabrics extends LitElement {
         hideActions
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.matter.manage_fabrics.title")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.matter.manage_fabrics.title")
         )}
       >
         <p>
-          ${this.hass.localize("ui.panel.config.matter.manage_fabrics.fabrics")}
+          ${this.menuai.localize("ui.panel.config.matter.manage_fabrics.fabrics")}
         </p>
         ${this._nodeDiagnostics
           ? html`<ha-list>
@@ -93,7 +93,7 @@ class DialogMatterManageFabrics extends LitElement {
 
     try {
       this._nodeDiagnostics = await getMatterNodeDiagnostics(
-        this.hass,
+        this.menuai,
         this.device_id
       );
     } catch (_err: any) {
@@ -109,11 +109,11 @@ class DialogMatterManageFabrics extends LitElement {
     const fabricName =
       fabric.vendor_name || fabric.fabric_label || fabric.vendor_id.toString();
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.matter.manage_fabrics.remove_fabric_confirm_header",
         { fabric: fabricName }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.matter.manage_fabrics.remove_fabric_confirm_text",
         { fabric: fabricName }
       ),
@@ -125,15 +125,15 @@ class DialogMatterManageFabrics extends LitElement {
     }
 
     try {
-      await removeMatterFabric(this.hass, this.device_id!, fabric.fabric_index);
+      await removeMatterFabric(this.menuai, this.device_id!, fabric.fabric_index);
       this._fetchNodeDetails();
     } catch (_err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.matter.manage_fabrics.remove_fabric_failed_header",
           { fabric: fabricName }
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.matter.manage_fabrics.remove_fabric_failed_text"
         ),
       });

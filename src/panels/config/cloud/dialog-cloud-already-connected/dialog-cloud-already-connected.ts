@@ -9,13 +9,13 @@ import "../../../../components/ha-button";
 import "../../../../components/ha-icon-button";
 import { createCloseHeading } from "../../../../components/ha-dialog";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { CloudAlreadyConnectedParams as CloudAlreadyConnectedDialogParams } from "./show-dialog-cloud-already-connected";
 import { obfuscateUrl } from "../../../../util/url";
 
 @customElement("dialog-cloud-already-connected")
 class DialogCloudAlreadyConnected extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _params?: CloudAlreadyConnectedDialogParams;
 
@@ -43,20 +43,20 @@ class DialogCloudAlreadyConnected extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             "ui.panel.config.cloud.dialog_already_connected.heading"
           )
         )}
       >
         <div class="intro">
           <span>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.dialog_already_connected.description"
             )}
           </span>
           <b>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.cloud.dialog_already_connected.other_home_assistant"
             )}
           </b>
@@ -65,7 +65,7 @@ class DialogCloudAlreadyConnected extends LitElement {
           ${details.name
             ? html`<div class="instance-detail">
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.dialog_already_connected.instance_name"
                   )}:
                 </span>
@@ -75,7 +75,7 @@ class DialogCloudAlreadyConnected extends LitElement {
           ${details.version
             ? html`<div class="instance-detail">
                 <span>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.cloud.dialog_already_connected.instance_version"
                   )}:
                 </span>
@@ -84,7 +84,7 @@ class DialogCloudAlreadyConnected extends LitElement {
             : nothing}
           <div class="instance-detail">
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.cloud.dialog_already_connected.ip_address"
               )}:
             </span>
@@ -97,7 +97,7 @@ class DialogCloudAlreadyConnected extends LitElement {
 
               <ha-icon-button
                 class="toggle-unmasked-url"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   `ui.panel.config.cloud.dialog_already_connected.obfuscated_ip.${this._obfuscateIp ? "hide" : "show"}`
                 )}
                 @click=${this._toggleObfuscateIp}
@@ -107,35 +107,35 @@ class DialogCloudAlreadyConnected extends LitElement {
           </div>
           <div class="instance-detail">
             <span>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.cloud.dialog_already_connected.connected_at"
               )}:
             </span>
             <span>
               ${formatDateTime(
                 new Date(details.connected_at),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )}
             </span>
           </div>
         </div>
         <ha-alert
           alert-type="info"
-          .title=${this.hass.localize(
+          .title=${this.menuai.localize(
             "ui.panel.config.cloud.dialog_already_connected.info_backups.title"
           )}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.cloud.dialog_already_connected.info_backups.description"
           )}
         </ha-alert>
 
         <ha-button @click=${this.closeDialog} slot="secondaryAction">
-          ${this.hass!.localize("ui.common.cancel")}
+          ${this.menuai!.localize("ui.common.cancel")}
         </ha-button>
         <ha-button @click=${this._logInHere} slot="primaryAction">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.config.cloud.dialog_already_connected.login_here"
           )}
         </ha-button>

@@ -12,11 +12,11 @@ import {
 } from "../../../../../../data/zwave_js";
 import { SubscribeMixin } from "../../../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 
 @customElement("ha-device-info-zwave_js")
 export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -38,7 +38,7 @@ export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
       return;
     }
 
-    const configEntries = await getConfigEntries(this.hass, {
+    const configEntries = await getConfigEntries(this.menuai, {
       domain: "zwave_js",
     });
 
@@ -54,7 +54,7 @@ export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
 
     this._configEntry = configEntry;
 
-    this._node = await fetchZwaveNodeStatus(this.hass, this.device.id);
+    this._node = await fetchZwaveNodeStatus(this.menuai, this.device.id);
   }
 
   protected render() {
@@ -63,7 +63,7 @@ export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
     }
     return html`
       <ha-expansion-panel
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.zwave_js.device_info.zwave_info"
         )}
       >
@@ -71,7 +71,7 @@ export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
           ${this._multipleConfigEntries
             ? html`
                 <div>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.common.source"
                   )}:
                   ${this._configEntry!.title}
@@ -79,7 +79,7 @@ export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
               `
             : nothing}
           <div>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.device_info.node_id"
             )}:
             ${this._node.node_id}
@@ -87,41 +87,41 @@ export class HaDeviceInfoZWaveJS extends SubscribeMixin(LitElement) {
           ${!this._node.is_controller_node
             ? html`
                 <div>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.device_info.node_ready"
                   )}:
                   ${this._node.ready
-                    ? this.hass.localize("ui.common.yes")
-                    : this.hass.localize("ui.common.no")}
+                    ? this.menuai.localize("ui.common.yes")
+                    : this.menuai.localize("ui.common.no")}
                 </div>
                 <div>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.device_info.highest_security"
                   )}:
                   ${this._node.highest_security_class !== null
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         `ui.panel.config.zwave_js.security_classes.${
                           SecurityClass[this._node.highest_security_class]
                         }.title`
                       )
                     : this._node.is_secure === false
-                      ? this.hass.localize(
+                      ? this.menuai.localize(
                           "ui.panel.config.zwave_js.security_classes.none.title"
                         )
-                      : this.hass.localize(
+                      : this.menuai.localize(
                           "ui.panel.config.zwave_js.device_info.unknown"
                         )}
                 </div>
                 <div>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zwave_js.device_info.zwave_plus"
                   )}:
                   ${this._node.zwave_plus_version
-                    ? this.hass.localize(
+                    ? this.menuai.localize(
                         "ui.panel.config.zwave_js.device_info.zwave_plus_version",
                         { version: this._node.zwave_plus_version }
                       )
-                    : this.hass.localize("ui.common.no")}
+                    : this.menuai.localize("ui.common.no")}
                 </div>
               `
             : nothing}

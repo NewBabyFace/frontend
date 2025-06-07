@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import {
   differenceInMonths,
   subHours,
@@ -54,7 +54,7 @@ export function getCommonOptions(
   start: Date,
   end: Date,
   locale: FrontendLocaleData,
-  config: HassConfig,
+  config: menuaiConfig,
   unit?: string,
   compareStart?: Date,
   compareEnd?: Date,
@@ -137,7 +137,7 @@ export function getCommonOptions(
 function formatTooltip(
   params: CallbackDataParams[],
   locale: FrontendLocaleData,
-  config: HassConfig,
+  config: menuaiConfig,
   dayDifference: number,
   compare: boolean | null,
   unit?: string,

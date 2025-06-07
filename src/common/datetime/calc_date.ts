@@ -12,7 +12,7 @@ import {
   addDays,
 } from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import type { FrontendLocaleData } from "../../data/translation";
 import { TimeZone } from "../../data/translation";
 
@@ -34,7 +34,7 @@ export const calcDate = (
   date: Date,
   fn: (date: Date, options?: any) => Date,
   locale: FrontendLocaleData,
-  config: HassConfig,
+  config: menuaiConfig,
   options?
 ) =>
   locale.time_zone === TimeZone.server
@@ -45,7 +45,7 @@ export const calcDateProperty = (
   date: Date,
   fn: (date: Date, options?: any) => boolean | number,
   locale: FrontendLocaleData,
-  config: HassConfig,
+  config: menuaiConfig,
   options?
 ) =>
   locale.time_zone === TimeZone.server
@@ -57,7 +57,7 @@ export const calcDateDifferenceProperty = (
   startDate: Date,
   fn: (date: Date, options?: any) => boolean | number,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) =>
   calcDateProperty(
     endDate,

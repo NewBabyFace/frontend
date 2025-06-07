@@ -1,13 +1,13 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 type ResultCache<T> = Record<string, Promise<T> | undefined>;
 
 /**
  * Call a function with result caching per entity.
- * @param cacheKey key to store the cache on hass object
+ * @param cacheKey key to store the cache on menuai object
  * @param cacheTime time to cache the results
  * @param func function to fetch the data
- * @param hass Home Assistant object
+ * @param menuai MenuAI object
  * @param entityId entity to fetch data for
  * @param args extra arguments to pass to the function to fetch the data
  * @returns
@@ -15,15 +15,15 @@ type ResultCache<T> = Record<string, Promise<T> | undefined>;
 export const timeCacheEntityPromiseFunc = async <T>(
   cacheKey: string,
   cacheTime: number,
-  func: (hass: HomeAssistant, entityId: string, ...args: any[]) => Promise<T>,
-  hass: HomeAssistant,
+  func: (menuai: menuai, entityId: string, ...args: any[]) => Promise<T>,
+  menuai: menuai,
   entityId: string,
   ...args: any[]
 ): Promise<T> => {
-  let cache: ResultCache<T> | undefined = (hass as any)[cacheKey];
+  let cache: ResultCache<T> | undefined = (menuai as any)[cacheKey];
 
   if (!cache) {
-    cache = hass[cacheKey] = {};
+    cache = menuai[cacheKey] = {};
   }
 
   const lastResult = cache[entityId];
@@ -32,7 +32,7 @@ export const timeCacheEntityPromiseFunc = async <T>(
     return lastResult;
   }
 
-  const result = func(hass, entityId, ...args);
+  const result = func(menuai, entityId, ...args);
   cache[entityId] = result;
 
   result.then(

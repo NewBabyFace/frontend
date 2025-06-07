@@ -8,17 +8,17 @@ import "../../../src/components/ha-alert";
 import "../../../src/components/ha-card";
 import "../../../src/components/ha-settings-row";
 import "../../../src/components/ha-switch";
-import type { HassioStats } from "../../../src/data/hassio/common";
+import type { menuaiioStats } from "../../../src/data/menuaiio/common";
 import {
   extractApiErrorMessage,
-  fetchHassioStats,
-} from "../../../src/data/hassio/common";
-import type { SupervisorOptions } from "../../../src/data/hassio/supervisor";
+  fetchmenuaiioStats,
+} from "../../../src/data/menuaiio/common";
+import type { SupervisorOptions } from "../../../src/data/menuaiio/supervisor";
 import {
   reloadSupervisor,
   restartSupervisor,
   setSupervisorOption,
-} from "../../../src/data/hassio/supervisor";
+} from "../../../src/data/menuaiio/supervisor";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import {
   showAlertDialog,
@@ -30,19 +30,19 @@ import {
   UNSUPPORTED_REASON_URL,
 } from "../../../src/panels/config/repairs/dialog-system-information";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import { bytesToString } from "../../../src/util/bytes-to-string";
 import { documentationUrl } from "../../../src/util/documentation-url";
 import "../components/supervisor-metric";
-import { hassioStyle } from "../resources/hassio-style";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
-@customElement("hassio-supervisor-info")
-class HassioSupervisorInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-supervisor-info")
+class menuaiioSupervisorInfo extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @state() private _metrics?: HassioStats;
+  @state() private _metrics?: menuaiioStats;
 
   protected render(): TemplateResult | undefined {
     const metrics = [
@@ -77,10 +77,10 @@ class HassioSupervisorInfo extends LitElement {
               <span slot="description">
                 supervisor-${this.supervisor.supervisor.version_latest}
               </span>
-              ${!atLeastVersion(this.hass.config.version, 2021, 12) &&
+              ${!atLeastVersion(this.menuai.config.version, 2021, 12) &&
               this.supervisor.supervisor.update_available
                 ? html`
-                    <a href="/hassio/update-available/supervisor">
+                    <a href="/menuaiio/update-available/supervisor">
                       <mwc-button
                         .label=${this.supervisor.localize("common.show")}
                       >
@@ -126,7 +126,7 @@ class HassioSupervisorInfo extends LitElement {
             </ha-settings-row>
 
             ${this.supervisor.supervisor.supported
-              ? !atLeastVersion(this.hass.config.version, 2021, 4)
+              ? !atLeastVersion(this.menuai.config.version, 2021, 4)
                 ? html` <ha-settings-row three-line>
                     <span slot="heading">
                       ${this.supervisor.localize(
@@ -219,7 +219,7 @@ class HassioSupervisorInfo extends LitElement {
   }
 
   private async _loadData(): Promise<void> {
-    this._metrics = await fetchHassioStats(this.hass, "supervisor");
+    this._metrics = await fetchmenuaiioStats(this.menuai, "supervisor");
   }
 
   private async _toggleBeta(ev: CustomEvent): Promise<void> {
@@ -249,7 +249,7 @@ class HassioSupervisorInfo extends LitElement {
       const data: Partial<SupervisorOptions> = {
         channel,
       };
-      await setSupervisorOption(this.hass, data);
+      await setSupervisorOption(this.menuai, data);
       await this._reloadSupervisor();
     } catch (err: any) {
       showAlertDialog(this, {
@@ -278,7 +278,7 @@ class HassioSupervisorInfo extends LitElement {
   }
 
   private async _reloadSupervisor(): Promise<void> {
-    await reloadSupervisor(this.hass);
+    await reloadSupervisor(this.menuai);
     fireEvent(this, "supervisor-collection-refresh", {
       collection: "supervisor",
     });
@@ -305,7 +305,7 @@ class HassioSupervisorInfo extends LitElement {
     }
 
     try {
-      await restartSupervisor(this.hass);
+      await restartSupervisor(this.menuai);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize("common.failed_to_restart_name", {
@@ -342,7 +342,7 @@ class HassioSupervisorInfo extends LitElement {
               <li>
                 <a
                   href=${documentationUrl(
-                    this.hass,
+                    this.menuai,
                     UNSUPPORTED_REASON_URL[reason] ||
                       `/more-info/unsupported/${reason}`
                   )}
@@ -372,7 +372,7 @@ class HassioSupervisorInfo extends LitElement {
               <li>
                 <a
                   href=${documentationUrl(
-                    this.hass,
+                    this.menuai,
                     UNHEALTHY_REASON_URL[reason] ||
                       `/more-info/unhealthy/${reason}`
                   )}
@@ -395,7 +395,7 @@ class HassioSupervisorInfo extends LitElement {
       const data: SupervisorOptions = {
         diagnostics: !this.supervisor.supervisor?.diagnostics,
       };
-      await setSupervisorOption(this.hass, data);
+      await setSupervisorOption(this.menuai, data);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize(
@@ -409,7 +409,7 @@ class HassioSupervisorInfo extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           height: 100%;
@@ -461,6 +461,6 @@ class HassioSupervisorInfo extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-supervisor-info": HassioSupervisorInfo;
+    "menuaiio-supervisor-info": menuaiioSupervisorInfo;
   }
 }

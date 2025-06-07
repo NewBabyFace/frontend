@@ -9,7 +9,7 @@ import { computeDomain } from "../common/entity/compute_domain";
 import { stringCompare } from "../common/string/compare";
 import { domainToName } from "../data/integration";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-domain-icon";
 import "./ha-expansion-panel";
@@ -18,7 +18,7 @@ import "./search-input-outlined";
 
 @customElement("ha-filter-domains")
 export class HaFilterDomains extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -39,7 +39,7 @@ export class HaFilterDomains extends LitElement {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.entities.picker.headers.domain"
           )}
           ${this.value?.length
@@ -52,7 +52,7 @@ export class HaFilterDomains extends LitElement {
         </div>
         ${this._shouldRender
           ? html`<search-input-outlined
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .filter=${this._filter}
                 @value-changed=${this._handleSearchChange}
               >
@@ -63,7 +63,7 @@ export class HaFilterDomains extends LitElement {
                 multi
               >
                 ${repeat(
-                  this._domains(this.hass.states, this._filter),
+                  this._domains(this.menuai.states, this._filter),
                   (i) => i,
                   (domain) =>
                     html`<ha-check-list-item
@@ -73,11 +73,11 @@ export class HaFilterDomains extends LitElement {
                     >
                       <ha-domain-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .domain=${domain}
                         brand-fallback
                       ></ha-domain-icon>
-                      ${domainToName(this.hass.localize, domain)}
+                      ${domainToName(this.menuai.localize, domain)}
                     </ha-check-list-item>`
                 )}
               </ha-list> `
@@ -95,7 +95,7 @@ export class HaFilterDomains extends LitElement {
     return Array.from(domains.values())
       .map((domain) => ({
         domain,
-        name: domainToName(this.hass.localize, domain),
+        name: domainToName(this.menuai.localize, domain),
       }))
       .filter(
         (entry) =>
@@ -103,7 +103,7 @@ export class HaFilterDomains extends LitElement {
           entry.domain.toLowerCase().includes(filter) ||
           entry.name.toLowerCase().includes(filter)
       )
-      .sort((a, b) => stringCompare(a.name, b.name, this.hass.locale.language))
+      .sort((a, b) => stringCompare(a.name, b.name, this.menuai.locale.language))
       .map((entry) => entry.domain);
   });
 

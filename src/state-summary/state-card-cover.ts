@@ -7,11 +7,11 @@ import "../components/ha-cover-tilt-controls";
 import type { CoverEntity } from "../data/cover";
 import { isTiltOnly } from "../data/cover";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-cover")
 class StateCardCover extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: CoverEntity;
 
@@ -21,17 +21,17 @@ class StateCardCover extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         ></state-info>
         <ha-cover-controls
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .hidden=${isTiltOnly(this.stateObj)}
           .stateObj=${this.stateObj}
         ></ha-cover-controls>
         <ha-cover-tilt-controls
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .hidden=${!isTiltOnly(this.stateObj)}
           .stateObj=${this.stateObj}
         ></ha-cover-tilt-controls>

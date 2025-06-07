@@ -10,7 +10,7 @@ import type { RelatedResult } from "../data/search";
 import { findRelated } from "../data/search";
 import { haStyleScrollbar } from "../resources/styles";
 import { loadVirtualizer } from "../resources/virtualizer";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-expansion-panel";
 import "./ha-list";
@@ -18,7 +18,7 @@ import "./search-input-outlined";
 
 @customElement("ha-filter-devices")
 export class HaFilterDevices extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -52,7 +52,7 @@ export class HaFilterDevices extends LitElement {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize("ui.panel.config.devices.caption")}
+          ${this.menuai.localize("ui.panel.config.devices.caption")}
           ${this.value?.length
             ? html`<div class="badge">${this.value?.length}</div>
                 <ha-icon-button
@@ -63,7 +63,7 @@ export class HaFilterDevices extends LitElement {
         </div>
         ${this._shouldRender
           ? html`<search-input-outlined
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .filter=${this._filter}
                 @value-changed=${this._handleSearchChange}
               >
@@ -71,7 +71,7 @@ export class HaFilterDevices extends LitElement {
               <ha-list class="ha-scrollbar" multi>
                 <lit-virtualizer
                   .items=${this._devices(
-                    this.hass.devices,
+                    this.menuai.devices,
                     this._filter || "",
                     this.value
                   )}
@@ -95,7 +95,7 @@ export class HaFilterDevices extends LitElement {
           .value=${device.id}
           .selected=${this.value?.includes(device.id) ?? false}
         >
-          ${computeDeviceNameDisplay(device, this.hass)}
+          ${computeDeviceNameDisplay(device, this.menuai)}
         </ha-check-list-item>`;
 
   private _handleItemClick(ev) {
@@ -136,21 +136,21 @@ export class HaFilterDevices extends LitElement {
   }
 
   private _devices = memoizeOne(
-    (devices: HomeAssistant["devices"], filter: string, _value) => {
+    (devices: menuai["devices"], filter: string, _value) => {
       const values = Object.values(devices);
       return values
         .filter(
           (device) =>
             !filter ||
-            computeDeviceNameDisplay(device, this.hass)
+            computeDeviceNameDisplay(device, this.menuai)
               .toLowerCase()
               .includes(filter)
         )
         .sort((a, b) =>
           stringCompare(
-            computeDeviceNameDisplay(a, this.hass),
-            computeDeviceNameDisplay(b, this.hass),
-            this.hass.locale.language
+            computeDeviceNameDisplay(a, this.menuai),
+            computeDeviceNameDisplay(b, this.menuai),
+            this.menuai.locale.language
           )
         );
     }
@@ -173,7 +173,7 @@ export class HaFilterDevices extends LitElement {
     for (const deviceId of this.value) {
       value.push(deviceId);
       if (this.type) {
-        relatedPromises.push(findRelated(this.hass, "device", deviceId));
+        relatedPromises.push(findRelated(this.menuai, "device", deviceId));
       }
     }
     this.value = value;

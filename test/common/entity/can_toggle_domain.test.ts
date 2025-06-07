@@ -1,10 +1,10 @@
 import { assert, describe, it } from "vitest";
 
 import { canToggleDomain } from "../../../src/common/entity/can_toggle_domain";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
 describe("canToggleDomain", () => {
-  const hass: any = {
+  const menuai: any = {
     services: {
       light: {
         turn_on: null, // Service keys only need to be present for test
@@ -17,15 +17,15 @@ describe("canToggleDomain", () => {
   };
 
   it("Detects lights toggle", () => {
-    assert.isTrue(canToggleDomain(hass, "light"));
+    assert.isTrue(canToggleDomain(menuai, "light"));
   });
 
   it("Detects sensors do not toggle", () => {
-    assert.isFalse(canToggleDomain(hass, "sensor"));
+    assert.isFalse(canToggleDomain(menuai, "sensor"));
   });
 
   it("Detects binary sensors do not toggle", () => {
-    assert.isFalse(canToggleDomain(hass, "binary_sensor"));
+    assert.isFalse(canToggleDomain(menuai, "binary_sensor"));
   });
 
   it("Detects covers toggle", () => {
@@ -37,7 +37,7 @@ describe("canToggleDomain", () => {
               open_cover: null,
             },
           },
-        } as unknown as HomeAssistant,
+        } as unknown as menuai,
         "cover"
       )
     );
@@ -49,7 +49,7 @@ describe("canToggleDomain", () => {
               open: null,
             },
           },
-        } as unknown as HomeAssistant,
+        } as unknown as menuai,
         "cover"
       )
     );
@@ -64,7 +64,7 @@ describe("canToggleDomain", () => {
               lock: null,
             },
           },
-        } as unknown as HomeAssistant,
+        } as unknown as menuai,
         "lock"
       )
     );
@@ -76,7 +76,7 @@ describe("canToggleDomain", () => {
               unlock: null,
             },
           },
-        } as unknown as HomeAssistant,
+        } as unknown as menuai,
         "lock"
       )
     );

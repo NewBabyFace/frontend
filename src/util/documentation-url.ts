@@ -1,10 +1,10 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-export const documentationUrl = (hass: HomeAssistant, path: string) =>
+export const documentationUrl = (menuai: menuai, path: string) =>
   `https://${
-    hass.config.version.includes("b")
+    menuai.config.version.includes("b")
       ? "rc"
-      : hass.config.version.includes("dev")
+      : menuai.config.version.includes("dev")
         ? "next"
         : "www"
   }.home-assistant.io${path}`;

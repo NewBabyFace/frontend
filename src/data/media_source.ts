@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { MediaPlayerItem } from "./media-player";
 
 export interface ResolvedMediaSource {
@@ -7,19 +7,19 @@ export interface ResolvedMediaSource {
 }
 
 export const resolveMediaSource = (
-  hass: HomeAssistant,
+  menuai: menuai,
   media_content_id: string
 ) =>
-  hass.callWS<ResolvedMediaSource>({
+  menuai.callWS<ResolvedMediaSource>({
     type: "media_source/resolve_media",
     media_content_id,
   });
 
 export const browseLocalMediaPlayer = (
-  hass: HomeAssistant,
+  menuai: menuai,
   mediaContentId?: string
 ): Promise<MediaPlayerItem> =>
-  hass.callWS<MediaPlayerItem>({
+  menuai.callWS<MediaPlayerItem>({
     type: "media_source/browse_media",
     media_content_id: mediaContentId,
   });
@@ -31,14 +31,14 @@ export const isImageUploadMediaSourceContentId = (mediaId: string) =>
   mediaId.startsWith("media-source://image_upload");
 
 export const uploadLocalMedia = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   media_content_id: string,
   file: File
 ) => {
   const fd = new FormData();
   fd.append("media_content_id", media_content_id);
   fd.append("file", file);
-  const resp = await hass.fetchWithAuth(
+  const resp = await menuai.fetchWithAuth(
     "/api/media_source/local_source/upload",
     {
       method: "POST",
@@ -54,10 +54,10 @@ export const uploadLocalMedia = async (
 };
 
 export const removeLocalMedia = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   media_content_id: string
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "media_source/local_source/remove",
     media_content_id,
   });

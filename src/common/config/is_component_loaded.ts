@@ -1,7 +1,7 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 /** Return if a component is loaded. */
 export const isComponentLoaded = (
-  hass: HomeAssistant,
+  menuai: menuai,
   component: string
-): boolean => hass && hass.config.components.includes(component);
+): boolean => menuai && menuai.config.components.includes(component);

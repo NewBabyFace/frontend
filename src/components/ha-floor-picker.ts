@@ -1,6 +1,6 @@
 import { mdiPlus, mdiTextureBox } from "@mdi/js";
 import type { ComboBoxLitRenderer } from "@vaadin/combo-box/lit";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, html } from "lit";
 import { customElement, property, query } from "lit/decorators";
@@ -22,7 +22,7 @@ import {
 } from "../data/floor_registry";
 import { showAlertDialog } from "../dialogs/generic/show-dialog-box";
 import { showFloorRegistryDetailDialog } from "../panels/config/areas/show-dialog-floor-registry-detail";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import type { HaDevicePickerDeviceFilterFunc } from "./device/ha-device-picker";
 import "./ha-combo-box-item";
 import "./ha-floor-icon";
@@ -41,7 +41,7 @@ interface FloorComboBoxItem extends PickerComboBoxItem {
 
 @customElement("ha-floor-picker")
 export class HaFloorPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -90,7 +90,7 @@ export class HaFloorPicker extends LitElement {
   public deviceFilter?: HaDevicePickerDeviceFilterFunc;
 
   @property({ attribute: false })
-  public entityFilter?: (entity: HassEntity) => boolean;
+  public entityFilter?: (entity: menuaiEntity) => boolean;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -105,9 +105,9 @@ export class HaFloorPicker extends LitElement {
 
   // Recompute value renderer when the areas change
   private _computeValueRenderer = memoizeOne(
-    (_haAreas: HomeAssistant["floors"]): PickerValueRenderer =>
+    (_haAreas: menuai["floors"]): PickerValueRenderer =>
       (value) => {
-        const floor = this.hass.floors[value];
+        const floor = this.menuai.floors[value];
 
         if (!floor) {
           return html`
@@ -127,10 +127,10 @@ export class HaFloorPicker extends LitElement {
 
   private _getFloors = memoizeOne(
     (
-      haFloors: HomeAssistant["floors"],
-      haAreas: HomeAssistant["areas"],
-      haDevices: HomeAssistant["devices"],
-      haEntities: HomeAssistant["entities"],
+      haFloors: menuai["floors"],
+      haAreas: menuai["areas"],
+      haDevices: menuai["devices"],
+      haEntities: menuai["entities"],
       includeDomains: this["includeDomains"],
       excludeDomains: this["excludeDomains"],
       includeDeviceClasses: this["includeDeviceClasses"],
@@ -197,7 +197,7 @@ export class HaFloorPicker extends LitElement {
               return false;
             }
             return deviceEntityLookup[device.id].some((entity) => {
-              const stateObj = this.hass.states[entity.entity_id];
+              const stateObj = this.menuai.states[entity.entity_id];
               if (!stateObj) {
                 return false;
               }
@@ -208,7 +208,7 @@ export class HaFloorPicker extends LitElement {
             });
           });
           inputEntities = inputEntities!.filter((entity) => {
-            const stateObj = this.hass.states[entity.entity_id];
+            const stateObj = this.menuai.states[entity.entity_id];
             return (
               stateObj.attributes.device_class &&
               includeDeviceClasses.includes(stateObj.attributes.device_class)
@@ -229,7 +229,7 @@ export class HaFloorPicker extends LitElement {
               return false;
             }
             return deviceEntityLookup[device.id].some((entity) => {
-              const stateObj = this.hass.states[entity.entity_id];
+              const stateObj = this.menuai.states[entity.entity_id];
               if (!stateObj) {
                 return false;
               }
@@ -237,7 +237,7 @@ export class HaFloorPicker extends LitElement {
             });
           });
           inputEntities = inputEntities!.filter((entity) => {
-            const stateObj = this.hass.states[entity.entity_id];
+            const stateObj = this.menuai.states[entity.entity_id];
             if (!stateObj) {
               return false;
             }
@@ -319,10 +319,10 @@ export class HaFloorPicker extends LitElement {
 
   private _getItems = () =>
     this._getFloors(
-      this.hass.floors,
-      this.hass.areas,
-      this.hass.devices,
-      this.hass.entities,
+      this.menuai.floors,
+      this.menuai.areas,
+      this.menuai.devices,
+      this.menuai.entities,
       this.includeDomains,
       this.excludeDomains,
       this.includeDeviceClasses,
@@ -332,7 +332,7 @@ export class HaFloorPicker extends LitElement {
     );
 
   private _allFloorNames = memoizeOne(
-    (floors: HomeAssistant["floors"]) =>
+    (floors: menuai["floors"]) =>
       Object.values(floors)
         .map((floor) => computeFloorName(floor)?.toLowerCase())
         .filter(Boolean) as string[]
@@ -345,13 +345,13 @@ export class HaFloorPicker extends LitElement {
       return [];
     }
 
-    const allFloors = this._allFloorNames(this.hass.floors);
+    const allFloors = this._allFloorNames(this.menuai.floors);
 
     if (searchString && !allFloors.includes(searchString.toLowerCase())) {
       return [
         {
           id: ADD_NEW_ID + searchString,
-          primary: this.hass.localize(
+          primary: this.menuai.localize(
             "ui.components.floor-picker.add_new_sugestion",
             {
               name: searchString,
@@ -365,7 +365,7 @@ export class HaFloorPicker extends LitElement {
     return [
       {
         id: ADD_NEW_ID,
-        primary: this.hass.localize("ui.components.floor-picker.add_new"),
+        primary: this.menuai.localize("ui.components.floor-picker.add_new"),
         icon_path: mdiPlus,
       },
     ];
@@ -374,16 +374,16 @@ export class HaFloorPicker extends LitElement {
   protected render(): TemplateResult {
     const placeholder =
       this.placeholder ??
-      this.hass.localize("ui.components.floor-picker.floor");
+      this.menuai.localize("ui.components.floor-picker.floor");
 
-    const valueRenderer = this._computeValueRenderer(this.hass.floors);
+    const valueRenderer = this._computeValueRenderer(this.menuai.floors);
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         .label=${this.label}
-        .notFoundLabel=${this.hass.localize(
+        .notFoundLabel=${this.menuai.localize(
           "ui.components.floor-picker.no_match"
         )}
         .placeholder=${placeholder}
@@ -408,7 +408,7 @@ export class HaFloorPicker extends LitElement {
     }
 
     if (value.startsWith(ADD_NEW_ID)) {
-      this.hass.loadFragmentTranslation("config");
+      this.menuai.loadFragmentTranslation("config");
 
       const suggestedName = value.substring(ADD_NEW_ID.length);
 
@@ -416,16 +416,16 @@ export class HaFloorPicker extends LitElement {
         suggestedName: suggestedName,
         createEntry: async (values, addedAreas) => {
           try {
-            const floor = await createFloorRegistryEntry(this.hass, values);
+            const floor = await createFloorRegistryEntry(this.menuai, values);
             addedAreas.forEach((areaId) => {
-              updateAreaRegistryEntry(this.hass, areaId, {
+              updateAreaRegistryEntry(this.menuai, areaId, {
                 floor_id: floor.floor_id,
               });
             });
             this._setValue(floor.floor_id);
           } catch (err: any) {
             showAlertDialog(this, {
-              title: this.hass.localize(
+              title: this.menuai.localize(
                 "ui.components.floor-picker.failed_create_floor"
               ),
               text: err.message,

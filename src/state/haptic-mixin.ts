@@ -1,22 +1,22 @@
 import type { PropertyValues } from "lit";
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import type { HapticType } from "../data/haptics";
-import type { Constructor, HomeAssistant } from "../types";
+import type { Constructor, menuai } from "../types";
 import { storeState } from "../util/ha-pref-storage";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 interface VibrateParams {
-  vibrate: HomeAssistant["vibrate"];
+  vibrate: menuai["vibrate"];
 }
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
-    "hass-vibrate": VibrateParams;
+  interface menuaiDomEvents {
+    "menuai-vibrate": VibrateParams;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "hass-vibrate": HASSDomEvent<VibrateParams>;
+    "menuai-vibrate": menuaiDomEvent<VibrateParams>;
   }
 }
 
@@ -30,15 +30,15 @@ const hapticPatterns = {
   selection: [20],
 };
 
-const handleHaptic = (hapticTypeEvent: HASSDomEvent<HapticType>) => {
+const handleHaptic = (hapticTypeEvent: menuaiDomEvent<HapticType>) => {
   navigator.vibrate(hapticPatterns[hapticTypeEvent.detail]);
 };
 
-export const hapticMixin = <T extends Constructor<HassBaseEl>>(superClass: T) =>
+export const hapticMixin = <T extends Constructor<menuaiBaseEl>>(superClass: T) =>
   class extends superClass {
     protected firstUpdated(changedProps: PropertyValues) {
       super.firstUpdated(changedProps);
-      this.addEventListener("hass-vibrate", (ev) => {
+      this.addEventListener("menuai-vibrate", (ev) => {
         const vibrate = ev.detail.vibrate;
         // @ts-expect-error not all browsers support vibrate
         if (navigator.vibrate && vibrate) {
@@ -46,15 +46,15 @@ export const hapticMixin = <T extends Constructor<HassBaseEl>>(superClass: T) =>
         } else {
           window.removeEventListener("haptic", handleHaptic);
         }
-        this._updateHass({ vibrate });
-        storeState(this.hass!);
+        this._updatemenuai({ vibrate });
+        storeState(this.menuai!);
       });
     }
 
-    protected hassConnected() {
-      super.hassConnected();
+    protected menuaiConnected() {
+      super.menuaiConnected();
       // @ts-expect-error not all browsers support vibrate
-      if (navigator.vibrate && this.hass!.vibrate) {
+      if (navigator.vibrate && this.menuai!.vibrate) {
         window.addEventListener("haptic", handleHaptic);
       }
     }

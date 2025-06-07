@@ -8,9 +8,9 @@ import type { DataTableColumnContainer } from "../../../../../components/data-ta
 import { extractSearchParamsObject } from "../../../../../common/url/search-params";
 import "../../../../../components/ha-fab";
 import "../../../../../components/ha-icon-button";
-import "../../../../../layouts/hass-tabs-subpage-data-table";
+import "../../../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import type { DHCPDiscoveryData } from "../../../../../data/dhcp";
 import { SubscribeMixin } from "../../../../../mixins/subscribe-mixin";
 
@@ -18,7 +18,7 @@ import { subscribeDHCPDiscovery } from "../../../../../data/dhcp";
 
 @customElement("dhcp-config-panel")
 export class DHCPConfigPanel extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -30,9 +30,9 @@ export class DHCPConfigPanel extends SubscribeMixin(LitElement) {
 
   @state() private _data: DHCPDiscoveryData[] = [];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeDHCPDiscovery(this.hass.connection, (data) => {
+      subscribeDHCPDiscovery(this.menuai.connection, (data) => {
         this._data = data;
       }),
     ];
@@ -90,17 +90,17 @@ export class DHCPConfigPanel extends SubscribeMixin(LitElement) {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._dataWithIds(this._data)}
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.dhcp.no_devices_found"
         )}
         filter=${this._macAddress || ""}
-      ></hass-tabs-subpage-data-table>
+      ></menuai-tabs-subpage-data-table>
     `;
   }
 

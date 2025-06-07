@@ -1,30 +1,30 @@
 import { getPanelTitleFromUrlPath } from "../data/panel";
-import type { Constructor, HomeAssistant } from "../types";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { Constructor, menuai } from "../types";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 const setTitle = (title: string | undefined) => {
-  document.title = title ? `${title} – Home Assistant` : "Home Assistant";
+  document.title = title ? `${title} – MenuAI` : "MenuAI";
 };
 
-export const panelTitleMixin = <T extends Constructor<HassBaseEl>>(
+export const panelTitleMixin = <T extends Constructor<menuaiBaseEl>>(
   superClass: T
 ) =>
   class extends superClass {
     protected updated(changedProps) {
       super.updated(changedProps);
-      if (!changedProps.has("hass") || !this.hass) {
+      if (!changedProps.has("menuai") || !this.menuai) {
         return;
       }
 
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
       if (
-        !oldHass ||
-        oldHass.panels !== this.hass.panels ||
-        oldHass.panelUrl !== this.hass.panelUrl ||
-        oldHass.localize !== this.hass.localize
+        !oldmenuai ||
+        oldmenuai.panels !== this.menuai.panels ||
+        oldmenuai.panelUrl !== this.menuai.panelUrl ||
+        oldmenuai.localize !== this.menuai.localize
       ) {
-        setTitle(getPanelTitleFromUrlPath(this.hass, this.hass.panelUrl));
+        setTitle(getPanelTitleFromUrlPath(this.menuai, this.menuai.panelUrl));
       }
     }
   };

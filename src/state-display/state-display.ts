@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -12,7 +12,7 @@ import { SENSOR_DEVICE_CLASS_TIMESTAMP } from "../data/sensor";
 import type { UpdateEntity } from "../data/update";
 import { computeUpdateStateDisplay } from "../data/update";
 import "../panels/lovelace/components/hui-timestamp-display";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 const TIMESTAMP_STATE_DOMAINS = ["button", "input_button", "scene"];
 
@@ -53,9 +53,9 @@ export const DEFAULT_STATE_CONTENT_DOMAINS: Record<string, StateContent> = {
 
 @customElement("state-display")
 class StateDisplay extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: false }) public content?: StateContent;
 
@@ -90,7 +90,7 @@ class StateDisplay extends LitElement {
       ) {
         return html`
           <hui-timestamp-display
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .ts=${new Date(stateObj.state)}
             format="relative"
             capitalize
@@ -98,7 +98,7 @@ class StateDisplay extends LitElement {
         `;
       }
 
-      return this.hass!.formatEntityState(stateObj);
+      return this.menuai!.formatEntityState(stateObj);
     }
     if (content === "name") {
       return html`${this.name || computeStateName(stateObj)}`;
@@ -133,7 +133,7 @@ class StateDisplay extends LitElement {
     if (relativeDateTime) {
       return html`
         <ha-relative-time
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .datetime=${relativeDateTime}
           capitalize
         ></ha-relative-time>
@@ -146,14 +146,14 @@ class StateDisplay extends LitElement {
     if (specialContent.includes(content)) {
       if (content === "install_status") {
         return html`
-          ${computeUpdateStateDisplay(stateObj as UpdateEntity, this.hass!)}
+          ${computeUpdateStateDisplay(stateObj as UpdateEntity, this.menuai!)}
         `;
       }
       if (content === "remaining_time") {
         import("./ha-timer-remaining-time");
         return html`
           <ha-timer-remaining-time
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .stateObj=${stateObj}
           ></ha-timer-remaining-time>
         `;
@@ -168,7 +168,7 @@ class StateDisplay extends LitElement {
     ) {
       return undefined;
     }
-    return this.hass!.formatEntityAttributeValue(stateObj, content);
+    return this.menuai!.formatEntityAttributeValue(stateObj, content);
   }
 
   protected render() {
@@ -180,7 +180,7 @@ class StateDisplay extends LitElement {
       .filter(Boolean);
 
     if (!values.length) {
-      return html`${this.hass!.formatEntityState(stateObj)}`;
+      return html`${this.menuai!.formatEntityState(stateObj)}`;
     }
 
     return join(values, " · ");

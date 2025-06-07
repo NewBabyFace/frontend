@@ -1,5 +1,5 @@
-import type { HassEntity } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../../types";
+import type { menuaiEntity } from "home-assistant-js-websocket";
+import type { menuai } from "../../types";
 import { ensureArray } from "../array/ensure-array";
 import { computeDomain } from "./compute_domain";
 import { getEntityContext } from "./context/get_entity_context";
@@ -20,7 +20,7 @@ export interface EntityFilter {
 export type EntityFilterFunc = (entityId: string) => boolean;
 
 export const generateEntityFilter = (
-  hass: HomeAssistant,
+  menuai: menuai,
   filter: EntityFilter
 ): EntityFilterFunc => {
   const domains = filter.domain
@@ -43,7 +43,7 @@ export const generateEntityFilter = (
     : undefined;
 
   return (entityId: string) => {
-    const stateObj = hass.states[entityId] as HassEntity | undefined;
+    const stateObj = menuai.states[entityId] as menuaiEntity | undefined;
     if (!stateObj) {
       return false;
     }
@@ -60,7 +60,7 @@ export const generateEntityFilter = (
       }
     }
 
-    const { area, floor, device, entity } = getEntityContext(stateObj, hass);
+    const { area, floor, device, entity } = getEntityContext(stateObj, menuai);
 
     if (entity && entity.hidden) {
       return false;

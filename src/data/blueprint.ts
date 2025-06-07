@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { ManualAutomationConfig } from "./automation";
 import type { ManualScriptConfig } from "./script";
 import type { Selector } from "./selector";
@@ -49,21 +49,21 @@ export interface BlueprintSubstituteResults {
   script: { substituted_config: ManualScriptConfig };
 }
 
-export const fetchBlueprints = (hass: HomeAssistant, domain: BlueprintDomain) =>
-  hass.callWS<Blueprints>({ type: "blueprint/list", domain });
+export const fetchBlueprints = (menuai: menuai, domain: BlueprintDomain) =>
+  menuai.callWS<Blueprints>({ type: "blueprint/list", domain });
 
-export const importBlueprint = (hass: HomeAssistant, url: string) =>
-  hass.callWS<BlueprintImportResult>({ type: "blueprint/import", url });
+export const importBlueprint = (menuai: menuai, url: string) =>
+  menuai.callWS<BlueprintImportResult>({ type: "blueprint/import", url });
 
 export const saveBlueprint = (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: BlueprintDomain,
   path: string,
   yaml: string,
   source_url?: string,
   allow_override?: boolean
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "blueprint/save",
     domain,
     path,
@@ -73,17 +73,17 @@ export const saveBlueprint = (
   });
 
 export const deleteBlueprint = (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: BlueprintDomain,
   path: string
 ) =>
-  hass.callWS<BlueprintImportResult>({
+  menuai.callWS<BlueprintImportResult>({
     type: "blueprint/delete",
     domain,
     path,
   });
 
-export type BlueprintSourceType = "local" | "community" | "homeassistant";
+export type BlueprintSourceType = "local" | "community" | "menuai";
 
 export const getBlueprintSourceType = (
   blueprint: Blueprint
@@ -94,7 +94,7 @@ export const getBlueprintSourceType = (
     return "local";
   }
   if (sourceUrl.includes("github.com/home-assistant")) {
-    return "homeassistant";
+    return "menuai";
   }
   return "community";
 };
@@ -102,12 +102,12 @@ export const getBlueprintSourceType = (
 export const substituteBlueprint = <
   T extends BlueprintDomain = BlueprintDomain,
 >(
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: T,
   path: string,
   input: Record<string, any>
 ) =>
-  hass.callWS<BlueprintSubstituteResults[T]>({
+  menuai.callWS<BlueprintSubstituteResults[T]>({
     type: "blueprint/substitute",
     domain,
     path,

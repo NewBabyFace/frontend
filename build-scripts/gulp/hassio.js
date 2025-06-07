@@ -9,37 +9,37 @@ import "./translations.js";
 import "./rspack.js";
 
 gulp.task(
-  "develop-hassio",
+  "develop-menuaiio",
   gulp.series(
     async function setEnv() {
       process.env.NODE_ENV = "development";
     },
-    "clean-hassio",
+    "clean-menuaiio",
     "gen-dummy-icons-json",
-    "gen-pages-hassio-dev",
+    "gen-pages-menuaiio-dev",
     "build-supervisor-translations",
     "copy-translations-supervisor",
     "build-locale-data",
     "copy-static-supervisor",
-    "rspack-watch-hassio"
+    "rspack-watch-menuaiio"
   )
 );
 
 gulp.task(
-  "build-hassio",
+  "build-menuaiio",
   gulp.series(
     async function setEnv() {
       process.env.NODE_ENV = "production";
     },
-    "clean-hassio",
+    "clean-menuaiio",
     "gen-dummy-icons-json",
     "build-supervisor-translations",
     "copy-translations-supervisor",
     "build-locale-data",
     "copy-static-supervisor",
-    "rspack-prod-hassio",
-    "gen-pages-hassio-prod",
+    "rspack-prod-menuaiio",
+    "gen-pages-menuaiio-prod",
     ...// Don't compress running tests
-    (env.isTestBuild() ? [] : ["compress-hassio"])
+    (env.isTestBuild() ? [] : ["compress-menuaiio"])
   )
 );

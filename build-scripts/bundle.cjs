@@ -18,16 +18,16 @@ module.exports.sourceMapURL = () => {
 module.exports.ignorePackages = () => [];
 
 // Files from NPM packages that we should replace with empty file
-module.exports.emptyPackages = ({ isHassioBuild }) =>
+module.exports.emptyPackages = ({ ismenuaiioBuild }) =>
   [
     require.resolve("@vaadin/vaadin-material-styles/typography.js"),
     require.resolve("@vaadin/vaadin-material-styles/font-icons.js"),
     // Icons in supervisor conflict with icons in HA so we don't load.
-    isHassioBuild &&
+    ismenuaiioBuild &&
       require.resolve(
         path.resolve(paths.root_dir, "src/components/ha-icon.ts")
       ),
-    isHassioBuild &&
+    ismenuaiioBuild &&
       require.resolve(
         path.resolve(paths.root_dir, "src/components/ha-icon-picker.ts")
       ),
@@ -41,9 +41,9 @@ module.exports.definedVars = ({ isProdBuild, latestBuild, defineOverlay }) => ({
   __SUPERVISOR__: false,
   __BACKWARDS_COMPAT__: false,
   __STATIC_PATH__: "/static/",
-  __HASS_URL__: `\`${
-    "HASS_URL" in process.env
-      ? process.env.HASS_URL
+  __menuai_URL__: `\`${
+    "menuai_URL" in process.env
+      ? process.env.menuai_URL
       : // eslint-disable-next-line no-template-curly-in-string
         "${location.protocol}//${location.host}"
   }\``,
@@ -292,22 +292,22 @@ module.exports.config = {
     };
   },
 
-  hassio({ isProdBuild, latestBuild, isStatsBuild, isTestBuild }) {
+  menuaiio({ isProdBuild, latestBuild, isStatsBuild, isTestBuild }) {
     return {
       name: "supervisor" + nameSuffix(latestBuild),
       entry: {
-        entrypoint: path.resolve(paths.hassio_dir, "src/entrypoint.ts"),
+        entrypoint: path.resolve(paths.menuaiio_dir, "src/entrypoint.ts"),
       },
-      outputPath: outputPath(paths.hassio_output_root, latestBuild),
-      publicPath: publicPath(latestBuild, paths.hassio_publicPath),
+      outputPath: outputPath(paths.menuaiio_output_root, latestBuild),
+      publicPath: publicPath(latestBuild, paths.menuaiio_publicPath),
       isProdBuild,
       latestBuild,
       isStatsBuild,
       isTestBuild,
-      isHassioBuild: true,
+      ismenuaiioBuild: true,
       defineOverlay: {
         __SUPERVISOR__: true,
-        __STATIC_PATH__: `"${paths.hassio_publicPath}/static/"`,
+        __STATIC_PATH__: `"${paths.menuaiio_publicPath}/static/"`,
       },
     };
   },

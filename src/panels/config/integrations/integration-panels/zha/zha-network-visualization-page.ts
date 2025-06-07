@@ -15,8 +15,8 @@ import type {
 } from "../../../../../components/chart/ha-network-graph";
 import type { ZHADevice } from "../../../../../data/zha";
 import { fetchDevices, refreshTopology } from "../../../../../data/zha";
-import "../../../../../layouts/hass-tabs-subpage";
-import type { HomeAssistant, Route } from "../../../../../types";
+import "../../../../../layouts/menuai-tabs-subpage";
+import type { menuai, Route } from "../../../../../types";
 import { formatAsPaddedHex } from "./functions";
 import { zhaTabs } from "./zha-config-dashboard";
 import { colorVariables } from "../../../../../resources/theme/color.globals";
@@ -24,7 +24,7 @@ import { navigate } from "../../../../../common/navigate";
 
 @customElement("zha-network-visualization-page")
 export class ZHANetworkVisualizationPage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -45,23 +45,23 @@ export class ZHANetworkVisualizationPage extends LitElement {
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
 
-    if (this.hass) {
+    if (this.menuai) {
       this._fetchData();
     }
   }
 
   protected render() {
     return html`
-      <hass-tabs-subpage
+      <menuai-tabs-subpage
         .tabs=${zhaTabs}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .isWide=${this.isWide}
         .route=${this.route}
-        header=${this.hass.localize("ui.panel.config.zha.visualization.header")}
+        header=${this.menuai.localize("ui.panel.config.zha.visualization.header")}
       >
         <ha-network-graph
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .data=${this._networkData}
           .tooltipFormatter=${this._tooltipFormatter}
           @chart-click=${this._handleChartClick}
@@ -71,17 +71,17 @@ export class ZHANetworkVisualizationPage extends LitElement {
             class="refresh-button"
             .path=${mdiRefresh}
             @click=${this._refreshTopology}
-            label=${this.hass.localize(
+            label=${this.menuai.localize(
               "ui.panel.config.zha.visualization.refresh_topology"
             )}
           ></ha-icon-button>
         </ha-network-graph>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   private async _fetchData() {
-    this._devices = await fetchDevices(this.hass!);
+    this._devices = await fetchDevices(this.menuai!);
     this._networkData = this._createChartData(this._devices);
   }
 
@@ -110,26 +110,26 @@ export class ZHANetworkVisualizationPage extends LitElement {
       return name;
     }
     let label = `<b>IEEE: </b>${device.ieee}`;
-    label += `<br><b>${this.hass.localize("ui.panel.config.zha.visualization.device_type")}: </b>${device.device_type.replace("_", " ")}`;
+    label += `<br><b>${this.menuai.localize("ui.panel.config.zha.visualization.device_type")}: </b>${device.device_type.replace("_", " ")}`;
     if (device.nwk != null) {
       label += `<br><b>NWK: </b>${formatAsPaddedHex(device.nwk)}`;
     }
     if (device.manufacturer != null && device.model != null) {
-      label += `<br><b>${this.hass.localize("ui.panel.config.zha.visualization.device")}: </b>${device.manufacturer} ${device.model}`;
+      label += `<br><b>${this.menuai.localize("ui.panel.config.zha.visualization.device")}: </b>${device.manufacturer} ${device.model}`;
     } else {
-      label += `<br><b>${this.hass.localize("ui.panel.config.zha.visualization.device_not_in_db")}</b>`;
+      label += `<br><b>${this.menuai.localize("ui.panel.config.zha.visualization.device_not_in_db")}</b>`;
     }
     if (device.area_id) {
-      const area = this.hass.areas[device.area_id];
+      const area = this.menuai.areas[device.area_id];
       if (area) {
-        label += `<br><b>${this.hass.localize("ui.panel.config.zha.visualization.area")}: </b>${area.name}`;
+        label += `<br><b>${this.menuai.localize("ui.panel.config.zha.visualization.area")}: </b>${area.name}`;
       }
     }
     return label;
   };
 
   private async _refreshTopology(): Promise<void> {
-    await refreshTopology(this.hass);
+    await refreshTopology(this.menuai);
     await this._fetchData();
   }
 
@@ -165,26 +165,26 @@ export class ZHANetworkVisualizationPage extends LitElement {
     const links: NetworkLink[] = [];
     const categories = [
       {
-        name: this.hass.localize(
+        name: this.menuai.localize(
           "ui.panel.config.zha.visualization.coordinator"
         ),
         symbol: "roundRect",
         itemStyle: { color: primaryColor },
       },
       {
-        name: this.hass.localize("ui.panel.config.zha.visualization.router"),
+        name: this.menuai.localize("ui.panel.config.zha.visualization.router"),
         symbol: "circle",
         itemStyle: { color: routerColor },
       },
       {
-        name: this.hass.localize(
+        name: this.menuai.localize(
           "ui.panel.config.zha.visualization.end_device"
         ),
         symbol: "circle",
         itemStyle: { color: endDeviceColor },
       },
       {
-        name: this.hass.localize("ui.panel.config.zha.visualization.offline"),
+        name: this.menuai.localize("ui.panel.config.zha.visualization.offline"),
         symbol: "circle",
         itemStyle: { color: offlineColor },
       },

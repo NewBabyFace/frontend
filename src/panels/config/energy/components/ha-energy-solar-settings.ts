@@ -21,7 +21,7 @@ import {
   showAlertDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { documentationUrl } from "../../../../util/documentation-url";
 import { showEnergySettingsSolarDialog } from "../dialogs/show-dialogs-energy";
 import "./ha-energy-validation-result";
@@ -29,7 +29,7 @@ import { energyCardStyles } from "./styles";
 
 @customElement("ha-energy-solar-settings")
 export class EnergySolarSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public preferences!: EnergyPreferences;
@@ -62,17 +62,17 @@ export class EnergySolarSettings extends LitElement {
       <ha-card outlined>
         <h1 class="card-header">
           <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-          ${this.hass.localize("ui.panel.config.energy.solar.title")}
+          ${this.menuai.localize("ui.panel.config.energy.solar.title")}
         </h1>
 
         <div class="card-content">
           <p>
-            ${this.hass.localize("ui.panel.config.energy.solar.sub")}
+            ${this.menuai.localize("ui.panel.config.energy.solar.sub")}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href=${documentationUrl(this.hass, "/docs/energy/solar-panels/")}
-              >${this.hass.localize(
+              href=${documentationUrl(this.menuai, "/docs/energy/solar-panels/")}
+              >${this.menuai.localize(
                 "ui.panel.config.energy.solar.learn_more"
               )}</a
             >
@@ -80,19 +80,19 @@ export class EnergySolarSettings extends LitElement {
           ${solarValidation.map(
             (result) => html`
               <ha-energy-validation-result
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .issues=${result}
               ></ha-energy-validation-result>
             `
           )}
 
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.solar.solar_production"
             )}
           </h3>
           ${solarSources.map((source) => {
-            const entityState = this.hass.states[source.stat_energy_from];
+            const entityState = this.menuai.states[source.stat_energy_from];
             return html`
               <div class="row" .source=${source}>
                 ${entityState?.attributes.icon
@@ -102,7 +102,7 @@ export class EnergySolarSettings extends LitElement {
                   : html`<ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>`}
                 <span class="content"
                   >${getStatisticLabel(
-                    this.hass,
+                    this.menuai,
                     source.stat_energy_from,
                     this.statsMetadata?.[source.stat_energy_from]
                   )}</span
@@ -110,7 +110,7 @@ export class EnergySolarSettings extends LitElement {
                 ${this.info
                   ? html`
                       <ha-icon-button
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.energy.solar.edit_solar_production"
                         )}
                         @click=${this._editSource}
@@ -119,7 +119,7 @@ export class EnergySolarSettings extends LitElement {
                     `
                   : ""}
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.solar.delete_solar_production"
                   )}
                   @click=${this._deleteSource}
@@ -133,7 +133,7 @@ export class EnergySolarSettings extends LitElement {
                 <div class="row border-bottom">
                   <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
                   <mwc-button @click=${this._addSource}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.energy.solar.add_solar_production"
                     )}
                   </mwc-button>
@@ -186,7 +186,7 @@ export class EnergySolarSettings extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_source"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_source"),
       }))
     ) {
       return;
@@ -205,7 +205,7 @@ export class EnergySolarSettings extends LitElement {
   }
 
   private async _savePreferences(preferences: EnergyPreferences) {
-    const result = await saveEnergyPreferences(this.hass, preferences);
+    const result = await saveEnergyPreferences(this.menuai, preferences);
     fireEvent(this, "value-changed", { value: result });
   }
 

@@ -4,7 +4,7 @@ import {
   mdiWaterPercent,
   mdiWhiteBalanceSunny,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -14,7 +14,7 @@ import { batteryLevelIcon } from "../../../common/entity/battery_icon";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import "../../../components/ha-card";
 import "../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { findEntities } from "../common/find-entities";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
@@ -38,14 +38,14 @@ class HuiPlantStatusCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): PlantStatusCardConfig {
     const includeDomains = ["plant"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -55,7 +55,7 @@ class HuiPlantStatusCard extends LitElement implements LovelaceCard {
     return { type: "plant-status", entity: foundEntities[0] || "" };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: PlantStatusCardConfig;
 
@@ -77,35 +77,35 @@ class HuiPlantStatusCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | PlantStatusCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config!.entity];
+    const stateObj = this.menuai.states[this._config!.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -240,7 +240,7 @@ class HuiPlantStatusCard extends LitElement implements LovelaceCard {
     }
   `;
 
-  private _computeAttributes(stateObj: HassEntity): string[] {
+  private _computeAttributes(stateObj: menuaiEntity): string[] {
     return Object.keys(SENSOR_ICONS).filter(
       (key) => key in stateObj.attributes
     );
@@ -248,10 +248,10 @@ class HuiPlantStatusCard extends LitElement implements LovelaceCard {
 
   private _handleMoreInfo(ev: Event): void {
     const target = ev.currentTarget! as PlantAttributeTarget;
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
 
     if (target.value) {
-      fireEvent(this, "hass-more-info", {
+      fireEvent(this, "menuai-more-info", {
         entityId: stateObj.attributes.sensors[target.value],
       });
     }

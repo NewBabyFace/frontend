@@ -4,19 +4,19 @@ import { LitElement } from "lit";
 import { property, state } from "lit/decorators";
 import { atLeastVersion } from "../../src/common/config/version";
 import { computeLocalize } from "../../src/common/translations/localize";
-import { fetchHassioAddonsInfo } from "../../src/data/hassio/addon";
-import type { HassioResponse } from "../../src/data/hassio/common";
+import { fetchmenuaiioAddonsInfo } from "../../src/data/menuaiio/addon";
+import type { menuaiioResponse } from "../../src/data/menuaiio/common";
 import {
-  fetchHassioHassOsInfo,
-  fetchHassioHostInfo,
-} from "../../src/data/hassio/host";
-import { fetchNetworkInfo } from "../../src/data/hassio/network";
-import { fetchHassioResolution } from "../../src/data/hassio/resolution";
+  fetchmenuaiiomenuaiOsInfo,
+  fetchmenuaiioHostInfo,
+} from "../../src/data/menuaiio/host";
+import { fetchNetworkInfo } from "../../src/data/menuaiio/network";
+import { fetchmenuaiioResolution } from "../../src/data/menuaiio/resolution";
 import {
-  fetchHassioHomeAssistantInfo,
-  fetchHassioInfo,
-  fetchHassioSupervisorInfo,
-} from "../../src/data/hassio/supervisor";
+  fetchmenuaiiomenuaiInfo,
+  fetchmenuaiioInfo,
+  fetchmenuaiioSupervisorInfo,
+} from "../../src/data/menuaiio/supervisor";
 import { fetchSupervisorStore } from "../../src/data/supervisor/store";
 import type {
   Supervisor,
@@ -28,9 +28,9 @@ import {
   supervisorCollection,
   cleanupSupervisorCollection,
 } from "../../src/data/supervisor/supervisor";
-import { ProvideHassLitMixin } from "../../src/mixins/provide-hass-lit-mixin";
+import { ProvidemenuaiLitMixin } from "../../src/mixins/provide-menuai-lit-mixin";
 import { urlSyncMixin } from "../../src/state/url-sync-mixin";
-import type { HomeAssistant, Route } from "../../src/types";
+import type { menuai, Route } from "../../src/types";
 import { getTranslation } from "../../src/util/common-translation";
 import {
   computeRTLDirection,
@@ -38,14 +38,14 @@ import {
 } from "../../src/common/util/compute_rtl";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "supervisor-update": Partial<Supervisor>;
     "supervisor-collection-refresh": { collection: SupervisorObject };
   }
 }
 
 export class SupervisorBaseElement extends urlSyncMixin(
-  ProvideHassLitMixin(LitElement)
+  ProvidemenuaiLitMixin(LitElement)
 ) {
   @property({ attribute: false }) public route?: Route;
 
@@ -64,7 +64,7 @@ export class SupervisorBaseElement extends urlSyncMixin(
     if (!this.hasUpdated) {
       return;
     }
-    if (this.route?.prefix === "/hassio") {
+    if (this.route?.prefix === "/menuaiio") {
       this._initSupervisor();
     }
   }
@@ -76,7 +76,7 @@ export class SupervisorBaseElement extends urlSyncMixin(
       delete this._unsubs[unsub];
     });
     Object.keys(this._collections).forEach((collection) => {
-      cleanupSupervisorCollection(this.hass.connection, collection);
+      cleanupSupervisorCollection(this.menuai.connection, collection);
     });
     this._collections = {};
     this.removeEventListener(
@@ -87,22 +87,22 @@ export class SupervisorBaseElement extends urlSyncMixin(
 
   protected willUpdate(changedProperties: PropertyValues) {
     if (!this.hasUpdated) {
-      if (this.route?.prefix === "/hassio") {
+      if (this.route?.prefix === "/menuaiio") {
         this._initSupervisor();
       }
     }
-    if (changedProperties.has("hass")) {
-      const oldHass = changedProperties.get("hass") as
-        | HomeAssistant
+    if (changedProperties.has("menuai")) {
+      const oldmenuai = changedProperties.get("menuai") as
+        | menuai
         | undefined;
-      if (oldHass?.language !== this.hass.language) {
-        this._language = this.hass.language;
+      if (oldmenuai?.language !== this.menuai.language) {
+        this._language = this.menuai.language;
       }
     }
 
     if (changedProperties.has("_language") || !this.hasUpdated) {
       this._initializeLocalize();
-      this._applyDirection(this.hass);
+      this._applyDirection(this.menuai);
     }
   }
 
@@ -126,16 +126,16 @@ export class SupervisorBaseElement extends urlSyncMixin(
 
   private async _handleSupervisorStoreRefreshEvent(ev) {
     const collection = ev.detail.collection;
-    if (atLeastVersion(this.hass.config.version, 2021, 2, 4)) {
+    if (atLeastVersion(this.menuai.config.version, 2021, 2, 4)) {
       if (collection in this._collections) {
         this._collections[collection].refresh();
       }
       return;
     }
 
-    const response = await this.hass.callApi<HassioResponse<any>>(
+    const response = await this.menuai.callApi<menuaiioResponse<any>>(
       "GET",
-      `hassio${supervisorCollection[collection]}`
+      `menuaiio${supervisorCollection[collection]}`
     );
     this._updateSupervisor({ [collection]: response.data });
   }
@@ -163,14 +163,14 @@ export class SupervisorBaseElement extends urlSyncMixin(
       this._handleSupervisorStoreRefreshEvent
     );
 
-    if (atLeastVersion(this.hass.config.version, 2021, 2, 4)) {
+    if (atLeastVersion(this.menuai.config.version, 2021, 2, 4)) {
       Object.keys(supervisorCollection).forEach((collection) => {
         if (collection in this._collections) {
           this._subscribeCollection(collection);
           this._collections[collection].refresh();
         } else {
           this._collections[collection] = getSupervisorEventCollection(
-            this.hass.connection,
+            this.menuai.connection,
             collection,
             supervisorCollection[collection]
           );
@@ -195,15 +195,15 @@ export class SupervisorBaseElement extends urlSyncMixin(
         resolution,
         store,
       ] = await Promise.all([
-        fetchHassioAddonsInfo(this.hass),
-        fetchHassioSupervisorInfo(this.hass),
-        fetchHassioHostInfo(this.hass),
-        fetchHassioHomeAssistantInfo(this.hass),
-        fetchHassioInfo(this.hass),
-        fetchHassioHassOsInfo(this.hass),
-        fetchNetworkInfo(this.hass),
-        fetchHassioResolution(this.hass),
-        fetchSupervisorStore(this.hass),
+        fetchmenuaiioAddonsInfo(this.menuai),
+        fetchmenuaiioSupervisorInfo(this.menuai),
+        fetchmenuaiioHostInfo(this.menuai),
+        fetchmenuaiiomenuaiInfo(this.menuai),
+        fetchmenuaiioInfo(this.menuai),
+        fetchmenuaiiomenuaiOsInfo(this.menuai),
+        fetchNetworkInfo(this.menuai),
+        fetchmenuaiioResolution(this.menuai),
+        fetchSupervisorStore(this.menuai),
       ]);
 
       this._updateSupervisor({
@@ -224,8 +224,8 @@ export class SupervisorBaseElement extends urlSyncMixin(
     }
   }
 
-  private _applyDirection(hass: HomeAssistant) {
-    const direction = computeRTLDirection(hass);
+  private _applyDirection(menuai: menuai) {
+    const direction = computeRTLDirection(menuai);
     setDirectionStyles(direction, this);
   }
 }

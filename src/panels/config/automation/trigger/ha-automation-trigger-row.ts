@@ -51,13 +51,13 @@ import {
   showPromptDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./types/ha-automation-trigger-calendar";
 import "./types/ha-automation-trigger-conversation";
 import "./types/ha-automation-trigger-device";
 import "./types/ha-automation-trigger-event";
 import "./types/ha-automation-trigger-geo_location";
-import "./types/ha-automation-trigger-homeassistant";
+import "./types/ha-automation-trigger-menuai";
 import "./types/ha-automation-trigger-list";
 import "./types/ha-automation-trigger-mqtt";
 import "./types/ha-automation-trigger-numeric_state";
@@ -99,7 +99,7 @@ export const handleChangeEvent = (element: TriggerElement, ev: CustomEvent) => {
 
 @customElement("ha-automation-trigger-row")
 export default class HaAutomationTriggerRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: Trigger;
 
@@ -151,7 +151,7 @@ export default class HaAutomationTriggerRow extends LitElement {
         ${"enabled" in this.trigger && this.trigger.enabled === false
           ? html`
               <div class="disabled-bar">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.actions.disabled"
                 )}
               </div>
@@ -165,7 +165,7 @@ export default class HaAutomationTriggerRow extends LitElement {
             .path=${TRIGGER_ICONS[type]}
           ></ha-svg-icon>
           <h3 slot="header">
-            ${describeTrigger(this.trigger, this.hass, this._entityReg)}
+            ${describeTrigger(this.trigger, this.menuai, this._entityReg)}
           </h3>
 
           <slot name="icons" slot="icons"></slot>
@@ -179,7 +179,7 @@ export default class HaAutomationTriggerRow extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
 
@@ -187,7 +187,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._renameTrigger}
               .disabled=${this.disabled || type === "list"}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.rename"
               )}
               <ha-svg-icon slot="start" .path=${mdiRenameBox}></ha-svg-icon>
@@ -197,7 +197,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._showTriggerId}
               .disabled=${this.disabled || type === "list"}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.edit_id"
               )}
               <ha-svg-icon slot="start" .path=${mdiIdentifier}></ha-svg-icon>
@@ -209,7 +209,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._duplicateTrigger}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.duplicate"
               )}
               <ha-svg-icon
@@ -222,7 +222,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._copyTrigger}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.copy"
               )}
               <ha-svg-icon slot="start" .path=${mdiContentCopy}></ha-svg-icon>
@@ -232,7 +232,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._cutTrigger}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.cut"
               )}
               <ha-svg-icon slot="start" .path=${mdiContentCut}></ha-svg-icon>
@@ -242,7 +242,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._moveUp}
               .disabled=${this.disabled || this.first}
             >
-              ${this.hass.localize("ui.panel.config.automation.editor.move_up")}
+              ${this.menuai.localize("ui.panel.config.automation.editor.move_up")}
               <ha-svg-icon slot="start" .path=${mdiArrowUp}></ha-svg-icon
             ></ha-md-menu-item>
 
@@ -250,7 +250,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._moveDown}
               .disabled=${this.disabled || this.last}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.move_down"
               )}
               <ha-svg-icon slot="start" .path=${mdiArrowDown}></ha-svg-icon
@@ -260,7 +260,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               .clickAction=${this._toggleYamlMode}
               .disabled=${!supported}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.automation.editor.edit_${!yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon slot="start" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -273,10 +273,10 @@ export default class HaAutomationTriggerRow extends LitElement {
               .disabled=${this.disabled || type === "list"}
             >
               ${"enabled" in this.trigger && this.trigger.enabled === false
-                ? this.hass.localize(
+                ? this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.enable"
                   )
-                : this.hass.localize(
+                : this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.disable"
                   )}
               <ha-svg-icon
@@ -292,7 +292,7 @@ export default class HaAutomationTriggerRow extends LitElement {
               class="warning"
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.delete"
               )}
               <ha-svg-icon
@@ -313,7 +313,7 @@ export default class HaAutomationTriggerRow extends LitElement {
             ${this._warnings
               ? html`<ha-alert
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.errors.config.editor_not_supported"
                   )}
                 >
@@ -324,7 +324,7 @@ export default class HaAutomationTriggerRow extends LitElement {
                         )}
                       </ul>`
                     : ""}
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.errors.config.edit_in_yaml_supported"
                   )}
                 </ha-alert>`
@@ -333,14 +333,14 @@ export default class HaAutomationTriggerRow extends LitElement {
               ? html`
                   ${!supported
                     ? html`
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.editor.triggers.unsupported_platform",
                           { platform: type }
                         )}
                       `
                     : ""}
                   <ha-yaml-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${this.trigger}
                     .readOnly=${this.disabled}
                     @value-changed=${this._onYamlChange}
@@ -350,7 +350,7 @@ export default class HaAutomationTriggerRow extends LitElement {
                   ${showId && !isTriggerList(this.trigger)
                     ? html`
                         <ha-textfield
-                          .label=${this.hass.localize(
+                          .label=${this.menuai.localize(
                             "ui.panel.config.automation.editor.triggers.id"
                           )}
                           .value=${this.trigger.id || ""}
@@ -365,7 +365,7 @@ export default class HaAutomationTriggerRow extends LitElement {
                     @value-changed=${this._onUiChanged}
                   >
                     ${dynamicElement(`ha-automation-trigger-${type}`, {
-                      hass: this.hass,
+                      menuai: this.menuai,
                       trigger: this.trigger,
                       disabled: this.disabled,
                     })}
@@ -381,7 +381,7 @@ export default class HaAutomationTriggerRow extends LitElement {
           })}"
           @click=${this._showTriggeredInfo}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.editor.triggers.triggered"
           )}
         </div>
@@ -433,7 +433,7 @@ export default class HaAutomationTriggerRow extends LitElement {
       this._triggerUnsub = undefined;
     }
 
-    const validateResult = await validateConfig(this.hass, {
+    const validateResult = await validateConfig(this.menuai, {
       triggers: trigger,
     });
 
@@ -443,7 +443,7 @@ export default class HaAutomationTriggerRow extends LitElement {
     }
 
     const triggerUnsub = subscribeTrigger(
-      this.hass,
+      this.menuai,
       (result) => {
         if (untriggerTimeout !== undefined) {
           clearTimeout(untriggerTimeout);
@@ -468,7 +468,7 @@ export default class HaAutomationTriggerRow extends LitElement {
   }, 5000);
 
   private _handleUiModeNotAvailable(ev: CustomEvent) {
-    this._warnings = handleStructError(this.hass, ev.detail).warnings;
+    this._warnings = handleStructError(this.menuai, ev.detail).warnings;
     if (!this._yamlMode) {
       this._yamlMode = true;
     }
@@ -483,14 +483,14 @@ export default class HaAutomationTriggerRow extends LitElement {
 
   private _onDelete = () => {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.triggers.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.automation.editor.triggers.delete_confirm_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: () => {
         fireEvent(this, "value-changed", { value: null });
@@ -560,13 +560,13 @@ export default class HaAutomationTriggerRow extends LitElement {
 
   private _showTriggeredInfo() {
     showAlertDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.triggers.triggering_event_detail"
       ),
       text: html`
         <ha-yaml-editor
           read-only
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .defaultValue=${this._triggered}
         ></ha-yaml-editor>
       `,
@@ -576,18 +576,18 @@ export default class HaAutomationTriggerRow extends LitElement {
   private _renameTrigger = async (): Promise<void> => {
     if (isTriggerList(this.trigger)) return;
     const alias = await showPromptDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.triggers.change_alias"
       ),
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.config.automation.editor.triggers.alias"
       ),
       inputType: "string",
       placeholder: capitalizeFirstLetter(
-        describeTrigger(this.trigger, this.hass, this._entityReg, true)
+        describeTrigger(this.trigger, this.menuai, this._entityReg, true)
       ),
       defaultValue: this.trigger.alias,
-      confirmText: this.hass.localize("ui.common.submit"),
+      confirmText: this.menuai.localize("ui.common.submit"),
     });
 
     if (alias !== null) {

@@ -20,7 +20,7 @@ import {
   showConfirmationDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { documentationUrl } from "../../../../util/documentation-url";
 import { showEnergySettingsWaterDialog } from "../dialogs/show-dialogs-energy";
 import "./ha-energy-validation-result";
@@ -28,7 +28,7 @@ import { energyCardStyles } from "./styles";
 
 @customElement("ha-energy-water-settings")
 export class EnergyWaterSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public preferences!: EnergyPreferences;
@@ -58,17 +58,17 @@ export class EnergyWaterSettings extends LitElement {
       <ha-card outlined>
         <h1 class="card-header">
           <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
-          ${this.hass.localize("ui.panel.config.energy.water.title")}
+          ${this.menuai.localize("ui.panel.config.energy.water.title")}
         </h1>
 
         <div class="card-content">
           <p>
-            ${this.hass.localize("ui.panel.config.energy.water.sub")}
+            ${this.menuai.localize("ui.panel.config.energy.water.sub")}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href=${documentationUrl(this.hass, "/docs/energy/water/")}
-              >${this.hass.localize(
+              href=${documentationUrl(this.menuai, "/docs/energy/water/")}
+              >${this.menuai.localize(
                 "ui.panel.config.energy.water.learn_more"
               )}</a
             >
@@ -76,18 +76,18 @@ export class EnergyWaterSettings extends LitElement {
           ${waterValidation.map(
             (result) => html`
               <ha-energy-validation-result
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .issues=${result}
               ></ha-energy-validation-result>
             `
           )}
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.energy.water.water_consumption"
             )}
           </h3>
           ${waterSources.map((source) => {
-            const entityState = this.hass.states[source.stat_energy_from];
+            const entityState = this.menuai.states[source.stat_energy_from];
             return html`
               <div class="row" .source=${source}>
                 ${entityState?.attributes.icon
@@ -97,20 +97,20 @@ export class EnergyWaterSettings extends LitElement {
                   : html`<ha-svg-icon .path=${mdiWater}></ha-svg-icon>`}
                 <span class="content"
                   >${getStatisticLabel(
-                    this.hass,
+                    this.menuai,
                     source.stat_energy_from,
                     this.statsMetadata?.[source.stat_energy_from]
                   )}</span
                 >
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.water.edit_water_source"
                   )}
                   @click=${this._editSource}
                   .path=${mdiPencil}
                 ></ha-icon-button>
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.energy.water.delete_water_source"
                   )}
                   @click=${this._deleteSource}
@@ -122,7 +122,7 @@ export class EnergyWaterSettings extends LitElement {
           <div class="row border-bottom">
             <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
             <mwc-button @click=${this._addSource}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.panel.config.energy.water.add_water_source"
               )}</mwc-button
             >
@@ -173,7 +173,7 @@ export class EnergyWaterSettings extends LitElement {
 
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize("ui.panel.config.energy.delete_source"),
+        title: this.menuai.localize("ui.panel.config.energy.delete_source"),
       }))
     ) {
       return;
@@ -192,7 +192,7 @@ export class EnergyWaterSettings extends LitElement {
   }
 
   private async _savePreferences(preferences: EnergyPreferences) {
-    const result = await saveEnergyPreferences(this.hass, preferences);
+    const result = await saveEnergyPreferences(this.menuai, preferences);
     fireEvent(this, "value-changed", { value: result });
   }
 

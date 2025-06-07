@@ -7,7 +7,7 @@ import "../../../../../components/ha-entities-display-editor";
 import "../../../../../components/ha-icon-button";
 import "../../../../../components/ha-icon-button-prev";
 import "../../../../../components/ha-icon";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { AreaStrategyGroup } from "../helpers/areas-strategy-helper";
 import {
   AREA_STRATEGY_GROUP_ICONS,
@@ -28,7 +28,7 @@ export class HuiAreasDashboardStrategyEditor
   extends LitElement
   implements LovelaceStrategyEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state()
   private _config?: AreasDashboardStrategyConfig;
@@ -41,14 +41,14 @@ export class HuiAreasDashboardStrategyEditor
   private _area?: string;
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     if (this._area) {
-      const groups = getAreaGroupedEntities(this._area, this.hass);
+      const groups = getAreaGroupedEntities(this._area, this.menuai);
 
-      const area = this.hass.areas[this._area];
+      const area = this.menuai.areas[this._area];
 
       return html`
         <div class="toolbar">
@@ -56,19 +56,19 @@ export class HuiAreasDashboardStrategyEditor
           <p>${area.name}</p>
         </div>
         <ha-expansion-panel
-          .header=${this.hass!.localize(
+          .header=${this.menuai!.localize(
             `ui.panel.lovelace.strategy.areas.header`
           )}
           expanded
           outlined
         >
           <p>
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               `ui.panel.lovelace.strategy.areas.header_description`,
               {
                 edit_the_area: html`
                   <button class="link" @click=${this._editArea} .area=${area}>
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.lovelace.strategy.areas.edit_the_area"
                     )}
                   </button>
@@ -84,7 +84,7 @@ export class HuiAreasDashboardStrategyEditor
 
           return html`
             <ha-expansion-panel
-              .header=${this.hass!.localize(
+              .header=${this.menuai!.localize(
                 `ui.panel.lovelace.strategy.areas.groups.${group}`
               )}
               expanded
@@ -97,7 +97,7 @@ export class HuiAreasDashboardStrategyEditor
               ${entities.length
                 ? html`
                     <ha-entities-display-editor
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .value=${value}
                       .label=${group}
                       @value-changed=${this._entitiesDisplayChanged}
@@ -108,7 +108,7 @@ export class HuiAreasDashboardStrategyEditor
                   `
                 : html`
                     <p>
-                      ${this.hass!.localize(
+                      ${this.menuai!.localize(
                         "ui.panel.lovelace.editor.strategy.areas.no_entities"
                       )}
                     </p>
@@ -123,9 +123,9 @@ export class HuiAreasDashboardStrategyEditor
 
     return html`
       <ha-areas-display-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${value}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.lovelace.editor.strategy.areas.areas_display"
         )}
         @value-changed=${this._areasDisplayChanged}
@@ -148,7 +148,7 @@ export class HuiAreasDashboardStrategyEditor
     showAreaRegistryDetailDialog(this, {
       entry: area,
       updateEntry: (values) =>
-        updateAreaRegistryEntry(this.hass!, area.area_id, values),
+        updateAreaRegistryEntry(this.menuai!, area.area_id, values),
     });
   }
 

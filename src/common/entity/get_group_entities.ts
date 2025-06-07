@@ -1,8 +1,8 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { GroupEntity } from "../../data/group";
 
 export const getGroupEntities = (
-  entities: HassEntities,
+  entities: menuaiEntities,
   group: GroupEntity
 ) => {
   const result = {};

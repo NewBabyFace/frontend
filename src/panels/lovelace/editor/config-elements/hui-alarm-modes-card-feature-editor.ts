@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -10,7 +10,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import { supportedAlarmModes } from "../../../../data/alarm_control_panel";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   AlarmModesCardFeatureConfig,
   LovelaceCardFeatureContext,
@@ -26,7 +26,7 @@ export class HuiAlarmModesCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -39,7 +39,7 @@ export class HuiAlarmModesCardFeatureEditor
   private _schema = memoizeOne(
     (
       localize: LocalizeFunc,
-      stateObj: HassEntity | undefined,
+      stateObj: menuaiEntity | undefined,
       customizeModes: boolean
     ) =>
       [
@@ -74,7 +74,7 @@ export class HuiAlarmModesCardFeatureEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -84,18 +84,18 @@ export class HuiAlarmModesCardFeatureEditor
     };
 
     const stateObj = this.context?.entity_id
-      ? this.hass.states[this.context?.entity_id]
+      ? this.menuai.states[this.context?.entity_id]
       : undefined;
 
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       stateObj,
       data.customize_modes
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -109,7 +109,7 @@ export class HuiAlarmModesCardFeatureEditor
       .value as AlarmModesCardFeatureData;
 
     const stateObj = this.context?.entity_id
-      ? this.hass!.states[this.context?.entity_id]
+      ? this.menuai!.states[this.context?.entity_id]
       : undefined;
 
     if (customize_modes && !config.modes) {
@@ -128,7 +128,7 @@ export class HuiAlarmModesCardFeatureEditor
     switch (schema.name) {
       case "modes":
       case "customize_modes":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.features.types.alarm-modes.${schema.name}`
         );
       default:

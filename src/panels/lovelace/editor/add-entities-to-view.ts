@@ -5,26 +5,26 @@ import type { LovelaceConfig } from "../../../data/lovelace/config/types";
 import { fetchConfig, saveConfig } from "../../../data/lovelace/config/types";
 import { fetchDashboards } from "../../../data/lovelace/dashboard";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showSuggestCardDialog } from "./card-editor/show-suggest-card-dialog";
 import { showSelectViewDialog } from "./select-view/show-select-view-dialog";
 
 export const addEntitiesToLovelaceView = async (
   element: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   cardConfig: LovelaceCardConfig[],
   sectionConfig?: LovelaceSectionConfig,
   entities?: string[]
 ) => {
-  hass.loadFragmentTranslation("lovelace");
-  const dashboards = await fetchDashboards(hass);
+  menuai.loadFragmentTranslation("lovelace");
+  const dashboards = await fetchDashboards(menuai);
 
   const storageDashs = dashboards.filter(
     (dashboard) => dashboard.mode === "storage"
   );
 
   const mainLovelaceMode = (
-    hass!.panels.lovelace?.config as LovelacePanelConfig
+    menuai!.panels.lovelace?.config as LovelacePanelConfig
   )?.mode;
 
   if (mainLovelaceMode !== "storage" && !storageDashs.length) {
@@ -41,7 +41,7 @@ export const addEntitiesToLovelaceView = async (
   let urlPath: string | null = null;
   if (mainLovelaceMode === "storage") {
     try {
-      lovelaceConfig = await fetchConfig(hass.connection, null, false);
+      lovelaceConfig = await fetchConfig(menuai.connection, null, false);
     } catch (_err: any) {
       // default dashboard is in generated mode
     }
@@ -53,7 +53,7 @@ export const addEntitiesToLovelaceView = async (
       try {
         // eslint-disable-next-line no-await-in-loop
         lovelaceConfig = await fetchConfig(
-          hass.connection,
+          menuai.connection,
           storageDash.url_path,
           false
         );
@@ -97,9 +97,9 @@ export const addEntitiesToLovelaceView = async (
       lovelaceConfig: lovelaceConfig!,
       saveConfig: async (newConfig: LovelaceConfig): Promise<void> => {
         try {
-          await saveConfig(hass!, null, newConfig);
+          await saveConfig(menuai!, null, newConfig);
         } catch (_err: any) {
-          alert(hass.localize("ui.panel.lovelace.add_entities.saving_failed"));
+          alert(menuai.localize("ui.panel.lovelace.add_entities.saving_failed"));
         }
       },
       path: [0],
@@ -112,7 +112,7 @@ export const addEntitiesToLovelaceView = async (
     lovelaceConfig,
     urlPath,
     allowDashboardChange: true,
-    actionLabel: hass.localize("ui.common.next"),
+    actionLabel: menuai.localize("ui.common.next"),
     dashboards,
     viewSelectedCallback: (newUrlPath, selectedDashConfig, viewIndex) => {
       showSuggestCardDialog(element, {
@@ -121,10 +121,10 @@ export const addEntitiesToLovelaceView = async (
         lovelaceConfig: selectedDashConfig,
         saveConfig: async (newConfig: LovelaceConfig): Promise<void> => {
           try {
-            await saveConfig(hass!, newUrlPath, newConfig);
+            await saveConfig(menuai!, newUrlPath, newConfig);
           } catch {
             alert(
-              hass.localize("ui.panel.lovelace.add_entities.saving_failed")
+              menuai.localize("ui.panel.lovelace.add_entities.saving_failed")
             );
           }
         },

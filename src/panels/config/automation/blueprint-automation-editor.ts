@@ -1,5 +1,5 @@
 import "@material/mwc-button/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../components/ha-alert";
@@ -12,7 +12,7 @@ import { HaBlueprintGenericEditor } from "../blueprint/blueprint-generic-editor"
 export class HaBlueprintAutomationEditor extends HaBlueprintGenericEditor {
   @property({ attribute: false }) public config!: BlueprintAutomationConfig;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected get _config(): BlueprintAutomationConfig {
     return this.config;
@@ -23,11 +23,11 @@ export class HaBlueprintAutomationEditor extends HaBlueprintGenericEditor {
       ${this.stateObj?.state === "off"
         ? html`
             <ha-alert alert-type="info">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.disabled"
               )}
               <mwc-button slot="action" @click=${this._enable}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.enable"
                 )}
               </mwc-button>
@@ -46,14 +46,14 @@ export class HaBlueprintAutomationEditor extends HaBlueprintGenericEditor {
   }
 
   protected async _getBlueprints() {
-    this._blueprints = await fetchBlueprints(this.hass, "automation");
+    this._blueprints = await fetchBlueprints(this.menuai, "automation");
   }
 
   private async _enable(): Promise<void> {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
-    await this.hass.callService("automation", "turn_on", {
+    await this.menuai.callService("automation", "turn_on", {
       entity_id: this.stateObj.entity_id,
     });
   }

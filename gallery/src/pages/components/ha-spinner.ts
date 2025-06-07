@@ -5,11 +5,11 @@ import { applyThemesOnElement } from "../../../../src/common/dom/apply_themes_on
 import "../../../../src/components/ha-bar";
 import "../../../../src/components/ha-card";
 import "../../../../src/components/ha-spinner";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 
 @customElement("demo-components-ha-spinner")
 export class DemoHaSpinner extends LitElement {
-  @property({ attribute: false }) hass!: HomeAssistant;
+  @property({ attribute: false }) menuai!: menuai;
 
   protected render(): TemplateResult {
     return html`

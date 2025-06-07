@@ -6,17 +6,17 @@ import { mockAuth } from "../../../../demo/src/stubs/auth";
 import { mockConfig } from "../../../../demo/src/stubs/config";
 import { mockDeviceRegistry } from "../../../../demo/src/stubs/device_registry";
 import { mockEntityRegistry } from "../../../../demo/src/stubs/entity_registry";
-import { mockHassioSupervisor } from "../../../../demo/src/stubs/hassio_supervisor";
+import { mockmenuaiioSupervisor } from "../../../../demo/src/stubs/menuaiio_supervisor";
 import { mockTags } from "../../../../demo/src/stubs/tags";
 import "../../../../src/components/ha-formfield";
 import type { Trigger } from "../../../../src/data/automation";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../../../src/panels/config/automation/trigger/ha-automation-trigger";
 import { HaConversationTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-conversation";
 import { HaDeviceTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-device";
 import { HaEventTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-event";
 import { HaGeolocationTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-geo_location";
-import { HaHassTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-homeassistant";
+import { HamenuaiTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-menuai";
 import { HaTriggerList } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-list";
 import { HaMQTTTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-mqtt";
 import { HaNumericStateTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-numeric_state";
@@ -29,7 +29,7 @@ import { HaTimeTrigger } from "../../../../src/panels/config/automation/trigger/
 import { HaTimePatternTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-time_pattern";
 import { HaWebhookTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-webhook";
 import { HaZoneTrigger } from "../../../../src/panels/config/automation/trigger/types/ha-automation-trigger-zone";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import "../../components/demo-black-white-row";
 
 const SCHEMAS: { name: string; triggers: Trigger[] }[] = [
@@ -49,8 +49,8 @@ const SCHEMAS: { name: string; triggers: Trigger[] }[] = [
   },
 
   {
-    name: "Home Assistant",
-    triggers: [{ ...HaHassTrigger.defaultConfig }],
+    name: "MenuAI",
+    triggers: [{ ...HamenuaiTrigger.defaultConfig }],
   },
 
   {
@@ -129,7 +129,7 @@ const SCHEMAS: { name: string; triggers: Trigger[] }[] = [
 
 @customElement("demo-automation-editor-trigger")
 export class DemoAutomationEditorTrigger extends LitElement {
-  @state() private hass!: HomeAssistant;
+  @state() private menuai!: menuai;
 
   @state() private _disabled = false;
 
@@ -137,16 +137,16 @@ export class DemoAutomationEditorTrigger extends LitElement {
 
   constructor() {
     super();
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    mockEntityRegistry(hass);
-    mockDeviceRegistry(hass);
-    mockAreaRegistry(hass);
-    mockHassioSupervisor(hass);
-    mockConfig(hass);
-    mockTags(hass);
-    mockAuth(hass);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    mockEntityRegistry(menuai);
+    mockDeviceRegistry(menuai);
+    mockAreaRegistry(menuai);
+    mockmenuaiioSupervisor(menuai);
+    mockConfig(menuai);
+    mockTags(menuai);
+    mockAuth(menuai);
   }
 
   protected render(): TemplateResult {
@@ -170,7 +170,7 @@ export class DemoAutomationEditorTrigger extends LitElement {
               (slot) => html`
                 <ha-automation-trigger
                   slot=${slot}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .triggers=${this.data[sampleIdx]}
                   .sampleIdx=${sampleIdx}
                   .disabled=${this._disabled}

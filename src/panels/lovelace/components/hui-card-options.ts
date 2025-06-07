@@ -27,7 +27,7 @@ import {
   showPromptDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeCardSize } from "../common/compute-card-size";
 import {
   addCard,
@@ -47,7 +47,7 @@ import type { Lovelace, LovelaceCard } from "../types";
 
 @customElement("hui-card-options")
 export class HuiCardOptions extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -96,7 +96,7 @@ export class HuiCardOptions extends LitElement {
       <ha-card>
         <div class="card-actions">
           <mwc-button @click=${this._editCard}
-            >${this.hass!.localize(
+            >${this.menuai!.localize(
               "ui.panel.lovelace.editor.edit_card.edit"
             )}</mwc-button
           >
@@ -105,7 +105,7 @@ export class HuiCardOptions extends LitElement {
             ${!this.hidePosition
               ? html`
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.decrease_position"
                     )}
                     .path=${mdiMinus}
@@ -115,14 +115,14 @@ export class HuiCardOptions extends LitElement {
                   ></ha-icon-button>
                   <ha-icon-button
                     @click=${this._changeCardPosition}
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.change_position"
                     )}
                   >
                     <div class="position-badge">${cardIndex + 1}</div>
                   </ha-icon-button>
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.increase_position"
                     )}
                     .path=${mdiPlus}
@@ -135,7 +135,7 @@ export class HuiCardOptions extends LitElement {
             <ha-button-menu @action=${this._handleAction}>
               <ha-icon-button
                 slot="trigger"
-                .label=${this.hass!.localize(
+                .label=${this.menuai!.localize(
                   "ui.panel.lovelace.editor.edit_card.options"
                 )}
                 .path=${mdiDotsVertical}
@@ -145,7 +145,7 @@ export class HuiCardOptions extends LitElement {
                   slot="graphic"
                   .path=${mdiFileMoveOutline}
                 ></ha-svg-icon>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.edit_card.move"
                 )}
               </ha-list-item>
@@ -154,7 +154,7 @@ export class HuiCardOptions extends LitElement {
                   slot="graphic"
                   .path=${mdiPlusCircleMultipleOutline}
                 ></ha-svg-icon>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.edit_card.duplicate"
                 )}
               </ha-list-item>
@@ -163,7 +163,7 @@ export class HuiCardOptions extends LitElement {
                   slot="graphic"
                   .path=${mdiContentCopy}
                 ></ha-svg-icon>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.edit_card.copy"
                 )}
               </ha-list-item>
@@ -172,7 +172,7 @@ export class HuiCardOptions extends LitElement {
                   slot="graphic"
                   .path=${mdiContentCut}
                 ></ha-svg-icon>
-                ${this.hass!.localize("ui.panel.lovelace.editor.edit_card.cut")}
+                ${this.menuai!.localize("ui.panel.lovelace.editor.edit_card.cut")}
               </ha-list-item>
               <li divider role="separator"></li>
               <ha-list-item class="warning" graphic="icon">
@@ -181,7 +181,7 @@ export class HuiCardOptions extends LitElement {
                   slot="graphic"
                   .path=${mdiDelete}
                 ></ha-svg-icon>
-                ${this.hass!.localize(
+                ${this.menuai!.localize(
                   "ui.panel.lovelace.editor.edit_card.delete"
                 )}
               </ha-list-item>
@@ -313,10 +313,10 @@ export class HuiCardOptions extends LitElement {
     const path = this.path!;
     const { cardIndex } = parseLovelaceCardPath(path);
     const positionString = await showPromptDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.lovelace.editor.change_position.title"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.lovelace.editor.change_position.text"
       ),
       inputType: "number",
@@ -339,7 +339,7 @@ export class HuiCardOptions extends LitElement {
       lovelaceConfig: this.lovelace!.config,
       urlPath: this.lovelace!.urlPath,
       allowDashboardChange: true,
-      header: this.hass!.localize("ui.panel.lovelace.editor.move_card.header"),
+      header: this.menuai!.localize("ui.panel.lovelace.editor.move_card.header"),
       viewSelectedCallback: async (urlPath, selectedDashConfig, viewIndex) => {
         if (!this.lovelace) return;
         const toView = selectedDashConfig.views[viewIndex];
@@ -351,10 +351,10 @@ export class HuiCardOptions extends LitElement {
 
         if (isStrategyView(toView)) {
           showAlertDialog(this, {
-            title: this.hass!.localize(
+            title: this.menuai!.localize(
               "ui.panel.lovelace.editor.move_card.error_title"
             ),
-            text: this.hass!.localize(
+            text: this.menuai!.localize(
               "ui.panel.lovelace.editor.move_card.error_text_strategy"
             ),
             warning: true,
@@ -369,13 +369,13 @@ export class HuiCardOptions extends LitElement {
             moveCardToContainer(newConfig, this.path!, toPath)
           );
           this.lovelace.showToast({
-            message: this.hass!.localize(
+            message: this.menuai!.localize(
               "ui.panel.lovelace.editor.move_card.success"
             ),
             duration: 4000,
             action: {
               action: undoAction,
-              text: this.hass!.localize("ui.common.undo"),
+              text: this.menuai!.localize("ui.common.undo"),
             },
           });
           return;
@@ -384,7 +384,7 @@ export class HuiCardOptions extends LitElement {
           const { cardIndex } = parseLovelaceCardPath(this.path!);
           const card = this._cards[cardIndex];
           await saveConfig(
-            this.hass!,
+            this.menuai!,
             urlPath,
             addCard(newConfig, toPath, card)
           );
@@ -393,18 +393,18 @@ export class HuiCardOptions extends LitElement {
           );
 
           this.lovelace.showToast({
-            message: this.hass!.localize(
+            message: this.menuai!.localize(
               "ui.panel.lovelace.editor.move_card.success"
             ),
             duration: 4000,
             action: {
               action: undoAction,
-              text: this.hass!.localize("ui.common.undo"),
+              text: this.menuai!.localize("ui.common.undo"),
             },
           });
         } catch (_err: any) {
           this.lovelace.showToast({
-            message: this.hass!.localize(
+            message: this.menuai!.localize(
               "ui.panel.lovelace.editor.move_card.error"
             ),
           });

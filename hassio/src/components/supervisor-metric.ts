@@ -44,17 +44,17 @@ class SupervisorMetric extends LitElement {
       justify-content: space-between;
     }
     ha-bar {
-      --ha-bar-primary-color: var(--hassio-bar-ok-color, var(--success-color));
+      --ha-bar-primary-color: var(--menuaiio-bar-ok-color, var(--success-color));
     }
     .target-warning {
       --ha-bar-primary-color: var(
-        --hassio-bar-warning-color,
+        --menuaiio-bar-warning-color,
         var(--warning-color)
       );
     }
     .target-critical {
       --ha-bar-primary-color: var(
-        --hassio-bar-critical-color,
+        --menuaiio-bar-critical-color,
         var(--error-color)
       );
     }

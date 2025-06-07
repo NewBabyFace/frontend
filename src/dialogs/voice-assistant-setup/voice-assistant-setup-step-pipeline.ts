@@ -19,7 +19,7 @@ import type { LanguageScore, LanguageScores } from "../../data/conversation";
 import { getLanguageScores, listAgents } from "../../data/conversation";
 import { listSTTEngines } from "../../data/stt";
 import { listTTSEngines, listTTSVoices } from "../../data/tts";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { AssistantSetupStyles } from "./styles";
 import { STEP } from "./voice-assistant-setup-dialog";
 import { documentationUrl } from "../../util/documentation-url";
@@ -34,7 +34,7 @@ const EMPTY_SCORE: LanguageScore = {
 
 @customElement("ha-voice-assistant-setup-step-pipeline")
 export class HaVoiceAssistantSetupStepPipeline extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public assistConfiguration?: AssistSatelliteConfiguration;
@@ -73,7 +73,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
       if (!this._value) {
         this._value = this._getOptions(
           this._languageScores[lang] || EMPTY_SCORE,
-          this.hass.localize
+          this.menuai.localize
         ).supportedOptions[0]?.value as
           | "cloud"
           | "focused_local"
@@ -118,22 +118,22 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
 
     if (!this.language) {
       const language = formatLanguageCode(
-        this.hass.config.language,
-        this.hass.locale
+        this.menuai.config.language,
+        this.menuai.locale
       );
       return html`<div class="content">
         <h1>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.pipeline.unsupported_language.header"
           )}
         </h1>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.voice_assistants.satellite_wizard.pipeline.unsupported_language.secondary",
           { language }
         )}
         <ha-language-picker
-          .hass=${this.hass}
-          .label=${this.hass.localize(
+          .menuai=${this.menuai}
+          .label=${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.pipeline.unsupported_language.language_picker"
           )}
           .languages=${this.languages}
@@ -142,10 +142,10 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
 
         <a
           href=${documentationUrl(
-            this.hass,
+            this.menuai,
             "/voice_control/contribute-voice/"
           )}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.pipeline.unsupported_language.contribute",
             { language }
           )}</a
@@ -155,7 +155,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
 
     const score = this._languageScores[this.language] || EMPTY_SCORE;
 
-    const options = this._getOptions(score, this.hass.localize);
+    const options = this._getOptions(score, this.menuai.localize);
 
     const performance = !this._value
       ? ""
@@ -175,19 +175,19 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
 
     return html`<div class="content">
         <h1>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.pipeline.title"
           )}
         </h1>
         <div class="bar-header">
           <span
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.voice_assistants.satellite_wizard.pipeline.performance.header"
             )}</span
           ><span
             >${!performance
               ? ""
-              : this.hass.localize(
+              : this.menuai.localize(
                   `ui.panel.config.voice_assistants.satellite_wizard.pipeline.performance.${performance}`
                 )}</span
           >
@@ -199,13 +199,13 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
         </div>
         <div class="bar-header">
           <span
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.panel.config.voice_assistants.satellite_wizard.pipeline.commands.header"
             )}</span
           ><span
             >${!commands
               ? ""
-              : this.hass.localize(
+              : this.menuai.localize(
                   `ui.panel.config.voice_assistants.satellite_wizard.pipeline.commands.${commands}`
                 )}</span
           >
@@ -223,7 +223,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
         ></ha-select-box>
         ${options.unsupportedOptions.length
           ? html`<h3>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.pipeline.unsupported"
                 )}
               </h3>
@@ -239,7 +239,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
           @click=${this._createPipeline}
           unelevated
           .disabled=${!this._value}
-          >${this.hass.localize("ui.common.next")}</ha-button
+          >${this.menuai.localize("ui.common.next")}</ha-button
         >
       </div>`;
   }
@@ -249,15 +249,15 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
       (await this._hasCloud()) && (await this._createCloudPipeline(false));
     if (!cloud) {
       this._cloudChecked = true;
-      this._languageScores = (await getLanguageScores(this.hass)).languages;
+      this._languageScores = (await getLanguageScores(this.menuai)).languages;
     }
   }
 
   private async _hasCloud(): Promise<boolean> {
-    if (!isComponentLoaded(this.hass, "cloud")) {
+    if (!isComponentLoaded(this.menuai, "cloud")) {
       return false;
     }
-    const cloudStatus = await fetchCloudStatus(this.hass);
+    const cloudStatus = await fetchCloudStatus(this.menuai);
     if (!cloudStatus.logged_in || !cloudStatus.active_subscription) {
       return false;
     }
@@ -267,7 +267,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
   private async _createCloudPipeline(useLanguage: boolean): Promise<boolean> {
     let cloudTtsEntityId;
     let cloudSttEntityId;
-    for (const entity of Object.values(this.hass.entities)) {
+    for (const entity of Object.values(this.menuai.entities)) {
       if (entity.platform === "cloud") {
         const domain = computeDomain(entity.entity_id);
         if (domain === "tts") {
@@ -283,7 +283,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
       }
     }
     try {
-      const pipelines = await listAssistPipelines(this.hass);
+      const pipelines = await listAssistPipelines(this.menuai);
 
       if (pipelines.preferred_pipeline) {
         pipelines.pipelines.sort((a) =>
@@ -303,9 +303,9 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
       if (!cloudPipeline) {
         const agent = (
           await listAgents(
-            this.hass,
-            this.language || this.hass.config.language,
-            this.hass.config.country || undefined
+            this.menuai,
+            this.language || this.menuai.config.language,
+            this.menuai.config.country || undefined
           )
         ).agents.find((agnt) => agnt.id === "conversation.home_assistant");
 
@@ -315,9 +315,9 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
 
         const ttsEngine = (
           await listTTSEngines(
-            this.hass,
-            this.language || this.hass.config.language,
-            this.hass.config.country || undefined
+            this.menuai,
+            this.language || this.menuai.config.language,
+            this.menuai.config.country || undefined
           )
         ).providers.find((provider) => provider.engine_id === cloudTtsEntityId);
 
@@ -326,16 +326,16 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
         }
 
         const ttsVoices = await listTTSVoices(
-          this.hass,
+          this.menuai,
           cloudTtsEntityId,
           ttsEngine.supported_languages[0]
         );
 
         const sttEngine = (
           await listSTTEngines(
-            this.hass,
-            this.language || this.hass.config.language,
-            this.hass.config.country || undefined
+            this.menuai,
+            this.language || this.menuai.config.language,
+            this.menuai.config.country || undefined
           )
         ).providers.find((provider) => provider.engine_id === cloudSttEntityId);
 
@@ -343,7 +343,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
           return false;
         }
 
-        let pipelineName = "Home Assistant Cloud";
+        let pipelineName = "MenuAI Cloud";
         let i = 1;
         while (
           pipelines.pipelines.find(
@@ -351,13 +351,13 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
             (pipeline) => pipeline.name === pipelineName
           )
         ) {
-          pipelineName = `Home Assistant Cloud ${i}`;
+          pipelineName = `MenuAI Cloud ${i}`;
           i++;
         }
 
-        cloudPipeline = await createAssistPipeline(this.hass, {
+        cloudPipeline = await createAssistPipeline(this.menuai, {
           name: pipelineName,
-          language: (this.language || this.hass.config.language).split("-")[0],
+          language: (this.language || this.menuai.config.language).split("-")[0],
           conversation_engine: "conversation.home_assistant",
           conversation_language: agent.supported_languages[0],
           stt_engine: cloudSttEntityId,
@@ -370,7 +370,7 @@ export class HaVoiceAssistantSetupStepPipeline extends LitElement {
         });
       }
 
-      await this.hass.callService(
+      await this.menuai.callService(
         "select",
         "select_option",
         { option: cloudPipeline.name },

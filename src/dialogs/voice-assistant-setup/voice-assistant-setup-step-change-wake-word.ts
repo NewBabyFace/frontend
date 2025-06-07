@@ -5,13 +5,13 @@ import "../../components/ha-md-list";
 import "../../components/ha-md-list-item";
 import type { AssistSatelliteConfiguration } from "../../data/assist_satellite";
 import { setWakeWords } from "../../data/assist_satellite";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { AssistantSetupStyles } from "./styles";
 import { STEP } from "./voice-assistant-setup-dialog";
 
 @customElement("ha-voice-assistant-setup-step-change-wake-word")
 export class HaVoiceAssistantSetupStepChangeWakeWord extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public assistConfiguration?: AssistSatelliteConfiguration;
@@ -22,15 +22,15 @@ export class HaVoiceAssistantSetupStepChangeWakeWord extends LitElement {
     return html`<div class="padding content">
         <img
           src="/static/images/voice-assistant/change-wake-word.png"
-          alt="Casita Home Assistant logo"
+          alt="Casita MenuAI logo"
         />
         <h1>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.change_wake_word.title"
           )}
         </h1>
         <p class="secondary">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.change_wake_word.secondary"
           )}
         </p>
@@ -58,7 +58,7 @@ export class HaVoiceAssistantSetupStepChangeWakeWord extends LitElement {
 
     const wakeWordId = ev.currentTarget.value;
 
-    await setWakeWords(this.hass, this.assistEntityId, [wakeWordId]);
+    await setWakeWords(this.menuai, this.assistEntityId, [wakeWordId]);
     this._nextStep();
   }
 

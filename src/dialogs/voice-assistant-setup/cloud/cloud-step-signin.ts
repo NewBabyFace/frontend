@@ -11,7 +11,7 @@ import "../../../components/ha-textfield";
 import type { HaTextField } from "../../../components/ha-textfield";
 import { cloudLogin } from "../../../data/cloud";
 import { showCloudAlreadyConnectedDialog } from "../../../panels/config/cloud/dialog-cloud-already-connected/show-dialog-cloud-already-connected";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import {
   showAlertDialog,
   showPromptDialog,
@@ -20,7 +20,7 @@ import { AssistantSetupStyles } from "../styles";
 
 @customElement("cloud-step-signin")
 export class CloudStepSignin extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _requestInProgress = false;
 
@@ -35,10 +35,10 @@ export class CloudStepSignin extends LitElement {
   render() {
     return html`<div class="content">
         <img
-          src=${`/static/images/logo_nabu_casa${this.hass.themes?.darkMode ? "_dark" : ""}.png`}
+          src=${`/static/images/logo_nabu_casa${this.menuai.themes?.darkMode ? "_dark" : ""}.png`}
           alt="Nabu Casa logo"
         />
-        <h1>${this.hass.localize("ui.panel.config.cloud.login.sign_in")}</h1>
+        <h1>${this.menuai.localize("ui.panel.config.cloud.login.sign_in")}</h1>
         ${this._error
           ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
           : ""}
@@ -46,7 +46,7 @@ export class CloudStepSignin extends LitElement {
           autofocus
           id="email"
           name="email"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.cloud.register.email_address"
           )}
           .disabled=${this._requestInProgress}
@@ -54,14 +54,14 @@ export class CloudStepSignin extends LitElement {
           autocomplete="email"
           required
           @keydown=${this._keyDown}
-          validationMessage=${this.hass.localize(
+          validationMessage=${this.menuai.localize(
             "ui.panel.config.cloud.register.email_error_msg"
           )}
         ></ha-textfield>
         <ha-password-field
           id="password"
           name="password"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.cloud.register.password"
           )}
           .disabled=${this._requestInProgress}
@@ -69,7 +69,7 @@ export class CloudStepSignin extends LitElement {
           minlength="8"
           required
           @keydown=${this._keyDown}
-          validationMessage=${this.hass.localize(
+          validationMessage=${this.menuai.localize(
             "ui.panel.config.cloud.register.password_error_msg"
           )}
         ></ha-password-field>
@@ -79,7 +79,7 @@ export class CloudStepSignin extends LitElement {
           unelevated
           @click=${this._handleLogin}
           .disabled=${this._requestInProgress}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.cloud.login.sign_in"
           )}</ha-button
         >
@@ -115,7 +115,7 @@ export class CloudStepSignin extends LitElement {
     const doLogin = async (username: string, code?: string) => {
       try {
         await cloudLogin({
-          hass: this.hass,
+          menuai: this.menuai,
           email: username,
           ...(code ? { code } : { password }),
           check_connection: this._checkConnection,
@@ -125,15 +125,15 @@ export class CloudStepSignin extends LitElement {
 
         if (errCode === "mfarequired") {
           const totpCode = await showPromptDialog(this, {
-            title: this.hass.localize(
+            title: this.menuai.localize(
               "ui.panel.config.cloud.login.totp_code_prompt_title"
             ),
-            inputLabel: this.hass.localize(
+            inputLabel: this.menuai.localize(
               "ui.panel.config.cloud.login.totp_code"
             ),
             inputType: "text",
             defaultValue: "",
-            confirmText: this.hass.localize(
+            confirmText: this.menuai.localize(
               "ui.panel.config.cloud.login.submit"
             ),
           });
@@ -164,7 +164,7 @@ export class CloudStepSignin extends LitElement {
 
         if (errCode === "PasswordChangeRequired") {
           showAlertDialog(this, {
-            title: this.hass.localize(
+            title: this.menuai.localize(
               "ui.panel.config.cloud.login.alert_password_change_required"
             ),
           });
@@ -177,22 +177,22 @@ export class CloudStepSignin extends LitElement {
 
         switch (errCode) {
           case "UserNotConfirmed":
-            this._error = this.hass.localize(
+            this._error = this.menuai.localize(
               "ui.panel.config.cloud.login.alert_email_confirm_necessary"
             );
             break;
           case "mfarequired":
-            this._error = this.hass.localize(
+            this._error = this.menuai.localize(
               "ui.panel.config.cloud.login.alert_mfa_code_required"
             );
             break;
           case "mfaexpiredornotstarted":
-            this._error = this.hass.localize(
+            this._error = this.menuai.localize(
               "ui.panel.config.cloud.login.alert_mfa_expired_or_not_started"
             );
             break;
           case "invalidtotpcode":
-            this._error = this.hass.localize(
+            this._error = this.menuai.localize(
               "ui.panel.config.cloud.login.alert_totp_code_invalid"
             );
             break;

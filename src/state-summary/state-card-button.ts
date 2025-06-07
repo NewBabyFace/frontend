@@ -1,5 +1,5 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -7,13 +7,13 @@ import "../components/entity/ha-entity-toggle";
 import "../components/entity/state-info";
 import { UNAVAILABLE } from "../data/entity";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-button")
 class StateCardButton extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -22,7 +22,7 @@ class StateCardButton extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${stateObj}
           .inDialog=${this.inDialog}
         ></state-info>
@@ -30,7 +30,7 @@ class StateCardButton extends LitElement {
           @click=${this._pressButton}
           .disabled=${stateObj.state === UNAVAILABLE}
         >
-          ${this.hass.localize("ui.card.button.press")}
+          ${this.menuai.localize("ui.card.button.press")}
         </mwc-button>
       </div>
     `;
@@ -38,7 +38,7 @@ class StateCardButton extends LitElement {
 
   private _pressButton(ev: Event) {
     ev.stopPropagation();
-    this.hass.callService("button", "press", {
+    this.menuai.callService("button", "press", {
       entity_id: this.stateObj.entity_id,
     });
   }

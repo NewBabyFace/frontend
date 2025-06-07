@@ -1,6 +1,6 @@
 import type { Connection } from "home-assistant-js-websocket";
 import type { LocalizeFunc } from "../common/translations/localize";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type {
   DataEntryFlowProgress,
   DataEntryFlowStep,
@@ -13,7 +13,7 @@ export const DISCOVERY_SOURCES = [
   "dhcp",
   "discovery",
   "hardware",
-  "hassio",
+  "menuaiio",
   "homekit",
   "integration_discovery",
   "mqtt",
@@ -30,23 +30,23 @@ const HEADERS = {
 };
 
 export const createConfigFlow = (
-  hass: HomeAssistant,
+  menuai: menuai,
   handler: string,
   entry_id?: string
 ) =>
-  hass.callApi<DataEntryFlowStep>(
+  menuai.callApi<DataEntryFlowStep>(
     "POST",
     "config/config_entries/flow",
     {
       handler,
-      show_advanced_options: Boolean(hass.userData?.showAdvanced),
+      show_advanced_options: Boolean(menuai.userData?.showAdvanced),
       entry_id,
     },
     HEADERS
   );
 
-export const fetchConfigFlow = (hass: HomeAssistant, flowId: string) =>
-  hass.callApi<DataEntryFlowStep>(
+export const fetchConfigFlow = (menuai: menuai, flowId: string) =>
+  menuai.callApi<DataEntryFlowStep>(
     "GET",
     `config/config_entries/flow/${flowId}`,
     undefined,
@@ -54,11 +54,11 @@ export const fetchConfigFlow = (hass: HomeAssistant, flowId: string) =>
   );
 
 export const handleConfigFlowStep = (
-  hass: HomeAssistant,
+  menuai: menuai,
   flowId: string,
   data: Record<string, any>
 ) =>
-  hass.callApi<DataEntryFlowStep>(
+  menuai.callApi<DataEntryFlowStep>(
     "POST",
     `config/config_entries/flow/${flowId}`,
     data,
@@ -66,20 +66,20 @@ export const handleConfigFlowStep = (
   );
 
 export const ignoreConfigFlow = (
-  hass: HomeAssistant,
+  menuai: menuai,
   flowId: string,
   title: string
 ) =>
-  hass.callWS({ type: "config_entries/ignore_flow", flow_id: flowId, title });
+  menuai.callWS({ type: "config_entries/ignore_flow", flow_id: flowId, title });
 
-export const deleteConfigFlow = (hass: HomeAssistant, flowId: string) =>
-  hass.callApi("DELETE", `config/config_entries/flow/${flowId}`);
+export const deleteConfigFlow = (menuai: menuai, flowId: string) =>
+  menuai.callApi("DELETE", `config/config_entries/flow/${flowId}`);
 
 export const getConfigFlowHandlers = (
-  hass: HomeAssistant,
+  menuai: menuai,
   type?: IntegrationType[]
 ) =>
-  hass.callApi<string[]>(
+  menuai.callApi<string[]>(
     "GET",
     `config/config_entries/flow_handlers${type ? `?type=${type}` : ""}`
   );
@@ -98,10 +98,10 @@ export interface ConfigFlowInProgressMessage {
 }
 
 export const subscribeConfigFlowInProgress = (
-  hass: HomeAssistant,
+  menuai: menuai,
   onChange: (update: ConfigFlowInProgressMessage[]) => void
 ) =>
-  hass.connection.subscribeMessage<ConfigFlowInProgressMessage[]>(
+  menuai.connection.subscribeMessage<ConfigFlowInProgressMessage[]>(
     (message) => onChange(message),
     { type: "config_entries/flow/subscribe" }
   );

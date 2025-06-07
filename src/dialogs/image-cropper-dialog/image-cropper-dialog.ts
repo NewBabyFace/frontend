@@ -8,12 +8,12 @@ import { customElement, property, state, query } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import "../../components/ha-dialog";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { HaImageCropperDialogParams } from "./show-image-cropper-dialog";
 
 @customElement("image-cropper-dialog")
 export class HaImagecropperDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: HaImageCropperDialogParams;
 
@@ -90,19 +90,19 @@ export class HaImagecropperDialog extends LitElement {
           round: Boolean(this._params?.options.round),
         })}"
       >
-        <img alt=${this.hass.localize("ui.dialogs.image_cropper.crop_image")} />
+        <img alt=${this.menuai.localize("ui.dialogs.image_cropper.crop_image")} />
       </div>
       <mwc-button slot="secondaryAction" @click=${this.closeDialog}>
-        ${this.hass.localize("ui.common.cancel")}
+        ${this.menuai.localize("ui.common.cancel")}
       </mwc-button>
       ${this._isTargetAspectRatio
         ? html`<mwc-button slot="primaryAction" @click=${this._useOriginal}>
-            ${this.hass.localize("ui.dialogs.image_cropper.use_original")}
+            ${this.menuai.localize("ui.dialogs.image_cropper.use_original")}
           </mwc-button>`
         : nothing}
 
       <mwc-button slot="primaryAction" @click=${this._cropImage}>
-        ${this.hass.localize("ui.dialogs.image_cropper.crop")}
+        ${this.menuai.localize("ui.dialogs.image_cropper.crop")}
       </mwc-button>
     </ha-dialog>`;
   }

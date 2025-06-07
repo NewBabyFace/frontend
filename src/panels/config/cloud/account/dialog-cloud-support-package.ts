@@ -14,12 +14,12 @@ import type { HaMdDialog } from "../../../../components/ha-md-dialog";
 import "../../../../components/ha-select";
 import "../../../../components/ha-textarea";
 import { fetchSupportPackage } from "../../../../data/cloud";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { fileDownload } from "../../../../util/file_download";
 
 @customElement("dialog-cloud-support-package")
 export class DialogSupportPackage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _open = false;
 
@@ -52,7 +52,7 @@ export class DialogSupportPackage extends LitElement {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
@@ -88,7 +88,7 @@ export class DialogSupportPackage extends LitElement {
   }
 
   private async _loadSupportPackage() {
-    this._supportPackage = await fetchSupportPackage(this.hass);
+    this._supportPackage = await fetchSupportPackage(this.menuai);
   }
 
   private async _download() {

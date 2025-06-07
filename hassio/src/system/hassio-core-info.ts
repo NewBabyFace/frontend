@@ -8,11 +8,11 @@ import "../../../src/components/buttons/ha-progress-button";
 import "../../../src/components/ha-button-menu";
 import "../../../src/components/ha-card";
 import "../../../src/components/ha-settings-row";
-import type { HassioStats } from "../../../src/data/hassio/common";
+import type { menuaiioStats } from "../../../src/data/menuaiio/common";
 import {
   extractApiErrorMessage,
-  fetchHassioStats,
-} from "../../../src/data/hassio/common";
+  fetchmenuaiioStats,
+} from "../../../src/data/menuaiio/common";
 import { restartCore } from "../../../src/data/supervisor/core";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import {
@@ -20,18 +20,18 @@ import {
   showConfirmationDialog,
 } from "../../../src/dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import { bytesToString } from "../../../src/util/bytes-to-string";
 import "../components/supervisor-metric";
-import { hassioStyle } from "../resources/hassio-style";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
-@customElement("hassio-core-info")
-class HassioCoreInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-core-info")
+class menuaiioCoreInfo extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @state() private _metrics?: HassioStats;
+  @state() private _metrics?: menuaiioStats;
 
   protected render(): TemplateResult | undefined {
     const metrics = [
@@ -67,10 +67,10 @@ class HassioCoreInfo extends LitElement {
               <span slot="description">
                 core-${this.supervisor.core.version_latest}
               </span>
-              ${!atLeastVersion(this.hass.config.version, 2021, 12) &&
+              ${!atLeastVersion(this.menuai.config.version, 2021, 12) &&
               this.supervisor.core.update_available
                 ? html`
-                    <a href="/hassio/update-available/core">
+                    <a href="/menuaiio/update-available/core">
                       <mwc-button
                         .label=${this.supervisor.localize("common.show")}
                       >
@@ -113,7 +113,7 @@ class HassioCoreInfo extends LitElement {
   }
 
   private async _loadData(): Promise<void> {
-    this._metrics = await fetchHassioStats(this.hass, "core");
+    this._metrics = await fetchmenuaiioStats(this.menuai, "core");
   }
 
   private async _coreRestart(ev: CustomEvent): Promise<void> {
@@ -122,10 +122,10 @@ class HassioCoreInfo extends LitElement {
 
     const confirmed = await showConfirmationDialog(this, {
       title: this.supervisor.localize("confirm.restart.title", {
-        name: "Home Assistant Core",
+        name: "MenuAI Core",
       }),
       text: this.supervisor.localize("confirm.restart.text", {
-        name: "Home Assistant Core",
+        name: "MenuAI Core",
       }),
       confirmText: this.supervisor.localize("common.restart"),
       dismissText: this.supervisor.localize("common.cancel"),
@@ -137,12 +137,12 @@ class HassioCoreInfo extends LitElement {
     }
 
     try {
-      await restartCore(this.hass);
+      await restartCore(this.menuai);
     } catch (err: any) {
-      if (this.hass.connection.connected) {
+      if (this.menuai.connection.connected) {
         showAlertDialog(this, {
           title: this.supervisor.localize("common.failed_to_restart_name", {
-            name: "Home Assistant Core",
+            name: "MenuAI Core",
           }),
           text: extractApiErrorMessage(err),
         });
@@ -155,7 +155,7 @@ class HassioCoreInfo extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           height: 100%;
@@ -207,6 +207,6 @@ class HassioCoreInfo extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-core-info": HassioCoreInfo;
+    "menuaiio-core-info": menuaiioCoreInfo;
   }
 }

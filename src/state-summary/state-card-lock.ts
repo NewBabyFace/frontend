@@ -1,19 +1,19 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { supportsFeature } from "../common/entity/supports-feature";
 import "../components/entity/state-info";
 import { callProtectedLockService, LockEntityFeature } from "../data/lock";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { haStyle } from "../resources/styles";
 
 @customElement("state-card-lock")
 class StateCardLock extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -24,23 +24,23 @@ class StateCardLock extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         ></state-info>
         ${!supportsOpen
           ? html`<mwc-button @click=${this._callService} data-service="open"
-              >${this.hass.localize("ui.card.lock.open")}</mwc-button
+              >${this.menuai.localize("ui.card.lock.open")}</mwc-button
             >`
           : nothing}
         ${isLocked
           ? html` <mwc-button @click=${this._callService} data-service="unlock"
-              >${this.hass.localize("ui.card.lock.unlock")}</mwc-button
+              >${this.menuai.localize("ui.card.lock.unlock")}</mwc-button
             >`
           : nothing}
         ${!isLocked
           ? html`<mwc-button @click=${this._callService} data-service="lock"
-              >${this.hass.localize("ui.card.lock.lock")}</mwc-button
+              >${this.menuai.localize("ui.card.lock.lock")}</mwc-button
             >`
           : nothing}
       </div>
@@ -50,10 +50,10 @@ class StateCardLock extends LitElement {
   private async _callService(ev) {
     ev.stopPropagation();
     const service = ev.target.dataset.service;
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
-    await callProtectedLockService(this, this.hass, this.stateObj, service);
+    await callProtectedLockService(this, this.menuai, this.stateObj, service);
   }
 
   static get styles(): CSSResultGroup {

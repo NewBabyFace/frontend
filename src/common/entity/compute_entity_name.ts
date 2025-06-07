@@ -1,18 +1,18 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type {
   EntityRegistryDisplayEntry,
   EntityRegistryEntry,
 } from "../../data/entity_registry";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { computeDeviceName } from "./compute_device_name";
 import { computeStateName } from "./compute_state_name";
 import { stripPrefixFromEntityName } from "./strip_prefix_from_entity_name";
 
 export const computeEntityName = (
-  stateObj: HassEntity,
-  hass: HomeAssistant
+  stateObj: menuaiEntity,
+  menuai: menuai
 ): string | undefined => {
-  const entry = hass.entities[stateObj.entity_id] as
+  const entry = menuai.entities[stateObj.entity_id] as
     | EntityRegistryDisplayEntry
     | undefined;
 
@@ -20,23 +20,23 @@ export const computeEntityName = (
     // Fall back to state name if not in the entity registry (friendly name)
     return computeStateName(stateObj);
   }
-  return computeEntityEntryName(entry, hass);
+  return computeEntityEntryName(entry, menuai);
 };
 
 export const computeEntityEntryName = (
   entry: EntityRegistryDisplayEntry | EntityRegistryEntry,
-  hass: HomeAssistant
+  menuai: menuai
 ): string | undefined => {
   const name =
     entry.name || ("original_name" in entry ? entry.original_name : undefined);
 
-  const device = entry.device_id ? hass.devices[entry.device_id] : undefined;
+  const device = entry.device_id ? menuai.devices[entry.device_id] : undefined;
 
   if (!device) {
     if (name) {
       return name;
     }
-    const stateObj = hass.states[entry.entity_id] as HassEntity | undefined;
+    const stateObj = menuai.states[entry.entity_id] as menuaiEntity | undefined;
     if (stateObj) {
       return computeStateName(stateObj);
     }

@@ -19,20 +19,20 @@ import "../../../../src/components/ha-switch";
 import "../../../../src/components/ha-yaml-editor";
 import type { HaYamlEditor } from "../../../../src/components/ha-yaml-editor";
 import type {
-  HassioAddonDetails,
-  HassioAddonSetOptionParams,
-} from "../../../../src/data/hassio/addon";
+  menuaiioAddonDetails,
+  menuaiioAddonSetOptionParams,
+} from "../../../../src/data/menuaiio/addon";
 import {
-  setHassioAddonOption,
-  validateHassioAddonOption,
-} from "../../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+  setmenuaiioAddonOption,
+  validatemenuaiioAddonOption,
+} from "../../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { showConfirmationDialog } from "../../../../src/dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import { suggestAddonRestart } from "../../dialogs/suggestAddonRestart";
-import { hassioStyle } from "../../resources/hassio-style";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
 
 const SUPPORTED_UI_TYPES = [
   "string",
@@ -52,11 +52,11 @@ const ADDON_YAML_SCHEMA = DEFAULT_SCHEMA.extend([
 
 const MASKED_FIELDS = ["password", "secret", "token"];
 
-@customElement("hassio-addon-config")
-class HassioAddonConfig extends LitElement {
-  @property({ attribute: false }) public addon!: HassioAddonDetails;
+@customElement("menuaiio-addon-config")
+class menuaiioAddonConfig extends LitElement {
+  @property({ attribute: false }) public addon!: menuaiioAddonDetails;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -79,13 +79,13 @@ class HassioAddonConfig extends LitElement {
   @query("ha-yaml-editor") private _editor?: HaYamlEditor;
 
   public computeLabel = (entry: HaFormSchema): string =>
-    this.addon.translations[this.hass.language]?.configuration?.[entry.name]
+    this.addon.translations[this.menuai.language]?.configuration?.[entry.name]
       ?.name ||
     this.addon.translations.en?.configuration?.[entry.name]?.name ||
     entry.name;
 
   public computeHelper = (entry: HaFormSchema): string =>
-    this.addon.translations[this.hass.language]?.configuration?.[entry.name]
+    this.addon.translations[this.menuai.language]?.configuration?.[entry.name]
       ?.description ||
     this.addon.translations.en?.configuration?.[entry.name]?.description ||
     "";
@@ -332,18 +332,18 @@ class HassioAddonConfig extends LitElement {
     }
 
     this._error = undefined;
-    const data: HassioAddonSetOptionParams = {
+    const data: menuaiioAddonSetOptionParams = {
       options: null,
     };
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       this._configHasChanged = false;
       const eventdata = {
         success: true,
         response: undefined,
         path: "options",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_reset", {
         error: extractApiErrorMessage(err),
@@ -371,21 +371,21 @@ class HassioAddonConfig extends LitElement {
     this._error = undefined;
 
     try {
-      const validation = await validateHassioAddonOption(
-        this.hass,
+      const validation = await validatemenuaiioAddonOption(
+        this.menuai,
         this.addon.slug,
         options
       );
       if (!validation.valid) {
         throw Error(validation.message);
       }
-      await setHassioAddonOption(this.hass, this.addon.slug, {
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, {
         options,
       });
 
       this._configHasChanged = false;
       if (this.addon?.state === "started") {
-        await suggestAddonRestart(this, this.hass, this.supervisor, this.addon);
+        await suggestAddonRestart(this, this.menuai, this.supervisor, this.addon);
       }
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
@@ -394,13 +394,13 @@ class HassioAddonConfig extends LitElement {
       eventdata.success = false;
     }
     button.progress = false;
-    fireEvent(this, "hass-api-called", eventdata);
+    fireEvent(this, "menuai-api-called", eventdata);
   }
 
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         :host {
           display: block;
@@ -450,6 +450,6 @@ class HassioAddonConfig extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-config": HassioAddonConfig;
+    "menuaiio-addon-config": menuaiioAddonConfig;
   }
 }

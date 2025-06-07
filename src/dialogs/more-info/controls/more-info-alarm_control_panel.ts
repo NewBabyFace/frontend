@@ -8,27 +8,27 @@ import "../../../components/ha-state-icon";
 import type { AlarmControlPanelEntity } from "../../../data/alarm_control_panel";
 import { setProtectedAlarmControlPanelMode } from "../../../data/alarm_control_panel";
 import "../../../state-control/alarm_control_panel/ha-state-control-alarm_control_panel-modes";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-state-header";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
 @customElement("more-info-alarm_control_panel")
 class MoreInfoAlarmControlPanel extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: AlarmControlPanelEntity;
 
   private async _disarm() {
     setProtectedAlarmControlPanelMode(
       this,
-      this.hass,
+      this.menuai,
       this.stateObj!,
       "disarmed"
     );
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -38,7 +38,7 @@ class MoreInfoAlarmControlPanel extends LitElement {
     };
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
       ></ha-more-info-state-header>
       <div class="controls" style=${styleMap(style)}>
@@ -46,7 +46,7 @@ class MoreInfoAlarmControlPanel extends LitElement {
           ? html`
               <div class="status">
                 <div class="icon">
-                  <ha-state-icon .hass=${this.hass} .stateObj=${this.stateObj}>
+                  <ha-state-icon .menuai=${this.menuai} .stateObj=${this.stateObj}>
                   </ha-state-icon>
                 </div>
               </div>
@@ -54,7 +54,7 @@ class MoreInfoAlarmControlPanel extends LitElement {
           : html`
               <ha-state-control-alarm_control_panel-modes
                 .stateObj=${this.stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               >
               </ha-state-control-alarm_control_panel-modes>
             `}
@@ -63,7 +63,7 @@ class MoreInfoAlarmControlPanel extends LitElement {
         ${["triggered", "arming", "pending"].includes(this.stateObj.state)
           ? html`
               <ha-control-button @click=${this._disarm} class="disarm">
-                ${this.hass.localize("ui.card.alarm_control_panel.disarm")}
+                ${this.menuai.localize("ui.card.alarm_control_panel.disarm")}
               </ha-control-button>
             `
           : nothing}

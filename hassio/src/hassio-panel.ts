@@ -3,13 +3,13 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { Supervisor } from "../../src/data/supervisor/supervisor";
 import { supervisorCollection } from "../../src/data/supervisor/supervisor";
-import "../../src/layouts/hass-loading-screen";
-import type { HomeAssistant, Route } from "../../src/types";
-import "./hassio-panel-router";
+import "../../src/layouts/menuai-loading-screen";
+import type { menuai, Route } from "../../src/types";
+import "./menuaiio-panel-router";
 
-@customElement("hassio-panel")
-class HassioPanel extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-panel")
+class menuaiioPanel extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -18,8 +18,8 @@ class HassioPanel extends LitElement {
   @property({ attribute: false }) public route!: Route;
 
   protected render(): TemplateResult {
-    if (!this.hass) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+    if (!this.menuai) {
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
 
     if (
@@ -27,15 +27,15 @@ class HassioPanel extends LitElement {
         (collection) => !this.supervisor[collection]
       )
     ) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
     return html`
-      <hassio-panel-router
-        .hass=${this.hass}
+      <menuaiio-panel-router
+        .menuai=${this.menuai}
         .supervisor=${this.supervisor}
         .route=${this.route}
         .narrow=${this.narrow}
-      ></hassio-panel-router>
+      ></menuaiio-panel-router>
     `;
   }
 
@@ -50,6 +50,6 @@ class HassioPanel extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-panel": HassioPanel;
+    "menuaiio-panel": menuaiioPanel;
   }
 }

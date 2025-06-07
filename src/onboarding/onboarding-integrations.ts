@@ -13,13 +13,13 @@ import { subscribeConfigFlowInProgress } from "../data/config_flow";
 import { domainToName } from "../data/integration";
 import { scanUSBDevices } from "../data/usb";
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./integration-badge";
 import { onBoardingStyles } from "./styles";
 
 const HIDDEN_DOMAINS = new Set([
   "google_translate",
-  "hassio",
+  "menuaiio",
   "met",
   "radio_browser",
   "rpi_power",
@@ -29,7 +29,7 @@ const HIDDEN_DOMAINS = new Set([
 
 @customElement("onboarding-integrations")
 class OnboardingIntegrations extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public onboardingLocalize!: LocalizeFunc;
 
@@ -39,9 +39,9 @@ class OnboardingIntegrations extends SubscribeMixin(LitElement) {
 
   @state() private _discoveredDomainsReceived = false;
 
-  public hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  public menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeConfigFlowInProgress(this.hass, (messages) => {
+      subscribeConfigFlowInProgress(this.menuai, (messages) => {
         messages.forEach((message) => {
           if (
             message.type === "removed" ||
@@ -51,14 +51,14 @@ class OnboardingIntegrations extends SubscribeMixin(LitElement) {
           }
           this._discoveredDomains.add(message.flow.handler);
         });
-        this.hass.loadBackendTranslation(
+        this.menuai.loadBackendTranslation(
           "title",
           Array.from(this._discoveredDomains)
         );
         this._discoveredDomainsReceived = true;
       }),
       subscribeConfigEntries(
-        this.hass,
+        this.menuai,
         (messages) => {
           let fullUpdate = false;
           const newEntries: ConfigEntry[] = [];
@@ -90,7 +90,7 @@ class OnboardingIntegrations extends SubscribeMixin(LitElement) {
           if (!newEntries.length && !fullUpdate) {
             return;
           }
-          this.hass.loadBackendTranslation("title", Array.from(integrations));
+          this.menuai.loadBackendTranslation("title", Array.from(integrations));
           const existingEntries = fullUpdate ? [] : this._entries;
           this._entries = [...existingEntries!, ...newEntries];
         },
@@ -111,10 +111,10 @@ class OnboardingIntegrations extends SubscribeMixin(LitElement) {
     uniqueDomains = new Set([...uniqueDomains, ...this._discoveredDomains]);
     let domains: [string, string][] = [];
     for (const domain of uniqueDomains.values()) {
-      domains.push([domain, domainToName(this.hass.localize, domain)]);
+      domains.push([domain, domainToName(this.menuai.localize, domain)]);
     }
     domains = domains.sort((a, b) =>
-      stringCompare(a[0], b[0], this.hass.locale.language)
+      stringCompare(a[0], b[0], this.menuai.locale.language)
     );
 
     const foundIntegrations = domains.length;
@@ -162,7 +162,7 @@ class OnboardingIntegrations extends SubscribeMixin(LitElement) {
             html`<integration-badge
               .domain=${domain}
               .title=${title}
-              .darkOptimizedIcon=${this.hass.themes?.darkMode}
+              .darkOptimizedIcon=${this.menuai.themes?.darkMode}
             ></integration-badge>`
         )}
         ${foundIntegrations > domains.length
@@ -186,15 +186,15 @@ class OnboardingIntegrations extends SubscribeMixin(LitElement) {
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("title");
+    this.menuai.loadBackendTranslation("title");
     this._scanUSBDevices();
   }
 
   private async _scanUSBDevices() {
-    if (!isComponentLoaded(this.hass, "usb")) {
+    if (!isComponentLoaded(this.menuai, "usb")) {
       return;
     }
-    await scanUSBDevices(this.hass);
+    await scanUSBDevices(this.menuai);
   }
 
   private async _finish() {

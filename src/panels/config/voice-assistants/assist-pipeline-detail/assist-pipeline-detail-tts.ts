@@ -6,11 +6,11 @@ import "../../../../components/ha-button";
 import "../../../../components/ha-form/ha-form";
 import type { AssistPipeline } from "../../../../data/assist_pipeline";
 import { showTTSTryDialog } from "../../../../dialogs/tts-try/show-dialog-tts-try";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("assist-pipeline-detail-tts")
 export class AssistPipelineDetailTTS extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data?: Partial<AssistPipeline>;
 
@@ -55,7 +55,7 @@ export class AssistPipelineDetailTTS extends LitElement {
 
   private _computeLabel = (schema): string =>
     schema.name
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.panel.config.voice_assistants.assistants.pipeline.detail.form.${schema.name}` as LocalizeKeys
         )
       : "";
@@ -66,12 +66,12 @@ export class AssistPipelineDetailTTS extends LitElement {
         <div class="content">
           <div class="intro">
           <h3>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.tts.title`
             )}
           </h3>
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.tts.description`
             )}
           </p>
@@ -82,7 +82,7 @@ export class AssistPipelineDetailTTS extends LitElement {
               this._supportedLanguages
             )}
             .data=${this.data}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .computeLabel=${this._computeLabel}
             @supported-languages-changed=${this._supportedLanguagesChanged}
           ></ha-form>
@@ -92,7 +92,7 @@ export class AssistPipelineDetailTTS extends LitElement {
          this.data?.tts_engine
            ? html`<div class="footer">
                <ha-button
-                 .label=${this.hass.localize(
+                 .label=${this.menuai.localize(
                    "ui.panel.config.voice_assistants.assistants.pipeline.detail.try_tts"
                  )}
                  @click=${this._preview}

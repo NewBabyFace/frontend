@@ -5,7 +5,7 @@ import { isComponentLoaded } from "../../../../common/config/is_component_loaded
 import type { AreasDisplayValue } from "../../../../components/ha-areas-display-editor";
 import { getEnergyPreferences } from "../../../../data/energy";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { generateDefaultViewConfig } from "../../common/generate-lovelace-config";
 
 export interface OriginalStatesViewStrategyConfig {
@@ -19,35 +19,35 @@ export interface OriginalStatesViewStrategyConfig {
 export class OriginalStatesViewStrategy extends ReactiveElement {
   static async generate(
     config: OriginalStatesViewStrategyConfig,
-    hass: HomeAssistant
+    menuai: menuai
   ): Promise<LovelaceViewConfig> {
-    if (hass.config.state === STATE_NOT_RUNNING) {
+    if (menuai.config.state === STATE_NOT_RUNNING) {
       return {
         cards: [{ type: "starting" }],
       };
     }
 
-    if (hass.config.recovery_mode) {
+    if (menuai.config.recovery_mode) {
       return {
         cards: [{ type: "recovery-mode" }],
       };
     }
 
     const [localize, energyPrefs] = await Promise.all([
-      hass.loadBackendTranslation("title"),
-      isComponentLoaded(hass, "energy")
+      menuai.loadBackendTranslation("title"),
+      isComponentLoaded(menuai, "energy")
         ? // It raises if not configured, just swallow that.
-          getEnergyPreferences(hass).catch(() => undefined)
+          getEnergyPreferences(menuai).catch(() => undefined)
         : undefined,
     ]);
 
     // User can override default view. If they didn't, we will add one
     // that contains all entities.
     const view = generateDefaultViewConfig(
-      hass.areas,
-      hass.devices,
-      hass.entities,
-      hass.states,
+      menuai.areas,
+      menuai.devices,
+      menuai.entities,
+      menuai.states,
       localize,
       energyPrefs,
       config.areas,
@@ -56,7 +56,7 @@ export class OriginalStatesViewStrategy extends ReactiveElement {
     );
 
     // Add map of geo locations to default view if loaded
-    if (hass.config.components.includes("geo_location")) {
+    if (menuai.config.components.includes("geo_location")) {
       if (view && view.cards) {
         view.cards.push({
           type: "map",

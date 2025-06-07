@@ -14,7 +14,7 @@ import type { HaComboBoxItem } from "./ha-combo-box-item";
 import "./ha-icon-button";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     clear: undefined;
   }
 }

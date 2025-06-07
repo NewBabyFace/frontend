@@ -43,13 +43,13 @@ import {
 } from "../../dialogs/generic/show-dialog-box";
 import { showVoiceCommandDialog } from "../../dialogs/voice-command-dialog/show-ha-voice-command-dialog";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../lovelace/cards/hui-card";
 import { showTodoItemEditDialog } from "./show-dialog-todo-item-editor";
 
 @customElement("ha-panel-todo")
 class PanelTodo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -71,7 +71,7 @@ class PanelTodo extends LitElement {
   private _mql?: MediaQueryList;
 
   private _conversation = memoizeOne((_components) =>
-    isComponentLoaded(this.hass, "conversation")
+    isComponentLoaded(this.menuai, "conversation")
   );
 
   public connectedCallback() {
@@ -101,17 +101,17 @@ class PanelTodo extends LitElement {
     super.willUpdate(changedProperties);
 
     if (!this.hasUpdated) {
-      this.hass.loadFragmentTranslation("lovelace");
+      this.menuai.loadFragmentTranslation("lovelace");
 
       const urlEntityId = extractSearchParam("entity_id");
       if (urlEntityId) {
         this._entityId = urlEntityId;
       } else {
-        if (this._entityId && !(this._entityId in this.hass.states)) {
+        if (this._entityId && !(this._entityId in this.menuai.states)) {
           this._entityId = undefined;
         }
         if (!this._entityId) {
-          this._entityId = getTodoLists(this.hass)[0]?.entity_id;
+          this._entityId = getTodoLists(this.menuai)[0]?.entity_id;
         }
       }
     }
@@ -142,13 +142,13 @@ class PanelTodo extends LitElement {
 
   protected render(): TemplateResult {
     const entityRegistryEntry = this._entityId
-      ? this.hass.entities[this._entityId]
+      ? this.menuai.entities[this._entityId]
       : undefined;
     const entityState = this._entityId
-      ? this.hass.states[this._entityId]
+      ? this.menuai.states[this._entityId]
       : undefined;
     const showPane = this._showPaneController.value ?? !this.narrow;
-    const listItems = getTodoLists(this.hass).map(
+    const listItems = getTodoLists(this.menuai).map(
       (list) =>
         html`<ha-list-item
           graphic="icon"
@@ -158,7 +158,7 @@ class PanelTodo extends LitElement {
         >
           <ha-state-icon
             .stateObj=${list}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             slot="graphic"
           ></ha-state-icon
           >${list.name}
@@ -168,7 +168,7 @@ class PanelTodo extends LitElement {
       <ha-two-pane-top-app-bar-fixed .pane=${showPane} footer>
         <ha-menu-button
           slot="navigationIcon"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
         ></ha-menu-button>
         <div slot="title">
@@ -197,28 +197,28 @@ class PanelTodo extends LitElement {
                   ></ha-svg-icon>
                 </ha-button>
                 ${listItems}
-                ${this.hass.user?.is_admin
+                ${this.menuai.user?.is_admin
                   ? html`<li divider role="separator"></li>
                       <ha-list-item graphic="icon" @click=${this._addList}>
                         <ha-svg-icon
                           .path=${mdiPlus}
                           slot="graphic"
                         ></ha-svg-icon>
-                        ${this.hass.localize("ui.panel.todo.create_list")}
+                        ${this.menuai.localize("ui.panel.todo.create_list")}
                       </ha-list-item>`
                   : nothing}
               </ha-button-menu>`
-            : this.hass.localize("panel.todo")}
+            : this.menuai.localize("panel.todo")}
         </div>
         <ha-list slot="pane" activatable>${listItems}</ha-list>
-        ${showPane && this.hass.user?.is_admin
+        ${showPane && this.menuai.user?.is_admin
           ? html`<ha-list-item
               graphic="icon"
               slot="pane-footer"
               @click=${this._addList}
             >
               <ha-svg-icon .path=${mdiPlus} slot="graphic"></ha-svg-icon>
-              ${this.hass.localize("ui.panel.todo.create_list")}
+              ${this.menuai.localize("ui.panel.todo.create_list")}
             </ha-list-item>`
           : nothing}
         <ha-button-menu slot="actionItems">
@@ -227,7 +227,7 @@ class PanelTodo extends LitElement {
             .label=${""}
             .path=${mdiDotsVertical}
           ></ha-icon-button>
-          ${this._conversation(this.hass.config.components)
+          ${this._conversation(this.menuai.config.components)
             ? html`<ha-list-item
                 graphic="icon"
                 @click=${this._showMoreInfoDialog}
@@ -235,14 +235,14 @@ class PanelTodo extends LitElement {
               >
                 <ha-svg-icon .path=${mdiInformationOutline} slot="graphic">
                 </ha-svg-icon>
-                ${this.hass.localize("ui.panel.todo.information")}
+                ${this.menuai.localize("ui.panel.todo.information")}
               </ha-list-item>`
             : nothing}
           <li divider role="separator"></li>
           <ha-list-item graphic="icon" @click=${this._showVoiceCommandDialog}>
             <ha-svg-icon .path=${mdiCommentProcessingOutline} slot="graphic">
             </ha-svg-icon>
-            ${this.hass.localize("ui.panel.todo.assist")}
+            ${this.menuai.localize("ui.panel.todo.assist")}
           </ha-list-item>
           ${entityRegistryEntry?.platform === "local_todo"
             ? html` <li divider role="separator"></li>
@@ -258,7 +258,7 @@ class PanelTodo extends LitElement {
                     class="warning"
                   >
                   </ha-svg-icon>
-                  ${this.hass.localize("ui.panel.todo.delete_list")}
+                  ${this.menuai.localize("ui.panel.todo.delete_list")}
                 </ha-list-item>`
             : nothing}
         </ha-button-menu>
@@ -267,7 +267,7 @@ class PanelTodo extends LitElement {
             ${this._entityId
               ? html`
                   <hui-card
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .config=${this._cardConfig(this._entityId)}
                   ></hui-card>
                 `
@@ -277,7 +277,7 @@ class PanelTodo extends LitElement {
         ${entityState &&
         supportsFeature(entityState, TodoListEntityFeature.CREATE_TODO_ITEM)
           ? html`<ha-fab
-              .label=${this.hass.localize("ui.panel.todo.add_item")}
+              .label=${this.menuai.localize("ui.panel.todo.add_item")}
               extended
               @click=${this._addItem}
             >
@@ -295,8 +295,8 @@ class PanelTodo extends LitElement {
   private async _addList(): Promise<void> {
     showConfigFlowDialog(this, {
       startFlowHandler: "local_todo",
-      showAdvanced: this.hass.userData?.showAdvanced,
-      manifest: await fetchIntegrationManifest(this.hass, "local_todo"),
+      showAdvanced: this.menuai.userData?.showAdvanced,
+      manifest: await fetchIntegrationManifest(this.menuai, "local_todo"),
     });
   }
 
@@ -304,7 +304,7 @@ class PanelTodo extends LitElement {
     if (!this._entityId) {
       return;
     }
-    fireEvent(this, "hass-more-info", { entityId: this._entityId });
+    fireEvent(this, "menuai-more-info", { entityId: this._entityId });
   }
 
   private async _deleteList(): Promise<void> {
@@ -313,7 +313,7 @@ class PanelTodo extends LitElement {
     }
 
     const entityRegistryEntry = await getExtendedEntityRegistryEntry(
-      this.hass,
+      this.menuai,
       this._entityId
     );
 
@@ -328,34 +328,34 @@ class PanelTodo extends LitElement {
     }
 
     const confirmed = await showConfirmationDialog(this, {
-      title: this.hass.localize("ui.panel.todo.delete_confirm_title", {
+      title: this.menuai.localize("ui.panel.todo.delete_confirm_title", {
         name:
-          this._entityId in this.hass.states
-            ? computeStateName(this.hass.states[this._entityId])
+          this._entityId in this.menuai.states
+            ? computeStateName(this.menuai.states[this._entityId])
             : this._entityId,
       }),
-      text: this.hass.localize("ui.panel.todo.delete_confirm_text"),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      text: this.menuai.localize("ui.panel.todo.delete_confirm_text"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       destructive: true,
     });
 
     if (!confirmed) {
       return;
     }
-    const result = await deleteConfigEntry(this.hass, entryId);
+    const result = await deleteConfigEntry(this.menuai, entryId);
 
-    this._entityId = getTodoLists(this.hass)[0]?.entity_id;
+    this._entityId = getTodoLists(this.menuai)[0]?.entity_id;
 
     if (result.require_restart) {
       showAlertDialog(this, {
-        text: this.hass.localize("ui.panel.todo.restart_confirm"),
+        text: this.menuai.localize("ui.panel.todo.restart_confirm"),
       });
     }
   }
 
   private _showVoiceCommandDialog(): void {
-    showVoiceCommandDialog(this, this.hass, { pipeline_id: "last_used" });
+    showVoiceCommandDialog(this, this.menuai, { pipeline_id: "last_used" });
   }
 
   private _addItem() {

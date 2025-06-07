@@ -12,7 +12,7 @@ import { formatDateTimeWithSeconds } from "../../common/datetime/format_date_tim
 import millisecondsToDuration from "../../common/datetime/milliseconds_to_duration";
 import { computeRTL } from "../../common/util/compute_rtl";
 import type { TimelineEntity } from "../../data/history";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { MIN_TIME_BETWEEN_UPDATES } from "./ha-chart-base";
 import { computeTimelineColor } from "./timeline-color";
 import type { ECOption } from "../../resources/echarts";
@@ -24,7 +24,7 @@ import { fireEvent } from "../../common/dom/fire_event";
 
 @customElement("state-history-chart-timeline")
 export class StateHistoryChartTimeline extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data: TimelineEntity[] = [];
 
@@ -62,7 +62,7 @@ export class StateHistoryChartTimeline extends LitElement {
   protected render() {
     return html`
       <ha-chart-base
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .options=${this._chartOptions}
         .height=${`${this.data.length * 30 + 30}px`}
         .data=${this._chartData as ECOption["series"]}
@@ -134,11 +134,11 @@ export class StateHistoryChartTimeline extends LitElement {
         ? `<h4 style="text-align: center; margin: 0;">${seriesName}</h4>`
         : "";
       const durationInMs = value![2] - value![1];
-      const formattedDuration = `${this.hass.localize(
+      const formattedDuration = `${this.menuai.localize(
         "ui.components.history_charts.duration"
       )}: ${millisecondsToDuration(durationInMs)}`;
 
-      const markerLocalized = !computeRTL(this.hass)
+      const markerLocalized = !computeRTL(this.menuai)
         ? marker
         : `<span style="direction: rtl;display:inline-block;margin-right:4px;margin-inline-end:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`;
 
@@ -146,13 +146,13 @@ export class StateHistoryChartTimeline extends LitElement {
         markerLocalized + name,
         formatDateTimeWithSeconds(
           new Date(value![1]),
-          this.hass.locale,
-          this.hass.config
+          this.menuai.locale,
+          this.menuai.config
         ),
         formatDateTimeWithSeconds(
           new Date(value![2]),
-          this.hass.locale,
-          this.hass.config
+          this.menuai.locale,
+          this.menuai.config
         ),
         formattedDuration,
       ].join("<br>");
@@ -192,7 +192,7 @@ export class StateHistoryChartTimeline extends LitElement {
       ? Math.max(this.paddingYAxis, this._yWidth)
       : 0;
     const labelMargin = 5;
-    const rtl = computeRTL(this.hass);
+    const rtl = computeRTL(this.menuai);
     this._chartOptions = {
       xAxis: {
         type: "time",
@@ -300,7 +300,7 @@ export class StateHistoryChartTimeline extends LitElement {
           const color = computeTimelineColor(
             prevState,
             computedStyles,
-            this.hass.states[stateInfo.entity_id]
+            this.menuai.states[stateInfo.entity_id]
           );
           dataRow.push({
             value: [
@@ -326,7 +326,7 @@ export class StateHistoryChartTimeline extends LitElement {
         const color = computeTimelineColor(
           prevState,
           computedStyles,
-          this.hass.states[stateInfo.entity_id]
+          this.menuai.states[stateInfo.entity_id]
         );
         dataRow.push({
           value: [
@@ -364,7 +364,7 @@ export class StateHistoryChartTimeline extends LitElement {
     if (e.detail.targetType === "axisLabel") {
       const dataset = this._chartData[e.detail.dataIndex];
       if (dataset) {
-        fireEvent(this, "hass-more-info", {
+        fireEvent(this, "menuai-more-info", {
           entityId: dataset.id as string,
         });
       }

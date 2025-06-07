@@ -18,12 +18,12 @@ import {
   fetchFrontendUserData,
   saveFrontendUserData,
 } from "../../data/frontend";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { showConfirmationDialog } from "../generic/show-dialog-box";
 
 @customElement("dialog-edit-sidebar")
 class DialogEditSidebar extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _open = false;
 
@@ -48,7 +48,7 @@ class DialogEditSidebar extends LitElement {
 
   private async _getData() {
     try {
-      const data = await fetchFrontendUserData(this.hass.connection, "sidebar");
+      const data = await fetchFrontendUserData(this.menuai.connection, "sidebar");
       this._order = data?.panelOrder;
       this._hidden = data?.hiddenPanels;
 
@@ -77,7 +77,7 @@ class DialogEditSidebar extends LitElement {
     this._dialog?.close();
   }
 
-  private _panels = memoizeOne((panels: HomeAssistant["panels"]) =>
+  private _panels = memoizeOne((panels: menuai["panels"]) =>
     panels ? Object.values(panels) : []
   );
 
@@ -92,14 +92,14 @@ class DialogEditSidebar extends LitElement {
       return html`<ha-alert alert-type="error">${this._error}</ha-alert>`;
     }
 
-    const panels = this._panels(this.hass.panels);
+    const panels = this._panels(this.menuai.panels);
 
     const [beforeSpacer, afterSpacer] = computePanels(
-      this.hass.panels,
-      this.hass.defaultPanel,
+      this.menuai.panels,
+      this.menuai.defaultPanel,
       this._order,
       this._hidden,
-      this.hass.locale
+      this.menuai.locale
     );
 
     const items = [
@@ -109,12 +109,12 @@ class DialogEditSidebar extends LitElement {
     ].map((panel) => ({
       value: panel.url_path,
       label:
-        panel.url_path === this.hass.defaultPanel
-          ? panel.title || this.hass.localize("panel.states")
-          : this.hass.localize(`panel.${panel.title}`) || panel.title || "?",
+        panel.url_path === this.menuai.defaultPanel
+          ? panel.title || this.menuai.localize("panel.states")
+          : this.menuai.localize(`panel.${panel.title}`) || panel.title || "?",
       icon: panel.icon || undefined,
       iconPath:
-        panel.url_path === this.hass.defaultPanel && !panel.icon
+        panel.url_path === this.menuai.defaultPanel && !panel.icon
           ? PANEL_ICONS.lovelace
           : panel.url_path in PANEL_ICONS
             ? PANEL_ICONS[panel.url_path]
@@ -123,7 +123,7 @@ class DialogEditSidebar extends LitElement {
     }));
 
     return html`<ha-items-display-editor
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .value=${{
         order: this._order,
         hidden: this._hidden,
@@ -140,34 +140,34 @@ class DialogEditSidebar extends LitElement {
       return nothing;
     }
 
-    const dialogTitle = this.hass.localize("ui.sidebar.edit_sidebar");
+    const dialogTitle = this.menuai.localize("ui.sidebar.edit_sidebar");
 
     return html`
       <ha-md-dialog open @closed=${this._dialogClosed}>
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close") ?? "Close"}
+            .label=${this.menuai.localize("ui.common.close") ?? "Close"}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
           <span slot="title" .title=${dialogTitle}>${dialogTitle}</span>
           ${!this._migrateToUserData
             ? html`<span slot="subtitle"
-                >${this.hass.localize("ui.sidebar.edit_subtitle")}</span
+                >${this.menuai.localize("ui.sidebar.edit_subtitle")}</span
               >`
             : nothing}
         </ha-dialog-header>
         <div slot="content" class="content">${this._renderContent()}</div>
         <div slot="actions">
           <ha-button @click=${this.closeDialog}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </ha-button>
           <ha-button
             .disabled=${!this._order || !this._hidden}
             @click=${this._save}
           >
-            ${this.hass.localize("ui.common.save")}
+            ${this.menuai.localize("ui.common.save")}
           </ha-button>
         </div>
       </ha-md-dialog>
@@ -184,7 +184,7 @@ class DialogEditSidebar extends LitElement {
     if (this._migrateToUserData) {
       const confirmation = await showConfirmationDialog(this, {
         destructive: true,
-        text: this.hass.localize("ui.sidebar.migrate_to_user_data"),
+        text: this.menuai.localize("ui.sidebar.migrate_to_user_data"),
       });
       if (!confirmation) {
         return;
@@ -192,7 +192,7 @@ class DialogEditSidebar extends LitElement {
     }
 
     try {
-      await saveFrontendUserData(this.hass.connection, "sidebar", {
+      await saveFrontendUserData(this.menuai.connection, "sidebar", {
         panelOrder: this._order!,
         hiddenPanels: this._hidden!,
       });

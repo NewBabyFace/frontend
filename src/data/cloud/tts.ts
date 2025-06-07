@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export interface CloudTTSInfo {
   languages: [
@@ -11,8 +11,8 @@ export interface CloudTTSInfo {
   ][];
 }
 
-export const getCloudTTSInfo = (hass: HomeAssistant) =>
-  hass.callWS<CloudTTSInfo>({ type: "cloud/tts/info" });
+export const getCloudTTSInfo = (menuai: menuai) =>
+  menuai.callWS<CloudTTSInfo>({ type: "cloud/tts/info" });
 
 export const getCloudTtsLanguages = (info?: CloudTTSInfo) => {
   const languages: string[] = [];

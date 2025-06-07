@@ -32,7 +32,7 @@ import {
   zwaveTryParseDskFromQrCode,
   zwaveValidateDskAndEnterPin,
 } from "../../../../../../data/zwave_js";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import {
   backButtonStages,
   closeButtonStages,
@@ -72,7 +72,7 @@ const INCLUSION_TIMEOUT_MINUTES = 5;
 @customElement("dialog-zwave_js-add-node")
 class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
   // #region variables
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _open = false;
 
@@ -122,9 +122,9 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
   // #endregion
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeEntityRegistry(this.hass.connection, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection, (entities) => {
         this._entities = entities;
       }),
     ];
@@ -155,7 +155,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
   }
 
   private _renderHeader(): { headerText: string; headerHtml: TemplateResult } {
-    let headerText = this.hass.localize(
+    let headerText = this.menuai.localize(
       `ui.panel.config.zwave_js.add_node.title`
     );
 
@@ -223,7 +223,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
         break;
     }
 
-    headerText = this.hass.localize(
+    headerText = this.menuai.localize(
       `ui.panel.config.zwave_js.add_node.${titleTranslationKey}`
     );
 
@@ -234,7 +234,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
           ? html`<ha-icon-button
               slot="navigationIcon"
               @click=${this._handleCloseOrBack}
-              .label=${this.hass.localize("ui.common.close")}
+              .label=${this.menuai.localize("ui.common.close")}
               .path=${icon}
             ></ha-icon-button>`
           : nothing}
@@ -246,7 +246,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
   private _renderStep() {
     if (["select_method", "select_other_method"].includes(this._step!)) {
       return html`<zwave-js-add-node-select-method
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .hideQrWebcam=${this._step === "select_other_method"}
         @z-wave-method-selected=${this._methodSelected}
       ></zwave-js-add-node-select-method>`;
@@ -256,7 +256,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       return html`
         <div>
           <ha-qr-scanner
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             @qr-code-scanned=${this._qrCodeScanned}
             @qr-code-closed=${this.closeDialog}
             @qr-code-more-options=${this._qrScanShowMoreOptions}
@@ -270,10 +270,10 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       return html`
         <zwave-js-add-node-code-input
           .value=${this._codeInput}
-          .description=${this.hass.localize(
+          .description=${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.qr.manual.text"
           )}
-          .placeholder=${this.hass.localize(
+          .placeholder=${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.qr.manual.placeholder"
           )}
           @value-changed=${this._manualQrCodeInputChange}
@@ -284,7 +284,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
           .disabled=${!this._codeInput}
           @click=${this._qrCodeScanned}
         >
-          ${this.hass.localize("ui.common.next")}
+          ${this.menuai.localize("ui.common.next")}
         </ha-button>
       `;
     }
@@ -296,7 +296,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     ) {
       return html`
         <zwave-js-add-node-searching-devices
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .smartStart=${this._step === "search_smart_start_device"}
           .showAddAnotherDevice=${this._step === "search_smart_start_device"}
           .showSecurityOptions=${this._step === "search_devices"}
@@ -308,7 +308,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
         ${this._step === "search_smart_start_device"
           ? html`
               <ha-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </ha-button>
             `
           : nothing}
@@ -317,7 +317,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     if (this._step === "choose_security_strategy") {
       return html`<zwave-js-add-node-select-security-strategy
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           @z-wave-strategy-selected=${this._setSecurityStrategy}
         ></zwave-js-add-node-select-security-strategy>
         <ha-button
@@ -325,7 +325,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
           .disabled=${this._inclusionStrategy === undefined}
           @click=${this._searchDevicesWithStrategy}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.select_method.search_device"
           )}
         </ha-button>`;
@@ -333,7 +333,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     if (this._step === "configure_device") {
       return html`<zwave-js-add-node-configure-device
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .deviceName=${this._device?.name ?? ""}
           .longRangeSupported=${!!this._device?.provisioningInfo?.supportedProtocols?.includes(
             Protocols.ZWaveLongRange
@@ -345,7 +345,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
           .disabled=${!this._deviceOptions?.name}
           @click=${this._saveDevice}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             this._device?.id
               ? "ui.common.save"
               : "ui.panel.config.zwave_js.add_node.configure_device.add_device"
@@ -357,10 +357,10 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       return html`
         <zwave-js-add-node-code-input
           .value=${this._dskPin}
-          .description=${this.hass.localize(
+          .description=${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.validate_dsk_pin.text"
           )}
-          .placeholder=${this.hass.localize(
+          .placeholder=${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.validate_dsk_pin.placeholder"
           )}
           .referenceKey=${this._dsk!}
@@ -374,7 +374,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
           .disabled=${!this._dskPin || this._dskPin.length !== 5}
           @click=${this._validateDskAndEnterPin}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.configure_device.add_device"
           )}
         </ha-button>
@@ -388,7 +388,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     ) {
       return html`
         <zwave-js-add-node-loading
-          .description=${this.hass.localize(
+          .description=${this.menuai.localize(
             `ui.panel.config.zwave_js.add_node.${this._step !== "rename_device" ? "getting_device_information" : "saving_device"}`
           )}
         ></zwave-js-add-node-loading>
@@ -398,12 +398,12 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     if (this._step === "added_insecure") {
       return html`
         <zwave-js-add-node-added-insecure
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .deviceName=${this._device?.name}
           .reason=${this._lowSecurityReason?.toString()}
         ></zwave-js-add-node-added-insecure>
         <ha-button slot="primaryAction" @click=${this._navigateToDevice}>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.added_insecure.view_device"
           )}
         </ha-button>
@@ -413,14 +413,14 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     if (this._step === "grant_security_classes") {
       return html`
         <zwave-js-add-node-grant-security-classes
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .error=${this._error}
           .securityClassOptions=${this._requestedGrant!.securityClasses}
           .selectedSecurityClasses=${this._securityClasses}
           @value-changed=${this._securityClassChange}
         ></zwave-js-add-node-grant-security-classes>
         <ha-button slot="primaryAction" @click=${this._grantSecurityClasses}>
-          ${this.hass.localize("ui.common.submit")}
+          ${this.menuai.localize("ui.common.submit")}
         </ha-button>
       `;
     }
@@ -429,7 +429,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       return html`
         <zwave-js-add-node-failed
           .error=${this._error}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .device=${this._device}
         ></zwave-js-add-node-failed>
       `;
@@ -455,7 +455,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
   private _showFirstStep() {
     if (this._supportsSmartStart) {
-      if (this.hass.auth.external?.config.hasBarCodeScanner) {
+      if (this.menuai.auth.external?.config.hasBarCodeScanner) {
         this._step = "qr_scan";
       } else {
         this._step = "select_method";
@@ -481,7 +481,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     if (this._controllerSupportsLongRange === undefined) {
       try {
-        const zwaveNetwork = await fetchZwaveNetworkStatus(this.hass, {
+        const zwaveNetwork = await fetchZwaveNetworkStatus(this.menuai, {
           entry_id: this._entryId,
         });
         this._controllerSupportsLongRange =
@@ -504,7 +504,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     this._supportsSmartStart = (
       await zwaveSupportsFeature(
-        this.hass,
+        this.menuai,
         this._entryId!,
         ZWaveFeature.SmartStart
       )
@@ -556,7 +556,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
         this._step = "select_method";
         break;
       case "qr_code_input":
-        if (this.hass.auth.external?.config.hasBarCodeScanner) {
+        if (this.menuai.auth.external?.config.hasBarCodeScanner) {
           this._step = "select_other_method";
           break;
         }
@@ -566,7 +566,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
         this._unsubscribe();
         if (
           this._supportsSmartStart &&
-          this.hass.auth.external?.config.hasBarCodeScanner
+          this.menuai.auth.external?.config.hasBarCodeScanner
         ) {
           this._step = "select_other_method";
           break;
@@ -628,7 +628,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     const s2Device = qrProvisioningInformation || dsk;
     this._subscribed = subscribeAddZwaveNode(
-      this.hass,
+      this.menuai,
       this._entryId!,
       (message) => {
         switch (message.event) {
@@ -658,7 +658,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
           case "grant security classes":
             if (this._inclusionStrategy === undefined) {
               zwaveGrantSecurityClasses(
-                this.hass,
+                this.menuai,
                 this._entryId!,
                 message.requested_grant.securityClasses,
                 message.requested_grant.clientSideAuth
@@ -696,7 +696,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     this._addNodeTimeoutHandle = window.setTimeout(
       () => {
         this._unsubscribe();
-        this._error = this.hass.localize(
+        this._error = this.menuai.localize(
           "ui.panel.config.zwave_js.add_node.timeout_error",
           { minutes: INCLUSION_TIMEOUT_MINUTES }
         );
@@ -712,7 +712,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
   private _getQrCodeValidationError = (qrCode: string): string | undefined =>
     this._validateQrCode(qrCode)
       ? undefined
-      : this.hass.localize(
+      : this.menuai.localize(
           "ui.panel.config.zwave_js.add_node.qr.invalid_code",
           { code: qrCode }
         );
@@ -737,7 +737,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
       if (!this._validateQrCode(this._codeInput)) {
         this._step = "failed";
-        this._error = this.hass.localize(
+        this._error = this.menuai.localize(
           "ui.panel.config.zwave_js.add_node.qr.invalid_code",
           { code: this._codeInput }
         );
@@ -751,7 +751,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     this._qrProcessing = true;
     const dsk = await zwaveTryParseDskFromQrCode(
-      this.hass,
+      this.menuai,
       this._entryId!,
       qrCodeString
     );
@@ -772,7 +772,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
     try {
       provisioningInfo = await zwaveParseQrCode(
-        this.hass,
+        this.menuai,
         this._entryId!,
         qrCodeString
       );
@@ -786,7 +786,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     let deviceName = "";
     try {
       const device = await lookupZwaveDevice(
-        this.hass,
+        this.menuai,
         this._entryId!,
         provisioningInfo.manufacturerId,
         provisioningInfo.productType,
@@ -817,7 +817,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       this._inclusionStrategy = InclusionStrategy.Security_S2;
       this._startInclusion(provisioningInfo);
     } else {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.add_node.qr.unsupported_code",
         { code: qrCodeString }
       );
@@ -840,7 +840,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
 
       try {
         const id = await provisionZwaveSmartStartNode(
-          this.hass,
+          this.menuai,
           this._entryId!,
           {
             ...this._device.provisioningInfo,
@@ -866,7 +866,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
         const oldDeviceName = this._device.name;
         const newDeviceName = this._deviceOptions!.name;
         try {
-          await updateDeviceRegistryEntry(this.hass, this._device.id, {
+          await updateDeviceRegistryEntry(this.menuai, this._device.id, {
             name_by_user: this._deviceOptions!.name,
             area_id: this._deviceOptions!.area,
           });
@@ -879,7 +879,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
             );
 
             const entityIdsMapping = getAutomaticEntityIds(
-              this.hass,
+              this.menuai,
               entities.map((entity) => entity.entity_id)
             );
 
@@ -909,7 +909,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
                   return undefined;
                 }
 
-                return updateEntityRegistryEntry(this.hass!, entity.entity_id, {
+                return updateEntityRegistryEntry(this.menuai!, entity.entity_id, {
                   name: newName || name,
                   new_entity_id: newEntityId || undefined,
                 });
@@ -917,7 +917,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
             );
           }
         } catch (_err: any) {
-          this._error = this.hass.localize(
+          this._error = this.menuai.localize(
             "ui.panel.config.zwave_js.add_node.configure_device.save_device_failed"
           );
           this._step = "failed";
@@ -955,7 +955,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       return;
     }
     this._newDeviceSubscription = subscribeNewDevices(
-      this.hass,
+      this.menuai,
       this._entryId!,
       ({ event, device }) => {
         if (
@@ -988,7 +988,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     this._error = undefined;
     try {
       await zwaveValidateDskAndEnterPin(
-        this.hass,
+        this.menuai,
         this._entryId!,
         this._dskPin
       );
@@ -1003,7 +1003,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     this._error = undefined;
     try {
       await zwaveGrantSecurityClasses(
-        this.hass,
+        this.menuai,
         this._entryId!,
         this._securityClasses
       );
@@ -1030,7 +1030,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
       this._subscribed = undefined;
 
       if (this._entryId) {
-        stopZwaveInclusion(this.hass, this._entryId);
+        stopZwaveInclusion(this.menuai, this._entryId);
         if (
           this._step &&
           [
@@ -1039,7 +1039,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
             "grant_security_classes",
           ].includes(this._step)
         ) {
-          cancelSecureBootstrapS2(this.hass, this._entryId);
+          cancelSecureBootstrapS2(this.menuai, this._entryId);
         }
       }
     }
@@ -1080,7 +1080,7 @@ class DialogZWaveJSAddNode extends SubscribeMixin(LitElement) {
     if (this._step === "validate_dsk_enter_pin") {
       this._step = "loading";
       try {
-        await zwaveValidateDskAndEnterPin(this.hass, this._entryId!, false);
+        await zwaveValidateDskAndEnterPin(this.menuai, this._entryId!, false);
       } catch (err: any) {
         // ignore
         // eslint-disable-next-line no-console

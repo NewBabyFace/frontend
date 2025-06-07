@@ -2,17 +2,17 @@ import type { TemplateResult } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../../../common/dom/fire_event";
-import type { HassDialog } from "../../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../../dialogs/make-dialog-manager";
 import { createCloseHeading } from "../../../../../components/ha-dialog";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZeroconfDiscoveryInfoDialogParams } from "./show-dialog-zeroconf-discovery-info";
 import "../../../../../components/ha-button";
 import { showToast } from "../../../../../util/toast";
 import { copyToClipboard } from "../../../../../common/util/copy-clipboard";
 
 @customElement("dialog-zeroconf-device-info")
-class DialogZeroconfDiscoveryInfo extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogZeroconfDiscoveryInfo extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: ZeroconfDiscoveryInfoDialogParams;
 
@@ -35,7 +35,7 @@ class DialogZeroconfDiscoveryInfo extends LitElement implements HassDialog {
 
     await copyToClipboard(JSON.stringify(this._params!.entry));
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -49,26 +49,26 @@ class DialogZeroconfDiscoveryInfo extends LitElement implements HassDialog {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.zeroconf.discovery_information")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.zeroconf.discovery_information")
         )}
       >
         <p>
-          <b>${this.hass.localize("ui.panel.config.zeroconf.name")}</b>:
+          <b>${this.menuai.localize("ui.panel.config.zeroconf.name")}</b>:
           ${this._params.entry.name.slice(
             0,
             -this._params.entry.type.length - 1
           )}
           <br />
-          <b>${this.hass.localize("ui.panel.config.zeroconf.type")}</b>:
+          <b>${this.menuai.localize("ui.panel.config.zeroconf.type")}</b>:
           ${this._params.entry.type}
           <br />
-          <b>${this.hass.localize("ui.panel.config.zeroconf.port")}</b>:
+          <b>${this.menuai.localize("ui.panel.config.zeroconf.port")}</b>:
           ${this._params.entry.port}
           <br />
         </p>
 
-        <h4>${this.hass.localize("ui.panel.config.zeroconf.ip_addresses")}</h4>
+        <h4>${this.menuai.localize("ui.panel.config.zeroconf.ip_addresses")}</h4>
         <table width="100%">
           <tbody>
             ${this._params.entry.ip_addresses.map(
@@ -81,7 +81,7 @@ class DialogZeroconfDiscoveryInfo extends LitElement implements HassDialog {
           </tbody>
         </table>
 
-        <h4>${this.hass.localize("ui.panel.config.zeroconf.properties")}</h4>
+        <h4>${this.menuai.localize("ui.panel.config.zeroconf.properties")}</h4>
         <table width="100%">
           <tbody>
             ${Object.entries(this._params.entry.properties).map(
@@ -96,7 +96,7 @@ class DialogZeroconfDiscoveryInfo extends LitElement implements HassDialog {
         </table>
 
         <ha-button slot="secondaryAction" @click=${this._copyToClipboard}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.zeroconf.copy_to_clipboard"
           )}</ha-button
         >

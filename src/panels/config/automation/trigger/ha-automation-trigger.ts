@@ -18,7 +18,7 @@ import type {
   TriggerList,
 } from "../../../../data/automation";
 import { isTriggerList } from "../../../../data/trigger";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   PASTE_VALUE,
   showAddAutomationElementDialog,
@@ -28,7 +28,7 @@ import type HaAutomationTriggerRow from "./ha-automation-trigger-row";
 
 @customElement("ha-automation-trigger")
 export default class HaAutomationTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public triggers!: Trigger[];
 
@@ -93,7 +93,7 @@ export default class HaAutomationTrigger extends LitElement {
                 @move-down=${this._moveDown}
                 @move-up=${this._moveUp}
                 @value-changed=${this._triggerChanged}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .disabled=${this.disabled}
                 ?highlight=${this.highlightedTriggers?.includes(trg)}
               >
@@ -110,7 +110,7 @@ export default class HaAutomationTrigger extends LitElement {
           <div class="buttons">
             <ha-button
               outlined
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.add"
               )}
               .disabled=${this.disabled}

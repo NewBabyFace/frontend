@@ -1,7 +1,7 @@
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockSensor = (hass: MockHomeAssistant) => {
-  hass.mockWS("sensor/numeric_device_classes", () => [
+export const mockSensor = (menuai: Mockmenuai) => {
+  menuai.mockWS("sensor/numeric_device_classes", () => [
     {
       numeric_device_classes: [
         "volume_storage",

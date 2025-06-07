@@ -7,20 +7,20 @@ import { fireEvent } from "../../src/common/dom/fire_event";
 import { mainWindow } from "../../src/common/dom/get_main_window";
 import { isNavigationClick } from "../../src/common/dom/is-navigation-click";
 import { navigate } from "../../src/common/navigate";
-import type { HassioPanelInfo } from "../../src/data/hassio/supervisor";
+import type { menuaiioPanelInfo } from "../../src/data/menuaiio/supervisor";
 import type { Supervisor } from "../../src/data/supervisor/supervisor";
 import { makeDialogManager } from "../../src/dialogs/make-dialog-manager";
-import type { HomeAssistant } from "../../src/types";
-import "./hassio-router";
+import type { menuai } from "../../src/types";
+import "./menuaiio-router";
 import { SupervisorBaseElement } from "./supervisor-base-element";
 
-@customElement("hassio-main")
-export class HassioMain extends SupervisorBaseElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-main")
+export class menuaiioMain extends SupervisorBaseElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public panel!: HassioPanelInfo;
+  @property({ attribute: false }) public panel!: menuaiioPanelInfo;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -30,16 +30,16 @@ export class HassioMain extends SupervisorBaseElement {
     this._applyTheme();
 
     // Paulus - March 17, 2019
-    // We went to a single hass-toggle-menu event in HA 0.90. However, the
-    // supervisor UI can also run under older versions of Home Assistant.
+    // We went to a single menuai-toggle-menu event in HA 0.90. However, the
+    // supervisor UI can also run under older versions of MenuAI.
     // So here we are going to translate toggle events into the appropriate
     // open and close events. These events are a no-op in newer versions of
-    // Home Assistant.
-    this.addEventListener("hass-toggle-menu", () => {
+    // MenuAI.
+    this.addEventListener("menuai-toggle-menu", () => {
       fireEvent(
         (window.parent as any).customPanel,
         // @ts-ignore
-        this.hass.dockedSidebar ? "hass-close-menu" : "hass-open-menu"
+        this.menuai.dockedSidebar ? "menuai-close-menu" : "menuai-open-menu"
       );
     });
     // Paulus - March 19, 2019
@@ -57,7 +57,7 @@ export class HassioMain extends SupervisorBaseElement {
     );
 
     // Paulus - May 17, 2021
-    // Convert the <a> tags to native nav in Home Assistant < 2021.6
+    // Convert the <a> tags to native nav in MenuAI < 2021.6
     document.body.addEventListener("click", (ev) => {
       const href = isNavigationClick(ev);
       if (href) {
@@ -80,7 +80,7 @@ export class HassioMain extends SupervisorBaseElement {
         return;
       }
       // @ts-ignore
-      fireEvent(mainWindow, "hass-quick-bar-trigger", ev, {
+      fireEvent(mainWindow, "menuai-quick-bar-trigger", ev, {
         bubbles: false,
       });
     });
@@ -90,48 +90,48 @@ export class HassioMain extends SupervisorBaseElement {
 
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    if (!oldHass) {
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    if (!oldmenuai) {
       return;
     }
-    if (oldHass.themes !== this.hass.themes) {
+    if (oldmenuai.themes !== this.menuai.themes) {
       this._applyTheme();
     }
   }
 
   protected render() {
     return html`
-      <hassio-router
-        .hass=${this.hass}
+      <menuaiio-router
+        .menuai=${this.menuai}
         .supervisor=${this.supervisor}
         .route=${this.route}
         .panel=${this.panel}
         .narrow=${this.narrow}
-      ></hassio-router>
+      ></menuaiio-router>
     `;
   }
 
   private _applyTheme() {
     let themeName: string;
-    let themeSettings: Partial<HomeAssistant["selectedTheme"]> | undefined;
+    let themeSettings: Partial<menuai["selectedTheme"]> | undefined;
 
-    if (atLeastVersion(this.hass.config.version, 0, 114)) {
+    if (atLeastVersion(this.menuai.config.version, 0, 114)) {
       themeName =
-        this.hass.selectedTheme?.theme ||
-        (this.hass.themes.darkMode && this.hass.themes.default_dark_theme
-          ? this.hass.themes.default_dark_theme!
-          : this.hass.themes.default_theme);
+        this.menuai.selectedTheme?.theme ||
+        (this.menuai.themes.darkMode && this.menuai.themes.default_dark_theme
+          ? this.menuai.themes.default_dark_theme!
+          : this.menuai.themes.default_theme);
 
-      themeSettings = this.hass.selectedTheme;
+      themeSettings = this.menuai.selectedTheme;
     } else {
       themeName =
-        (this.hass.selectedTheme as unknown as string) ||
-        this.hass.themes.default_theme;
+        (this.menuai.selectedTheme as unknown as string) ||
+        this.menuai.themes.default_theme;
     }
 
     applyThemesOnElement(
       this.parentElement,
-      this.hass.themes,
+      this.menuai.themes,
       themeName,
       themeSettings,
       true
@@ -141,6 +141,6 @@ export class HassioMain extends SupervisorBaseElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-main": HassioMain;
+    "menuaiio-main": menuaiioMain;
   }
 }

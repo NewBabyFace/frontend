@@ -6,7 +6,7 @@ import { applyThemesOnElement } from "../../../../src/common/dom/apply_themes_on
 import "../../../../src/components/ha-badge";
 import "../../../../src/components/ha-card";
 import "../../../../src/components/ha-svg-icon";
-import { mdiHomeAssistant } from "../../../../src/resources/home-assistant-logo-svg";
+import { mdimenuai } from "../../../../src/resources/home-assistant-logo-svg";
 
 const badges: {
   type?: "badge" | "button";
@@ -51,7 +51,7 @@ const badges: {
     iconOnly: true,
     iconSlot: html`<ha-svg-icon
       slot="icon"
-      .path=${mdiHomeAssistant}
+      .path=${mdimenuai}
     ></ha-svg-icon>`,
   },
 ];

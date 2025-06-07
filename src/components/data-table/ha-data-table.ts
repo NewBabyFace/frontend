@@ -20,7 +20,7 @@ import { debounce } from "../../common/util/debounce";
 import { groupBy } from "../../common/util/group-by";
 import { haStyleScrollbar } from "../../resources/styles";
 import { loadVirtualizer } from "../../resources/virtualizer";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-checkbox";
 import type { HaCheckbox } from "../ha-checkbox";
 import "../ha-svg-icon";
@@ -101,7 +101,7 @@ const UNDEFINED_GROUP_KEY = "zzzzz_undefined";
 
 @customElement("ha-data-table")
 export class HaDataTable extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public localizeFunc?: LocalizeFunc;
 
@@ -363,7 +363,7 @@ export class HaDataTable extends LitElement {
   );
 
   protected render() {
-    const localize = this.localizeFunc || this.hass.localize;
+    const localize = this.localizeFunc || this.menuai.localize;
 
     const columns = this._sortedColumns(this.columns, this.columnOrder);
 
@@ -377,7 +377,7 @@ export class HaDataTable extends LitElement {
             ? html`
                 <div class="table-header">
                   <search-input
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     @value-changed=${this._handleSearchChange}
                     .label=${this.searchLabel}
                     .noLabelFloat=${this.noLabelFloat}
@@ -670,7 +670,7 @@ export class HaDataTable extends LitElement {
             this._sortColumns[this.sortColumn],
             this.sortDirection,
             this.sortColumn,
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         : filteredData;
 
@@ -731,7 +731,7 @@ export class HaDataTable extends LitElement {
               return stringCompare(
                 ["", "-", "—"].includes(a) ? "zzz" : a,
                 ["", "-", "—"].includes(b) ? "zzz" : b,
-                this.hass.locale.language
+                this.menuai.locale.language
               );
             })
             .reduce((obj, key) => {
@@ -752,7 +752,7 @@ export class HaDataTable extends LitElement {
               >
                 <ha-icon-button
                   .path=${mdiChevronUp}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     `ui.components.data-table.${collapsed ? "expand" : "collapse"}`
                   )}
                   class=${collapsed ? "collapsed" : ""}
@@ -830,7 +830,7 @@ export class HaDataTable extends LitElement {
 
     const groupedData = this._groupData(
       this._filteredData,
-      this.localizeFunc || this.hass.localize,
+      this.localizeFunc || this.menuai.localize,
       this.appendRow,
       this.hasFab,
       this.groupColumn,
@@ -1398,7 +1398,7 @@ declare global {
   }
 
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "selection-changed": SelectionChangedEvent;
     "row-click": RowClickedEvent;
     "sorting-changed": SortingChangedEvent;

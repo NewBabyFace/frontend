@@ -1,7 +1,7 @@
 import { atLeastVersion } from "../../common/config/version";
-import type { HomeAssistant } from "../../types";
-import type { HassioResponse } from "./common";
-import { hassioApiResultExtractor } from "./common";
+import type { menuai } from "../../types";
+import type { menuaiioResponse } from "./common";
+import { menuaiioApiResultExtractor } from "./common";
 
 interface IpConfiguration {
   address: string[];
@@ -54,31 +54,31 @@ export interface NetworkInfo {
 }
 
 export const fetchNetworkInfo = async (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<NetworkInfo> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: "/network/info",
       method: "get",
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<NetworkInfo>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<NetworkInfo>>(
       "GET",
-      "hassio/network/info"
+      "menuaiio/network/info"
     )
   );
 };
 
 export const updateNetworkInterface = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   network_interface: string,
   options: Partial<NetworkInterface>
 ) => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    await hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    await menuai.callWS({
       type: "supervisor/api",
       endpoint: `/network/interface/${network_interface}/update`,
       method: "post",
@@ -88,19 +88,19 @@ export const updateNetworkInterface = async (
     return;
   }
 
-  await hass.callApi<HassioResponse<NetworkInfo>>(
+  await menuai.callApi<menuaiioResponse<NetworkInfo>>(
     "POST",
-    `hassio/network/interface/${network_interface}/update`,
+    `menuaiio/network/interface/${network_interface}/update`,
     options
   );
 };
 
 export const accesspointScan = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   network_interface: string
 ): Promise<AccessPoints> => {
-  if (atLeastVersion(hass.config.version, 2021, 2, 4)) {
-    return hass.callWS({
+  if (atLeastVersion(menuai.config.version, 2021, 2, 4)) {
+    return menuai.callWS({
       type: "supervisor/api",
       endpoint: `/network/interface/${network_interface}/accesspoints`,
       method: "get",
@@ -108,10 +108,10 @@ export const accesspointScan = async (
     });
   }
 
-  return hassioApiResultExtractor(
-    await hass.callApi<HassioResponse<AccessPoints>>(
+  return menuaiioApiResultExtractor(
+    await menuai.callApi<menuaiioResponse<AccessPoints>>(
       "GET",
-      `hassio/network/interface/${network_interface}/accesspoints`
+      `menuaiio/network/interface/${network_interface}/accesspoints`
     )
   );
 };

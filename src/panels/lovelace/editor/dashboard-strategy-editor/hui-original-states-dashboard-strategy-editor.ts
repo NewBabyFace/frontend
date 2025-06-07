@@ -6,7 +6,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { OriginalStatesDashboardStrategyConfig } from "../../strategies/original-states/original-states-dashboard-strategy";
 import type { LovelaceStrategyEditor } from "../../strategies/types";
 
@@ -42,7 +42,7 @@ export class HuiOriginalStatesDashboardStrategyEditor
   extends LitElement
   implements LovelaceStrategyEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state()
   private _config?: OriginalStatesDashboardStrategyConfig;
@@ -52,13 +52,13 @@ export class HuiOriginalStatesDashboardStrategyEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -77,7 +77,7 @@ export class HuiOriginalStatesDashboardStrategyEditor
       case "areas":
       case "hide_energy":
       case "hide_entities_without_area":
-        return this.hass?.localize(
+        return this.menuai?.localize(
           `ui.panel.lovelace.editor.strategy.original-states.${schema.name}`
         );
       default:

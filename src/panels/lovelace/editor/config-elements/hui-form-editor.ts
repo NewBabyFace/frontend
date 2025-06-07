@@ -7,7 +7,7 @@ import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/ha-form/ha-form";
 import type { HaFormSchema } from "../../../../components/ha-form/types";
 import type { LovelaceCardConfig } from "../../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceGenericElementEditor } from "../../types";
 import { configElementStyle } from "./config-elements-style";
 
@@ -16,7 +16,7 @@ export class HuiFormEditor
   extends LitElement
   implements LovelaceGenericElementEditor
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public schema!: HaFormSchema[];
 
@@ -38,7 +38,7 @@ export class HuiFormEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${this.schema}
         .computeLabel=${this._computeLabelCallback}
@@ -59,14 +59,14 @@ export class HuiFormEditor
   ): string | undefined => undefined;
 
   private _computeLabelCallback = (schema: HaFormSchema) =>
-    this.computeLabel(schema, this.hass.localize) ||
-    this.hass.localize(
+    this.computeLabel(schema, this.menuai.localize) ||
+    this.menuai.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     ) ||
     capitalizeFirstLetter(schema.name.split("_").join(" "));
 
   private _computeHelperCallback = (schema: HaFormSchema) =>
-    this.computeHelper(schema, this.hass.localize);
+    this.computeHelper(schema, this.menuai.localize);
 
   private _valueChanged(ev: CustomEvent): void {
     const config = ev.detail.value;

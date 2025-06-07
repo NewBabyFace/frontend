@@ -1,4 +1,4 @@
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
@@ -14,7 +14,7 @@ import {
 } from "../data/label_registry";
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
 import { showLabelDetailDialog } from "../panels/config/labels/show-dialog-label-detail";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import "./chips/ha-chip-set";
 import "./chips/ha-input-chip";
 import type { HaDevicePickerDeviceFilterFunc } from "./device/ha-device-picker";
@@ -23,7 +23,7 @@ import type { HaLabelPicker } from "./ha-label-picker";
 
 @customElement("ha-labels-picker")
 export class HaLabelsPicker extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -72,7 +72,7 @@ export class HaLabelsPicker extends SubscribeMixin(LitElement) {
   public deviceFilter?: HaDevicePickerDeviceFilterFunc;
 
   @property({ attribute: false })
-  public entityFilter?: (entity: HassEntity) => boolean;
+  public entityFilter?: (entity: menuaiEntity) => boolean;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -92,9 +92,9 @@ export class HaLabelsPicker extends SubscribeMixin(LitElement) {
     await this.labelPicker?.focus();
   }
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         const lookUp = {};
         labels.forEach((label) => {
           lookUp[label.label_id] = label;
@@ -119,7 +119,7 @@ export class HaLabelsPicker extends SubscribeMixin(LitElement) {
     const labels = this._sortedLabels(
       this.value,
       this._labels,
-      this.hass.locale.language
+      this.menuai.locale.language
     );
     return html`
       ${this.label ? html`<label>${this.label}</label>` : nothing}
@@ -154,7 +154,7 @@ export class HaLabelsPicker extends SubscribeMixin(LitElement) {
           </ha-chip-set>`
         : nothing}
       <ha-label-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .helper=${this.helper}
         .disabled=${this.disabled}
         .required=${this.required}
@@ -180,7 +180,7 @@ export class HaLabelsPicker extends SubscribeMixin(LitElement) {
     showLabelDetailDialog(this, {
       entry: label,
       updateEntry: async (values) => {
-        await updateLabelRegistryEntry(this.hass, label.label_id, values);
+        await updateLabelRegistryEntry(this.menuai, label.label_id, values);
       },
     });
   }

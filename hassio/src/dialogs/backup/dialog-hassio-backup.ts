@@ -20,37 +20,37 @@ import "../../../../src/components/ha-md-dialog";
 import type { HaMdDialog } from "../../../../src/components/ha-md-dialog";
 import "../../../../src/components/ha-spinner";
 import { getSignedPath } from "../../../../src/data/auth";
-import type { HassioBackupDetail } from "../../../../src/data/hassio/backup";
+import type { menuaiioBackupDetail } from "../../../../src/data/menuaiio/backup";
 import {
-  fetchHassioBackupInfo,
+  fetchmenuaiioBackupInfo,
   removeBackup,
   restoreBackup,
-} from "../../../../src/data/hassio/backup";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+} from "../../../../src/data/menuaiio/backup";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../../src/dialogs/generic/show-dialog-box";
-import type { HassDialog } from "../../../../src/dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../src/dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import { fileDownload } from "../../../../src/util/file_download";
 import "../../components/supervisor-backup-content";
 import type { SupervisorBackupContent } from "../../components/supervisor-backup-content";
-import type { HassioBackupDialogParams } from "./show-dialog-hassio-backup";
+import type { menuaiioBackupDialogParams } from "./show-dialog-menuaiio-backup";
 
-@customElement("dialog-hassio-backup")
-class HassioBackupDialog
+@customElement("dialog-menuaiio-backup")
+class menuaiioBackupDialog
   extends LitElement
-  implements HassDialog<HassioBackupDialogParams>
+  implements menuaiDialog<menuaiioBackupDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: string;
 
-  @state() private _backup?: HassioBackupDetail;
+  @state() private _backup?: menuaiioBackupDetail;
 
-  @state() private _dialogParams?: HassioBackupDialogParams;
+  @state() private _dialogParams?: menuaiioBackupDialogParams;
 
   @state() private _restoringBackup = false;
 
@@ -59,14 +59,14 @@ class HassioBackupDialog
 
   @query("ha-md-dialog") private _dialog?: HaMdDialog;
 
-  public async showDialog(dialogParams: HassioBackupDialogParams) {
+  public async showDialog(dialogParams: menuaiioBackupDialogParams) {
     this._dialogParams = dialogParams;
-    this._backup = await fetchHassioBackupInfo(this.hass, dialogParams.slug);
+    this._backup = await fetchmenuaiioBackupInfo(this.menuai, dialogParams.slug);
     if (!this._backup) {
       this._error = this._dialogParams.supervisor?.localize(
         "backup.no_backup_found"
       );
-    } else if (this._dialogParams.onboarding && !this._backup.homeassistant) {
+    } else if (this._dialogParams.onboarding && !this._backup.menuai) {
       this._error = this._dialogParams.supervisor?.localize(
         "backup.restore_no_home_assistant"
       );
@@ -144,7 +144,7 @@ class HassioBackupDialog
                 </div>`
               : html`
                   <supervisor-backup-content
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .supervisor=${this._dialogParams.supervisor}
                     .backup=${this._backup}
                     .onboarding=${this._dialogParams.onboarding || false}
@@ -217,11 +217,11 @@ class HassioBackupDialog
 
     try {
       await restoreBackup(
-        this.hass,
+        this.menuai,
         this._backup!.type,
         this._backup!.slug,
         { ...backupDetails, background: this._dialogParams?.onboarding },
-        !!this.hass && atLeastVersion(this.hass.config.version, 2021, 9)
+        !!this.menuai && atLeastVersion(this.menuai.config.version, 2021, 9)
       );
 
       this._dialogParams?.onRestoring?.();
@@ -252,7 +252,7 @@ class HassioBackupDialog
     }
 
     try {
-      await removeBackup(this.hass!, this._backup!.slug);
+      await removeBackup(this.menuai!, this._backup!.slug);
       if (this._dialogParams!.onDelete) {
         this._dialogParams!.onDelete();
       }
@@ -269,9 +269,9 @@ class HassioBackupDialog
     let signedPath: { path: string };
     try {
       signedPath = await getSignedPath(
-        this.hass!,
-        `/api/hassio/${
-          atLeastVersion(this.hass!.config.version, 2021, 9)
+        this.menuai!,
+        `/api/menuaiio/${
+          atLeastVersion(this.menuai!.config.version, 2021, 9)
             ? "backups"
             : "snapshots"
         }/${this._backup!.slug}/download`
@@ -335,6 +335,6 @@ class HassioBackupDialog
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-backup": HassioBackupDialog;
+    "dialog-menuaiio-backup": menuaiioBackupDialog;
   }
 }

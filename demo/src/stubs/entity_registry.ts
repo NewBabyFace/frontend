@@ -1,9 +1,9 @@
 import type { EntityRegistryEntry } from "../../../src/data/entity_registry";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 export const mockEntityRegistry = (
-  hass: MockHomeAssistant,
+  menuai: Mockmenuai,
   data: EntityRegistryEntry[] = []
 ) => {
-  hass.mockWS("config/entity_registry/list", () => data);
+  menuai.mockWS("config/entity_registry/list", () => data);
 };

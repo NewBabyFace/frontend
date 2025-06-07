@@ -4,13 +4,13 @@ import { customElement, property, state } from "lit/decorators";
 import { applyThemesOnElement } from "../../../common/dom/apply_themes_on_element";
 import { listenMediaQuery } from "../../../common/dom/media_query";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 type BackgroundConfig = LovelaceViewConfig["background"];
 
 @customElement("hui-view-container")
 class HuiViewContainer extends LitElement {
-  @property({ attribute: false }) hass?: HomeAssistant;
+  @property({ attribute: false }) menuai?: menuai;
 
   @property({ attribute: false }) background?: BackgroundConfig;
 
@@ -47,12 +47,12 @@ class HuiViewContainer extends LitElement {
 
   protected willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);
-    if (changedProperties.has("hass") && this.hass) {
-      const oldHass = changedProperties.get("hass");
+    if (changedProperties.has("menuai") && this.menuai) {
+      const oldmenuai = changedProperties.get("menuai");
       if (
-        !oldHass ||
-        this.hass.themes !== oldHass.themes ||
-        this.hass.selectedTheme !== oldHass.selectedTheme
+        !oldmenuai ||
+        this.menuai.themes !== oldmenuai.themes ||
+        this.menuai.selectedTheme !== oldmenuai.selectedTheme
       ) {
         this._applyTheme();
         return;
@@ -69,8 +69,8 @@ class HuiViewContainer extends LitElement {
   }
 
   private _applyTheme() {
-    if (this.hass) {
-      applyThemesOnElement(this, this.hass?.themes, this.theme);
+    if (this.menuai) {
+      applyThemesOnElement(this, this.menuai?.themes, this.theme);
     }
   }
 

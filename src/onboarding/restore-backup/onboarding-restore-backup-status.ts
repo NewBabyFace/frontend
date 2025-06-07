@@ -104,7 +104,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "onboarding-restore-backup-status": OnboardingRestoreBackupStatus;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "restore-started";
   }
 }

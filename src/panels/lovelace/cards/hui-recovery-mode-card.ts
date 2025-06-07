@@ -3,13 +3,13 @@ import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../components/ha-card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../config/logs/error-log-card";
 import type { LovelaceCard } from "../types";
 
 @customElement("hui-recovery-mode-card")
 export class HuiRecoveryModeCard extends LitElement implements LovelaceCard {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   public getCardSize(): number {
     return 3;
@@ -22,16 +22,16 @@ export class HuiRecoveryModeCard extends LitElement implements LovelaceCard {
   protected render(): TemplateResult {
     return html`
       <ha-card
-        .header=${this.hass!.localize(
+        .header=${this.menuai!.localize(
           "ui.panel.lovelace.cards.recovery-mode.header"
         )}
       >
         <div class="card-content">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.lovelace.cards.recovery-mode.description"
           )}
         </div>
-        <error-log-card .hass=${this.hass} provider="core"></error-log-card>
+        <error-log-card .menuai=${this.menuai} provider="core"></error-log-card>
       </ha-card>
     `;
   }

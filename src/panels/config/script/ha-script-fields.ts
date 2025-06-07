@@ -8,13 +8,13 @@ import "../../../components/ha-button";
 import "../../../components/ha-button-menu";
 import "../../../components/ha-svg-icon";
 import type { Fields } from "../../../data/script";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./ha-script-field-row";
 import type HaScriptFieldRow from "./ha-script-field-row";
 
 @customElement("ha-script-fields")
 export default class HaScriptFields extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -38,7 +38,7 @@ export default class HaScriptFields extends LitElement {
                   .field=${field}
                   .disabled=${this.disabled}
                   @value-changed=${this._fieldChanged}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   ?highlight=${this.highlightedFields?.[key] !== undefined}
                 >
                 </ha-script-field-row>
@@ -50,7 +50,7 @@ export default class HaScriptFields extends LitElement {
         outlined
         @click=${this._addField}
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.script.editor.field.add_field"
         )}
       >
@@ -81,7 +81,7 @@ export default class HaScriptFields extends LitElement {
 
   private _addField() {
     const key = this._getUniqueKey(
-      this.hass.localize("ui.panel.config.script.editor.field.field") ||
+      this.menuai.localize("ui.panel.config.script.editor.field.field") ||
         "field",
       this.fields || {}
     );

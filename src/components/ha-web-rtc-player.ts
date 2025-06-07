@@ -13,7 +13,7 @@ import {
   webRtcOffer,
   type WebRtcOfferEvent,
 } from "../data/camera";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-alert";
 
 /**
@@ -23,7 +23,7 @@ import "./ha-alert";
  */
 @customElement("ha-web-rtc-player")
 class HaWebRtcPlayer extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public entityid?: string;
 
@@ -113,7 +113,7 @@ class HaWebRtcPlayer extends LitElement {
       return;
     }
 
-    if (!this.hass || !this.entityid) {
+    if (!this.menuai || !this.entityid) {
       return;
     }
 
@@ -124,7 +124,7 @@ class HaWebRtcPlayer extends LitElement {
     this._logEvent("start clientConfig");
 
     this._clientConfig = await fetchWebRtcClientConfiguration(
-      this.hass,
+      this.menuai,
       this.entityid
     );
 
@@ -213,7 +213,7 @@ class HaWebRtcPlayer extends LitElement {
     this._logEvent("start webRtcOffer", offer_sdp);
 
     try {
-      this._unsub = webRtcOffer(this.hass, this.entityid, offer_sdp, (event) =>
+      this._unsub = webRtcOffer(this.menuai, this.entityid, offer_sdp, (event) =>
         this._handleOfferEvent(event)
       );
     } catch (err: any) {
@@ -240,7 +240,7 @@ class HaWebRtcPlayer extends LitElement {
       this._sessionId = event.session_id;
       this._candidatesList.forEach((candidate) =>
         addWebRtcCandidate(
-          this.hass,
+          this.menuai,
           this.entityid!,
           event.session_id,
           // toJSON returns RTCIceCandidateInit
@@ -293,7 +293,7 @@ class HaWebRtcPlayer extends LitElement {
 
     if (this._sessionId) {
       addWebRtcCandidate(
-        this.hass,
+        this.menuai,
         this.entityid,
         this._sessionId,
         // toJSON returns RTCIceCandidateInit

@@ -1,7 +1,7 @@
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import type { SystemLogLevel } from "../data/system_log";
 import type { Constructor } from "../types";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
 interface WriteLogParams {
   level?: SystemLogLevel;
@@ -10,22 +10,22 @@ interface WriteLogParams {
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     write_log: WriteLogParams;
   }
   interface HTMLElementEventMap {
-    write_log: HASSDomEvent<WriteLogParams>;
+    write_log: menuaiDomEvent<WriteLogParams>;
   }
 }
 
-export const loggingMixin = <T extends Constructor<HassBaseEl>>(
+export const loggingMixin = <T extends Constructor<menuaiBaseEl>>(
   superClass: T
 ) =>
   class extends superClass {
-    protected hassConnected() {
-      super.hassConnected();
+    protected menuaiConnected() {
+      super.menuaiConnected();
       window.addEventListener("error", async (ev) => {
-        if (!this.hass?.connected) {
+        if (!this.menuai?.connected) {
           return;
         }
         if (
@@ -58,7 +58,7 @@ export const loggingMixin = <T extends Constructor<HassBaseEl>>(
         }
       });
       window.addEventListener("unhandledrejection", async (ev) => {
-        if (!this.hass?.connected) {
+        if (!this.menuai?.connected) {
           return;
         }
         try {
@@ -90,7 +90,7 @@ export const loggingMixin = <T extends Constructor<HassBaseEl>>(
     }
 
     private _writeLog(log: WriteLogParams) {
-      return this.hass?.callService(
+      return this.menuai?.callService(
         "system_log",
         "write",
         {

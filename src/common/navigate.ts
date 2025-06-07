@@ -4,7 +4,7 @@ import { mainWindow } from "./dom/get_main_window";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "location-changed": NavigateOptions;
   }
 }

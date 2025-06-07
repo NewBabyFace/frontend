@@ -1,5 +1,5 @@
 import { stringCompare } from "../common/string/compare";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { DeviceRegistryEntry } from "./device_registry";
 import type { EntityRegistryEntry } from "./entity_registry";
 import type { RegistryEntry } from "./registry";
@@ -34,27 +34,27 @@ export interface AreaRegistryEntryMutableParams {
 }
 
 export const createAreaRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: AreaRegistryEntryMutableParams
 ) =>
-  hass.callWS<AreaRegistryEntry>({
+  menuai.callWS<AreaRegistryEntry>({
     type: "config/area_registry/create",
     ...values,
   });
 
 export const updateAreaRegistryEntry = (
-  hass: HomeAssistant,
+  menuai: menuai,
   areaId: string,
   updates: Partial<AreaRegistryEntryMutableParams>
 ) =>
-  hass.callWS<AreaRegistryEntry>({
+  menuai.callWS<AreaRegistryEntry>({
     type: "config/area_registry/update",
     area_id: areaId,
     ...updates,
   });
 
-export const deleteAreaRegistryEntry = (hass: HomeAssistant, areaId: string) =>
-  hass.callWS({
+export const deleteAreaRegistryEntry = (menuai: menuai, areaId: string) =>
+  menuai.callWS({
     type: "config/area_registry/delete",
     area_id: areaId,
   });
@@ -92,7 +92,7 @@ export const getAreaDeviceLookup = (
 };
 
 export const areaCompare =
-  (entries?: HomeAssistant["areas"], order?: string[]) =>
+  (entries?: menuai["areas"], order?: string[]) =>
   (a: string, b: string) => {
     const indexA = order ? order.indexOf(a) : -1;
     const indexB = order ? order.indexOf(b) : -1;

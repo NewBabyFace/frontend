@@ -10,7 +10,7 @@ import { until } from "lit/directives/until";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../common/dom/fire_event";
 import { orderCompare } from "../common/string/compare";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon";
 import "./ha-icon-button";
 import "./ha-icon-next";
@@ -37,14 +37,14 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-items-display-editor": HaItemDisplayEditor;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "item-display-navigate-clicked": { value: string };
   }
 }
 
 @customElement("ha-items-display-editor")
 export class HaItemDisplayEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public items: DisplayItem[] = [];
 
@@ -165,7 +165,7 @@ export class HaItemDisplayEditor extends LitElement {
                   <ha-icon-button
                     .path=${isVisible ? mdiEye : mdiEyeOff}
                     slot="end"
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       `ui.components.items-display-editor.${isVisible ? "hide" : "show"}`,
                       {
                         label: label,

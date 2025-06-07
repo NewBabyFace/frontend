@@ -6,7 +6,7 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import { computeStateDomain } from "../../../../../common/entity/compute_state_domain";
 import { hasLocation } from "../../../../../common/entity/has_location";
 import type { ZoneTrigger } from "../../../../../data/automation";
-import type { ValueChangedEvent, HomeAssistant } from "../../../../../types";
+import type { ValueChangedEvent, menuai } from "../../../../../types";
 import type { HaRadio } from "../../../../../components/ha-radio";
 
 function zoneAndLocationFilter(stateObj) {
@@ -17,7 +17,7 @@ const includeDomains = ["zone"];
 
 @customElement("ha-automation-trigger-zone")
 export class HaZoneTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: ZoneTrigger;
 
@@ -36,35 +36,35 @@ export class HaZoneTrigger extends LitElement {
     const { entity_id, zone, event } = this.trigger;
     return html`
       <ha-entity-picker
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.zone.entity"
         )}
         .value=${entity_id}
         .disabled=${this.disabled}
         @value-changed=${this._entityPicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         allow-custom-entity
         .entityFilter=${zoneAndLocationFilter}
       ></ha-entity-picker>
       <ha-entity-picker
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.zone.zone"
         )}
         .value=${zone}
         .disabled=${this.disabled}
         @value-changed=${this._zonePicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         allow-custom-entity
         .includeDomains=${includeDomains}
       ></ha-entity-picker>
 
       <label>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.zone.event"
         )}
         <ha-formfield
           .disabled=${this.disabled}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.automation.editor.triggers.type.zone.enter"
           )}
         >
@@ -78,7 +78,7 @@ export class HaZoneTrigger extends LitElement {
         </ha-formfield>
         <ha-formfield
           .disabled=${this.disabled}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.automation.editor.triggers.type.zone.leave"
           )}
         >

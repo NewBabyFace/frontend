@@ -5,7 +5,7 @@ import { styleMap } from "lit/directives/style-map";
 import parseAspectRatio from "../../../common/util/parse-aspect-ratio";
 import "../../../components/ha-alert";
 import "../../../components/ha-card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type {
   LovelaceCard,
   LovelaceCardEditor,
@@ -32,7 +32,7 @@ export class HuiIframeCard extends LitElement implements LovelaceCard {
   @property({ attribute: false })
   public layout?: string;
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() protected _config?: IframeCardConfig;
 
@@ -55,7 +55,7 @@ export class HuiIframeCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
@@ -77,7 +77,7 @@ export class HuiIframeCard extends LitElement implements LovelaceCard {
     if (location.protocol === "https:" && target_protocol !== "https:") {
       return html`
         <ha-alert alert-type="error">
-          ${this.hass!.localize(
+          ${this.menuai!.localize(
             "ui.panel.lovelace.cards.iframe.error_secure_context",
             {
               target_protocol,

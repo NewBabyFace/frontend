@@ -12,7 +12,7 @@ import {
   LockEntityFeature,
   type LockEntity,
 } from "../../../data/lock";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -21,11 +21,11 @@ import type {
 } from "./types";
 
 export const supportsLockOpenDoorCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -42,7 +42,7 @@ class HuiLockOpenDoorCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -53,10 +53,10 @@ class HuiLockOpenDoorCardFeature
   private _buttonTimeout?: number;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as LockEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as LockEntity | undefined;
   }
 
   static getStubConfig(): LockOpenDoorCardFeatureConfig {
@@ -87,10 +87,10 @@ class HuiLockOpenDoorCardFeature
       this._setButtonState("confirm", CONFIRM_TIMEOUT_SECOND);
       return;
     }
-    if (!this.hass || !this._stateObj) {
+    if (!this.menuai || !this._stateObj) {
       return;
     }
-    callProtectedLockService(this, this.hass, this._stateObj!, "open");
+    callProtectedLockService(this, this.menuai, this._stateObj!, "open");
 
     this._setButtonState("done", DONE_TIMEOUT_SECOND);
   }
@@ -98,10 +98,10 @@ class HuiLockOpenDoorCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsLockOpenDoorCardFeature(this.hass, this.context)
+      !supportsLockOpenDoorCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -111,7 +111,7 @@ class HuiLockOpenDoorCardFeature
         ? html`
             <p class="open-done">
               <ha-svg-icon path=${mdiCheck}></ha-svg-icon>
-              ${this.hass.localize("ui.card.lock.open_door_done")}
+              ${this.menuai.localize("ui.card.lock.open_door_done")}
             </p>
           `
         : html`
@@ -122,8 +122,8 @@ class HuiLockOpenDoorCardFeature
                 @click=${this._open}
               >
                 ${this._buttonState === "confirm"
-                  ? this.hass.localize("ui.card.lock.open_door_confirm")
-                  : this.hass.localize("ui.card.lock.open_door")}
+                  ? this.menuai.localize("ui.card.lock.open_door_confirm")
+                  : this.menuai.localize("ui.card.lock.open_door")}
               </ha-control-button>
             </ha-control-button-group>
           `}

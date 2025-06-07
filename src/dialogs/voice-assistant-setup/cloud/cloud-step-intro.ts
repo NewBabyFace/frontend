@@ -4,22 +4,22 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../common/dom/fire_event";
 import "../../../components/ha-button";
 import "../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { AssistantSetupStyles } from "../styles";
 
 @customElement("cloud-step-intro")
 export class CloudStepIntro extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   render() {
     return html`<div class="content">
         <img
-          src=${`/static/images/logo_nabu_casa${this.hass.themes?.darkMode ? "_dark" : ""}.png`}
+          src=${`/static/images/logo_nabu_casa${this.menuai.themes?.darkMode ? "_dark" : ""}.png`}
           alt="Nabu Casa logo"
         />
         <h1>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.satellite_wizard.cloud.title"
           )}
         </h1>
@@ -31,13 +31,13 @@ export class CloudStepIntro extends LitElement {
               </div>
             </div>
             <h2>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.cloud.features.speech.title"
               )}
               <span class="no-wrap"></span>
             </h2>
             <p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.cloud.features.speech.text"
               )}
             </p>
@@ -49,13 +49,13 @@ export class CloudStepIntro extends LitElement {
               </div>
             </div>
             <h2>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.cloud.features.remote_access.title"
               )}
               <span class="no-wrap"></span>
             </h2>
             <p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.cloud.features.remote_access.text"
               )}
             </p>
@@ -67,7 +67,7 @@ export class CloudStepIntro extends LitElement {
                 src=${brandsUrl({
                   domain: "google_assistant",
                   type: "icon",
-                  darkOptimized: this.hass.themes?.darkMode,
+                  darkOptimized: this.menuai.themes?.darkMode,
                 })}
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"
@@ -77,19 +77,19 @@ export class CloudStepIntro extends LitElement {
                 src=${brandsUrl({
                   domain: "alexa",
                   type: "icon",
-                  darkOptimized: this.hass.themes?.darkMode,
+                  darkOptimized: this.menuai.themes?.darkMode,
                 })}
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"
               />
             </div>
             <h2>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.cloud.features.assistants.title"
               )}
             </h2>
             <p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.assistants.cloud.features.assistants.text"
               )}
             </p>
@@ -108,7 +108,7 @@ export class CloudStepIntro extends LitElement {
           </ha-button>
         </a>
         <ha-button unelevated @click=${this._signUp}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.cloud.register.headline"
           )}</ha-button
         >

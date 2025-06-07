@@ -8,7 +8,7 @@ import type { Action } from "../../data/script";
 import { migrateAutomationAction } from "../../data/script";
 import type { ActionSelector } from "../../data/selector";
 import "../../panels/config/automation/action/ha-automation-action";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   subscribeEntityRegistry,
   type EntityRegistryEntry,
@@ -17,7 +17,7 @@ import { SubscribeMixin } from "../../mixins/subscribe-mixin";
 
 @customElement("ha-selector-action")
 export class HaActionSelector extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -35,7 +35,7 @@ export class HaActionSelector extends SubscribeMixin(LitElement) {
 
   @state() private _entitiesContext;
 
-  protected hassSubscribeRequiredHostProps = ["_entitiesContext"];
+  protected menuaiSubscribeRequiredHostProps = ["_entitiesContext"];
 
   private _actions = memoizeOne((action: Action | undefined) => {
     if (!action) {
@@ -53,9 +53,9 @@ export class HaActionSelector extends SubscribeMixin(LitElement) {
     }
   }
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeEntityRegistry(this.hass.connection!, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection!, (entities) => {
         this._entitiesContext.setValue(entities);
       }),
     ];
@@ -67,7 +67,7 @@ export class HaActionSelector extends SubscribeMixin(LitElement) {
       <ha-automation-action
         .disabled=${this.disabled}
         .actions=${this._actions(this.value)}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
       ></ha-automation-action>
     `;

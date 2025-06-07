@@ -1,5 +1,5 @@
 import { endOfToday, isToday, startOfToday } from "date-fns";
-import type { HassConfig, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiConfig, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -21,7 +21,7 @@ import type { Statistics, StatisticsMetaData } from "../../../../data/recorder";
 import { getStatisticLabel } from "../../../../data/recorder";
 import type { FrontendLocaleData } from "../../../../data/translation";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyWaterGraphCardConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -38,7 +38,7 @@ export class HuiEnergyWaterGraphCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyWaterGraphCardConfig;
 
@@ -54,11 +54,11 @@ export class HuiEnergyWaterGraphCard
 
   @state() private _unit?: string;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config?.collection_key,
       }).subscribe((data) => this._getStatistics(data)),
     ];
@@ -76,12 +76,12 @@ export class HuiEnergyWaterGraphCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -96,13 +96,13 @@ export class HuiEnergyWaterGraphCard
           })}"
         >
           <ha-chart-base
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._chartData}
             .options=${this._createOptions(
               this._start,
               this._end,
-              this.hass.locale,
-              this.hass.config,
+              this.menuai.locale,
+              this.menuai.config,
               this._unit,
               this._compareStart,
               this._compareEnd
@@ -112,8 +112,8 @@ export class HuiEnergyWaterGraphCard
           ${!this._chartData.length
             ? html`<div class="no-data">
                 ${isToday(this._start)
-                  ? this.hass.localize("ui.panel.lovelace.cards.energy.no_data")
-                  : this.hass.localize(
+                  ? this.menuai.localize("ui.panel.lovelace.cards.energy.no_data")
+                  : this.menuai.localize(
                       "ui.panel.lovelace.cards.energy.no_data_period"
                     )}
               </div>`
@@ -124,9 +124,9 @@ export class HuiEnergyWaterGraphCard
   }
 
   private _formatTotal = (total: number) =>
-    this.hass.localize(
+    this.menuai.localize(
       "ui.panel.lovelace.cards.energy.energy_water_graph.total_consumed",
-      { num: formatNumber(total, this.hass.locale), unit: this._unit }
+      { num: formatNumber(total, this.menuai.locale), unit: this._unit }
     );
 
   private _createOptions = memoizeOne(
@@ -134,7 +134,7 @@ export class HuiEnergyWaterGraphCard
       start: Date,
       end: Date,
       locale: FrontendLocaleData,
-      config: HassConfig,
+      config: menuaiConfig,
       unit?: string,
       compareStart?: Date,
       compareEnd?: Date
@@ -163,7 +163,7 @@ export class HuiEnergyWaterGraphCard
         (source) => source.type === "water"
       ) as WaterSourceTypeEnergyPreference[];
 
-    this._unit = getEnergyWaterUnit(this.hass);
+    this._unit = getEnergyWaterUnit(this.menuai);
 
     const datasets: BarSeriesOption[] = [];
 
@@ -256,7 +256,7 @@ export class HuiEnergyWaterGraphCard
           ? "compare-" + source.stat_energy_from
           : source.stat_energy_from,
         name: getStatisticLabel(
-          this.hass,
+          this.menuai,
           source.stat_energy_from,
           statisticsMetaData[source.stat_energy_from]
         ),
@@ -264,7 +264,7 @@ export class HuiEnergyWaterGraphCard
         itemStyle: {
           borderColor: getEnergyColor(
             computedStyles,
-            this.hass.themes.darkMode,
+            this.menuai.themes.darkMode,
             false,
             compare,
             "--energy-water-color",
@@ -273,7 +273,7 @@ export class HuiEnergyWaterGraphCard
         },
         color: getEnergyColor(
           computedStyles,
-          this.hass.themes.darkMode,
+          this.menuai.themes.darkMode,
           true,
           compare,
           "--energy-water-color",

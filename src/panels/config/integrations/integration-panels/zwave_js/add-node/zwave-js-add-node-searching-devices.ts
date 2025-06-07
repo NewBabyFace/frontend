@@ -3,7 +3,7 @@ import { mdiRestart } from "@mdi/js";
 
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { fireEvent } from "../../../../../../common/dom/fire_event";
 import { InclusionStrategy } from "../../../../../../data/zwave_js";
 
@@ -14,7 +14,7 @@ import { WakeLockMixin } from "../../../../../../mixins/wakelock-mixin";
 
 @customElement("zwave-js-add-node-searching-devices")
 export class ZWaveJsAddNodeSearchingDevices extends WakeLockMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, attribute: "smart-start" })
   public smartStart = false;
@@ -54,39 +54,39 @@ export class ZWaveJsAddNodeSearchingDevices extends WakeLockMixin(LitElement) {
         </div>
         ${this.smartStart
           ? html`<ha-alert
-                .title=${this.hass.localize(
+                .title=${this.menuai.localize(
                   "ui.panel.config.zwave_js.add_node.specific_device.turn_on_device"
                 )}
               >
                 <ha-svg-icon slot="icon" .path=${mdiRestart}></ha-svg-icon>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.add_node.specific_device.turn_on_device_description"
                 )}
               </ha-alert>
               <p class="note">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.add_node.specific_device.close_description"
                 )}
               </p>`
           : html`
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.add_node.follow_device_instructions"
                 )}
               </p>
             `}
         ${this.showSecurityOptions && !inclusionStrategyTranslationKey
           ? html`<ha-button @click=${this._handleSecurityOptions}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.add_node.security_options"
               )}
             </ha-button>`
           : inclusionStrategyTranslationKey
             ? html`<span class="note">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zwave_js.add_node.select_strategy.inclusion_strategy",
                   {
-                    strategy: this.hass.localize(
+                    strategy: this.menuai.localize(
                       `ui.panel.config.zwave_js.add_node.select_strategy.${inclusionStrategyTranslationKey}_label`
                     ),
                   }
@@ -95,7 +95,7 @@ export class ZWaveJsAddNodeSearchingDevices extends WakeLockMixin(LitElement) {
             : nothing}
         ${this.showAddAnotherDevice
           ? html`<ha-button @click=${this._handleAddAnotherDevice}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.add_node.specific_device.add_another_z_wave_device"
               )}
             </ha-button>`
@@ -158,7 +158,7 @@ declare global {
     "zwave-js-add-node-searching-devices": ZWaveJsAddNodeSearchingDevices;
   }
 
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "show-z-wave-security-options": undefined;
     "add-another-z-wave-device": undefined;
   }

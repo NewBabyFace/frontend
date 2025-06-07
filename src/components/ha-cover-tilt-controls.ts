@@ -10,12 +10,12 @@ import {
   canStopTilt,
   CoverEntityFeature,
 } from "../data/cover";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 
 @customElement("ha-cover-tilt-controls")
 class HaCoverTiltControls extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) stateObj!: CoverEntity;
 
@@ -31,7 +31,7 @@ class HaCoverTiltControls extends LitElement {
             CoverEntityFeature.OPEN_TILT
           ),
         })}
-        .label=${this.hass.localize("ui.card.cover.open_tilt_cover")}
+        .label=${this.menuai.localize("ui.card.cover.open_tilt_cover")}
         .path=${mdiArrowTopRight}
         @click=${this._onOpenTiltTap}
         .disabled=${!canOpenTilt(this.stateObj)}
@@ -43,7 +43,7 @@ class HaCoverTiltControls extends LitElement {
             CoverEntityFeature.STOP_TILT
           ),
         })}
-        .label=${this.hass.localize("ui.card.cover.stop_cover")}
+        .label=${this.menuai.localize("ui.card.cover.stop_cover")}
         .path=${mdiStop}
         @click=${this._onStopTiltTap}
         .disabled=${!canStopTilt(this.stateObj)}
@@ -55,7 +55,7 @@ class HaCoverTiltControls extends LitElement {
             CoverEntityFeature.CLOSE_TILT
           ),
         })}
-        .label=${this.hass.localize("ui.card.cover.close_tilt_cover")}
+        .label=${this.menuai.localize("ui.card.cover.close_tilt_cover")}
         .path=${mdiArrowBottomLeft}
         @click=${this._onCloseTiltTap}
         .disabled=${!canCloseTilt(this.stateObj)}
@@ -64,21 +64,21 @@ class HaCoverTiltControls extends LitElement {
 
   private _onOpenTiltTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("cover", "open_cover_tilt", {
+    this.menuai.callService("cover", "open_cover_tilt", {
       entity_id: this.stateObj.entity_id,
     });
   }
 
   private _onCloseTiltTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("cover", "close_cover_tilt", {
+    this.menuai.callService("cover", "close_cover_tilt", {
       entity_id: this.stateObj.entity_id,
     });
   }
 
   private _onStopTiltTap(ev): void {
     ev.stopPropagation();
-    this.hass.callService("cover", "stop_cover_tilt", {
+    this.menuai.callService("cover", "stop_cover_tilt", {
       entity_id: this.stateObj.entity_id,
     });
   }

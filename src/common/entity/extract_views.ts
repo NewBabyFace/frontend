@@ -1,9 +1,9 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { GroupEntity } from "../../data/group";
 import { DEFAULT_VIEW_ENTITY_ID } from "../const";
 
 // Return an ordered array of available views
-export const extractViews = (entities: HassEntities): GroupEntity[] => {
+export const extractViews = (entities: menuaiEntities): GroupEntity[] => {
   const views: GroupEntity[] = [];
 
   Object.keys(entities).forEach((entityId) => {

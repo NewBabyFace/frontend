@@ -44,28 +44,28 @@ import "../../../../src/components/ha-switch";
 import type { HaSwitch } from "../../../../src/components/ha-switch";
 import type {
   AddonCapability,
-  HassioAddonDetails,
-  HassioAddonSetOptionParams,
-  HassioAddonSetSecurityParams,
-} from "../../../../src/data/hassio/addon";
+  menuaiioAddonDetails,
+  menuaiioAddonSetOptionParams,
+  menuaiioAddonSetSecurityParams,
+} from "../../../../src/data/menuaiio/addon";
 import {
-  fetchHassioAddonChangelog,
-  fetchHassioAddonInfo,
-  installHassioAddon,
+  fetchmenuaiioAddonChangelog,
+  fetchmenuaiioAddonInfo,
+  installmenuaiioAddon,
   rebuildLocalAddon,
-  restartHassioAddon,
-  setHassioAddonOption,
-  setHassioAddonSecurity,
-  startHassioAddon,
-  stopHassioAddon,
-  uninstallHassioAddon,
-  validateHassioAddonOption,
-} from "../../../../src/data/hassio/addon";
-import type { HassioStats } from "../../../../src/data/hassio/common";
+  restartmenuaiioAddon,
+  setmenuaiioAddonOption,
+  setmenuaiioAddonSecurity,
+  startmenuaiioAddon,
+  stopmenuaiioAddon,
+  uninstallmenuaiioAddon,
+  validatemenuaiioAddonOption,
+} from "../../../../src/data/menuaiio/addon";
+import type { menuaiioStats } from "../../../../src/data/menuaiio/common";
 import {
   extractApiErrorMessage,
-  fetchHassioStats,
-} from "../../../../src/data/hassio/common";
+  fetchmenuaiioStats,
+} from "../../../../src/data/menuaiio/common";
 import type {
   StoreAddon,
   StoreAddonDetails,
@@ -75,18 +75,18 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../../src/dialogs/generic/show-dialog-box";
-import { mdiHomeAssistant } from "../../../../src/resources/home-assistant-logo-svg";
+import { mdimenuai } from "../../../../src/resources/home-assistant-logo-svg";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../../src/types";
+import type { menuai, Route } from "../../../../src/types";
 import { bytesToString } from "../../../../src/util/bytes-to-string";
-import "../../components/hassio-card-content";
+import "../../components/menuaiio-card-content";
 import "../../components/supervisor-metric";
-import { showHassioMarkdownDialog } from "../../dialogs/markdown/show-dialog-hassio-markdown";
+import { showmenuaiioMarkdownDialog } from "../../dialogs/markdown/show-dialog-menuaiio-markdown";
 import { showSystemManagedDialog } from "../../dialogs/system-managed/show-dialog-system-managed";
-import { hassioStyle } from "../../resources/hassio-style";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
 import "../../update-available/update-available-card";
 import { addonArchIsSupported, extractChangelog } from "../../util/addon";
-import "./hassio-addon-system-managed";
+import "./menuaiio-addon-system-managed";
 
 const STAGE_ICON = {
   stable: mdiCheckCircle,
@@ -105,16 +105,16 @@ const RATING_ICON = {
   8: mdiNumeric8,
 };
 
-@customElement("hassio-addon-info")
-class HassioAddonInfo extends LitElement {
+@customElement("menuaiio-addon-info")
+class menuaiioAddonInfo extends LitElement {
   @property({ type: Boolean }) public narrow = false;
 
   @property({ attribute: false }) public route!: Route;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public addon!:
-    | HassioAddonDetails
+    | menuaiioAddonDetails
     | StoreAddonDetails;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
@@ -122,7 +122,7 @@ class HassioAddonInfo extends LitElement {
   @property({ type: Boolean, attribute: "control-enabled" })
   public controlEnabled = false;
 
-  @state() private _metrics?: HassioStats;
+  @state() private _metrics?: menuaiioStats;
 
   @state() private _error?: string;
 
@@ -167,7 +167,7 @@ class HassioAddonInfo extends LitElement {
       ${this.addon.update_available
         ? html`
             <update-available-card
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               .supervisor=${this.supervisor}
               .addonSlug=${this.addon.slug}
@@ -199,11 +199,11 @@ class HassioAddonInfo extends LitElement {
         : nothing}
       ${systemManaged
         ? html`
-            <hassio-addon-system-managed
+            <menuaiio-addon-system-managed
               .supervisor=${this.supervisor}
               .narrow=${this.narrow}
               .hideButton=${this.controlEnabled}
-            ></hassio-addon-system-managed>
+            ></menuaiio-addon-system-managed>
           `
         : nothing}
 
@@ -335,12 +335,12 @@ class HassioAddonInfo extends LitElement {
                   </ha-assist-chip>
                 `
               : nothing}
-            ${this.addon.homeassistant_api
+            ${this.addon.menuai_api
               ? html`
                   <ha-assist-chip
                     filled
                     @click=${this._showMoreInfo}
-                    id="homeassistant_api"
+                    id="menuai_api"
                     .label=${capitalizeFirstLetter(
                       this.supervisor.localize(
                         "addon.dashboard.capability.label.core"
@@ -349,26 +349,26 @@ class HassioAddonInfo extends LitElement {
                   >
                     <ha-svg-icon
                       slot="icon"
-                      .path=${mdiHomeAssistant}
+                      .path=${mdimenuai}
                     ></ha-svg-icon>
                   </ha-assist-chip>
                 `
               : nothing}
-            ${this._computeHassioApi
+            ${this._computemenuaiioApi
               ? html`
                   <ha-assist-chip
                     filled
                     @click=${this._showMoreInfo}
-                    id="hassio_api"
+                    id="menuaiio_api"
                     .label=${capitalizeFirstLetter(
                       this.supervisor.localize(
-                        `addon.dashboard.capability.role.${this.addon.hassio_role}`
-                      ) || this.addon.hassio_role
+                        `addon.dashboard.capability.role.${this.addon.menuaiio_role}`
+                      ) || this.addon.menuaiio_role
                     )}
                   >
                     <ha-svg-icon
                       slot="icon"
-                      .path=${mdiHomeAssistant}
+                      .path=${mdimenuai}
                     ></ha-svg-icon>
                   </ha-assist-chip>
                 `
@@ -485,7 +485,7 @@ class HassioAddonInfo extends LitElement {
                   >
                     <ha-svg-icon
                       slot="icon"
-                      .path=${mdiHomeAssistant}
+                      .path=${mdimenuai}
                     ></ha-svg-icon>
                   </ha-assist-chip>
                 `
@@ -510,7 +510,7 @@ class HassioAddonInfo extends LitElement {
                     <img
                       class="logo"
                       alt=""
-                      src="/api/hassio/addons/${this.addon.slug}/logo"
+                      src="/api/menuaiio/addons/${this.addon.slug}/logo"
                     />
                   `
                 : nothing}
@@ -565,7 +565,7 @@ class HassioAddonInfo extends LitElement {
                           `
                         : nothing}
                       ${this.addon.auto_update ||
-                      this.hass.userData?.showAdvanced
+                      this.menuai.userData?.showAdvanced
                         ? html`
                             <ha-settings-row ?three-line=${this.narrow}>
                               <span slot="heading">
@@ -679,7 +679,7 @@ class HassioAddonInfo extends LitElement {
                       "addon.dashboard.not_available_version",
                       {
                         core_version_installed: this.supervisor.core.version,
-                        core_version_needed: addonStoreInfo!.homeassistant,
+                        core_version_needed: addonStoreInfo!.menuai,
                       }
                     )}
                   </ha-alert>
@@ -804,7 +804,7 @@ class HassioAddonInfo extends LitElement {
 
   private _scheduleDataUpdate() {
     this._fetchDataTimeout = window.setTimeout(async () => {
-      const addon = await fetchHassioAddonInfo(this.hass, this.addon.slug);
+      const addon = await fetchmenuaiioAddonInfo(this.menuai, this.addon.slug);
       if (addon.state !== "startup") {
         this._fetchDataTimeout = undefined;
         this.addon = addon;
@@ -813,7 +813,7 @@ class HassioAddonInfo extends LitElement {
           response: undefined,
           path: "start",
         };
-        fireEvent(this, "hass-api-called", eventdata);
+        fireEvent(this, "menuai-api-called", eventdata);
       } else {
         this._scheduleDataUpdate();
       }
@@ -822,18 +822,18 @@ class HassioAddonInfo extends LitElement {
 
   private async _loadData(): Promise<void> {
     if ("state" in this.addon && this.addon.state === "started") {
-      this._metrics = await fetchHassioStats(
-        this.hass,
+      this._metrics = await fetchmenuaiioStats(
+        this.menuai,
         `addons/${this.addon.slug}`
       );
     }
   }
 
-  private get _computeHassioApi(): boolean {
+  private get _computemenuaiioApi(): boolean {
     return (
-      this.addon.hassio_api &&
-      (this.addon.hassio_role === "manager" ||
-        this.addon.hassio_role === "admin")
+      this.addon.menuaiio_api &&
+      (this.addon.menuaiio_role === "manager" ||
+        this.addon.menuaiio_role === "admin")
     );
   }
 
@@ -849,7 +849,7 @@ class HassioAddonInfo extends LitElement {
 
   private _showMoreInfo(ev): void {
     const id = ev.currentTarget.id as AddonCapability;
-    showHassioMarkdownDialog(this, {
+    showmenuaiioMarkdownDialog(this, {
       title: this.supervisor.localize(`addon.dashboard.capability.${id}.title`),
       content:
         id === "stage"
@@ -869,17 +869,17 @@ class HassioAddonInfo extends LitElement {
 
   private _showSystemManagedDialog() {
     showSystemManagedDialog(this, {
-      addon: this.addon as HassioAddonDetails,
+      addon: this.addon as menuaiioAddonDetails,
       supervisor: this.supervisor,
     });
   }
 
   private get _computeIsRunning(): boolean {
-    return (this.addon as HassioAddonDetails)?.state === "started";
+    return (this.addon as menuaiioAddonDetails)?.state === "started";
   }
 
   private get _pathWebui(): string | null {
-    return (this.addon as HassioAddonDetails).webui!.replace(
+    return (this.addon as menuaiioAddonDetails).webui!.replace(
       "[HOST]",
       document.location.hostname
     );
@@ -888,13 +888,13 @@ class HassioAddonInfo extends LitElement {
   private get _computeShowWebUI(): boolean | "" | null {
     return (
       !this.addon.ingress &&
-      (this.addon as HassioAddonDetails).webui &&
+      (this.addon as menuaiioAddonDetails).webui &&
       this._computeIsRunning
     );
   }
 
   private _openIngress(): void {
-    navigate(`/hassio/ingress/${this.addon.slug}`);
+    navigate(`/menuaiio/ingress/${this.addon.slug}`);
   }
 
   private get _computeShowIngressUI(): boolean {
@@ -903,7 +903,7 @@ class HassioAddonInfo extends LitElement {
 
   private get _computeCannotIngressSidebar(): boolean {
     return (
-      !this.addon.ingress || !atLeastVersion(this.hass.config.version, 0, 92)
+      !this.addon.ingress || !atLeastVersion(this.menuai.config.version, 0, 92)
     );
   }
 
@@ -915,18 +915,18 @@ class HassioAddonInfo extends LitElement {
 
   private async _startOnBootToggled(): Promise<void> {
     this._error = undefined;
-    const data: HassioAddonSetOptionParams = {
+    const data: menuaiioAddonSetOptionParams = {
       boot:
-        (this.addon as HassioAddonDetails).boot === "auto" ? "manual" : "auto",
+        (this.addon as menuaiioAddonDetails).boot === "auto" ? "manual" : "auto",
     };
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       const eventdata = {
         success: true,
         response: undefined,
         path: "option",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
         error: extractApiErrorMessage(err),
@@ -936,17 +936,17 @@ class HassioAddonInfo extends LitElement {
 
   private async _watchdogToggled(): Promise<void> {
     this._error = undefined;
-    const data: HassioAddonSetOptionParams = {
-      watchdog: !(this.addon as HassioAddonDetails).watchdog,
+    const data: menuaiioAddonSetOptionParams = {
+      watchdog: !(this.addon as menuaiioAddonDetails).watchdog,
     };
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       const eventdata = {
         success: true,
         response: undefined,
         path: "option",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
         error: extractApiErrorMessage(err),
@@ -956,17 +956,17 @@ class HassioAddonInfo extends LitElement {
 
   private async _autoUpdateToggled(): Promise<void> {
     this._error = undefined;
-    const data: HassioAddonSetOptionParams = {
-      auto_update: !(this.addon as HassioAddonDetails).auto_update,
+    const data: menuaiioAddonSetOptionParams = {
+      auto_update: !(this.addon as menuaiioAddonDetails).auto_update,
     };
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       const eventdata = {
         success: true,
         response: undefined,
         path: "option",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
         error: extractApiErrorMessage(err),
@@ -976,17 +976,17 @@ class HassioAddonInfo extends LitElement {
 
   private async _protectionToggled(): Promise<void> {
     this._error = undefined;
-    const data: HassioAddonSetSecurityParams = {
-      protected: !(this.addon as HassioAddonDetails).protected,
+    const data: menuaiioAddonSetSecurityParams = {
+      protected: !(this.addon as menuaiioAddonDetails).protected,
     };
     try {
-      await setHassioAddonSecurity(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonSecurity(this.menuai, this.addon.slug, data);
       const eventdata = {
         success: true,
         response: undefined,
         path: "security",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
         error: extractApiErrorMessage(err),
@@ -996,17 +996,17 @@ class HassioAddonInfo extends LitElement {
 
   private async _panelToggled(): Promise<void> {
     this._error = undefined;
-    const data: HassioAddonSetOptionParams = {
-      ingress_panel: !(this.addon as HassioAddonDetails).ingress_panel,
+    const data: menuaiioAddonSetOptionParams = {
+      ingress_panel: !(this.addon as menuaiioAddonDetails).ingress_panel,
     };
     try {
-      await setHassioAddonOption(this.hass, this.addon.slug, data);
+      await setmenuaiioAddonOption(this.menuai, this.addon.slug, data);
       const eventdata = {
         success: true,
         response: undefined,
         path: "option",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       this._error = this.supervisor.localize("addon.failed_to_save", {
         error: extractApiErrorMessage(err),
@@ -1016,14 +1016,14 @@ class HassioAddonInfo extends LitElement {
 
   private async _openChangelog(): Promise<void> {
     try {
-      const content = await fetchHassioAddonChangelog(
-        this.hass,
+      const content = await fetchmenuaiioAddonChangelog(
+        this.menuai,
         this.addon.slug
       );
 
-      showHassioMarkdownDialog(this, {
+      showmenuaiioMarkdownDialog(this, {
         title: this.supervisor.localize("addon.dashboard.changelog"),
-        content: extractChangelog(this.addon as HassioAddonDetails, content),
+        content: extractChangelog(this.addon as menuaiioAddonDetails, content),
       });
     } catch (err: any) {
       showAlertDialog(this, {
@@ -1041,7 +1041,7 @@ class HassioAddonInfo extends LitElement {
       response: undefined,
       path: "install",
     };
-    fireEvent(this, "hass-api-called", eventdata);
+    fireEvent(this, "menuai-api-called", eventdata);
   }
 
   private async _installClicked(ev: CustomEvent): Promise<void> {
@@ -1049,13 +1049,13 @@ class HassioAddonInfo extends LitElement {
     button.progress = true;
 
     try {
-      await installHassioAddon(this.hass, this.addon.slug);
+      await installmenuaiioAddon(this.menuai, this.addon.slug);
       const eventdata = {
         success: true,
         response: undefined,
         path: "install",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize("addon.dashboard.action_error.install"),
@@ -1074,13 +1074,13 @@ class HassioAddonInfo extends LitElement {
     button.progress = true;
 
     try {
-      await stopHassioAddon(this.hass, this.addon.slug);
+      await stopmenuaiioAddon(this.menuai, this.addon.slug);
       const eventdata = {
         success: true,
         response: undefined,
         path: "stop",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize("addon.dashboard.action_error.stop"),
@@ -1095,13 +1095,13 @@ class HassioAddonInfo extends LitElement {
     button.progress = true;
 
     try {
-      await restartHassioAddon(this.hass, this.addon.slug);
+      await restartmenuaiioAddon(this.menuai, this.addon.slug);
       const eventdata = {
         success: true,
         response: undefined,
         path: "stop",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize("addon.dashboard.action_error.restart"),
@@ -1116,7 +1116,7 @@ class HassioAddonInfo extends LitElement {
     button.progress = true;
 
     try {
-      await rebuildLocalAddon(this.hass, this.addon.slug);
+      await rebuildLocalAddon(this.menuai, this.addon.slug);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize("addon.dashboard.action_error.rebuild"),
@@ -1130,8 +1130,8 @@ class HassioAddonInfo extends LitElement {
     const button = ev.currentTarget as any;
     button.progress = true;
     try {
-      const validate = await validateHassioAddonOption(
-        this.hass,
+      const validate = await validatemenuaiioAddonOption(
+        this.menuai,
         this.addon.slug
       );
       if (!validate.valid) {
@@ -1159,14 +1159,14 @@ class HassioAddonInfo extends LitElement {
     }
 
     try {
-      await startHassioAddon(this.hass, this.addon.slug);
-      this.addon = await fetchHassioAddonInfo(this.hass, this.addon.slug);
+      await startmenuaiioAddon(this.menuai, this.addon.slug);
+      this.addon = await fetchmenuaiioAddonInfo(this.menuai, this.addon.slug);
       const eventdata = {
         success: true,
         response: undefined,
         path: "start",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize("addon.dashboard.action_error.start"),
@@ -1177,7 +1177,7 @@ class HassioAddonInfo extends LitElement {
   }
 
   private _openConfiguration(): void {
-    navigate(`/hassio/addon/${this.addon.slug}/config`);
+    navigate(`/menuaiio/addon/${this.addon.slug}/config`);
   }
 
   private async _uninstallClicked(ev: CustomEvent): Promise<void> {
@@ -1221,13 +1221,13 @@ class HassioAddonInfo extends LitElement {
 
     this._error = undefined;
     try {
-      await uninstallHassioAddon(this.hass, this.addon.slug, removeData);
+      await uninstallmenuaiioAddon(this.menuai, this.addon.slug, removeData);
       const eventdata = {
         success: true,
         response: undefined,
         path: "uninstall",
       };
-      fireEvent(this, "hass-api-called", eventdata);
+      fireEvent(this, "menuai-api-called", eventdata);
     } catch (err: any) {
       showAlertDialog(this, {
         title: this.supervisor.localize(
@@ -1240,14 +1240,14 @@ class HassioAddonInfo extends LitElement {
   }
 
   private _isSystemManaged = memoizeOne(
-    (addon: HassioAddonDetails | StoreAddonDetails) =>
+    (addon: menuaiioAddonDetails | StoreAddonDetails) =>
       "system_managed" in addon && addon.system_managed
   );
 
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         :host {
           display: block;
@@ -1424,6 +1424,6 @@ class HassioAddonInfo extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-info": HassioAddonInfo;
+    "menuaiio-addon-info": menuaiioAddonInfo;
   }
 }

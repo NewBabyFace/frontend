@@ -10,12 +10,12 @@ import { documentationUrl } from "../../../util/documentation-url";
 import "./event-subscribe-card";
 import "./events-list";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { fireEvent } from "../../../common/dom/fire_event";
 
 @customElement("developer-tools-event")
 class HaPanelDevEvent extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -36,25 +36,25 @@ class HaPanelDevEvent extends LitElement {
           <ha-card>
             <div class="card-content">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.developer-tools.tabs.events.description"
                 )}
                 <a
                   href=${documentationUrl(
-                    this.hass,
+                    this.menuai,
                     "/docs/configuration/events/"
                   )}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.developer-tools.tabs.events.documentation"
                   )}
                 </a>
               </p>
               <div class="inputs">
                 <ha-textfield
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.developer-tools.tabs.events.type"
                   )}
                   autofocus
@@ -63,7 +63,7 @@ class HaPanelDevEvent extends LitElement {
                   @change=${this._eventTypeChanged}
                 ></ha-textfield>
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.developer-tools.tabs.events.data"
                   )}
                 </p>
@@ -81,25 +81,25 @@ class HaPanelDevEvent extends LitElement {
                 @click=${this._fireEvent}
                 raised
                 .disabled=${!this._isValid}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.developer-tools.tabs.events.fire_event"
                 )}</ha-button
               >
             </div>
           </ha-card>
 
-          <event-subscribe-card .hass=${this.hass}></event-subscribe-card>
+          <event-subscribe-card .menuai=${this.menuai}></event-subscribe-card>
         </div>
 
         <div>
           <h2>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.developer-tools.tabs.events.active_listeners"
             )}
           </h2>
           <events-list
             @event-selected=${this._eventSelected}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
           ></events-list>
         </div>
       </div>
@@ -122,19 +122,19 @@ class HaPanelDevEvent extends LitElement {
   private async _fireEvent() {
     if (!this._eventType) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.developer-tools.tabs.events.alert_event_type"
         ),
       });
       return;
     }
-    await this.hass.callApi(
+    await this.menuai.callApi(
       "POST",
       `events/${this._eventType}`,
       this._eventData
     );
-    fireEvent(this, "hass-notification", {
-      message: this.hass.localize(
+    fireEvent(this, "menuai-notification", {
+      message: this.menuai.localize(
         "ui.panel.developer-tools.tabs.events.notification_event_fired",
         { type: this._eventType }
       ),

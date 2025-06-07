@@ -1,11 +1,11 @@
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { LitElement, html } from "lit";
 import type { nothing, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import type { FlowType } from "../../../data/data_entry_flow";
 import type { GenericPreview } from "../../../data/preview";
 import { subscribePreviewGeneric } from "../../../data/preview";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./entity-preview-row";
 import { debounce } from "../../../common/util/debounce";
 import { fireEvent } from "../../../common/dom/fire_event";
@@ -13,7 +13,7 @@ import "../../../components/ha-alert";
 
 @customElement("flow-preview-generic")
 export class FlowPreviewGeneric extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public flowType!: FlowType;
 
@@ -27,7 +27,7 @@ export class FlowPreviewGeneric extends LitElement {
 
   @property({ attribute: false }) public stepData!: Record<string, any>;
 
-  @state() protected _preview?: HassEntity;
+  @state() protected _preview?: menuaiEntity;
 
   @state() protected _error?: string;
 
@@ -52,7 +52,7 @@ export class FlowPreviewGeneric extends LitElement {
       return html`<ha-alert alert-type="error">${this._error}</ha-alert>`;
     }
     return html`<entity-preview-row
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .stateObj=${this._preview}
     ></entity-preview-row>`;
   }
@@ -88,7 +88,7 @@ export class FlowPreviewGeneric extends LitElement {
     this._error = undefined;
     try {
       this._unsub = subscribePreviewGeneric(
-        this.hass,
+        this.menuai,
         this.domain,
         this.flowId,
         this.flowType,

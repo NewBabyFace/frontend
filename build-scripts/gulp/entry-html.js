@@ -19,7 +19,7 @@ import paths from "../paths.cjs";
 // major version from browserslist and manually map that to a supported macOS
 // version. Note this assumes the user has kept Safari updated.
 const HA_MACOS_REGEX =
-  /Home Assistant\/[\d.]+ \(.+; macOS (\d+)\.(\d+)(?:\.(\d+))?\)/;
+  /MenuAI\/[\d.]+ \(.+; macOS (\d+)\.(\d+)(?:\.(\d+))?\)/;
 const SAFARI_TO_MACOS = {
   15: [10, 15, 0],
   16: [11, 0, 0],
@@ -56,7 +56,7 @@ const getCommonTemplateVars = () => {
   );
   return {
     modernRegex: compileRegex(browserRegexes.concat(haMacOSRegex)).toString(),
-    hassUrl: process.env.HASS_URL || "",
+    menuaiUrl: process.env.menuai_URL || "",
   };
 };
 
@@ -267,27 +267,27 @@ gulp.task(
   )
 );
 
-const HASSIO_PAGE_ENTRIES = { "entrypoint.js": ["entrypoint"] };
+const menuaiIO_PAGE_ENTRIES = { "entrypoint.js": ["entrypoint"] };
 
 gulp.task(
-  "gen-pages-hassio-dev",
+  "gen-pages-menuaiio-dev",
   genPagesDevTask(
-    HASSIO_PAGE_ENTRIES,
-    paths.hassio_dir,
-    paths.hassio_output_root,
+    menuaiIO_PAGE_ENTRIES,
+    paths.menuaiio_dir,
+    paths.menuaiio_output_root,
     "src",
-    paths.hassio_publicPath
+    paths.menuaiio_publicPath
   )
 );
 
 gulp.task(
-  "gen-pages-hassio-prod",
+  "gen-pages-menuaiio-prod",
   genPagesProdTask(
-    HASSIO_PAGE_ENTRIES,
-    paths.hassio_dir,
-    paths.hassio_output_root,
-    paths.hassio_output_latest,
-    paths.hassio_output_es5,
+    menuaiIO_PAGE_ENTRIES,
+    paths.menuaiio_dir,
+    paths.menuaiio_output_root,
+    paths.menuaiio_output_latest,
+    paths.menuaiio_output_es5,
     "src"
   )
 );

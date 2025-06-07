@@ -36,10 +36,10 @@ import {
 } from "../../../../../data/zha";
 import { showOptionsFlowDialog } from "../../../../../dialogs/config-flow/show-dialog-options-flow";
 import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
-import "../../../../../layouts/hass-tabs-subpage";
-import type { PageNavigation } from "../../../../../layouts/hass-tabs-subpage";
+import "../../../../../layouts/menuai-tabs-subpage";
+import type { PageNavigation } from "../../../../../layouts/menuai-tabs-subpage";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import { fileDownload } from "../../../../../util/file_download";
 import "../../../ha-config-section";
 import { showZHAChangeChannelDialog } from "./show-dialog-zha-change-channel";
@@ -66,7 +66,7 @@ export const zhaTabs: PageNavigation[] = [
 
 @customElement("zha-config-dashboard")
 class ZHAConfigDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -90,8 +90,8 @@ class ZHAConfigDashboard extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    if (this.hass) {
-      this.hass.loadBackendTranslation("config_panel", "zha", false);
+    if (this.menuai) {
+      this.menuai.loadBackendTranslation("config_panel", "zha", false);
       this._fetchConfiguration();
       this._fetchSettings();
       this._fetchDevicesAndUpdateStatus();
@@ -102,8 +102,8 @@ class ZHAConfigDashboard extends LitElement {
     const deviceOnline =
       this._offlineDevices < this._totalDevices || this._totalDevices === 0;
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         .tabs=${zhaTabs}
@@ -124,21 +124,21 @@ class ZHAConfigDashboard extends LitElement {
               </div>
               <div class="details">
                 ZHA
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.zha.configuration_page.status_title"
                 )}:
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.zha.configuration_page.status_${deviceOnline ? "online" : "offline"}`
                 )}<br />
                 <small>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.zha.configuration_page.devices",
                     { count: this._totalDevices }
                   )}
                 </small>
                 <small class="offline">
                   ${this._offlineDevices > 0
-                    ? html`(${this.hass.localize(
+                    ? html`(${this.menuai.localize(
                         "ui.panel.config.zha.configuration_page.devices_offline",
                         { count: this._offlineDevices }
                       )})`
@@ -153,7 +153,7 @@ class ZHAConfigDashboard extends LitElement {
                   href=${`/config/devices/dashboard?historyBack=1&config_entry=${this.configEntryId}`}
                 >
                   <mwc-button
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.config.devices.caption"
                     )}</mwc-button
                   >
@@ -162,7 +162,7 @@ class ZHAConfigDashboard extends LitElement {
                   href=${`/config/entities/dashboard?historyBack=1&config_entry=${this.configEntryId}`}
                 >
                   <mwc-button
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.config.entities.caption"
                     )}</mwc-button
                   >
@@ -172,7 +172,7 @@ class ZHAConfigDashboard extends LitElement {
         </ha-card>
         <ha-card
           class="network-settings"
-          header=${this.hass.localize(
+          header=${this.menuai.localize(
             "ui.panel.config.zha.configuration_page.network_settings_title"
           )}
         >
@@ -201,7 +201,7 @@ class ZHAConfigDashboard extends LitElement {
                   >
 
                   <ha-icon-button
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.zha.configuration_page.change_channel"
                     )}
                     .path=${mdiPencil}
@@ -250,12 +250,12 @@ class ZHAConfigDashboard extends LitElement {
               .progress=${this._generatingBackup}
               .disabled=${!this._networkSettings || this._generatingBackup}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zha.configuration_page.download_backup"
               )}
             </ha-progress-button>
             <mwc-button class="warning" @click=${this._openOptionFlow}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zha.configuration_page.migrate_radio"
               )}
             </mwc-button>
@@ -265,19 +265,19 @@ class ZHAConfigDashboard extends LitElement {
           ? Object.entries(this._configuration.schemas).map(
               ([section, schema]) =>
                 html`<ha-card
-                  header=${this.hass.localize(
+                  header=${this.menuai.localize(
                     `component.zha.config_panel.${section}.title`
                   )}
                 >
                   <div class="card-content">
                     <ha-form
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .schema=${schema}
                       .data=${this._configuration!.data[section]}
                       @value-changed=${this._dataChanged}
                       .section=${section}
                       .computeLabel=${this._computeLabelCallback(
-                        this.hass.localize,
+                        this.menuai.localize,
                         section
                       )}
                     ></ha-form>
@@ -288,7 +288,7 @@ class ZHAConfigDashboard extends LitElement {
         <ha-card>
           <div class="card-actions">
             <mwc-button @click=${this._updateConfiguration}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zha.configuration_page.update_button"
               )}
             </mwc-button>
@@ -297,27 +297,27 @@ class ZHAConfigDashboard extends LitElement {
 
         <a href="/config/zha/add" slot="fab">
           <ha-fab
-            .label=${this.hass.localize("ui.panel.config.zha.add_device")}
+            .label=${this.menuai.localize("ui.panel.config.zha.add_device")}
             extended
           >
             <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
           </ha-fab>
         </a>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
   private async _fetchConfiguration(): Promise<void> {
-    this._configuration = await fetchZHAConfiguration(this.hass!);
+    this._configuration = await fetchZHAConfiguration(this.menuai!);
   }
 
   private async _fetchSettings(): Promise<void> {
-    this._networkSettings = await fetchZHANetworkSettings(this.hass!);
+    this._networkSettings = await fetchZHANetworkSettings(this.menuai!);
   }
 
   private async _fetchDevicesAndUpdateStatus(): Promise<void> {
     try {
-      const devices = await fetchDevices(this.hass);
+      const devices = await fetchDevices(this.menuai);
       this._totalDevices = devices.length;
       this._offlineDevices =
         this._totalDevices - devices.filter((d) => d.available).length;
@@ -329,10 +329,10 @@ class ZHAConfigDashboard extends LitElement {
   private async _showChannelMigrationDialog(): Promise<void> {
     if (this._networkSettings!.device.path === MULTIPROTOCOL_ADDON_URL) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.zha.configuration_page.channel_dialog.title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.zha.configuration_page.channel_dialog.text"
         ),
         warning: true,
@@ -351,7 +351,7 @@ class ZHAConfigDashboard extends LitElement {
     this._generatingBackup = true;
 
     try {
-      backup_and_metadata = await createZHANetworkBackup(this.hass!);
+      backup_and_metadata = await createZHANetworkBackup(this.menuai!);
     } catch (err: any) {
       showAlertDialog(this, {
         title: "Failed to create backup",
@@ -390,7 +390,7 @@ class ZHAConfigDashboard extends LitElement {
       return;
     }
 
-    const configEntries: ConfigEntry[] = await getConfigEntries(this.hass, {
+    const configEntries: ConfigEntry[] = await getConfigEntries(this.menuai, {
       domain: "zha",
     });
 
@@ -406,7 +406,7 @@ class ZHAConfigDashboard extends LitElement {
   }
 
   private async _updateConfiguration(): Promise<any> {
-    await updateZHAConfiguration(this.hass!, this._configuration!.data);
+    await updateZHAConfiguration(this.menuai!, this._configuration!.data);
   }
 
   private _computeLabelCallback(localize, section: string) {

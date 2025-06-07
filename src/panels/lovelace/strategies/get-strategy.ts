@@ -14,7 +14,7 @@ import type {
   LovelaceViewConfig,
 } from "../../../data/lovelace/config/view";
 import { isStrategyView } from "../../../data/lovelace/config/view";
-import type { AsyncReturnType, HomeAssistant } from "../../../types";
+import type { AsyncReturnType, menuai } from "../../../types";
 import { cleanLegacyStrategyConfig, isLegacyStrategy } from "./legacy-strategy";
 import type {
   LovelaceDashboardStrategy,
@@ -99,7 +99,7 @@ const generateStrategy = async <T extends LovelaceStrategyConfigType>(
   configType: T,
   renderError: (err: string | Error) => StrategyConfig<T>,
   strategyConfig: LovelaceStrategyConfig,
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<StrategyConfig<T>> => {
   const strategyType = strategyConfig.type;
   if (!strategyType) {
@@ -115,21 +115,21 @@ const generateStrategy = async <T extends LovelaceStrategyConfigType>(
       if (configType === "dashboard" && "generateDashboard" in strategy) {
         return (await strategy.generateDashboard({
           config: { strategy: strategyConfig, views: [] },
-          hass,
+          menuai,
         })) as StrategyConfig<T>;
       }
       if (configType === "view" && "generateView" in strategy) {
         return (await strategy.generateView({
           config: { views: [] },
           view: { strategy: strategyConfig },
-          hass,
+          menuai,
         })) as StrategyConfig<T>;
       }
     }
 
     const config = cleanLegacyStrategyConfig(strategyConfig);
 
-    return await strategy.generate(config, hass);
+    return await strategy.generate(config, menuai);
   } catch (err: any) {
     if (err.message !== "timeout") {
       // eslint-disable-next-line
@@ -142,7 +142,7 @@ const generateStrategy = async <T extends LovelaceStrategyConfigType>(
 
 export const generateLovelaceDashboardStrategy = async (
   config: LovelaceDashboardStrategyConfig,
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<LovelaceConfig> => {
   const { strategy, ...base } = config;
   const generated = await generateStrategy(
@@ -161,7 +161,7 @@ export const generateLovelaceDashboardStrategy = async (
       ],
     }),
     strategy,
-    hass
+    menuai
   );
   return {
     ...base,
@@ -171,7 +171,7 @@ export const generateLovelaceDashboardStrategy = async (
 
 export const generateLovelaceViewStrategy = async (
   config: LovelaceStrategyViewConfig,
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<LovelaceViewConfig> => {
   const { strategy, ...base } = config;
   const generated = await generateStrategy(
@@ -185,7 +185,7 @@ export const generateLovelaceViewStrategy = async (
       ],
     }),
     strategy,
-    hass
+    menuai
   );
   return {
     ...base,
@@ -195,7 +195,7 @@ export const generateLovelaceViewStrategy = async (
 
 export const generateLovelaceSectionStrategy = async (
   config: LovelaceStrategySectionConfig,
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<LovelaceSectionConfig> => {
   const { strategy, ...base } = config;
   const generated = await generateStrategy(
@@ -209,7 +209,7 @@ export const generateLovelaceSectionStrategy = async (
       ],
     }),
     strategy,
-    hass
+    menuai
   );
   return {
     ...base,
@@ -222,23 +222,23 @@ export const generateLovelaceSectionStrategy = async (
  */
 export const expandLovelaceConfigStrategies = async (
   config: LovelaceRawConfig,
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<LovelaceConfig> => {
   const newConfig = isStrategyDashboard(config)
-    ? await generateLovelaceDashboardStrategy(config, hass)
+    ? await generateLovelaceDashboardStrategy(config, menuai)
     : { ...config };
 
   newConfig.views = await Promise.all(
     newConfig.views.map(async (view) => {
       const newView = isStrategyView(view)
-        ? await generateLovelaceViewStrategy(view, hass)
+        ? await generateLovelaceViewStrategy(view, menuai)
         : { ...view };
 
       if (newView.sections) {
         newView.sections = await Promise.all(
           newView.sections.map(async (section) => {
             const newSection = isStrategyView(section)
-              ? await generateLovelaceSectionStrategy(section, hass)
+              ? await generateLovelaceSectionStrategy(section, menuai)
               : { ...section };
             return newSection;
           })

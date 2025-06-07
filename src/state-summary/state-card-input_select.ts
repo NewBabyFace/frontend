@@ -9,17 +9,17 @@ import "../components/ha-select";
 import { UNAVAILABLE } from "../data/entity";
 import type { InputSelectEntity } from "../data/input_select";
 import { setInputSelectOption } from "../data/input_select";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-input_select")
 class StateCardInputSelect extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: InputSelectEntity;
 
   protected render(): TemplateResult {
     return html`
-      <state-badge .hass=${this.hass} .stateObj=${this.stateObj}></state-badge>
+      <state-badge .menuai=${this.menuai} .stateObj=${this.stateObj}></state-badge>
       <ha-select
         .label=${computeStateName(this.stateObj)}
         .value=${this.stateObj.state}
@@ -45,7 +45,7 @@ class StateCardInputSelect extends LitElement {
     if (option === this.stateObj.state) {
       return;
     }
-    await setInputSelectOption(this.hass, this.stateObj.entity_id, option);
+    await setInputSelectOption(this.menuai, this.stateObj.entity_id, option);
   }
 
   static styles = css`

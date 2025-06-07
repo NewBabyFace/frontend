@@ -7,7 +7,7 @@ import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import type { TimeTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 import { computeDomain } from "../../../../../common/entity/compute_domain";
 
@@ -17,7 +17,7 @@ const VALID_DOMAINS = ["sensor", "input_datetime"];
 
 @customElement("ha-automation-trigger-time")
 export class HaTimeTrigger extends LitElement implements TriggerElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: TimeTrigger;
 
@@ -85,7 +85,7 @@ export class HaTimeTrigger extends LitElement implements TriggerElement {
       fireEvent(
         this,
         "ui-mode-not-available",
-        Error(this.hass.localize("ui.errors.config.editor_not_supported"))
+        Error(this.menuai.localize("ui.errors.config.editor_not_supported"))
       );
     }
   }
@@ -128,11 +128,11 @@ export class HaTimeTrigger extends LitElement implements TriggerElement {
     }
 
     const data = this._data(this._inputMode, at);
-    const schema = this._schema(this.hass.localize, data.mode);
+    const schema = this._schema(this.menuai.localize, data.mode);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .disabled=${this.disabled}
@@ -170,11 +170,11 @@ export class HaTimeTrigger extends LitElement implements TriggerElement {
   ): string => {
     switch (schema.name) {
       case "time":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.automation.editor.triggers.type.time.at`
         );
     }
-    return this.hass.localize(
+    return this.menuai.localize(
       `ui.panel.config.automation.editor.triggers.type.time.${schema.name}`
     );
   };

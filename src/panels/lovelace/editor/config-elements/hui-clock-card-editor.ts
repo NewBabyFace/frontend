@@ -19,7 +19,7 @@ import type {
   HaFormSchema,
   SchemaUnion,
 } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import type { ClockCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
@@ -44,7 +44,7 @@ export class HuiClockCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ClockCardConfig;
 
@@ -118,15 +118,15 @@ export class HuiClockCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._data(this._config)}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
@@ -149,23 +149,23 @@ export class HuiClockCardEditor
   ) => {
     switch (schema.name) {
       case "title":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.title"
         );
       case "clock_size":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.clock.clock_size`
         );
       case "time_format":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.clock.time_format`
         );
       case "time_zone":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.clock.time_zone`
         );
       case "show_seconds":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.clock.show_seconds`
         );
       default:

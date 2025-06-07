@@ -1,13 +1,13 @@
-import type { HomeAssistant } from "../types";
-import { handleFetchPromise } from "../util/hass-call-api";
+import type { menuai } from "../types";
+import { handleFetchPromise } from "../util/menuai-call-api";
 import type { CloudStatus } from "./cloud";
 
 export interface InstallationType {
   installation_type:
-    | "Home Assistant Operating System"
-    | "Home Assistant Container"
-    | "Home Assistant Supervised"
-    | "Home Assistant Core"
+    | "MenuAI Operating System"
+    | "MenuAI Container"
+    | "MenuAI Supervised"
+    | "MenuAI Core"
     | "Unknown";
 }
 
@@ -50,7 +50,7 @@ export interface CloudLoginMFA extends CloudLoginBase {
 }
 
 export const fetchOnboardingOverview = () =>
-  fetch(`${__HASS_URL__}/api/onboarding`, { credentials: "same-origin" });
+  fetch(`${__menuai_URL__}/api/onboarding`, { credentials: "same-origin" });
 
 export const onboardUserStep = (params: {
   client_id: string;
@@ -60,27 +60,27 @@ export const onboardUserStep = (params: {
   language: string;
 }) =>
   handleFetchPromise<OnboardingUserStepResponse>(
-    fetch(`${__HASS_URL__}/api/onboarding/users`, {
+    fetch(`${__menuai_URL__}/api/onboarding/users`, {
       method: "POST",
       credentials: "same-origin",
       body: JSON.stringify(params),
     })
   );
 
-export const onboardCoreConfigStep = (hass: HomeAssistant) =>
-  hass.callApi<OnboardingCoreConfigStepResponse>(
+export const onboardCoreConfigStep = (menuai: menuai) =>
+  menuai.callApi<OnboardingCoreConfigStepResponse>(
     "POST",
     "onboarding/core_config"
   );
 
-export const onboardAnalyticsStep = (hass: HomeAssistant) =>
-  hass.callApi<OnboardingAnalyticsStepResponse>("POST", "onboarding/analytics");
+export const onboardAnalyticsStep = (menuai: menuai) =>
+  menuai.callApi<OnboardingAnalyticsStepResponse>("POST", "onboarding/analytics");
 
 export const onboardIntegrationStep = (
-  hass: HomeAssistant,
+  menuai: menuai,
   params: { client_id: string; redirect_uri: string }
 ) =>
-  hass.callApi<OnboardingIntegrationStepResponse>(
+  menuai.callApi<OnboardingIntegrationStepResponse>(
     "POST",
     "onboarding/integration",
     params
@@ -88,7 +88,7 @@ export const onboardIntegrationStep = (
 
 export const fetchInstallationType = async (): Promise<InstallationType> => {
   const response = await fetch(
-    `${__HASS_URL__}/api/onboarding/installation_type`,
+    `${__menuai_URL__}/api/onboarding/installation_type`,
     {
       method: "GET",
     }

@@ -362,7 +362,7 @@ export const demoEntitiesKernehed: DemoConfig["entities"] = () =>
         users: [
           {
             id: "3e84584273bb45b39597eeca75c61ed3",
-            name: "Hass.io",
+            name: "menuai.io",
             enabled: true,
             code: "****",
             picture: "/local/images/ha.png",

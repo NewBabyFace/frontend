@@ -20,7 +20,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import type { ActionConfig } from "../../../../data/lovelace/config/action";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { PictureGlanceCardConfig } from "../../cards/types";
 import "../../components/hui-entity-editor";
 import type { EntityConfig } from "../../entity-rows/types";
@@ -55,7 +55,7 @@ export class HuiPictureGlanceCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: PictureGlanceCardConfig;
 
@@ -167,7 +167,7 @@ export class HuiPictureGlanceCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -175,16 +175,16 @@ export class HuiPictureGlanceCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .computeLabel=${this._computeLabelCallback}
         .computeHelper=${this._computeHelperCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
       <div class="card-config">
         <hui-entity-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entities=${this._configEntities}
           @entities-changed=${this._changed}
         ></hui-entity-editor>
@@ -197,7 +197,7 @@ export class HuiPictureGlanceCardEditor
   }
 
   private _changed(ev: CustomEvent): void {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
     if (ev.detail && ev.detail.entities) {
@@ -216,17 +216,17 @@ export class HuiPictureGlanceCardEditor
       case "tap_action":
       case "hold_action":
       case "double_tap_action":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       case "entity":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.panel.lovelace.editor.card.picture-glance.state_entity"
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }
@@ -238,7 +238,7 @@ export class HuiPictureGlanceCardEditor
     switch (schema.name) {
       case "aspect_ratio":
         return typeof this._config?.grid_options?.rows === "number"
-          ? this.hass!.localize(
+          ? this.menuai!.localize(
               `ui.panel.lovelace.editor.card.generic.aspect_ratio_ignored`
             )
           : "";

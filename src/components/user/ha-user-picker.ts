@@ -6,7 +6,7 @@ import memoizeOne from "memoize-one";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { User } from "../../data/user";
 import { fetchUsers } from "../../data/user";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-combo-box-item";
 import "../ha-generic-picker";
 import type { PickerComboBoxItem } from "../ha-picker-combo-box";
@@ -19,7 +19,7 @@ interface UserComboBoxItem extends PickerComboBoxItem {
 
 @customElement("ha-user-picker")
 class HaUserPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -41,7 +41,7 @@ class HaUserPicker extends LitElement {
   }
 
   private async _fetchUsers() {
-    this.users = await fetchUsers(this.hass);
+    this.users = await fetchUsers(this.menuai);
   }
 
   private usersMap = memoizeOne((users?: User[]): Map<string, User> => {
@@ -60,7 +60,7 @@ class HaUserPicker extends LitElement {
     return html`
       <ha-user-badge
         slot="start"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .user=${user}
       ></ha-user-badge>
       <span slot="headline">${user.name}</span>
@@ -90,7 +90,7 @@ class HaUserPicker extends LitElement {
       <ha-combo-box-item type="button" compact>
         <ha-user-badge
           slot="start"
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .user=${item.user}
         ></ha-user-badge>
         <span slot="headline">${item.primary}</span>
@@ -121,14 +121,14 @@ class HaUserPicker extends LitElement {
 
   protected render(): TemplateResult {
     const placeholder =
-      this.placeholder ?? this.hass.localize("ui.components.user-picker.user");
+      this.placeholder ?? this.menuai.localize("ui.components.user-picker.user");
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         .label=${this.label}
-        .notFoundLabel=${this.hass.localize(
+        .notFoundLabel=${this.menuai.localize(
           "ui.components.user-picker.no_match"
         )}
         .placeholder=${placeholder}

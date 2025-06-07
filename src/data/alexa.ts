@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface AlexaEntity {
   entity_id: string;
@@ -6,14 +6,14 @@ export interface AlexaEntity {
   interfaces: string[];
 }
 
-export const fetchCloudAlexaEntities = (hass: HomeAssistant) =>
-  hass.callWS<AlexaEntity[]>({ type: "cloud/alexa/entities" });
+export const fetchCloudAlexaEntities = (menuai: menuai) =>
+  menuai.callWS<AlexaEntity[]>({ type: "cloud/alexa/entities" });
 
-export const fetchCloudAlexaEntity = (hass: HomeAssistant, entity_id: string) =>
-  hass.callWS<AlexaEntity>({
+export const fetchCloudAlexaEntity = (menuai: menuai, entity_id: string) =>
+  menuai.callWS<AlexaEntity>({
     type: "cloud/alexa/entities/get",
     entity_id,
   });
 
-export const syncCloudAlexaEntities = (hass: HomeAssistant) =>
-  hass.callWS({ type: "cloud/alexa/sync" });
+export const syncCloudAlexaEntities = (menuai: menuai) =>
+  menuai.callWS({ type: "cloud/alexa/sync" });

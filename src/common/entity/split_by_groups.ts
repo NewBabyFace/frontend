@@ -1,13 +1,13 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { GroupEntity } from "../../data/group";
 import { computeDomain } from "./compute_domain";
 
 // Split a collection into a list of groups and a 'rest' list of ungrouped
 // entities.
 // Returns { groups: [], ungrouped: {} }
-export const splitByGroups = (entities: HassEntities) => {
+export const splitByGroups = (entities: menuaiEntities) => {
   const groups: GroupEntity[] = [];
-  const ungrouped: HassEntities = {};
+  const ungrouped: menuaiEntities = {};
 
   Object.keys(entities).forEach((entityId) => {
     const entity = entities[entityId];

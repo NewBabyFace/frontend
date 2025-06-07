@@ -7,7 +7,7 @@ import type {
   TopLevelFormatterParams,
 } from "echarts/types/dist/shared";
 import memoizeOne from "memoize-one";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import "../../../../../components/chart/ha-network-graph";
 import type {
   NetworkData,
@@ -23,7 +23,7 @@ import {
   subscribeBluetoothScannersDetails,
 } from "../../../../../data/bluetooth";
 import type { DeviceRegistryEntry } from "../../../../../data/device_registry";
-import "../../../../../layouts/hass-subpage";
+import "../../../../../layouts/menuai-subpage";
 import { colorVariables } from "../../../../../resources/theme/color.globals";
 import { navigate } from "../../../../../common/navigate";
 import { bluetoothAdvertisementMonitorTabs } from "./bluetooth-advertisement-monitor";
@@ -33,11 +33,11 @@ import { throttle } from "../../../../../common/util/throttle";
 const UPDATE_THROTTLE_TIME = 10000;
 
 const CORE_SOURCE_ID = "ha";
-const CORE_SOURCE_LABEL = "Home Assistant";
+const CORE_SOURCE_LABEL = "MenuAI";
 
 @customElement("bluetooth-network-visualization")
 export class BluetoothNetworkVisualization extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -61,9 +61,9 @@ export class BluetoothNetworkVisualization extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass) {
+    if (this.menuai) {
       this._unsub_advertisements = subscribeBluetoothAdvertisements(
-        this.hass.connection,
+        this.menuai.connection,
         (data) => {
           if (!this._data.length) {
             this._data = data;
@@ -73,13 +73,13 @@ export class BluetoothNetworkVisualization extends LitElement {
         }
       );
       this._unsub_scanners = subscribeBluetoothScannersDetails(
-        this.hass.connection,
+        this.menuai.connection,
         (scanners) => {
           this._scanners = scanners;
         }
       );
 
-      const devices = Object.values(this.hass.devices);
+      const devices = Object.values(this.menuai.devices);
       const bluetoothDevices = devices.filter((device) =>
         device.connections.find((connection) => connection[0] === "bluetooth")
       );
@@ -109,20 +109,20 @@ export class BluetoothNetworkVisualization extends LitElement {
 
   protected render() {
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
-        header=${this.hass.localize("ui.panel.config.bluetooth.visualization")}
+        header=${this.menuai.localize("ui.panel.config.bluetooth.visualization")}
         .tabs=${bluetoothAdvertisementMonitorTabs}
       >
         <ha-network-graph
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .data=${this._formatNetworkData(this._data, this._scanners)}
           .tooltipFormatter=${this._tooltipFormatter}
           @chart-click=${this._handleChartClick}
         ></ha-network-graph>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -140,21 +140,21 @@ export class BluetoothNetworkVisualization extends LitElement {
           },
         },
         {
-          name: this.hass.localize("ui.panel.config.bluetooth.scanners"),
+          name: this.menuai.localize("ui.panel.config.bluetooth.scanners"),
           symbol: "circle",
           itemStyle: {
             color: colorVariables["cyan-color"],
           },
         },
         {
-          name: this.hass.localize("ui.panel.config.bluetooth.known_devices"),
+          name: this.menuai.localize("ui.panel.config.bluetooth.known_devices"),
           symbol: "circle",
           itemStyle: {
             color: colorVariables["teal-color"],
           },
         },
         {
-          name: this.hass.localize("ui.panel.config.bluetooth.unknown_devices"),
+          name: this.menuai.localize("ui.panel.config.bluetooth.unknown_devices"),
           symbol: "circle",
           itemStyle: {
             color: colorVariables["disabled-color"],
@@ -266,22 +266,22 @@ export class BluetoothNetworkVisualization extends LitElement {
       const targetName = this._getBluetoothDeviceName(target);
       tooltipText = `${sourceName} → ${targetName}`;
       if (source !== CORE_SOURCE_ID) {
-        tooltipText += ` <b>${this.hass.localize("ui.panel.config.bluetooth.rssi")}:</b> ${value}`;
+        tooltipText += ` <b>${this.menuai.localize("ui.panel.config.bluetooth.rssi")}:</b> ${value}`;
       }
     } else {
       const { id: address } = data as any;
       const name = this._getBluetoothDeviceName(address);
       const btDevice = this._data.find((d) => d.address === address);
       if (btDevice) {
-        tooltipText = `<b>${name}</b><br><b>${this.hass.localize("ui.panel.config.bluetooth.address")}:</b> ${address}<br><b>${this.hass.localize("ui.panel.config.bluetooth.rssi")}:</b> ${btDevice.rssi}<br><b>${this.hass.localize("ui.panel.config.bluetooth.source")}:</b> ${btDevice.source}<br><b>${this.hass.localize("ui.panel.config.bluetooth.updated")}:</b> ${relativeTime(new Date(btDevice.time * 1000), this.hass.locale)}`;
+        tooltipText = `<b>${name}</b><br><b>${this.menuai.localize("ui.panel.config.bluetooth.address")}:</b> ${address}<br><b>${this.menuai.localize("ui.panel.config.bluetooth.rssi")}:</b> ${btDevice.rssi}<br><b>${this.menuai.localize("ui.panel.config.bluetooth.source")}:</b> ${btDevice.source}<br><b>${this.menuai.localize("ui.panel.config.bluetooth.updated")}:</b> ${relativeTime(new Date(btDevice.time * 1000), this.menuai.locale)}`;
       } else {
         const device = this._sourceDevices[address];
         if (device) {
-          tooltipText = `<b>${name}</b><br><b>${this.hass.localize("ui.panel.config.bluetooth.address")}:</b> ${address}`;
+          tooltipText = `<b>${name}</b><br><b>${this.menuai.localize("ui.panel.config.bluetooth.address")}:</b> ${address}`;
           if (device.area_id) {
-            const area = this.hass.areas[device.area_id];
+            const area = this.menuai.areas[device.area_id];
             if (area) {
-              tooltipText += `<br><b>${this.hass.localize("ui.panel.config.bluetooth.area")}: </b>${area.name}`;
+              tooltipText += `<br><b>${this.menuai.localize("ui.panel.config.bluetooth.area")}: </b>${area.name}`;
             }
           }
         }

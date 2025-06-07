@@ -5,12 +5,12 @@ import { domainToName } from "../../../data/integration";
 import type { ActionConfig } from "../../../data/lovelace/config/action";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
 import { showVoiceCommandDialog } from "../../../dialogs/voice-command-dialog/show-ha-voice-command-dialog";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showToast } from "../../../util/toast";
 import { toggleEntity } from "./entity/toggle-entity";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "ll-custom": ActionConfig;
   }
 }
@@ -26,7 +26,7 @@ export interface ActionConfigParams {
 
 export const handleAction = async (
   node: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   config: ActionConfigParams,
   action: string
 ): Promise<void> => {
@@ -50,7 +50,7 @@ export const handleAction = async (
     actionConfig.confirmation &&
     (!actionConfig.confirmation.exemptions ||
       !actionConfig.confirmation.exemptions.some(
-        (e) => e.user === hass!.user?.id
+        (e) => e.user === menuai!.user?.id
       ))
   ) {
     forwardHaptic("warning");
@@ -62,10 +62,10 @@ export const handleAction = async (
     ) {
       const [domain, service] = (actionConfig.perform_action ||
         actionConfig.service)!.split(".", 2);
-      const serviceDomains = hass.services;
+      const serviceDomains = menuai.services;
       if (domain in serviceDomains && service in serviceDomains[domain]) {
-        await hass.loadBackendTranslation("title");
-        const localize = await hass.loadBackendTranslation("services");
+        await menuai.loadBackendTranslation("title");
+        const localize = await menuai.loadBackendTranslation("services");
         serviceName = `${domainToName(localize, domain)}: ${
           localize(`component.${domain}.services.${serviceName}.name`) ||
           serviceDomains[domain][service].name ||
@@ -78,10 +78,10 @@ export const handleAction = async (
       !(await showConfirmationDialog(node, {
         text:
           actionConfig.confirmation.text ||
-          hass.localize("ui.panel.lovelace.cards.actions.action_confirmation", {
+          menuai.localize("ui.panel.lovelace.cards.actions.action_confirmation", {
             action:
               serviceName ||
-              hass.localize(
+              menuai.localize(
                 `ui.panel.lovelace.editor.action-editor.actions.${actionConfig.action}`
               ) ||
               actionConfig.action,
@@ -100,10 +100,10 @@ export const handleAction = async (
         config.camera_image ||
         config.image_entity;
       if (entityId) {
-        fireEvent(node, "hass-more-info", { entityId });
+        fireEvent(node, "menuai-more-info", { entityId });
       } else {
         showToast(node, {
-          message: hass.localize(
+          message: menuai.localize(
             "ui.panel.lovelace.cards.actions.no_entity_more_info"
           ),
         });
@@ -118,7 +118,7 @@ export const handleAction = async (
         });
       } else {
         showToast(node, {
-          message: hass.localize(
+          message: menuai.localize(
             "ui.panel.lovelace.cards.actions.no_navigation_path"
           ),
         });
@@ -130,7 +130,7 @@ export const handleAction = async (
         window.open(actionConfig.url_path);
       } else {
         showToast(node, {
-          message: hass.localize("ui.panel.lovelace.cards.actions.no_url"),
+          message: menuai.localize("ui.panel.lovelace.cards.actions.no_url"),
         });
         forwardHaptic("failure");
       }
@@ -138,11 +138,11 @@ export const handleAction = async (
     }
     case "toggle": {
       if (config.entity) {
-        toggleEntity(hass, config.entity!);
+        toggleEntity(menuai, config.entity!);
         forwardHaptic("light");
       } else {
         showToast(node, {
-          message: hass.localize(
+          message: menuai.localize(
             "ui.panel.lovelace.cards.actions.no_entity_toggle"
           ),
         });
@@ -154,14 +154,14 @@ export const handleAction = async (
     case "call-service": {
       if (!actionConfig.perform_action && !actionConfig.service) {
         showToast(node, {
-          message: hass.localize("ui.panel.lovelace.cards.actions.no_action"),
+          message: menuai.localize("ui.panel.lovelace.cards.actions.no_action"),
         });
         forwardHaptic("failure");
         return;
       }
       const [domain, service] = (actionConfig.perform_action ||
         actionConfig.service)!.split(".", 2);
-      hass.callService(
+      menuai.callService(
         domain,
         service,
         actionConfig.data ?? actionConfig.service_data,
@@ -171,7 +171,7 @@ export const handleAction = async (
       break;
     }
     case "assist": {
-      showVoiceCommandDialog(node, hass, {
+      showVoiceCommandDialog(node, menuai, {
         start_listening: actionConfig.start_listening ?? false,
         pipeline_id: actionConfig.pipeline_id ?? "last_used",
       });

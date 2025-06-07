@@ -35,13 +35,13 @@ import "../components/ha-md-divider";
 import "../components/ha-md-menu-item";
 import "../components/search-input-outlined";
 import { KeyboardShortcutMixin } from "../mixins/keyboard-shortcut-mixin";
-import type { HomeAssistant, Route } from "../types";
-import "./hass-tabs-subpage";
-import type { PageNavigation } from "./hass-tabs-subpage";
+import type { menuai, Route } from "../types";
+import "./menuai-tabs-subpage";
+import type { PageNavigation } from "./menuai-tabs-subpage";
 
-@customElement("hass-tabs-subpage-data-table")
+@customElement("menuai-tabs-subpage-data-table")
 export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public localizeFunc?: LocalizeFunc;
 
@@ -214,7 +214,7 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
   }
 
   protected render(): TemplateResult {
-    const localize = this.localizeFunc || this.hass.localize;
+    const localize = this.localizeFunc || this.menuai.localize;
     const showPane = this._showPaneController.value ?? !this.narrow;
     const filterButton = this.hasFilters
       ? html`<div class="relative">
@@ -246,7 +246,7 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
         : nothing;
 
     const searchBar = html`<search-input-outlined
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .filter=${this.filter}
       @value-changed=${this._handleSearchChange}
       .label=${this.searchLabel}
@@ -377,8 +377,8 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
     </ha-assist-chip>`;
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .localizeFunc=${this.localizeFunc}
         .narrow=${this.narrow}
         .isWide=${this.isWide}
@@ -509,7 +509,7 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
                   `
                 : ""}
               <ha-data-table
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .localize=${localize}
                 .narrow=${this.narrow}
                 .columns=${this.columns}
@@ -557,7 +557,7 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
                     `}
               </ha-data-table>`}
         <div slot="fab"><slot name="fab"></slot></div>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
       ${this.showFilters && !showPane
         ? html`<ha-dialog
             open
@@ -715,7 +715,7 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
       flex-direction: column;
     }
 
-    :host([narrow]) hass-tabs-subpage {
+    :host([narrow]) menuai-tabs-subpage {
       --main-title-margin: 0;
     }
     :host([narrow]) {
@@ -904,11 +904,11 @@ export class HaTabsSubpageDataTable extends KeyboardShortcutMixin(LitElement) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hass-tabs-subpage-data-table": HaTabsSubpageDataTable;
+    "menuai-tabs-subpage-data-table": HaTabsSubpageDataTable;
   }
 
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "search-changed": { value: string };
     "grouping-changed": { value: string };
     "columns-changed": {

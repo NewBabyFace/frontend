@@ -1,4 +1,4 @@
-import { handleFetchPromise } from "../util/hass-call-api";
+import { handleFetchPromise } from "../util/menuai-call-api";
 import type { BackupContentExtended } from "./backup";
 import type {
   BackupManagerState,
@@ -22,7 +22,7 @@ export interface BackupOnboardingConfig extends BackupOnboardingInfo {
 
 export const fetchBackupOnboardingInfo = async () =>
   handleFetchPromise<BackupOnboardingConfig>(
-    fetch(`${__HASS_URL__}/api/onboarding/backup/info`)
+    fetch(`${__menuai_URL__}/api/onboarding/backup/info`)
   );
 
 export interface RestoreOnboardingBackupParams {
@@ -38,7 +38,7 @@ export const restoreOnboardingBackup = async (
   params: RestoreOnboardingBackupParams
 ) =>
   handleFetchPromise(
-    fetch(`${__HASS_URL__}/api/onboarding/backup/restore`, {
+    fetch(`${__menuai_URL__}/api/onboarding/backup/restore`, {
       method: "POST",
       body: JSON.stringify(params),
     })
@@ -58,7 +58,7 @@ export const uploadOnboardingBackup = async (
   });
 
   return handleFetchPromise(
-    fetch(`${__HASS_URL__}/api/onboarding/backup/upload?${params.toString()}`, {
+    fetch(`${__menuai_URL__}/api/onboarding/backup/upload?${params.toString()}`, {
       method: "POST",
       body: fd,
     })

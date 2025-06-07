@@ -6,13 +6,13 @@ import { titleCase } from "../../../../common/string/title-case";
 import "../../../../components/ha-card";
 import type { DeviceRegistryEntry } from "../../../../data/device_registry";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { createSearchParam } from "../../../../common/url/search-params";
 import { isComponentLoaded } from "../../../../common/config/is_component_loaded";
 
 @customElement("ha-device-info-card")
 export class HaDeviceCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -22,8 +22,8 @@ export class HaDeviceCard extends LitElement {
     return html`
       <ha-card
         outlined
-        .header=${this.hass.localize("ui.panel.config.devices.device_info", {
-          type: this.hass.localize(
+        .header=${this.menuai.localize("ui.panel.config.devices.device_info", {
+          type: this.menuai.localize(
             `ui.panel.config.devices.type.${
               this.device.entry_type || "device"
             }_heading`
@@ -42,7 +42,7 @@ export class HaDeviceCard extends LitElement {
           ${this.device.manufacturer
             ? html`
                 <div class="manuf">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.manuf",
                     { manufacturer: this.device.manufacturer }
                   )}
@@ -52,7 +52,7 @@ export class HaDeviceCard extends LitElement {
           ${this.device.via_device_id
             ? html`
                 <div class="extra-info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.via"
                   )}
                   <span class="hub"
@@ -69,7 +69,7 @@ export class HaDeviceCard extends LitElement {
           ${this.device.sw_version
             ? html`
                 <div class="extra-info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.integrations.config_entry.${
                       this.device.entry_type === "service" &&
                       !this.device.hw_version
@@ -84,7 +84,7 @@ export class HaDeviceCard extends LitElement {
           ${this.device.hw_version
             ? html`
                 <div class="extra-info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.hardware",
                     { version: this.device.hw_version }
                   )}
@@ -94,7 +94,7 @@ export class HaDeviceCard extends LitElement {
           ${this.device.serial_number
             ? html`
                 <div class="extra-info">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.serial_number",
                     { serial_number: this.device.serial_number }
                   )}
@@ -105,7 +105,7 @@ export class HaDeviceCard extends LitElement {
             ([type, value]) => html`
               <div class="extra-info">
                 ${type === "bluetooth" &&
-                isComponentLoaded(this.hass, "bluetooth")
+                isComponentLoaded(this.menuai, "bluetooth")
                   ? html`${titleCase(type)}:
                       <a
                         href="/config/bluetooth/advertisement-monitor?${createSearchParam(
@@ -113,7 +113,7 @@ export class HaDeviceCard extends LitElement {
                         )}"
                         >${value.toUpperCase()}</a
                       >`
-                  : type === "mac" && isComponentLoaded(this.hass, "dhcp")
+                  : type === "mac" && isComponentLoaded(this.menuai, "dhcp")
                     ? html`MAC:
                         <a
                           href="/config/dhcp?${createSearchParam({
@@ -140,10 +140,10 @@ export class HaDeviceCard extends LitElement {
   }
 
   private _computeDeviceNameDislay(deviceId) {
-    const device = this.hass.devices[deviceId];
+    const device = this.menuai.devices[deviceId];
     return device
-      ? computeDeviceNameDisplay(device, this.hass)
-      : `<${this.hass.localize(
+      ? computeDeviceNameDisplay(device, this.menuai)
+      : `<${this.menuai.localize(
           "ui.panel.config.integrations.config_entry.unknown_via_device"
         )}>`;
   }

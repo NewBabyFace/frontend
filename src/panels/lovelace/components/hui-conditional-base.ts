@@ -3,7 +3,7 @@ import { ReactiveElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import type { MediaQueriesListener } from "../../../common/dom/media_query";
 import { deepEqual } from "../../../common/util/deep-equal";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiCard } from "../cards/hui-card";
 import type { ConditionalCardConfig } from "../cards/types";
 import type { Condition } from "../common/validate-condition";
@@ -16,14 +16,14 @@ import {
 import type { ConditionalRowConfig, LovelaceRow } from "../entity-rows/types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "visibility-changed": { value: boolean };
   }
 }
 
 @customElement("hui-conditional-base")
 export class HuiConditionalBase extends ReactiveElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public preview = false;
 
@@ -78,7 +78,7 @@ export class HuiConditionalBase extends ReactiveElement {
   }
 
   private _listenMediaQueries() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -116,7 +116,7 @@ export class HuiConditionalBase extends ReactiveElement {
     if (
       changed.has("_element") ||
       changed.has("_config") ||
-      changed.has("hass") ||
+      changed.has("menuai") ||
       changed.has("preview")
     ) {
       this._listenMediaQueries();
@@ -125,7 +125,7 @@ export class HuiConditionalBase extends ReactiveElement {
   }
 
   private _updateVisibility() {
-    if (!this._element || !this.hass || !this._config) {
+    if (!this._element || !this.menuai || !this._config) {
       return;
     }
 
@@ -133,14 +133,14 @@ export class HuiConditionalBase extends ReactiveElement {
 
     const conditionMet = checkConditionsMet(
       this._config!.conditions,
-      this.hass!
+      this.menuai!
     );
 
     this.setVisibility(conditionMet);
   }
 
   protected setVisibility(conditionMet: boolean) {
-    if (!this._element || !this.hass) {
+    if (!this._element || !this.menuai) {
       return;
     }
     const visible = this.preview || conditionMet;
@@ -149,7 +149,7 @@ export class HuiConditionalBase extends ReactiveElement {
       this.style.setProperty("display", visible ? "" : "none");
     }
     if (visible) {
-      this._element.hass = this.hass;
+      this._element.menuai = this.menuai;
       if (!this._element!.parentElement) {
         this.appendChild(this._element!);
       }

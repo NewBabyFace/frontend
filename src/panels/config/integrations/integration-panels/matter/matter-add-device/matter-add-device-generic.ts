@@ -5,12 +5,12 @@ import "../../../../../../components/ha-icon-next";
 import "../../../../../../components/ha-md-list-item";
 import "../../../../../../components/ha-md-list";
 import "../../../../../../components/ha-textfield";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 
 @customElement("matter-add-device-generic")
 class MatterAddDeviceGeneric extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _code = "";
 
@@ -18,12 +18,12 @@ class MatterAddDeviceGeneric extends LitElement {
     return html`
       <div class="content">
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.dialogs.matter-add-device.generic.code_instructions"
           )}
         </p>
         <ha-textfield
-          label=${this.hass.localize(
+          label=${this.menuai.localize(
             "ui.dialogs.matter-add-device.generic.setup_code"
           )}
           .value=${this._code}

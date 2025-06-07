@@ -1,9 +1,9 @@
-import type { HassConfig, HassEntity } from "home-assistant-js-websocket";
+import type { menuaiConfig, menuaiEntity } from "home-assistant-js-websocket";
 import { UNAVAILABLE, UNKNOWN } from "../../data/entity";
 import type { EntityRegistryDisplayEntry } from "../../data/entity_registry";
 import type { FrontendLocaleData } from "../../data/translation";
 import { TimeZone } from "../../data/translation";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { DURATION_UNITS, formatDuration } from "../datetime/format_duration";
 import { formatDate } from "../datetime/format_date";
 import { formatDateTime } from "../datetime/format_date_time";
@@ -19,11 +19,11 @@ import { computeDomain } from "./compute_domain";
 
 export const computeStateDisplay = (
   localize: LocalizeFunc,
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   locale: FrontendLocaleData,
   sensorNumericDeviceClasses: string[],
-  config: HassConfig,
-  entities: HomeAssistant["entities"],
+  config: menuaiConfig,
+  entities: menuai["entities"],
   state?: string
 ): string => {
   const entity = entities?.[stateObj.entity_id] as
@@ -45,7 +45,7 @@ export const computeStateDisplayFromEntityAttributes = (
   localize: LocalizeFunc,
   locale: FrontendLocaleData,
   sensorNumericDeviceClasses: string[],
-  config: HassConfig,
+  config: menuaiConfig,
   entity: EntityRegistryDisplayEntry | undefined,
   entityId: string,
   attributes: any,
@@ -91,7 +91,7 @@ export const computeStateDisplayFromEntityAttributes = (
           minimumFractionDigits: 2,
           // Override monetary options with number format
           ...getNumberFormatOptions(
-            { state, attributes } as HassEntity,
+            { state, attributes } as menuaiEntity,
             entity
           ),
         });
@@ -103,7 +103,7 @@ export const computeStateDisplayFromEntityAttributes = (
     const value = formatNumber(
       state,
       locale,
-      getNumberFormatOptions({ state, attributes } as HassEntity, entity)
+      getNumberFormatOptions({ state, attributes } as menuaiEntity, entity)
     );
 
     const unit =

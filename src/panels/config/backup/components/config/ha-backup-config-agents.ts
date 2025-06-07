@@ -22,14 +22,14 @@ import {
   isNetworkMountAgent,
 } from "../../../../../data/backup";
 import type { CloudStatus } from "../../../../../data/cloud";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { brandsUrl } from "../../../../../util/brands-url";
 
 const DEFAULT_AGENTS = [];
 
 @customElement("ha-backup-config-agents")
 class HaBackupConfigAgents extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatus;
 
@@ -52,11 +52,11 @@ class HaBackupConfigAgents extends LitElement {
         this.cloudStatus?.logged_in &&
         !this.cloudStatus.active_subscription
       ) {
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.config.backup.agents.cloud_agent_no_subcription"
         );
       }
-      return this.hass.localize(
+      return this.menuai.localize(
         "ui.panel.config.backup.agents.cloud_agent_description"
       );
     }
@@ -65,7 +65,7 @@ class HaBackupConfigAgents extends LitElement {
 
     if (isNetworkMountAgent(agentId)) {
       texts.push(
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.backup.agents.network_mount_agent_description"
         )
       );
@@ -79,7 +79,7 @@ class HaBackupConfigAgents extends LitElement {
         html`<div class="unencrypted-warning">
           <span class="dot warning"></span>
           <span>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.backup.agents.encryption_turned_off"
             )}
           </span>
@@ -92,11 +92,11 @@ class HaBackupConfigAgents extends LitElement {
     if (retention) {
       if (retention.copies === null && retention.days === null) {
         texts.push(
-          this.hass.localize("ui.panel.config.backup.agents.retention_all")
+          this.menuai.localize("ui.panel.config.backup.agents.retention_all")
         );
       } else {
         texts.push(
-          this.hass.localize(
+          this.menuai.localize(
             `ui.panel.config.backup.agents.retention_${retention.copies ? "backups" : "days"}`,
             {
               count: retention.copies || retention.days,
@@ -153,7 +153,7 @@ class HaBackupConfigAgents extends LitElement {
           domain,
           type: "icon",
           useFallback: true,
-          darkOptimized: this.hass.themes?.darkMode,
+          darkOptimized: this.menuai.themes?.darkMode,
         })}
         crossorigin="anonymous"
         referrerpolicy="no-referrer"
@@ -183,7 +183,7 @@ class HaBackupConfigAgents extends LitElement {
               ${availableAgents.map((agent) => {
                 const agentId = agent.agent_id;
                 const name = computeBackupAgentName(
-                  this.hass.localize,
+                  this.menuai.localize,
                   agentId,
                   allAgents
                 );
@@ -224,14 +224,14 @@ class HaBackupConfigAgents extends LitElement {
               ${unavailableAgents.length > 0 && this.showSettings
                 ? html`
                     <p class="heading">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.backup.agents.unavailable_agents"
                       )}
                     </p>
                     ${unavailableAgents.map((agent) => {
                       const agentId = agent.agent_id;
                       const name = computeBackupAgentName(
-                        this.hass.localize,
+                        this.menuai.localize,
                         agentId,
                         allAgents
                       );
@@ -255,7 +255,7 @@ class HaBackupConfigAgents extends LitElement {
           `
         : html`
             <p>
-              ${this.hass.localize("ui.panel.config.backup.agents.no_agents")}
+              ${this.menuai.localize("ui.panel.config.backup.agents.no_agents")}
             </p>
           `}
     `;

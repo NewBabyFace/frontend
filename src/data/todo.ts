@@ -1,4 +1,4 @@
-import type { HomeAssistant, ServiceCallResponse } from "../types";
+import type { menuai, ServiceCallResponse } from "../types";
 import { computeDomain } from "../common/entity/compute_domain";
 import { computeStateName } from "../common/entity/compute_state_name";
 import { isUnavailableState } from "./entity";
@@ -40,29 +40,29 @@ export const enum TodoListEntityFeature {
   SET_DESCRIPTION_ON_ITEM = 64,
 }
 
-export const getTodoLists = (hass: HomeAssistant): TodoList[] =>
-  Object.keys(hass.states)
+export const getTodoLists = (menuai: menuai): TodoList[] =>
+  Object.keys(menuai.states)
     .filter(
       (entityId) =>
         computeDomain(entityId) === "todo" &&
-        !isUnavailableState(hass.states[entityId].state)
+        !isUnavailableState(menuai.states[entityId].state)
     )
     .map((entityId) => ({
-      ...hass.states[entityId],
+      ...menuai.states[entityId],
       entity_id: entityId,
-      name: computeStateName(hass.states[entityId]),
+      name: computeStateName(menuai.states[entityId]),
     }))
-    .sort((a, b) => stringCompare(a.name, b.name, hass.locale.language));
+    .sort((a, b) => stringCompare(a.name, b.name, menuai.locale.language));
 
 export interface TodoItems {
   items: TodoItem[];
 }
 
 export const fetchItems = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string
 ): Promise<TodoItem[]> => {
-  const result = await hass.callWS<TodoItems>({
+  const result = await menuai.callWS<TodoItems>({
     type: "todo/item/list",
     entity_id,
   });
@@ -70,21 +70,21 @@ export const fetchItems = async (
 };
 
 export const subscribeItems = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   callback: (update: TodoItems) => void
 ) =>
-  hass.connection.subscribeMessage<any>(callback, {
+  menuai.connection.subscribeMessage<any>(callback, {
     type: "todo/item/subscribe",
     entity_id,
   });
 
 export const updateItem = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   item: TodoItem
 ): Promise<ServiceCallResponse> =>
-  hass.callService(
+  menuai.callService(
     "todo",
     "update_item",
     {
@@ -102,11 +102,11 @@ export const updateItem = (
   );
 
 export const createItem = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   item: Omit<TodoItem, "uid" | "status">
 ): Promise<ServiceCallResponse> =>
-  hass.callService(
+  menuai.callService(
     "todo",
     "add_item",
     {
@@ -122,11 +122,11 @@ export const createItem = (
   );
 
 export const deleteItems = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   uids: string[]
 ): Promise<ServiceCallResponse> =>
-  hass.callService(
+  menuai.callService(
     "todo",
     "remove_item",
     {
@@ -136,12 +136,12 @@ export const deleteItems = (
   );
 
 export const moveItem = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   uid: string,
   previous_uid: string | undefined
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "todo/item/move",
     entity_id,
     uid,

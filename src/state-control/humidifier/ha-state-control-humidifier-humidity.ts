@@ -18,7 +18,7 @@ import {
   HUMIDIFIER_ACTION_MODE,
   HumidifierEntityDeviceClass,
 } from "../../data/humidifier";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   createStateControlCircularSliderController,
   stateControlCircularSliderStyle,
@@ -26,7 +26,7 @@ import {
 
 @customElement("ha-state-control-humidifier-humidity")
 export class HaStateControlHumidifierHumidity extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: HumidifierEntity;
 
@@ -76,7 +76,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
   private _debouncedCallService = debounce(() => this._callService(), 1000);
 
   private _callService() {
-    this.hass.callService("humidifier", "set_humidity", {
+    this.menuai.callService("humidifier", "set_humidity", {
       entity_id: this.stateObj!.entity_id,
       humidity: this._targetHumidity,
     });
@@ -97,7 +97,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
     if (this.stateObj.state === UNAVAILABLE) {
       return html`
         <p class="label disabled">
-          ${this.hass.formatEntityState(this.stateObj, UNAVAILABLE)}
+          ${this.menuai.formatEntityState(this.stateObj, UNAVAILABLE)}
         </p>
       `;
     }
@@ -112,9 +112,9 @@ export class HaStateControlHumidifierHumidity extends LitElement {
     return html`
       <p class="label">
         ${action && action !== "off"
-          ? this.hass.formatEntityAttributeValue(this.stateObj, "action")
+          ? this.menuai.formatEntityAttributeValue(this.stateObj, "action")
           : isHumidityDisplayed
-            ? this.hass.formatEntityState(this.stateObj)
+            ? this.menuai.formatEntityState(this.stateObj)
             : nothing}
       </p>
     `;
@@ -153,7 +153,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
     if (this.stateObj.state !== UNAVAILABLE) {
       return html`
         <p class="primary-state">
-          ${this.hass.formatEntityState(this.stateObj)}
+          ${this.menuai.formatEntityState(this.stateObj)}
         </p>
       `;
     }
@@ -198,7 +198,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
         <ha-big-number
           .value=${humidity}
           .unit=${DOMAIN_ATTRIBUTES_UNITS.humidifier.current_humidity}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .formatOptions=${formatOptions}
           unit-position="bottom"
         ></ha-big-number>
@@ -206,7 +206,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
     }
 
     return html`
-      ${this.hass.formatEntityAttributeValue(
+      ${this.menuai.formatEntityAttributeValue(
         this.stateObj,
         "humidity",
         humidity
@@ -223,7 +223,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
         <ha-big-number
           .value=${humidity}
           .unit=${DOMAIN_ATTRIBUTES_UNITS.humidifier.current_humidity}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .formatOptions=${formatOptions}
           unit-position="bottom"
         ></ha-big-number>
@@ -231,7 +231,7 @@ export class HaStateControlHumidifierHumidity extends LitElement {
     }
 
     return html`
-      ${this.hass.formatEntityAttributeValue(
+      ${this.menuai.formatEntityAttributeValue(
         this.stateObj,
         "current_humidity",
         humidity

@@ -18,7 +18,7 @@ import { getConfigEntries } from "../data/config_entries";
 import type { ItemType, RelatedResult } from "../data/search";
 import { findRelated } from "../data/search";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { brandsUrl } from "../util/brands-url";
 import "./ha-icon-next";
 import "./ha-list-item";
@@ -28,7 +28,7 @@ import "./ha-list";
 
 @customElement("ha-related-items")
 export class HaRelatedItems extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public itemType!: ItemType;
 
@@ -48,8 +48,8 @@ export class HaRelatedItems extends LitElement {
     if (this._entries) {
       return;
     }
-    this.hass.loadBackendTranslation("title");
-    this._entries = await getConfigEntries(this.hass);
+    this.menuai.loadBackendTranslation("title");
+    this._entries = await getConfigEntries(this.menuai);
   }
 
   private async _fetchBlueprints() {
@@ -57,8 +57,8 @@ export class HaRelatedItems extends LitElement {
       return;
     }
     const [automation, script] = await Promise.all([
-      fetchBlueprints(this.hass, "automation"),
-      fetchBlueprints(this.hass, "script"),
+      fetchBlueprints(this.menuai, "automation"),
+      fetchBlueprints(this.menuai, "script"),
     ]);
     this._blueprints = { automation, script };
   }
@@ -96,13 +96,13 @@ export class HaRelatedItems extends LitElement {
 
   private _toEntities = (entityIds: string[]) =>
     entityIds
-      .map((entityId) => this.hass.states[entityId])
+      .map((entityId) => this.menuai.states[entityId])
       .filter((entity) => entity)
       .sort((a, b) =>
         caseInsensitiveStringCompare(
           a.attributes.friendly_name ?? a.entity_id,
           b.attributes.friendly_name ?? b.entity_id,
-          this.hass.language
+          this.menuai.language
         )
       );
 
@@ -138,7 +138,7 @@ export class HaRelatedItems extends LitElement {
               .path=${mdiAlertCircleOutline}
               slot="graphic"
             ></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.components.related-items.no_related_found"
             )}
           </ha-list-item>
@@ -154,7 +154,7 @@ export class HaRelatedItems extends LitElement {
     return html`
       ${configEntries || this._related.integration
         ? html`<h3>
-              ${this.hass.localize("ui.components.related-items.integration")}
+              ${this.menuai.localize("ui.components.related-items.integration")}
             </h3>
             <ha-list
               >${configEntries?.map((entry) => {
@@ -171,14 +171,14 @@ export class HaRelatedItems extends LitElement {
                           domain: entry.domain,
                           type: "icon",
                           useFallback: true,
-                          darkOptimized: this.hass.themes?.darkMode,
+                          darkOptimized: this.menuai.themes?.darkMode,
                         })}
                         crossorigin="anonymous"
                         referrerpolicy="no-referrer"
                         alt=${entry.domain}
                         slot="graphic"
                       />
-                      ${this.hass.localize(`component.${entry.domain}.title`)}:
+                      ${this.menuai.localize(`component.${entry.domain}.title`)}:
                       ${entry.title} <ha-icon-next slot="meta"></ha-icon-next>
                     </ha-list-item>
                   </a>
@@ -197,14 +197,14 @@ export class HaRelatedItems extends LitElement {
                             domain: integration,
                             type: "icon",
                             useFallback: true,
-                            darkOptimized: this.hass.themes?.darkMode,
+                            darkOptimized: this.menuai.themes?.darkMode,
                           })}
                           crossorigin="anonymous"
                           referrerpolicy="no-referrer"
                           alt=${integration}
                           slot="graphic"
                         />
-                        ${this.hass.localize(`component.${integration}.title`)}
+                        ${this.menuai.localize(`component.${integration}.title`)}
                         <ha-icon-next slot="meta"></ha-icon-next>
                       </ha-list-item>
                     </a>`
@@ -213,11 +213,11 @@ export class HaRelatedItems extends LitElement {
         : nothing}
       ${this._related.area
         ? html`<h3>
-              ${this.hass.localize("ui.components.related-items.area")}
+              ${this.menuai.localize("ui.components.related-items.area")}
             </h3>
             <ha-list
               >${this._related.area.map((relatedAreaId) => {
-                const area = this.hass.areas[relatedAreaId];
+                const area = this.menuai.areas[relatedAreaId];
                 if (!area) {
                   return nothing;
                 }
@@ -254,11 +254,11 @@ export class HaRelatedItems extends LitElement {
         : nothing}
       ${this._related.device
         ? html`<h3>
-              ${this.hass.localize("ui.components.related-items.device")}
+              ${this.menuai.localize("ui.components.related-items.device")}
             </h3>
             <ha-list>
               ${this._related.device.map((relatedDeviceId) => {
-                const device = this.hass.devices[relatedDeviceId];
+                const device = this.menuai.devices[relatedDeviceId];
                 if (!device) {
                   return nothing;
                 }
@@ -279,7 +279,7 @@ export class HaRelatedItems extends LitElement {
         : nothing}
       ${this._related.entity
         ? html`
-            <h3>${this.hass.localize("ui.components.related-items.entity")}</h3>
+            <h3>${this.menuai.localize("ui.components.related-items.entity")}</h3>
             <ha-list>
               ${this._relatedEntities(this._related.entity).map(
                 (entity) => html`
@@ -290,7 +290,7 @@ export class HaRelatedItems extends LitElement {
                     graphic="icon"
                   >
                     <ha-state-icon
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${entity}
                       slot="graphic"
                     ></ha-state-icon>
@@ -304,7 +304,7 @@ export class HaRelatedItems extends LitElement {
         : nothing}
       ${this._related.group
         ? html`
-            <h3>${this.hass.localize("ui.components.related-items.group")}</h3>
+            <h3>${this.menuai.localize("ui.components.related-items.group")}</h3>
             <ha-list>
               ${this._relatedGroups(this._related.group).map(
                 (group) => html`
@@ -315,7 +315,7 @@ export class HaRelatedItems extends LitElement {
                     graphic="icon"
                   >
                     <ha-state-icon
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${group}
                       slot="graphic"
                     ></ha-state-icon>
@@ -329,7 +329,7 @@ export class HaRelatedItems extends LitElement {
         : nothing}
       ${this._related.scene
         ? html`
-            <h3>${this.hass.localize("ui.components.related-items.scene")}</h3>
+            <h3>${this.menuai.localize("ui.components.related-items.scene")}</h3>
             <ha-list>
               ${this._relatedScenes(this._related.scene).map(
                 (scene) => html`
@@ -340,7 +340,7 @@ export class HaRelatedItems extends LitElement {
                     graphic="icon"
                   >
                     <ha-state-icon
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${scene}
                       slot="graphic"
                     ></ha-state-icon>
@@ -355,7 +355,7 @@ export class HaRelatedItems extends LitElement {
       ${this._related.automation_blueprint
         ? html`
             <h3>
-              ${this.hass.localize("ui.components.related-items.blueprint")}
+              ${this.menuai.localize("ui.components.related-items.blueprint")}
             </h3>
             <ha-list>
               ${this._related.automation_blueprint.map((path) => {
@@ -381,7 +381,7 @@ export class HaRelatedItems extends LitElement {
       ${this._related.automation
         ? html`
             <h3>
-              ${this.hass.localize("ui.components.related-items.automation")}
+              ${this.menuai.localize("ui.components.related-items.automation")}
             </h3>
             <ha-list>
               ${this._relatedAutomations(this._related.automation).map(
@@ -393,7 +393,7 @@ export class HaRelatedItems extends LitElement {
                     graphic="icon"
                   >
                     <ha-state-icon
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${automation}
                       slot="graphic"
                     ></ha-state-icon>
@@ -409,7 +409,7 @@ export class HaRelatedItems extends LitElement {
       ${this._related.script_blueprint
         ? html`
             <h3>
-              ${this.hass.localize("ui.components.related-items.blueprint")}
+              ${this.menuai.localize("ui.components.related-items.blueprint")}
             </h3>
             <ha-list>
               ${this._related.script_blueprint.map((path) => {
@@ -434,7 +434,7 @@ export class HaRelatedItems extends LitElement {
         : nothing}
       ${this._related.script
         ? html`
-            <h3>${this.hass.localize("ui.components.related-items.script")}</h3>
+            <h3>${this.menuai.localize("ui.components.related-items.script")}</h3>
             <ha-list>
               ${this._relatedScripts(this._related.script).map(
                 (script) => html`
@@ -445,7 +445,7 @@ export class HaRelatedItems extends LitElement {
                     graphic="icon"
                   >
                     <ha-state-icon
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .stateObj=${script}
                       slot="graphic"
                     ></ha-state-icon>
@@ -461,7 +461,7 @@ export class HaRelatedItems extends LitElement {
   }
 
   private async _findRelated() {
-    this._related = await findRelated(this.hass, this.itemType, this.itemId);
+    this._related = await findRelated(this.menuai, this.itemType, this.itemId);
     if (this._related.config_entry) {
       this._fetchConfigEntries();
     }
@@ -472,7 +472,7 @@ export class HaRelatedItems extends LitElement {
 
   private _openMoreInfo(ev: CustomEvent) {
     const entityId = (ev.target as any).entityId;
-    fireEvent(this, "hass-more-info", { entityId });
+    fireEvent(this, "menuai-more-info", { entityId });
   }
 
   static get styles(): CSSResultGroup {

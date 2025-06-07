@@ -5,14 +5,14 @@ import memoizeOne from "memoize-one";
 import type { LocalizeKeys } from "../../../../common/translations/localize";
 import "../../../../components/ha-form/ha-form";
 import type { AssistPipeline } from "../../../../data/assist_pipeline";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { WakeWord } from "../../../../data/wake_word";
 import { fetchWakeWordInfo } from "../../../../data/wake_word";
 import { fireEvent } from "../../../../common/dom/fire_event";
 
 @customElement("assist-pipeline-detail-wakeword")
 export class AssistPipelineDetailWakeWord extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data?: Partial<AssistPipeline>;
 
@@ -56,7 +56,7 @@ export class AssistPipelineDetailWakeWord extends LitElement {
 
   private _computeLabel = (schema): string =>
     schema.name
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.panel.config.voice_assistants.assistants.pipeline.detail.form.${schema.name}` as LocalizeKeys
         )
       : "";
@@ -84,17 +84,17 @@ export class AssistPipelineDetailWakeWord extends LitElement {
         <div class="content">
           <div class="intro">
             <h3>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.wakeword.title`
               )}
             </h3>
             <p>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.wakeword.description`
               )}
             </p>
             <ha-alert alert-type="info">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.voice_assistants.assistants.pipeline.detail.steps.wakeword.note`
               )}
             </ha-alert>
@@ -102,7 +102,7 @@ export class AssistPipelineDetailWakeWord extends LitElement {
           <ha-form
             .schema=${this._schema(this._wakeWords)}
             .data=${this.data}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .computeLabel=${this._computeLabel}
           ></ha-form>
         </div>
@@ -116,7 +116,7 @@ export class AssistPipelineDetailWakeWord extends LitElement {
       return;
     }
     const wakeWordEntity = this.data.wake_word_entity;
-    const wakewordInfo = await fetchWakeWordInfo(this.hass, wakeWordEntity);
+    const wakewordInfo = await fetchWakeWordInfo(this.menuai, wakeWordEntity);
     if (this.data.wake_word_entity !== wakeWordEntity) {
       // wake word entity changed while we were fetching
       return;

@@ -10,12 +10,12 @@ import type {
 } from "../../../components/entity/ha-entity-picker";
 import "../../../components/ha-icon-button";
 import "../../../components/ha-sortable";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntityConfig } from "../entity-rows/types";
 
 @customElement("hui-entity-editor")
 export class HuiEntityEditor extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public entities?: EntityConfig[];
 
@@ -42,9 +42,9 @@ export class HuiEntityEditor extends LitElement {
     return html`
       <h3>
         ${this.label ||
-        this.hass!.localize("ui.panel.lovelace.editor.card.generic.entities") +
+        this.menuai!.localize("ui.panel.lovelace.editor.card.generic.entities") +
           " (" +
-          this.hass!.localize("ui.panel.lovelace.editor.card.config.required") +
+          this.menuai!.localize("ui.panel.lovelace.editor.card.config.required") +
           ")"}
       </h3>
       <ha-sortable handle-selector=".handle" @item-moved=${this._entityMoved}>
@@ -58,7 +58,7 @@ export class HuiEntityEditor extends LitElement {
                   <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
                 </div>
                 <ha-entity-picker
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .value=${entityConf.entity}
                   .index=${index}
                   .entityFilter=${this.entityFilter}
@@ -72,7 +72,7 @@ export class HuiEntityEditor extends LitElement {
       </ha-sortable>
       <ha-entity-picker
         class="add-entity"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityFilter=${this.entityFilter}
         @value-changed=${this._addEntity}
       ></ha-entity-picker>

@@ -10,7 +10,7 @@ import "../../../components/ha-select";
 import type { HaSelect } from "../../../components/ha-select";
 import "../../../components/ha-svg-icon";
 import { showConfirmationDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type {
   ConditionalElementConfig,
   IconElementConfig,
@@ -24,7 +24,7 @@ import type {
 import { getElementStubConfig } from "./get-element-stub-config";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "elements-changed": {
       elements: any[];
     };
@@ -43,20 +43,20 @@ const elementTypes: string[] = [
 
 @customElement("hui-picture-elements-card-row-editor")
 export class HuiPictureElementsCardRowEditor extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public elements?: LovelaceElementConfig[];
 
   @query("ha-select") private _select!: HaSelect;
 
   protected render() {
-    if (!this.elements || !this.hass) {
+    if (!this.elements || !this.menuai) {
       return nothing;
     }
 
     return html`
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.lovelace.editor.card.picture-elements.elements"
         )}
       </h3>
@@ -69,7 +69,7 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
                     <div class="element-row">
                       <div>
                         <span>
-                          ${this.hass?.localize(
+                          ${this.menuai?.localize(
                             `ui.panel.lovelace.editor.card.picture-elements.element_types.${element.type}`
                           ) || element.type}
                         </span>
@@ -81,21 +81,21 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
                   `
                 : nothing}
               <ha-icon-button
-                .label=${this.hass!.localize("ui.common.delete")}
+                .label=${this.menuai!.localize("ui.common.delete")}
                 .path=${mdiClose}
                 class="remove-icon"
                 .index=${index}
                 @click=${this._removeRow}
               ></ha-icon-button>
               <ha-icon-button
-                .label=${this.hass!.localize("ui.common.edit")}
+                .label=${this.menuai!.localize("ui.common.edit")}
                 .path=${mdiPencil}
                 class="edit-icon"
                 .index=${index}
                 @click=${this._editRow}
               ></ha-icon-button>
               <ha-icon-button
-                .label=${this.hass!.localize("ui.common.duplicate")}
+                .label=${this.menuai!.localize("ui.common.duplicate")}
                 .path=${mdiContentDuplicate}
                 class="duplicate-icon"
                 .index=${index}
@@ -107,7 +107,7 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
         <ha-select
           fixedMenuPosition
           naturalMenuWidth
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.lovelace.editor.card.picture-elements.new_element"
           )}
           .value=${""}
@@ -117,7 +117,7 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
           ${elementTypes.map(
             (element) => html`
               <ha-list-item .value=${element}
-                >${this.hass?.localize(
+                >${this.menuai?.localize(
                   `ui.panel.lovelace.editor.card.picture-elements.element_types.${element}`
                 )}</ha-list-item
               >
@@ -163,7 +163,7 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
       case "conditional":
         return (
           element.title ??
-          `${((element as ConditionalElementConfig).elements || []).length.toString()} ${this.hass?.localize("ui.panel.lovelace.editor.card.picture-elements.elements")}`
+          `${((element as ConditionalElementConfig).elements || []).length.toString()} ${this.menuai?.localize("ui.panel.lovelace.editor.card.picture-elements.elements")}`
         );
     }
     return element.title ?? "Unknown type";
@@ -176,9 +176,9 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
     }
     const newElements = this.elements!.concat(
       await getElementStubConfig(
-        this.hass!,
+        this.menuai!,
         value,
-        Object.keys(this.hass!.entities),
+        Object.keys(this.menuai!.entities),
         []
       )
     );
@@ -193,16 +193,16 @@ export class HuiPictureElementsCardRowEditor extends LitElement {
       return;
     }
     showConfirmationDialog(this, {
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.lovelace.editor.card.picture-elements.confirm_delete_element",
         {
           type:
-            this.hass!.localize(
+            this.menuai!.localize(
               `ui.panel.lovelace.editor.card.picture-elements.element_types.${element.type}`
             ) || element.type,
         }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
       destructive: true,
       confirm: () => {
         const newElements = this.elements!.concat();

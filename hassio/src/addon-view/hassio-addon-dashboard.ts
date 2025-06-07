@@ -11,13 +11,13 @@ import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../src/common/dom/fire_event";
 import { navigate } from "../../../src/common/navigate";
 import { extractSearchParam } from "../../../src/common/url/search-params";
-import type { HassioAddonDetails } from "../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../src/data/menuaiio/addon";
 import {
   fetchAddonInfo,
-  fetchHassioAddonInfo,
-  fetchHassioAddonsInfo,
-} from "../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
+  fetchmenuaiioAddonInfo,
+  fetchmenuaiioAddonsInfo,
+} from "../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
 import type { StoreAddonDetails } from "../../../src/data/supervisor/store";
 import {
   addStoreRepository,
@@ -25,29 +25,29 @@ import {
 } from "../../../src/data/supervisor/store";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import { showConfirmationDialog } from "../../../src/dialogs/generic/show-dialog-box";
-import "../../../src/layouts/hass-error-screen";
-import "../../../src/layouts/hass-loading-screen";
-import "../../../src/layouts/hass-tabs-subpage";
-import type { PageNavigation } from "../../../src/layouts/hass-tabs-subpage";
+import "../../../src/layouts/menuai-error-screen";
+import "../../../src/layouts/menuai-loading-screen";
+import "../../../src/layouts/menuai-tabs-subpage";
+import type { PageNavigation } from "../../../src/layouts/menuai-tabs-subpage";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../src/types";
-import { hassioStyle } from "../resources/hassio-style";
-import "./config/hassio-addon-audio";
-import "./config/hassio-addon-config";
-import "./config/hassio-addon-network";
-import "./hassio-addon-router";
-import "./info/hassio-addon-info";
+import type { menuai, Route } from "../../../src/types";
+import { menuaiioStyle } from "../resources/menuaiio-style";
+import "./config/menuaiio-addon-audio";
+import "./config/menuaiio-addon-config";
+import "./config/menuaiio-addon-network";
+import "./menuaiio-addon-router";
+import "./info/menuaiio-addon-info";
 
-@customElement("hassio-addon-dashboard")
-class HassioAddonDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-dashboard")
+class menuaiioAddonDashboard extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
   @property({ attribute: false }) public route!: Route;
 
   @property({ attribute: false }) public addon?:
-    | HassioAddonDetails
+    | menuaiioAddonDetails
     | StoreAddonDetails;
 
   @property({ type: Boolean }) public narrow = false;
@@ -60,8 +60,8 @@ class HassioAddonDashboard extends LitElement {
   private _backPath = new URLSearchParams(window.parent.location.search).get(
     "store"
   )
-    ? "/hassio/store"
-    : "/hassio/dashboard";
+    ? "/menuaiio/store"
+    : "/menuaiio/dashboard";
 
   private _computeTail = memoizeOne((route: Route) => {
     const dividerPos = route.path.indexOf("/", 1);
@@ -78,19 +78,19 @@ class HassioAddonDashboard extends LitElement {
 
   protected render(): TemplateResult {
     if (this._error) {
-      return html`<hass-error-screen
+      return html`<menuai-error-screen
         .error=${this._error}
-      ></hass-error-screen>`;
+      ></menuai-error-screen>`;
     }
 
     if (!this.addon || !this.supervisor?.addon) {
-      return html`<hass-loading-screen></hass-loading-screen>`;
+      return html`<menuai-loading-screen></menuai-loading-screen>`;
     }
 
     const addonTabs: PageNavigation[] = [
       {
         translationKey: "addon.panel.info",
-        path: `/hassio/addon/${this.addon.slug}/info`,
+        path: `/menuaiio/addon/${this.addon.slug}/info`,
         iconPath: mdiInformationVariant,
       },
     ];
@@ -98,7 +98,7 @@ class HassioAddonDashboard extends LitElement {
     if (this.addon.documentation) {
       addonTabs.push({
         translationKey: "addon.panel.documentation",
-        path: `/hassio/addon/${this.addon.slug}/documentation`,
+        path: `/menuaiio/addon/${this.addon.slug}/documentation`,
         iconPath: mdiFileDocument,
       });
     }
@@ -107,12 +107,12 @@ class HassioAddonDashboard extends LitElement {
       addonTabs.push(
         {
           translationKey: "addon.panel.configuration",
-          path: `/hassio/addon/${this.addon.slug}/config`,
+          path: `/menuaiio/addon/${this.addon.slug}/config`,
           iconPath: mdiCogs,
         },
         {
           translationKey: "addon.panel.log",
-          path: `/hassio/addon/${this.addon.slug}/logs`,
+          path: `/menuaiio/addon/${this.addon.slug}/logs`,
           iconPath: mdiMathLog,
         }
       );
@@ -121,8 +121,8 @@ class HassioAddonDashboard extends LitElement {
     const route = this._computeTail(this.route);
 
     return html`
-      <hass-tabs-subpage
-        .hass=${this.hass}
+      <menuai-tabs-subpage
+        .menuai=${this.menuai}
         .localizeFunc=${this.supervisor.localize}
         .narrow=${this.narrow}
         .route=${route}
@@ -131,16 +131,16 @@ class HassioAddonDashboard extends LitElement {
         supervisor
       >
         <span slot="header">${this.addon.name}</span>
-        <hassio-addon-router
+        <menuaiio-addon-router
           .route=${route}
           .narrow=${this.narrow}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .supervisor=${this.supervisor}
           .addon=${this.addon}
           .controlEnabled=${this._controlEnabled}
           @system-managed-take-control=${this._enableControl}
-        ></hassio-addon-router>
-      </hass-tabs-subpage>
+        ></menuaiio-addon-router>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -151,7 +151,7 @@ class HassioAddonDashboard extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         :host {
           color: var(--primary-text-color);
@@ -162,18 +162,18 @@ class HassioAddonDashboard extends LitElement {
           flex-direction: column;
           align-items: center;
         }
-        hassio-addon-info,
-        hassio-addon-network,
-        hassio-addon-audio,
-        hassio-addon-config {
+        menuaiio-addon-info,
+        menuaiio-addon-network,
+        menuaiio-addon-audio,
+        menuaiio-addon-config {
           margin-bottom: 24px;
           width: 600px;
         }
         @media only screen and (max-width: 600px) {
-          hassio-addon-info,
-          hassio-addon-network,
-          hassio-addon-audio,
-          hassio-addon-config {
+          menuaiio-addon-info,
+          menuaiio-addon-network,
+          menuaiio-addon-audio,
+          menuaiio-addon-config {
             max-width: 100%;
             min-width: 100%;
           }
@@ -187,7 +187,7 @@ class HassioAddonDashboard extends LitElement {
       const requestedAddon = extractSearchParam("addon");
       const requestedAddonRepository = extractSearchParam("repository_url");
       if (requestedAddonRepository) {
-        const storeInfo = await fetchSupervisorStore(this.hass);
+        const storeInfo = await fetchSupervisorStore(this.menuai);
         if (
           !storeInfo.repositories.find(
             (repo) => repo.source === requestedAddonRepository
@@ -211,7 +211,7 @@ class HassioAddonDashboard extends LitElement {
           }
 
           try {
-            await addStoreRepository(this.hass, requestedAddonRepository);
+            await addStoreRepository(this.menuai, requestedAddonRepository);
           } catch (err: any) {
             this._error = extractApiErrorMessage(err);
           }
@@ -219,18 +219,18 @@ class HassioAddonDashboard extends LitElement {
       }
 
       if (requestedAddon) {
-        const store = await fetchSupervisorStore(this.hass);
+        const store = await fetchSupervisorStore(this.menuai);
         const validAddon = store.addons.some(
           (addon) => addon.slug === requestedAddon
         );
         if (!validAddon) {
           this._error = this.supervisor.localize("my.error_addon_not_found");
         } else {
-          navigate(`/hassio/addon/${requestedAddon}`, { replace: true });
+          navigate(`/menuaiio/addon/${requestedAddon}`, { replace: true });
         }
       }
     }
-    this.addEventListener("hass-api-called", (ev) => this._apiCalled(ev));
+    this.addEventListener("menuai-api-called", (ev) => this._apiCalled(ev));
   }
 
   private async _apiCalled(ev): Promise<void> {
@@ -257,7 +257,7 @@ class HassioAddonDashboard extends LitElement {
         navigate(this._backPath);
       }
     } else if (path === "install") {
-      this.addon = await fetchHassioAddonInfo(this.hass, this.addon!.slug);
+      this.addon = await fetchmenuaiioAddonInfo(this.menuai, this.addon!.slug);
     } else {
       await this._routeDataChanged();
     }
@@ -276,10 +276,10 @@ class HassioAddonDashboard extends LitElement {
     }
     try {
       if (!this.supervisor.addon) {
-        const addonsInfo = await fetchHassioAddonsInfo(this.hass);
+        const addonsInfo = await fetchmenuaiioAddonsInfo(this.menuai);
         fireEvent(this, "supervisor-update", { addon: addonsInfo });
       }
-      this.addon = await fetchAddonInfo(this.hass, this.supervisor, addon);
+      this.addon = await fetchAddonInfo(this.menuai, this.supervisor, addon);
     } catch (err: any) {
       this._error = `Error fetching addon info: ${extractApiErrorMessage(err)}`;
       this.addon = undefined;
@@ -289,6 +289,6 @@ class HassioAddonDashboard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-dashboard": HassioAddonDashboard;
+    "menuaiio-addon-dashboard": menuaiioAddonDashboard;
   }
 }

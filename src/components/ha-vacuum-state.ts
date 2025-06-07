@@ -2,9 +2,9 @@ import "@material/mwc-button";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 const STATES_INTERCEPTABLE: Record<
   string,
@@ -46,9 +46,9 @@ const STATES_INTERCEPTABLE: Record<
 
 @customElement("ha-vacuum-state")
 export class HaVacuumState extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   protected render(): TemplateResult {
     const interceptable = this._computeInterceptable(
@@ -71,10 +71,10 @@ export class HaVacuumState extends LitElement {
 
   private _computeLabel(state: string, interceptable: boolean) {
     return interceptable
-      ? this.hass.localize(
+      ? this.menuai.localize(
           `ui.card.vacuum.actions.${STATES_INTERCEPTABLE[state].action}`
         )
-      : this.hass.localize(
+      : this.menuai.localize(
           `component.vacuum.entity_component._.state.${state}`
         );
   }
@@ -83,7 +83,7 @@ export class HaVacuumState extends LitElement {
     ev.stopPropagation();
     const stateObj = this.stateObj;
     const service = STATES_INTERCEPTABLE[stateObj.state].service;
-    await this.hass.callService("vacuum", service, {
+    await this.menuai.callService("vacuum", service, {
       entity_id: stateObj.entity_id,
     });
   }

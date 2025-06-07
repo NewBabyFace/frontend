@@ -7,7 +7,7 @@ import { styleMap } from "lit/directives/style-map";
 import { fireEvent } from "../../../../common/dom/fire_event";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "slider-moved": { value?: number };
   }
 }

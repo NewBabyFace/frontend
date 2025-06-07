@@ -10,7 +10,7 @@ import type {
   NetworkConfig,
 } from "../data/network";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-checkbox";
 import type { HaCheckbox } from "./ha-checkbox";
 import "./ha-settings-row";
@@ -35,13 +35,13 @@ const format_auto_detected_interfaces = (
   );
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "network-config-changed": { configured_adapters: string[] };
   }
 }
 @customElement("ha-network")
 export class HaNetwork extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public networkConfig?: NetworkConfig;
 
@@ -64,12 +64,12 @@ export class HaNetwork extends LitElement {
           </ha-checkbox>
         </span>
         <span slot="heading" data-for="auto_configure">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.network.adapter.auto_configure"
           )}
         </span>
         <span slot="description" data-for="auto_configure">
-          ${this.hass.localize("ui.panel.config.network.adapter.detected")}:
+          ${this.menuai.localize("ui.panel.config.network.adapter.detected")}:
           ${format_auto_detected_interfaces(this.networkConfig.adapters)}
         </span>
       </ha-settings-row>
@@ -88,13 +88,13 @@ export class HaNetwork extends LitElement {
                   </ha-checkbox>
                 </span>
                 <span slot="heading">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.network.adapter.adapter"
                   )}:
                   ${adapter.name}
                   ${adapter.default
                     ? html`<ha-svg-icon .path=${mdiStar}></ha-svg-icon>
-                        (${this.hass.localize("ui.common.default")})`
+                        (${this.menuai.localize("ui.common.default")})`
                     : nothing}
                 </span>
                 <span slot="description">

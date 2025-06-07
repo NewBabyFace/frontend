@@ -45,7 +45,7 @@ import {
   showPromptDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./ha-automation-condition-editor";
 
 export interface ConditionElement extends LitElement {
@@ -81,7 +81,7 @@ export const handleChangeEvent = (
 
 @customElement("ha-automation-condition-row")
 export default class HaAutomationConditionRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: Condition;
 
@@ -121,7 +121,7 @@ export default class HaAutomationConditionRow extends LitElement {
         ${this.condition.enabled === false
           ? html`
               <div class="disabled-bar">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.automation.editor.actions.disabled"
                 )}
               </div>
@@ -136,7 +136,7 @@ export default class HaAutomationConditionRow extends LitElement {
           ></ha-svg-icon>
           <h3 slot="header">
             ${capitalizeFirstLetter(
-              describeCondition(this.condition, this.hass, this._entityReg)
+              describeCondition(this.condition, this.menuai, this._entityReg)
             )}
           </h3>
 
@@ -151,13 +151,13 @@ export default class HaAutomationConditionRow extends LitElement {
           >
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             >
             </ha-icon-button>
 
             <ha-md-menu-item .clickAction=${this._testCondition}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.conditions.test"
               )}
               <ha-svg-icon slot="start" .path=${mdiFlask}></ha-svg-icon>
@@ -166,7 +166,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._renameCondition}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.conditions.rename"
               )}
               <ha-svg-icon slot="start" .path=${mdiRenameBox}></ha-svg-icon>
@@ -178,7 +178,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._duplicateCondition}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.duplicate"
               )}
               <ha-svg-icon
@@ -191,7 +191,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._copyCondition}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.copy"
               )}
               <ha-svg-icon slot="start" .path=${mdiContentCopy}></ha-svg-icon>
@@ -201,7 +201,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._cutCondition}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.triggers.cut"
               )}
               <ha-svg-icon slot="start" .path=${mdiContentCut}></ha-svg-icon>
@@ -211,7 +211,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._moveUp}
               .disabled=${this.disabled || this.first}
             >
-              ${this.hass.localize("ui.panel.config.automation.editor.move_up")}
+              ${this.menuai.localize("ui.panel.config.automation.editor.move_up")}
               <ha-svg-icon slot="start" .path=${mdiArrowUp}></ha-svg-icon
             ></ha-md-menu-item>
 
@@ -219,7 +219,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._moveDown}
               .disabled=${this.disabled || this.last}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.move_down"
               )}
               <ha-svg-icon slot="start" .path=${mdiArrowDown}></ha-svg-icon
@@ -229,7 +229,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._toggleYamlMode}
               .disabled=${this._warnings}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.automation.editor.edit_${!this._yamlMode ? "yaml" : "ui"}`
               )}
               <ha-svg-icon slot="start" .path=${mdiPlaylistEdit}></ha-svg-icon>
@@ -242,10 +242,10 @@ export default class HaAutomationConditionRow extends LitElement {
               .disabled=${this.disabled}
             >
               ${this.condition.enabled === false
-                ? this.hass.localize(
+                ? this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.enable"
                   )
-                : this.hass.localize(
+                : this.menuai.localize(
                     "ui.panel.config.automation.editor.actions.disable"
                   )}
               <ha-svg-icon
@@ -260,7 +260,7 @@ export default class HaAutomationConditionRow extends LitElement {
               .clickAction=${this._onDelete}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.delete"
               )}
               <ha-svg-icon
@@ -280,7 +280,7 @@ export default class HaAutomationConditionRow extends LitElement {
             ${this._warnings
               ? html`<ha-alert
                   alert-type="warning"
-                  .title=${this.hass.localize(
+                  .title=${this.menuai.localize(
                     "ui.errors.config.editor_not_supported"
                   )}
                 >
@@ -292,7 +292,7 @@ export default class HaAutomationConditionRow extends LitElement {
                         )}
                       </ul>`
                     : ""}
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.errors.config.edit_in_yaml_supported"
                   )}
                 </ha-alert>`
@@ -302,7 +302,7 @@ export default class HaAutomationConditionRow extends LitElement {
               @value-changed=${this._handleChangeEvent}
               .yamlMode=${this._yamlMode}
               .disabled=${this.disabled}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .condition=${this.condition}
             ></ha-automation-condition-editor>
           </div>
@@ -315,10 +315,10 @@ export default class HaAutomationConditionRow extends LitElement {
           })}"
         >
           ${this._testingResult
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.automation.editor.conditions.testing_pass"
               )
-            : this.hass.localize(
+            : this.menuai.localize(
                 "ui.panel.config.automation.editor.conditions.testing_error"
               )}
         </div>
@@ -329,7 +329,7 @@ export default class HaAutomationConditionRow extends LitElement {
   private _handleUiModeNotAvailable(ev: CustomEvent) {
     // Prevent possible parent action-row from switching to yamlMode
     ev.stopPropagation();
-    this._warnings = handleStructError(this.hass, ev.detail).warnings;
+    this._warnings = handleStructError(this.menuai, ev.detail).warnings;
     if (!this._yamlMode) {
       this._yamlMode = true;
     }
@@ -356,14 +356,14 @@ export default class HaAutomationConditionRow extends LitElement {
 
   private _onDelete = () => {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.conditions.delete_confirm_title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.automation.editor.conditions.delete_confirm_text"
       ),
-      dismissText: this.hass.localize("ui.common.cancel"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: () => {
         fireEvent(this, "value-changed", { value: null });
@@ -390,7 +390,7 @@ export default class HaAutomationConditionRow extends LitElement {
     const condition = this.condition;
 
     try {
-      const validateResult = await validateConfig(this.hass, {
+      const validateResult = await validateConfig(this.menuai, {
         conditions: condition,
       });
 
@@ -402,7 +402,7 @@ export default class HaAutomationConditionRow extends LitElement {
 
       if (!validateResult.conditions.valid) {
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.automation.editor.conditions.invalid_condition"
           ),
           text: validateResult.conditions.error,
@@ -413,7 +413,7 @@ export default class HaAutomationConditionRow extends LitElement {
 
       let result: { result: boolean };
       try {
-        result = await testCondition(this.hass, condition);
+        result = await testCondition(this.menuai, condition);
       } catch (err: any) {
         if (this.condition !== condition) {
           this._testing = false;
@@ -421,7 +421,7 @@ export default class HaAutomationConditionRow extends LitElement {
         }
 
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.automation.editor.conditions.test_failed"
           ),
           text: err.message,
@@ -440,18 +440,18 @@ export default class HaAutomationConditionRow extends LitElement {
 
   private _renameCondition = async (): Promise<void> => {
     const alias = await showPromptDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.automation.editor.conditions.change_alias"
       ),
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.config.automation.editor.conditions.alias"
       ),
       inputType: "string",
       placeholder: capitalizeFirstLetter(
-        describeCondition(this.condition, this.hass, this._entityReg, true)
+        describeCondition(this.condition, this.menuai, this._entityReg, true)
       ),
       defaultValue: this.condition.alias,
-      confirmText: this.hass.localize("ui.common.submit"),
+      confirmText: this.menuai.localize("ui.common.submit"),
     });
     if (alias !== null) {
       const value = { ...this.condition };

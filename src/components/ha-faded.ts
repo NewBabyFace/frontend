@@ -78,7 +78,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-faded": HaFaded;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "content-resize": undefined;
   }
 }

@@ -21,8 +21,8 @@ if (!window.cardTools) {
 
   cardTools.litHtml = html;
 
-  cardTools.hass = () => {
-    return document.querySelector("home-assistant").hass;
+  cardTools.menuai = () => {
+    return document.querySelector("home-assistant").menuai;
   };
 
   cardTools.fireEvent = (ev, detail) => {
@@ -158,7 +158,7 @@ if (!window.cardTools) {
   })();
 
   cardTools.moreInfo = (entity) => {
-    cardTools.fireEvent("hass-more-info", { entityId: entity });
+    cardTools.fireEvent("menuai-more-info", { entityId: entity });
   };
 
   cardTools.longpress = (element) => {
@@ -178,7 +178,7 @@ if (!window.cardTools) {
       try {
         str = str.replace(/^\[\[\s+|\s+\]\]$/g, "");
         const parts = str.split(".");
-        let v = cardTools.hass().states[`${parts[0]}.${parts[1]}`];
+        let v = cardTools.menuai().states[`${parts[0]}.${parts[1]}`];
         parts.shift();
         parts.shift();
         parts.forEach((item) => (v = v[item]));

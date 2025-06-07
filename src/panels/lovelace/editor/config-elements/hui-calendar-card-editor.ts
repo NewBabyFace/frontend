@@ -16,7 +16,7 @@ import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/entity/ha-entities-picker";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { CalendarCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import { baseLovelaceCardConfig } from "../structs/base-card-struct";
@@ -38,7 +38,7 @@ export class HuiCalendarCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: CalendarCardConfig;
 
@@ -76,31 +76,31 @@ export class HuiCalendarCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
     const data = { initial_view: "dayGridMonth", ...this._config };
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.lovelace.editor.card.calendar.calendar_entities"
         ) +
         " (" +
-        this.hass!.localize("ui.panel.lovelace.editor.card.config.required") +
+        this.menuai!.localize("ui.panel.lovelace.editor.card.config.required") +
         ")"}
       </h3>
       <ha-entities-picker
-        .hass=${this.hass!}
+        .menuai=${this.menuai!}
         .value=${this._config.entities}
         .includeDomains=${["calendar"]}
         @value-changed=${this._entitiesChanged}
@@ -123,18 +123,18 @@ export class HuiCalendarCardEditor
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ) => {
     if (schema.name === "title") {
-      return this.hass!.localize("ui.panel.lovelace.editor.card.generic.title");
+      return this.menuai!.localize("ui.panel.lovelace.editor.card.generic.title");
     }
 
     if (schema.name === "theme") {
-      return `${this.hass!.localize(
+      return `${this.menuai!.localize(
         "ui.panel.lovelace.editor.card.generic.theme"
-      )} (${this.hass!.localize(
+      )} (${this.menuai!.localize(
         "ui.panel.lovelace.editor.card.config.optional"
       )})`;
     }
 
-    return this.hass!.localize(
+    return this.menuai!.localize(
       `ui.panel.lovelace.editor.card.calendar.${schema.name}`
     );
   };

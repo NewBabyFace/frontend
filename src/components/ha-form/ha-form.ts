@@ -3,7 +3,7 @@ import { css, html, LitElement, ReactiveElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { dynamicElement } from "../../common/dom/dynamic-element-directive";
 import { fireEvent } from "../../common/dom/fire_event";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-alert";
 import "../ha-selector/ha-selector";
 import type { HaFormDataContainer, HaFormElement, HaFormSchema } from "./types";
@@ -32,7 +32,7 @@ const getWarning = (obj, item) => (obj && item.name ? obj[item.name] : null);
 
 @customElement("ha-form")
 export class HaForm extends LitElement implements HaFormElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -136,7 +136,7 @@ export class HaForm extends LitElement implements HaFormElement {
             ${"selector" in item
               ? html`<ha-selector
                   .schema=${item}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .narrow=${this.narrow}
                   .name=${item.name}
                   .selector=${item.selector}
@@ -155,8 +155,8 @@ export class HaForm extends LitElement implements HaFormElement {
                   label: this._computeLabel(item, this.data),
                   helper: this._computeHelper(item),
                   disabled: this.disabled || item.disabled || false,
-                  hass: this.hass,
-                  localize: this.hass?.localize,
+                  menuai: this.menuai,
+                  localize: this.menuai?.localize,
                   computeLabel: this.computeLabel,
                   computeHelper: this.computeHelper,
                   localizeValue: this.localizeValue,

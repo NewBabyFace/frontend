@@ -9,13 +9,13 @@ import "../../../src/components/ha-ansi-to-html";
 import "../../../src/components/ha-card";
 import "../../../src/components/ha-select";
 import "../../../src/components/ha-list-item";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
-import { fetchHassioLogs } from "../../../src/data/hassio/supervisor";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
+import { fetchmenuaiioLogs } from "../../../src/data/menuaiio/supervisor";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
-import "../../../src/layouts/hass-loading-screen";
+import "../../../src/layouts/menuai-loading-screen";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant } from "../../../src/types";
-import { hassioStyle } from "../resources/hassio-style";
+import type { menuai } from "../../../src/types";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
 interface LogProvider {
   key: string;
@@ -49,9 +49,9 @@ const logProviders: LogProvider[] = [
   },
 ];
 
-@customElement("hassio-supervisor-log")
-class HassioSupervisorLog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-supervisor-log")
+class menuaiioSupervisorLog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -72,7 +72,7 @@ class HassioSupervisorLog extends LitElement {
         ${this._error
           ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
           : ""}
-        ${this.hass.userData?.showAdvanced
+        ${this.menuai.userData?.showAdvanced
           ? html`
               <ha-select
                 .label=${this.supervisor.localize("system.log.log_provider")}
@@ -94,7 +94,7 @@ class HassioSupervisorLog extends LitElement {
           ${this._content
             ? html`<ha-ansi-to-html .content=${this._content}>
               </ha-ansi-to-html>`
-            : html`<hass-loading-screen no-toolbar></hass-loading-screen>`}
+            : html`<menuai-loading-screen no-toolbar></menuai-loading-screen>`}
         </div>
         <div class="card-actions">
           <ha-progress-button @click=${this._refresh}>
@@ -122,8 +122,8 @@ class HassioSupervisorLog extends LitElement {
     this._error = undefined;
 
     try {
-      const response = await fetchHassioLogs(
-        this.hass,
+      const response = await fetchmenuaiioLogs(
+        this.menuai,
         this._selectedLogProvider
       );
 
@@ -139,7 +139,7 @@ class HassioSupervisorLog extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           margin-top: 8px;
@@ -159,6 +159,6 @@ class HassioSupervisorLog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-supervisor-log": HassioSupervisorLog;
+    "menuaiio-supervisor-log": menuaiioSupervisorLog;
   }
 }

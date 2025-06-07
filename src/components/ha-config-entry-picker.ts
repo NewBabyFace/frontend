@@ -6,7 +6,7 @@ import { caseInsensitiveStringCompare } from "../common/string/compare";
 import type { ConfigEntry } from "../data/config_entries";
 import { getConfigEntries } from "../data/config_entries";
 import { domainToName } from "../data/integration";
-import type { ValueChangedEvent, HomeAssistant } from "../types";
+import type { ValueChangedEvent, menuai } from "../types";
 import { brandsUrl } from "../util/brands-url";
 import "./ha-combo-box";
 import type { HaComboBox } from "./ha-combo-box";
@@ -18,7 +18,7 @@ export interface ConfigEntryExtended extends ConfigEntry {
 
 @customElement("ha-config-entry-picker")
 class HaConfigEntryPicker extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property() public integration?: string;
 
@@ -54,7 +54,7 @@ class HaConfigEntryPicker extends LitElement {
     <ha-combo-box-item type="button">
       <span slot="headline">
         ${item.title ||
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.integrations.config_entry.unnamed_entry"
         )}
       </span>
@@ -65,7 +65,7 @@ class HaConfigEntryPicker extends LitElement {
         src=${brandsUrl({
           domain: item.domain,
           type: "icon",
-          darkOptimized: this.hass.themes?.darkMode,
+          darkOptimized: this.menuai.themes?.darkMode,
         })}
         crossorigin="anonymous"
         referrerpolicy="no-referrer"
@@ -81,9 +81,9 @@ class HaConfigEntryPicker extends LitElement {
     }
     return html`
       <ha-combo-box
-        .hass=${this.hass}
-        .label=${this.label === undefined && this.hass
-          ? this.hass.localize("ui.components.config-entry-picker.config_entry")
+        .menuai=${this.menuai}
+        .label=${this.label === undefined && this.menuai
+          ? this.menuai.localize("ui.components.config-entry-picker.config_entry")
           : this.label}
         .value=${this._value}
         .required=${this.required}
@@ -108,7 +108,7 @@ class HaConfigEntryPicker extends LitElement {
   }
 
   private async _getConfigEntries() {
-    getConfigEntries(this.hass, {
+    getConfigEntries(this.menuai, {
       type: ["device", "hub", "service"],
       domain: this.integration,
     }).then((configEntries) => {
@@ -117,7 +117,7 @@ class HaConfigEntryPicker extends LitElement {
           (entry: ConfigEntry): ConfigEntryExtended => ({
             ...entry,
             localized_domain_name: domainToName(
-              this.hass.localize,
+              this.menuai.localize,
               entry.domain
             ),
           })
@@ -126,7 +126,7 @@ class HaConfigEntryPicker extends LitElement {
           caseInsensitiveStringCompare(
             conf1.localized_domain_name + conf1.title,
             conf2.localized_domain_name + conf2.title,
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         );
     });

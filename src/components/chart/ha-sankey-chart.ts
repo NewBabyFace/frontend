@@ -6,7 +6,7 @@ import type { SankeySeriesOption } from "echarts/types/dist/echarts";
 import { SankeyChart } from "echarts/charts";
 import memoizeOne from "memoize-one";
 import { ResizeController } from "@lit-labs/observers/resize-controller";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { ECOption } from "../../resources/echarts";
 import { measureTextWidth } from "../../util/text";
 import "./ha-chart-base";
@@ -44,7 +44,7 @@ const LABEL_DISTANCE = 5;
 
 @customElement("ha-sankey-chart")
 export class HaSankeyChart extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data: SankeyChartData = {
     nodes: [],

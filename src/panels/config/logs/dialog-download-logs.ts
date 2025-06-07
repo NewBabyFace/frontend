@@ -11,9 +11,9 @@ import type { HaMdDialog } from "../../../components/ha-md-dialog";
 import "../../../components/ha-md-select";
 import "../../../components/ha-md-select-option";
 import { getSignedPath } from "../../../data/auth";
-import { getHassioLogDownloadLinesUrl } from "../../../data/hassio/supervisor";
+import { getmenuaiioLogDownloadLinesUrl } from "../../../data/menuaiio/supervisor";
 import { haStyle, haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { fileDownload } from "../../../util/file_download";
 import type { DownloadLogsDialogParams } from "./show-dialog-download-logs";
 
@@ -21,7 +21,7 @@ const DEFAULT_LINE_COUNT = 500;
 
 @customElement("dialog-download-logs")
 class DownloadLogsDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _dialogParams?: DownloadLogsDialogParams;
 
@@ -61,26 +61,26 @@ class DownloadLogsDialog extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" id="dialog-light-color-favorite-title">
-            ${this.hass.localize("ui.panel.config.logs.download_logs")}
+            ${this.menuai.localize("ui.panel.config.logs.download_logs")}
           </span>
           <span slot="subtitle">
             ${this._dialogParams.header}${this._dialogParams.boot === 0
               ? ""
-              : ` · ${this._dialogParams.boot === -1 ? this.hass.localize("ui.panel.config.logs.previous") : this.hass.localize("ui.panel.config.logs.startups_ago", { boot: this._dialogParams.boot * -1 })}`}
+              : ` · ${this._dialogParams.boot === -1 ? this.menuai.localize("ui.panel.config.logs.previous") : this.menuai.localize("ui.panel.config.logs.startups_ago", { boot: this._dialogParams.boot * -1 })}`}
           </span>
         </ha-dialog-header>
         <div slot="content" class="content">
           <div>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.logs.select_number_of_lines"
             )}:
           </div>
           <ha-md-select
-            .label=${this.hass.localize("ui.panel.config.logs.lines")}
+            .label=${this.menuai.localize("ui.panel.config.logs.lines")}
             @change=${this._setNumberOfLogs}
             .value=${String(this._lineCount)}
           >
@@ -95,10 +95,10 @@ class DownloadLogsDialog extends LitElement {
         </div>
         <div slot="actions">
           <ha-button @click=${this.closeDialog}>
-            ${this.hass.localize("ui.common.cancel")}
+            ${this.menuai.localize("ui.common.cancel")}
           </ha-button>
           <ha-button @click=${this._downloadLogs}>
-            ${this.hass.localize("ui.common.download")}
+            ${this.menuai.localize("ui.common.download")}
           </ha-button>
         </div>
       </ha-md-dialog>
@@ -110,7 +110,7 @@ class DownloadLogsDialog extends LitElement {
     const boot = this._dialogParams!.boot;
 
     const timeString = new Date().toISOString().replace(/:/g, "-");
-    const downloadUrl = getHassioLogDownloadLinesUrl(
+    const downloadUrl = getmenuaiioLogDownloadLinesUrl(
       provider,
       this._lineCount,
       boot
@@ -119,7 +119,7 @@ class DownloadLogsDialog extends LitElement {
       provider !== "core"
         ? `${provider}_${timeString}.log`
         : `home-assistant_${timeString}.log`;
-    const signedUrl = await getSignedPath(this.hass, downloadUrl);
+    const signedUrl = await getSignedPath(this.menuai, downloadUrl);
     fileDownload(signedUrl.path, logFileName);
     this.closeDialog();
   }

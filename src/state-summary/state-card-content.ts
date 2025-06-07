@@ -1,7 +1,7 @@
 import { LitElement, nothing } from "lit";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { dynamicElement } from "../common/dom/dynamic-element-directive";
 import { stateCardType } from "../common/entity/state_card_type";
 import "./state-card-alert";
@@ -32,26 +32,26 @@ import "./state-card-water_heater";
 
 @customElement("state-card-content")
 class StateCardContent extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
   protected render() {
     let stateCard: string;
-    if (!this.stateObj || !this.hass) return nothing;
+    if (!this.stateObj || !this.menuai) return nothing;
     if (
       this.stateObj.attributes &&
       "custom_ui_state_card" in this.stateObj.attributes
     ) {
       stateCard = this.stateObj.attributes.custom_ui_state_card;
     } else {
-      stateCard = "state-card-" + stateCardType(this.hass, this.stateObj);
+      stateCard = "state-card-" + stateCardType(this.menuai, this.stateObj);
     }
 
     return dynamicElement(stateCard, {
-      hass: this.hass,
+      menuai: this.menuai,
       stateObj: this.stateObj,
       inDialog: this.inDialog,
     });

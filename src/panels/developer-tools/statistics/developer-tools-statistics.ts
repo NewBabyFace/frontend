@@ -11,12 +11,12 @@ import {
   mdiUnfoldMoreHorizontal,
 } from "@mdi/js";
 
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { type CSSResultGroup, LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { fireEvent } from "../../../common/dom/fire_event";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import type { LocalizeFunc } from "../../../common/translations/localize";
@@ -47,7 +47,7 @@ import {
   validateStatistics,
 } from "../../../data/recorder";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showConfirmationDialog } from "../../lovelace/custom-card-helpers";
 import { fixStatisticsIssue } from "./fix-statistics";
 import { showStatisticsAdjustSumDialog } from "./show-dialog-statistics-adjust-sum";
@@ -72,7 +72,7 @@ const FIXABLE_ISSUES: StatisticsValidationResult["type"][] = [
 
 type StatisticData = StatisticsMetaData & {
   issues?: StatisticsValidationResult[];
-  state?: HassEntity;
+  state?: menuaiEntity;
   selectable?: boolean;
 };
 
@@ -83,7 +83,7 @@ type DisplayedStatisticData = StatisticData & {
 
 @customElement("developer-tools-statistics")
 class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -198,7 +198,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
       },
       fix: {
         title: "",
-        label: this.hass.localize(
+        label: this.menuai.localize(
           "ui.panel.developer-tools.tabs.statistics.fix_issue.fix"
         ),
         template: (statistic) =>
@@ -243,8 +243,8 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
   );
 
   protected render() {
-    const localize = this.hass.localize;
-    const columns = this._columns(this.hass.localize);
+    const localize = this.menuai.localize;
+    const columns = this._columns(this.menuai.localize);
 
     const selectModeBtn = !this._selectMode
       ? html`<ha-assist-chip
@@ -260,7 +260,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
       : nothing;
 
     const searchBar = html`<search-input-outlined
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .filter=${this.filter}
       @value-changed=${this._handleSearchChange}
     >
@@ -410,11 +410,11 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
             `
           : ""}
         <ha-data-table
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${this.narrow}
           .columns=${columns}
-          .data=${this._displayData(this._data, this.hass.localize)}
-          .noDataText=${this.hass.localize(
+          .data=${this._displayData(this._data, this.menuai.localize)}
+          .noDataText=${this.menuai.localize(
             "ui.panel.developer-tools.tabs.statistics.data_table.no_statistics"
           )}
           .filter=${this.filter}
@@ -533,7 +533,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
@@ -560,7 +560,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
 
   private _openSettings() {
     showDataTableSettingsDialog(this, {
-      columns: this._columns(this.hass.localize),
+      columns: this._columns(this.menuai.localize),
       hiddenColumns: this.hiddenColumns,
       columnOrder: this.columnOrder,
       onUpdate: (
@@ -570,7 +570,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
         this.columnOrder = columnOrder;
         this.hiddenColumns = hiddenColumns;
       },
-      localizeFunc: this.hass.localize,
+      localizeFunc: this.menuai.localize,
     });
   }
 
@@ -617,18 +617,18 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
 
   private _rowClicked(ev) {
     const id = ev.detail.id;
-    if (id in this.hass.states) {
-      fireEvent(this, "hass-more-info", { entityId: id });
+    if (id in this.menuai.states) {
+      fireEvent(this, "menuai-more-info", { entityId: id });
     }
   }
 
   private async _validateStatistics() {
     const [statisticIds, issues] = await Promise.all([
-      getStatisticIds(this.hass),
-      validateStatistics(this.hass),
+      getStatisticIds(this.menuai),
+      validateStatistics(this.menuai),
     ]);
 
-    updateStatisticsIssues(this.hass);
+    updateStatisticsIssues(this.menuai);
 
     const statsIds = new Set();
 
@@ -636,7 +636,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
       statsIds.add(statistic.statistic_id);
       return {
         ...statistic,
-        state: this.hass.states[statistic.statistic_id],
+        state: this.menuai.states[statistic.statistic_id],
         issues: issues[statistic.statistic_id],
       };
     });
@@ -647,7 +647,7 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
           statistic_id: statisticId,
           statistics_unit_of_measurement: "",
           source: "",
-          state: this.hass.states[statisticId],
+          state: this.menuai.states[statisticId],
           issues: issues[statisticId],
           mean_type: StatisticMeanType.NONE,
           has_sum: false,
@@ -665,17 +665,17 @@ class HaPanelDevStatistics extends KeyboardShortcutMixin(LitElement) {
     const deletableIds = this._selected;
 
     await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.developer-tools.tabs.statistics.multi_delete.title"
       ),
-      text: html`${this.hass.localize(
+      text: html`${this.menuai.localize(
         "ui.panel.developer-tools.tabs.statistics.multi_delete.info_text",
         { statistic_count: deletableIds.length }
       )}`,
-      confirmText: this.hass.localize("ui.common.delete"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
       confirm: async () => {
-        await clearStatistics(this.hass, deletableIds);
+        await clearStatistics(this.menuai, deletableIds);
         this._validateStatistics();
         this._dataTable.clearSelection();
       },

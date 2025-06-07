@@ -1,4 +1,4 @@
-import type { HassEvent } from "home-assistant-js-websocket";
+import type { menuaiEvent } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -9,11 +9,11 @@ import "../../../components/ha-textfield";
 import "../../../components/ha-yaml-editor";
 import "../../../components/ha-button";
 import "../../../components/ha-alert";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("event-subscribe-card")
 class EventSubscribeCard extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _eventType = "";
 
@@ -21,7 +21,7 @@ class EventSubscribeCard extends LitElement {
 
   @state() private _events: {
     id: number;
-    event: HassEvent;
+    event: menuaiEvent;
   }[] = [];
 
   @state() private _error?: string;
@@ -39,17 +39,17 @@ class EventSubscribeCard extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-card
-        header=${this.hass!.localize(
+        header=${this.menuai!.localize(
           "ui.panel.developer-tools.tabs.events.listen_to_events"
         )}
       >
         <div class="card-content">
           <ha-textfield
             .label=${this._subscribed
-              ? this.hass!.localize(
+              ? this.menuai!.localize(
                   "ui.panel.developer-tools.tabs.events.listening_to"
                 )
-              : this.hass!.localize(
+              : this.menuai!.localize(
                   "ui.panel.developer-tools.tabs.events.subscribe_to"
                 )}
             .disabled=${this._subscribed !== undefined}
@@ -67,10 +67,10 @@ class EventSubscribeCard extends LitElement {
             @click=${this._startOrStopListening}
           >
             ${this._subscribed
-              ? this.hass!.localize(
+              ? this.menuai!.localize(
                   "ui.panel.developer-tools.tabs.events.stop_listening"
                 )
-              : this.hass!.localize(
+              : this.menuai!.localize(
                   "ui.panel.developer-tools.tabs.events.start_listening"
                 )}
           </ha-button>
@@ -79,7 +79,7 @@ class EventSubscribeCard extends LitElement {
             .disabled=${this._eventType === ""}
             @click=${this._clearEvents}
           >
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.developer-tools.tabs.events.clear_events"
             )}
           </ha-button>
@@ -93,14 +93,14 @@ class EventSubscribeCard extends LitElement {
               (event) => event.id,
               (event) => html`
                 <div class="event">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.developer-tools.tabs.events.event_fired",
                     { name: event.id }
                   )}
                   ${formatTime(
                     new Date(event.event.time_fired),
-                    this.hass!.locale,
-                    this.hass!.config
+                    this.menuai!.locale,
+                    this.menuai!.config
                   )}:
                   <ha-yaml-editor
                     .defaultValue=${event.event}
@@ -128,7 +128,7 @@ class EventSubscribeCard extends LitElement {
     } else {
       try {
         this._subscribed =
-          await this.hass!.connection.subscribeEvents<HassEvent>((event) => {
+          await this.menuai!.connection.subscribeEvents<menuaiEvent>((event) => {
             const tail =
               this._events.length > 30
                 ? this._events.slice(0, 29)
@@ -142,7 +142,7 @@ class EventSubscribeCard extends LitElement {
             ];
           }, this._eventType);
       } catch (error: any) {
-        this._error = this.hass!.localize(
+        this._error = this.menuai!.localize(
           "ui.panel.developer-tools.tabs.events.subscribe_failed",
           { error: error.message || "Unknown error" }
         );

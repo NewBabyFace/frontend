@@ -1,7 +1,7 @@
 import { css, html, nothing, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 import "../ha-code-editor";
 import "../ha-input-helper-text";
@@ -11,7 +11,7 @@ const WARNING_STRINGS = ["template:", "sensor:", "state:", "trigger: template"];
 
 @customElement("ha-selector-template")
 export class HaTemplateSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: string;
 
@@ -29,7 +29,7 @@ export class HaTemplateSelector extends LitElement {
     return html`
       ${this.warn
         ? html`<ha-alert alert-type="warning"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.components.selectors.template.yaml_warning",
               { string: this.warn }
             )}
@@ -38,10 +38,10 @@ export class HaTemplateSelector extends LitElement {
               target="_blank"
               rel="noopener noreferrer"
               href=${documentationUrl(
-                this.hass,
+                this.menuai,
                 "/docs/configuration/templating/"
               )}
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.components.selectors.template.learn_more"
               )}</a
             ></ha-alert
@@ -52,7 +52,7 @@ export class HaTemplateSelector extends LitElement {
         : nothing}
       <ha-code-editor
         mode="jinja2"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .readOnly=${this.disabled}
         autofocus

@@ -24,8 +24,8 @@ import {
   updateSupervisorUpdateConfig,
   type SupervisorUpdateConfig,
 } from "../../../data/supervisor/update";
-import "../../../layouts/hass-subpage";
-import type { HomeAssistant } from "../../../types";
+import "../../../layouts/menuai-subpage";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import "./components/config/ha-backup-config-addon";
 import "./components/config/ha-backup-config-agents";
@@ -39,7 +39,7 @@ import { brandsUrl } from "../../../util/brands-url";
 
 @customElement("ha-config-backup-settings")
 class HaConfigBackupSettings extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatus;
 
@@ -61,7 +61,7 @@ class HaConfigBackupSettings extends LitElement {
       this._config = this.config;
     }
 
-    if (!this.hasUpdated && isComponentLoaded(this.hass, "hassio")) {
+    if (!this.hasUpdated && isComponentLoaded(this.menuai, "menuaiio")) {
       this._getSupervisorUpdateConfig();
     }
   }
@@ -75,11 +75,11 @@ class HaConfigBackupSettings extends LitElement {
 
   private async _getSupervisorUpdateConfig() {
     try {
-      this._supervisorUpdateConfig = await getSupervisorUpdateConfig(this.hass);
+      this._supervisorUpdateConfig = await getSupervisorUpdateConfig(this.menuai);
     } catch (err: any) {
       // eslint-disable-next-line no-console
       console.error(err);
-      this._supervisorUpdateConfigError = this.hass.localize(
+      this._supervisorUpdateConfigError = this.menuai.localize(
         "ui.panel.config.backup.settings.addon_update_backup.error_load",
         {
           error: err?.message || err,
@@ -92,7 +92,7 @@ class HaConfigBackupSettings extends LitElement {
     const hash = window.location.hash.substring(1);
     if (
       hash === "locations" &&
-      isComponentLoaded(this.hass, "hassio") &&
+      isComponentLoaded(this.menuai, "menuaiio") &&
       !this._config?.create_backup.include_all_addons &&
       this._config?.create_backup.include_addons?.length
     ) {
@@ -129,21 +129,21 @@ class HaConfigBackupSettings extends LitElement {
       return nothing;
     }
 
-    const supervisor = isComponentLoaded(this.hass, "hassio");
+    const supervisor = isComponentLoaded(this.menuai, "menuaiio");
 
     return html`
-      <hass-subpage
+      <menuai-subpage
         back-path="/config/backup"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-        .header=${this.hass.localize("ui.panel.config.backup.settings.header")}
+        .header=${this.menuai.localize("ui.panel.config.backup.settings.header")}
       >
         ${supervisor
           ? html`
               <ha-button-menu slot="toolbar-icon">
                 <ha-icon-button
                   slot="trigger"
-                  .label=${this.hass.localize("ui.common.menu")}
+                  .label=${this.menuai.localize("ui.common.menu")}
                   .path=${mdiDotsVertical}
                 ></ha-icon-button>
                 <ha-list-item
@@ -154,7 +154,7 @@ class HaConfigBackupSettings extends LitElement {
                     slot="graphic"
                     .path=${mdiHarddisk}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.settings.menu.change_default_location"
                   )}
                 </ha-list-item>
@@ -165,13 +165,13 @@ class HaConfigBackupSettings extends LitElement {
         <div class="content">
           <ha-card id="schedule">
             <div class="card-header">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.settings.schedule.title"
               )}
             </div>
             <div class="card-content">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.settings.schedule.description"
                 )}
               </p>
@@ -181,7 +181,7 @@ class HaConfigBackupSettings extends LitElement {
                   </ha-alert>`
                 : nothing}
               <ha-backup-config-schedule
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._config}
                 .supervisor=${supervisor}
                 .supervisorUpdateConfig=${this._supervisorUpdateConfig}
@@ -192,13 +192,13 @@ class HaConfigBackupSettings extends LitElement {
           </ha-card>
           <ha-card id="data">
             <div class="card-header">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.settings.data.title"
               )}
             </div>
             <div class="card-content">
               <ha-backup-config-data
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._dataConfig}
                 @value-changed=${this._dataConfigChanged}
                 force-home-assistant
@@ -209,18 +209,18 @@ class HaConfigBackupSettings extends LitElement {
 
           <ha-card class="agents" id="locations">
             <div class="card-header">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.settings.locations.title"
               )}
             </div>
             <div class="card-content">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.settings.locations.description"
                 )}
               </p>
               <ha-backup-config-agents
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._config.create_backup.agent_ids}
                 .agentsConfig=${this._config.agents}
                 .cloudStatus=${this.cloudStatus}
@@ -232,11 +232,11 @@ class HaConfigBackupSettings extends LitElement {
                 ? html`
                     <ha-alert
                       alert-type="warning"
-                      .title=${this.hass.localize(
+                      .title=${this.menuai.localize(
                         "ui.panel.config.backup.settings.locations.no_location"
                       )}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.backup.settings.locations.no_location_description"
                       )}
                     </ha-alert>
@@ -252,7 +252,7 @@ class HaConfigBackupSettings extends LitElement {
                         domain: "cloud",
                         type: "icon",
                         useFallback: true,
-                        darkOptimized: this.hass.themes?.darkMode,
+                        darkOptimized: this.menuai.themes?.darkMode,
                       })}
                       crossorigin="anonymous"
                       referrerpolicy="no-referrer"
@@ -260,30 +260,30 @@ class HaConfigBackupSettings extends LitElement {
                       slot="start"
                     />
                     <span
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.backup.settings.locations.ha_cloud_backup",
                         {
-                          home_assistant_cloud: "Home Assistant Cloud",
+                          home_assistant_cloud: "MenuAI Cloud",
                         }
                       )}</span
                     >
                   </div>
                   <div class="card-content">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.backup.settings.locations.ha_cloud_description"
                     )}
                   </div>
                   <div class="card-actions">
                     <a href="/config/cloud/login">
                       <ha-button>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.voice_assistants.assistants.cloud.sign_in"
                         )}
                       </ha-button>
                     </a>
                     <a href="/config/cloud/register">
                       <ha-button unelevated>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.voice_assistants.assistants.cloud.try_one_month"
                         )}
                       </ha-button>
@@ -293,13 +293,13 @@ class HaConfigBackupSettings extends LitElement {
               : nothing}
             <div class="card-actions">
               <a
-                href=${documentationUrl(this.hass, "/integrations/#backup")}
+                href=${documentationUrl(this.menuai, "/integrations/#backup")}
                 target="_blank"
                 rel="noreferrer"
               >
                 <ha-button>
                   <ha-svg-icon slot="icon" .path=${mdiOpenInNew}></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.settings.locations.more_locations"
                   )}
                 </ha-button>
@@ -307,7 +307,7 @@ class HaConfigBackupSettings extends LitElement {
               ${supervisor
                 ? html`<a href="/config/storage">
                     <ha-button>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.backup.settings.locations.manage_network_storage"
                       )}
                     </ha-button>
@@ -318,18 +318,18 @@ class HaConfigBackupSettings extends LitElement {
           ${supervisor
             ? html`<ha-card>
                 <div class="card-header">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.settings.addon_update_backup.title"
                   )}
                 </div>
                 <div class="card-content">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.backup.settings.addon_update_backup.description"
                     )}
                   </p>
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.backup.settings.addon_update_backup.local_only"
                     )}
                   </p>
@@ -339,7 +339,7 @@ class HaConfigBackupSettings extends LitElement {
                       </ha-alert>`
                     : nothing}
                   <ha-backup-config-addon
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .supervisorUpdateConfig=${this._supervisorUpdateConfig}
                     @update-config-changed=${this
                       ._supervisorUpdateConfigChanged}
@@ -349,25 +349,25 @@ class HaConfigBackupSettings extends LitElement {
             : nothing}
           <ha-card>
             <div class="card-header">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.settings.encryption_key.title"
               )}
             </div>
             <div class="card-content">
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.settings.encryption_key.description"
                 )}
               </p>
               <ha-backup-config-encryption-key
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${this._config.create_backup.password}
                 @value-changed=${this._encryptionKeyChanged}
               ></ha-backup-config-encryption-key>
             </div>
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -407,7 +407,7 @@ class HaConfigBackupSettings extends LitElement {
     } = this._config!.create_backup;
 
     return {
-      include_homeassistant: true,
+      include_menuai: true,
       include_database,
       include_folders: include_folders || undefined,
       include_all_addons,
@@ -465,13 +465,13 @@ class HaConfigBackupSettings extends LitElement {
     }
     try {
       await updateSupervisorUpdateConfig(
-        this.hass,
+        this.menuai,
         this._supervisorUpdateConfig
       );
     } catch (err: any) {
       // eslint-disable-next-line no-console
       console.error(err);
-      this._supervisorUpdateConfigError = this.hass.localize(
+      this._supervisorUpdateConfigError = this.menuai.localize(
         "ui.panel.config.backup.settings.addon_update_backup.error_save",
         {
           error: err?.message || err?.toString(),
@@ -483,7 +483,7 @@ class HaConfigBackupSettings extends LitElement {
   private _debounceSave = debounce(() => this._save(), 500);
 
   private async _save() {
-    await updateBackupConfig(this.hass, {
+    await updateBackupConfig(this.menuai, {
       create_backup: {
         agent_ids: this._config!.create_backup.agent_ids,
         include_folders: this._config!.create_backup.include_folders ?? [],

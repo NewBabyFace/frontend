@@ -9,11 +9,11 @@ import "../../components/ha-list-item";
 import "../../components/ha-select";
 import "../../components/ha-settings-row";
 import { TimeZone } from "../../data/translation";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-pick-time-zone-row")
 class TimeZoneRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -22,17 +22,17 @@ class TimeZoneRow extends LitElement {
     return html`
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.time_zone.header")}
+          ${this.menuai.localize("ui.panel.profile.time_zone.header")}
         </span>
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.time_zone.description")}
+          ${this.menuai.localize("ui.panel.profile.time_zone.description")}
         </span>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.profile.time_zone.dropdown_label"
           )}
-          .disabled=${this.hass.locale === undefined}
-          .value=${this.hass.locale.time_zone}
+          .disabled=${this.menuai.locale === undefined}
+          .value=${this.menuai.locale.time_zone}
           @selected=${this._handleFormatSelection}
           naturalMenuWidth
         >
@@ -40,19 +40,19 @@ class TimeZoneRow extends LitElement {
             const formattedTime = formatDateTimeNumeric(
               date,
               {
-                ...this.hass.locale,
+                ...this.menuai.locale,
                 time_zone: format,
               },
-              this.hass.config
+              this.menuai.config
             );
             return html`<ha-list-item .value=${format} twoline>
               <span
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   `ui.panel.profile.time_zone.options.${format}`,
                   {
                     timezone: resolveTimeZone(
                       format,
-                      this.hass.config.time_zone
+                      this.menuai.config.time_zone
                     ).replace("_", " "),
                   }
                 )}</span
@@ -66,7 +66,7 @@ class TimeZoneRow extends LitElement {
   }
 
   private async _handleFormatSelection(ev) {
-    fireEvent(this, "hass-time-zone-select", ev.target.value);
+    fireEvent(this, "menuai-time-zone-select", ev.target.value);
   }
 }
 

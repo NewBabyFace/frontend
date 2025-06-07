@@ -15,9 +15,9 @@ import type { DeviceConsumptionEnergyPreference } from "../../../../data/energy"
 import { energyStatisticHelpUrl } from "../../../../data/energy";
 import { getStatisticLabel } from "../../../../data/recorder";
 import { getSensorDeviceClassConvertibleUnits } from "../../../../data/sensor";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { EnergySettingsDeviceDialogParams } from "./show-dialogs-energy";
 
 const energyUnitClasses = ["energy"];
@@ -25,9 +25,9 @@ const energyUnitClasses = ["energy"];
 @customElement("dialog-energy-device-settings")
 export class DialogEnergyDeviceSettings
   extends LitElement
-  implements HassDialog<EnergySettingsDeviceDialogParams>
+  implements menuaiDialog<EnergySettingsDeviceDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: EnergySettingsDeviceDialogParams;
 
@@ -48,7 +48,7 @@ export class DialogEnergyDeviceSettings
     this._device = this._params.device;
     this._computePossibleParents();
     this._energy_units = (
-      await getSensorDeviceClassConvertibleUnits(this.hass, "energy")
+      await getSensorDeviceClassConvertibleUnits(this.menuai, "energy")
     ).units;
     this._excludeList = this._params.device_consumptions
       .map((entry) => entry.stat_consumption)
@@ -102,25 +102,25 @@ export class DialogEnergyDeviceSettings
             .path=${mdiDevices}
             style="--mdc-icon-size: 32px;"
           ></ha-svg-icon>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.dialog.header"
           )}`}
         @closed=${this.closeDialog}
       >
         ${this._error ? html`<p class="error">${this._error}</p>` : ""}
         <div>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.dialog.selected_stat_intro",
             { unit: pickableUnit }
           )}
         </div>
 
         <ha-statistic-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .helpMissingEntityUrl=${energyStatisticHelpUrl}
           .includeUnitClass=${energyUnitClasses}
           .value=${this._device?.stat_consumption}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.dialog.device_consumption_energy"
           )}
           .excludeStatistics=${this._excludeList}
@@ -129,7 +129,7 @@ export class DialogEnergyDeviceSettings
         ></ha-statistic-picker>
 
         <ha-textfield
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.dialog.display_name"
           )}
           type="text"
@@ -137,7 +137,7 @@ export class DialogEnergyDeviceSettings
           .value=${this._device?.name || ""}
           .placeholder=${this._device
             ? getStatisticLabel(
-                this.hass,
+                this.menuai,
                 this._device.stat_consumption,
                 this._params?.statsMetadata?.[this._device.stat_consumption]
               )
@@ -147,11 +147,11 @@ export class DialogEnergyDeviceSettings
         </ha-textfield>
 
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.dialog.included_in_device"
           )}
           .value=${this._device?.included_in_stat || ""}
-          .helper=${this.hass.localize(
+          .helper=${this.menuai.localize(
             "ui.panel.config.energy.device_consumption.dialog.included_in_device_helper"
           )}
           .disabled=${!this._device}
@@ -164,7 +164,7 @@ export class DialogEnergyDeviceSettings
           ${!this._possibleParents.length
             ? html`
                 <ha-list-item disabled value="-"
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.energy.device_consumption.dialog.no_upstream_devices"
                   )}</ha-list-item
                 >
@@ -174,7 +174,7 @@ export class DialogEnergyDeviceSettings
                   <ha-list-item .value=${stat.stat_consumption}
                     >${stat.name ||
                     getStatisticLabel(
-                      this.hass,
+                      this.menuai,
                       stat.stat_consumption,
                       this._params?.statsMetadata?.[stat.stat_consumption]
                     )}</ha-list-item
@@ -184,14 +184,14 @@ export class DialogEnergyDeviceSettings
         </ha-select>
 
         <mwc-button @click=${this.closeDialog} slot="secondaryAction">
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           @click=${this._save}
           .disabled=${!this._device}
           slot="primaryAction"
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </mwc-button>
       </ha-dialog>
     `;

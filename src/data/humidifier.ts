@@ -1,14 +1,14 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 
 export type HumidifierState = "off" | "on";
 
 export type HumidifierAction = "off" | "idle" | "humidifying" | "drying";
 
-export type HumidifierEntity = HassEntityBase & {
-  attributes: HassEntityAttributeBase & {
+export type HumidifierEntity = menuaiEntityBase & {
+  attributes: menuaiEntityAttributeBase & {
     humidity?: number;
     current_humidity?: number;
     min_humidity?: number;

@@ -1,5 +1,5 @@
 import { strStartsWith } from "../common/string/starts-with";
-import type { Context, HomeAssistant } from "../types";
+import type { Context, menuai } from "../types";
 import type {
   BlueprintAutomationConfig,
   ManualAutomationConfig,
@@ -90,7 +90,7 @@ interface BaseTrace {
     // Script execution stops because of an unexpected exception:
     | "error"
     // The exception is in the trace itself or in the last element of the trace
-    // Script execution stopped by async_stop called on the script run because home assistant is shutting down, script mode is SCRIPT_MODE_RESTART etc:
+    // Script execution stopped by async_stop called on the script run because MenuAI is shutting down, script mode is SCRIPT_MODE_RESTART etc:
     | "cancelled";
 }
 
@@ -135,12 +135,12 @@ interface TraceTypes {
 }
 
 export const loadTrace = <T extends keyof TraceTypes>(
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: T,
   item_id: string,
   run_id: string
 ): Promise<TraceTypes[T]["extended"]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "trace/get",
     domain,
     item_id,
@@ -148,11 +148,11 @@ export const loadTrace = <T extends keyof TraceTypes>(
   });
 
 export const loadTraces = <T extends keyof TraceTypes>(
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: T,
   item_id: string
 ): Promise<TraceTypes[T]["short"][]> =>
-  hass.callWS({
+  menuai.callWS({
     type: "trace/list",
     domain,
     item_id,
@@ -164,11 +164,11 @@ export type TraceContexts = Record<
 >;
 
 export const loadTraceContexts = (
-  hass: HomeAssistant,
+  menuai: menuai,
   domain?: string,
   item_id?: string
 ): Promise<TraceContexts> =>
-  hass.callWS({
+  menuai.callWS({
     type: "trace/contexts",
     domain,
     item_id,

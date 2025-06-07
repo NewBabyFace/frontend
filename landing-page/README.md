@@ -1,7 +1,7 @@
-# Home Assistant OS Landingpage
+# MenuAI OS Landingpage
 
-On initial startup of Home Assistant, HAOS needs to download Home Assistant core before the setup can start.
-In this time the [home-assistant/landingpage](https://github.com/home-assistant/landingpage) is serving a "Preparing Home Assistant" page.
+On initial startup of MenuAI, HAOS needs to download MenuAI core before the setup can start.
+In this time the [home-assistant/landingpage](https://github.com/home-assistant/landingpage) is serving a "Preparing MenuAI" page.
 
 ## Functionality
 
@@ -29,7 +29,7 @@ It is similar to the core frontend dev.
 - clone [home-assistant/landingpage](https://github.com/home-assistant/landingpage)
 - Add frontend repo as mount to your devcontainer config
   - please do not commit this changes, you can remove it after initial dev container build, because the build will keep the options as long as you don't rebuild it.
-  - `"mounts": ["source=/path/to/hass/frontend,target=/workspaces/frontend,type=bind,consistency=cached"]`
+  - `"mounts": ["source=/path/to/menuai/frontend,target=/workspaces/frontend,type=bind,consistency=cached"]`
 - use the dev container
 - start the dev server with following optional env vars:
   - `SUPERVISOR_HOST` to have real supervisor data, you can [setup a supervisor remote API access](https://developers.home-assistant.io/docs/supervisor/development/#supervisor-api-access) and set the host of your supervisor. e.g.: `SUPERVISOR_HOST=192.168.0.20:8888`

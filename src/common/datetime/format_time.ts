@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import memoizeOne from "memoize-one";
 import type { FrontendLocaleData } from "../../data/translation";
 import { resolveTimeZone } from "./resolve-time-zone";
@@ -8,7 +8,7 @@ import { useAmPm } from "./use_am_pm";
 export const formatTime = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatTimeMem(locale, config.time_zone).format(dateObj);
 
 const formatTimeMem = memoizeOne(
@@ -25,7 +25,7 @@ const formatTimeMem = memoizeOne(
 export const formatTimeWithSeconds = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatTimeWithSecondsMem(locale, config.time_zone).format(dateObj);
 
 const formatTimeWithSecondsMem = memoizeOne(
@@ -43,7 +43,7 @@ const formatTimeWithSecondsMem = memoizeOne(
 export const formatTimeWeekday = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatTimeWeekdayMem(locale, config.time_zone).format(dateObj);
 
 const formatTimeWeekdayMem = memoizeOne(
@@ -61,7 +61,7 @@ const formatTimeWeekdayMem = memoizeOne(
 export const formatTime24h = (
   dateObj: Date,
   locale: FrontendLocaleData,
-  config: HassConfig
+  config: menuaiConfig
 ) => formatTime24hMem(locale, config.time_zone).format(dateObj);
 
 const formatTime24hMem = memoizeOne(

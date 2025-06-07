@@ -3,7 +3,7 @@ import type { Lovelace } from "../types";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "show-save-config": SaveDialogParams;
   }
 }

@@ -1,13 +1,13 @@
 import { computeDomain } from "../../../../common/entity/compute_domain";
-import type { HomeAssistant, ServiceCallResponse } from "../../../../types";
+import type { menuai, ServiceCallResponse } from "../../../../types";
 
 export const turnOnOffEntity = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   turnOn = true
 ): Promise<ServiceCallResponse> => {
   const stateDomain = computeDomain(entityId);
-  const serviceDomain = stateDomain === "group" ? "homeassistant" : stateDomain;
+  const serviceDomain = stateDomain === "group" ? "menuai" : stateDomain;
 
   let service;
   switch (stateDomain) {
@@ -31,5 +31,5 @@ export const turnOnOffEntity = (
       service = turnOn ? "turn_on" : "turn_off";
   }
 
-  return hass.callService(serviceDomain, service, { entity_id: entityId });
+  return menuai.callService(serviceDomain, service, { entity_id: entityId });
 };

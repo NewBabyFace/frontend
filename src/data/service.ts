@@ -1,11 +1,11 @@
-import type { Context, HomeAssistant } from "../types";
+import type { Context, menuai } from "../types";
 import type { Action } from "./script";
 
 export const callExecuteScript = (
-  hass: HomeAssistant,
+  menuai: menuai,
   sequence: Action | Action[]
 ): Promise<{ context: Context; response: Record<string, any> }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "execute_script",
     sequence,
   });
@@ -15,7 +15,7 @@ export const serviceCallWillDisconnect = (
   service: string,
   serviceData?: Record<string, any>
 ) =>
-  (domain === "homeassistant" && ["restart", "stop"].includes(service)) ||
+  (domain === "menuai" && ["restart", "stop"].includes(service)) ||
   (domain === "update" &&
     service === "install" &&
     [

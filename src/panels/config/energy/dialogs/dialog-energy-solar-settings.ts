@@ -20,9 +20,9 @@ import {
 } from "../../../../data/energy";
 import { getSensorDeviceClassConvertibleUnits } from "../../../../data/sensor";
 import { showConfigFlowDialog } from "../../../../dialogs/config-flow/show-dialog-config-flow";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { brandsUrl } from "../../../../util/brands-url";
 import type { EnergySettingsSolarDialogParams } from "./show-dialogs-energy";
 
@@ -31,9 +31,9 @@ const energyUnitClasses = ["energy"];
 @customElement("dialog-energy-solar-settings")
 export class DialogEnergySolarSettings
   extends LitElement
-  implements HassDialog<EnergySettingsSolarDialogParams>
+  implements menuaiDialog<EnergySettingsSolarDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: EnergySettingsSolarDialogParams;
 
@@ -59,7 +59,7 @@ export class DialogEnergySolarSettings
       : emptySolarEnergyPreference();
     this._forecast = this._source.config_entry_solar_forecast !== null;
     this._energy_units = (
-      await getSensorDeviceClassConvertibleUnits(this.hass, "energy")
+      await getSensorDeviceClassConvertibleUnits(this.menuai, "energy")
     ).units;
     this._excludeList = this._params.solar_sources
       .map((entry) => entry.stat_energy_from)
@@ -89,23 +89,23 @@ export class DialogEnergySolarSettings
             .path=${mdiSolarPower}
             style="--mdc-icon-size: 32px;"
           ></ha-svg-icon>
-          ${this.hass.localize("ui.panel.config.energy.solar.dialog.header")}`}
+          ${this.menuai.localize("ui.panel.config.energy.solar.dialog.header")}`}
         @closed=${this.closeDialog}
       >
         ${this._error ? html`<p class="error">${this._error}</p>` : ""}
         <div>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.solar.dialog.entity_para",
             { unit: pickableUnit }
           )}
         </div>
 
         <ha-statistic-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .helpMissingEntityUrl=${energyStatisticHelpUrl}
           .includeUnitClass=${energyUnitClasses}
           .value=${this._source.stat_energy_from}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.energy.solar.dialog.solar_production_energy"
           )}
           .excludeStatistics=${this._excludeList}
@@ -114,18 +114,18 @@ export class DialogEnergySolarSettings
         ></ha-statistic-picker>
 
         <h3>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.solar.dialog.solar_production_forecast"
           )}
         </h3>
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.energy.solar.dialog.solar_production_forecast_description"
           )}
         </p>
 
         <ha-formfield
-          label=${this.hass.localize(
+          label=${this.menuai.localize(
             "ui.panel.config.energy.solar.dialog.dont_forecast_production"
           )}
         >
@@ -137,7 +137,7 @@ export class DialogEnergySolarSettings
           ></ha-radio>
         </ha-formfield>
         <ha-formfield
-          label=${this.hass.localize(
+          label=${this.menuai.localize(
             "ui.panel.config.energy.solar.dialog.forecast_production"
           )}
         >
@@ -164,7 +164,7 @@ export class DialogEnergySolarSettings
                         src=${brandsUrl({
                           domain: entry.domain,
                           type: "icon",
-                          darkOptimized: this.hass.themes?.darkMode,
+                          darkOptimized: this.menuai.themes?.darkMode,
                         })}
                       />${entry.title}
                     </div>`}
@@ -180,7 +180,7 @@ export class DialogEnergySolarSettings
                   </ha-formfield>`
               )}
               <mwc-button @click=${this._addForecast}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.energy.solar.dialog.add_forecast"
                 )}
               </mwc-button>
@@ -188,14 +188,14 @@ export class DialogEnergySolarSettings
           : ""}
 
         <mwc-button @click=${this.closeDialog} slot="secondaryAction">
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           @click=${this._save}
           .disabled=${!this._source.stat_energy_from}
           slot="primaryAction"
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -207,11 +207,11 @@ export class DialogEnergySolarSettings
       domains.length === 0
         ? []
         : domains.length === 1
-          ? await getConfigEntries(this.hass, {
+          ? await getConfigEntries(this.menuai, {
               type: ["service"],
               domain: domains[0],
             })
-          : (await getConfigEntries(this.hass, { type: ["service"] })).filter(
+          : (await getConfigEntries(this.menuai, { type: ["service"] })).filter(
               (entry) => domains.includes(entry.domain)
             );
   }

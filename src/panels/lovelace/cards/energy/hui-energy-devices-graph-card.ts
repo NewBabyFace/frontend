@@ -20,7 +20,7 @@ import {
   isExternalStatistic,
 } from "../../../../data/recorder";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyDevicesGraphCardConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -34,7 +34,7 @@ export class HuiEnergyDevicesGraphCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyDevicesGraphCardConfig;
 
@@ -42,11 +42,11 @@ export class HuiEnergyDevicesGraphCard
 
   @state() private _data?: EnergyData;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -67,12 +67,12 @@ export class HuiEnergyDevicesGraphCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -87,7 +87,7 @@ export class HuiEnergyDevicesGraphCard
           })}"
         >
           <ha-chart-base
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._chartData}
             .options=${this._createOptions(this._chartData)}
             .height=${`${(this._chartData[0]?.data?.length || 0) * 28 + 50}px`}
@@ -104,8 +104,8 @@ export class HuiEnergyDevicesGraphCard
     )}</h4>`;
     const value = `${formatNumber(
       params.value[0] as number,
-      this.hass.locale,
-      getNumberFormatOptions(undefined, this.hass.entities[params.value[1]])
+      this.menuai.locale,
+      getNumberFormatOptions(undefined, this.menuai.entities[params.value[1]])
     )} kWh`;
     return `${title}${params.marker} ${params.seriesName}: ${value}`;
   }
@@ -161,7 +161,7 @@ export class HuiEnergyDevicesGraphCard
         (d) => d.stat_consumption === statisticId
       )?.name ||
       getStatisticLabel(
-        this.hass,
+        this.menuai,
         statisticId,
         this._data?.statsMetadata[statisticId]
       )
@@ -178,7 +178,7 @@ export class HuiEnergyDevicesGraphCard
     const datasets: BarSeriesOption[] = [
       {
         type: "bar",
-        name: this.hass.localize(
+        name: this.menuai.localize(
           "ui.panel.lovelace.cards.energy.energy_devices_graph.energy_usage"
         ),
         itemStyle: {
@@ -193,7 +193,7 @@ export class HuiEnergyDevicesGraphCard
     if (compareData) {
       datasets.push({
         type: "bar",
-        name: this.hass.localize(
+        name: this.menuai.localize(
           "ui.panel.lovelace.cards.energy.energy_devices_graph.previous_energy_usage"
         ),
         itemStyle: {
@@ -259,7 +259,7 @@ export class HuiEnergyDevicesGraphCard
       e.detail.value &&
       !isExternalStatistic(e.detail.value as string)
     ) {
-      fireEvent(this, "hass-more-info", {
+      fireEvent(this, "menuai-more-info", {
         entityId: e.detail.value as string,
       });
     }

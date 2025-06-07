@@ -15,11 +15,11 @@ import type { HaTextField } from "../../../components/ha-textfield";
 import type { BlueprintImportResult } from "../../../data/blueprint";
 import { importBlueprint, saveBlueprint } from "../../../data/blueprint";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("ha-dialog-import-blueprint")
 class DialogImportBlueprint extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public large = false;
 
@@ -56,14 +56,14 @@ class DialogImportBlueprint extends LitElement {
     if (!this._params) {
       return nothing;
     }
-    const heading = this.hass.localize("ui.panel.config.blueprint.add.header");
+    const heading = this.menuai.localize("ui.panel.config.blueprint.add.header");
     return html`
       <ha-dialog open .heading=${heading} @closed=${this.closeDialog}>
         <ha-dialog-header slot="heading">
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" @click=${this._enlarge}> ${heading} </span>
@@ -71,7 +71,7 @@ class DialogImportBlueprint extends LitElement {
         <div>
           ${this._error ? html` <div class="error">${this._error}</div> ` : ""}
           ${this._result
-            ? html`${this.hass.localize(
+            ? html`${this.menuai.localize(
                   "ui.panel.config.blueprint.add.import_header",
                   {
                     name: html`<b>${this._result.blueprint.metadata.name}</b>`,
@@ -86,7 +86,7 @@ class DialogImportBlueprint extends LitElement {
                 ${this._result.validation_errors
                   ? html`
                       <p class="error">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.blueprint.add.unsupported_blueprint"
                         )}
                       </p>
@@ -100,13 +100,13 @@ class DialogImportBlueprint extends LitElement {
                       <ha-textfield
                         id="input"
                         .value=${this._result.suggested_filename || ""}
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.blueprint.add.file_name"
                         )}
                       ></ha-textfield>
                     `}
                 <ha-expansion-panel
-                  .header=${this.hass.localize(
+                  .header=${this.menuai.localize(
                     "ui.panel.config.blueprint.add.raw_blueprint"
                   )}
                 >
@@ -121,11 +121,11 @@ class DialogImportBlueprint extends LitElement {
                   ? html`
                       <ha-alert
                         alert-type="warning"
-                        .title=${this.hass.localize(
+                        .title=${this.menuai.localize(
                           "ui.panel.config.blueprint.add.override_title"
                         )}
                       >
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.blueprint.add.override_description"
                         )}
                       </ha-alert>
@@ -133,7 +133,7 @@ class DialogImportBlueprint extends LitElement {
                   : nothing} `
             : html`
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.blueprint.add.import_introduction"
                   )}
                 </p>
@@ -142,14 +142,14 @@ class DialogImportBlueprint extends LitElement {
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.blueprint.add.community_forums"
                   )}
                   <ha-svg-icon .path=${mdiOpenInNew}></ha-svg-icon>
                 </a>
                 <ha-textfield
                   id="input"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.blueprint.add.url"
                   )}
                   .value=${this._url || ""}
@@ -162,7 +162,7 @@ class DialogImportBlueprint extends LitElement {
           @click=${this.closeDialog}
           .disabled=${this._saving}
         >
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         ${!this._result
           ? html`
@@ -174,12 +174,12 @@ class DialogImportBlueprint extends LitElement {
                 ${this._importing
                   ? html`<ha-spinner
                       size="small"
-                      .ariaLabel=${this.hass.localize(
+                      .ariaLabel=${this.menuai.localize(
                         "ui.panel.config.blueprint.add.importing"
                       )}
                     ></ha-spinner>`
                   : ""}
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.blueprint.add.import_btn"
                 )}
               </mwc-button>
@@ -193,16 +193,16 @@ class DialogImportBlueprint extends LitElement {
                 ${this._saving
                   ? html`<ha-spinner
                       size="small"
-                      .ariaLabel=${this.hass.localize(
+                      .ariaLabel=${this.menuai.localize(
                         "ui.panel.config.blueprint.add.saving"
                       )}
                     ></ha-spinner>`
                   : ""}
                 ${this._result.exists
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.panel.config.blueprint.add.save_btn_override"
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       "ui.panel.config.blueprint.add.save_btn"
                     )}
               </mwc-button>
@@ -222,12 +222,12 @@ class DialogImportBlueprint extends LitElement {
     try {
       const url = this._input?.value;
       if (!url) {
-        this._error = this.hass.localize(
+        this._error = this.menuai.localize(
           "ui.panel.config.blueprint.add.error_no_url"
         );
         return;
       }
-      this._result = await importBlueprint(this.hass, url);
+      this._result = await importBlueprint(this.menuai, url);
     } catch (err: any) {
       this._error = err.message;
     } finally {
@@ -243,7 +243,7 @@ class DialogImportBlueprint extends LitElement {
         return;
       }
       await saveBlueprint(
-        this.hass,
+        this.menuai,
         this._result!.blueprint.metadata.domain,
         filename,
         this._result!.raw_data,

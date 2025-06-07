@@ -11,12 +11,12 @@ import {
   updateIsInstalling,
   updateUsesProgress,
 } from "../../data/update";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { AssistantSetupStyles } from "./styles";
 
 @customElement("ha-voice-assistant-setup-step-update")
 export class HaVoiceAssistantSetupStepUpdate extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public updateEntityId?: string;
 
@@ -32,11 +32,11 @@ export class HaVoiceAssistantSetupStepUpdate extends LitElement {
       return;
     }
 
-    if (changedProperties.has("hass") && this.updateEntityId) {
-      const oldHass = changedProperties.get("hass") as this["hass"] | undefined;
-      if (oldHass) {
-        const oldState = oldHass.states[this.updateEntityId];
-        const newState = this.hass.states[this.updateEntityId];
+    if (changedProperties.has("menuai") && this.updateEntityId) {
+      const oldmenuai = changedProperties.get("menuai") as this["menuai"] | undefined;
+      if (oldmenuai) {
+        const oldState = oldmenuai.states[this.updateEntityId];
+        const newState = this.menuai.states[this.updateEntityId];
         if (
           (oldState?.state === UNAVAILABLE &&
             newState?.state !== UNAVAILABLE) ||
@@ -55,11 +55,11 @@ export class HaVoiceAssistantSetupStepUpdate extends LitElement {
   }
 
   protected override render() {
-    if (!this.updateEntityId || !(this.updateEntityId in this.hass.states)) {
+    if (!this.updateEntityId || !(this.updateEntityId in this.menuai.states)) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this.updateEntityId] as
+    const stateObj = this.menuai.states[this.updateEntityId] as
       | UpdateEntity
       | undefined;
 
@@ -68,20 +68,20 @@ export class HaVoiceAssistantSetupStepUpdate extends LitElement {
     return html`<div class="content">
       <img
         src="/static/images/voice-assistant/update.png"
-        alt="Casita Home Assistant loading logo"
+        alt="Casita MenuAI loading logo"
       />
       <h1>
         ${stateObj &&
         (stateObj.state === "unavailable" || updateIsInstalling(stateObj))
-          ? this.hass.localize(
+          ? this.menuai.localize(
               "ui.panel.config.voice_assistants.satellite_wizard.update.title"
             )
-          : this.hass.localize(
+          : this.menuai.localize(
               "ui.panel.config.voice_assistants.satellite_wizard.update.checking"
             )}
       </h1>
       <p class="secondary">
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.voice_assistants.satellite_wizard.update.secondary"
         )}
       </p>
@@ -107,24 +107,24 @@ export class HaVoiceAssistantSetupStepUpdate extends LitElement {
     if (!this.updateEntityId) {
       return;
     }
-    const updateEntity = this.hass.states[this.updateEntityId] as
+    const updateEntity = this.menuai.states[this.updateEntityId] as
       | UpdateEntity
       | undefined;
     if (
       updateEntity &&
-      this.hass.states[updateEntity.entity_id].state === ON &&
+      this.menuai.states[updateEntity.entity_id].state === ON &&
       updateCanInstall(updateEntity)
     ) {
       this._updated = true;
-      await this.hass.callService(
+      await this.menuai.callService(
         "update",
         "install",
         {},
         { entity_id: updateEntity.entity_id }
       );
     } else if (refreshUpdate) {
-      await this.hass.callService(
-        "homeassistant",
+      await this.menuai.callService(
+        "menuai",
         "update_entity",
         {},
         { entity_id: this.updateEntityId }

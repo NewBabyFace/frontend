@@ -3,9 +3,9 @@ import { customElement, property, state } from "lit/decorators";
 import type { TemplateResult } from "lit";
 import { dump } from "js-yaml";
 import { fireEvent } from "../../../../../common/dom/fire_event";
-import type { HassDialog } from "../../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../../dialogs/make-dialog-manager";
 import { createCloseHeading } from "../../../../../components/ha-dialog";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../../../../../components/ha-code-editor";
 
 export interface SSDPRawDataDialogParams {
@@ -14,8 +14,8 @@ export interface SSDPRawDataDialogParams {
 }
 
 @customElement("dialog-ssdp-raw-data")
-class DialogSSDPRawData extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogSSDPRawData extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: SSDPRawDataDialogParams;
 
@@ -39,8 +39,8 @@ class DialogSSDPRawData extends LitElement implements HassDialog {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          `${this.hass.localize("ui.panel.config.ssdp.raw_data_title")}: ${this._params.key}`
+          this.menuai,
+          `${this.menuai.localize("ui.panel.config.ssdp.raw_data_title")}: ${this._params.key}`
         )}
       >
         <ha-code-editor

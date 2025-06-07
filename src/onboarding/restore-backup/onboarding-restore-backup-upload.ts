@@ -4,11 +4,11 @@ import { customElement, property, state } from "lit/decorators";
 import "../../components/ha-file-upload";
 import "../../components/ha-alert";
 import "../../components/ha-icon-button-arrow-prev";
-import { fireEvent, type HASSDomEvent } from "../../common/dom/fire_event";
+import { fireEvent, type menuaiDomEvent } from "../../common/dom/fire_event";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
 import {
   CORE_LOCAL_AGENT,
-  HASSIO_LOCAL_AGENT,
+  menuaiIO_LOCAL_AGENT,
   SUPPORTED_UPLOAD_FORMAT,
 } from "../../data/backup";
 import type { LocalizeFunc } from "../../common/translations/localize";
@@ -18,7 +18,7 @@ import { navigate } from "../../common/navigate";
 import { removeSearchParam } from "../../common/url/search-params";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "backup-uploaded": { backupId: string };
   }
 }
@@ -72,7 +72,7 @@ class OnboardingRestoreBackupUpload extends LitElement {
     `;
   }
 
-  private async _filePicked(ev: HASSDomEvent<{ files: File[] }>) {
+  private async _filePicked(ev: menuaiDomEvent<{ files: File[] }>) {
     this._error = undefined;
     const file = ev.detail.files[0];
 
@@ -90,7 +90,7 @@ class OnboardingRestoreBackupUpload extends LitElement {
     }
 
     const agentIds = this.supervisor
-      ? [HASSIO_LOCAL_AGENT]
+      ? [menuaiIO_LOCAL_AGENT]
       : [CORE_LOCAL_AGENT];
 
     this._uploading = true;

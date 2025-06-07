@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators";
 import { any, array, assert, literal, object, optional } from "superstruct";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-form/ha-form";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type {
   AndCondition,
   Condition,
@@ -18,7 +18,7 @@ const andConditionStruct = object({
 
 @customElement("ha-card-condition-and")
 export class HaCardConditionNumericAnd extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: AndCondition;
 
@@ -36,7 +36,7 @@ export class HaCardConditionNumericAnd extends LitElement {
     return html`
       <ha-card-conditions-editor
         nested
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .conditions=${this.condition.conditions}
         @value-changed=${this._valueChanged}
       >

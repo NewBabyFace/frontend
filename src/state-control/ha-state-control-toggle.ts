@@ -1,5 +1,5 @@
 import { mdiFlash, mdiFlashOff } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -12,13 +12,13 @@ import "../components/ha-control-button";
 import "../components/ha-control-switch";
 import { UNAVAILABLE, UNKNOWN } from "../data/entity";
 import { forwardHaptic } from "../data/haptics";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-state-control-toggle")
 export class HaStateControlToggle extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: false }) public iconPathOn?: string;
 
@@ -43,7 +43,7 @@ export class HaStateControlToggle extends LitElement {
   }
 
   private async _callService(turnOn): Promise<void> {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
     forwardHaptic("light");
@@ -52,14 +52,14 @@ export class HaStateControlToggle extends LitElement {
     let service;
 
     if (stateDomain === "group") {
-      serviceDomain = "homeassistant";
+      serviceDomain = "menuai";
       service = turnOn ? "turn_on" : "turn_off";
     } else {
       serviceDomain = stateDomain;
       service = turnOn ? "turn_on" : "turn_off";
     }
 
-    await this.hass.callService(serviceDomain, service, {
+    await this.menuai.callService(serviceDomain, service, {
       entity_id: this.stateObj.entity_id,
     });
   }
@@ -78,7 +78,7 @@ export class HaStateControlToggle extends LitElement {
       return html`
         <div class="buttons">
           <ha-control-button
-            .label=${this.hass.localize("ui.card.common.turn_on")}
+            .label=${this.menuai.localize("ui.card.common.turn_on")}
             @click=${this._turnOn}
             .disabled=${this.stateObj.state === UNAVAILABLE}
             class=${classMap({
@@ -91,7 +91,7 @@ export class HaStateControlToggle extends LitElement {
             <ha-svg-icon .path=${this.iconPathOn || mdiFlash}></ha-svg-icon>
           </ha-control-button>
           <ha-control-button
-            .label=${this.hass.localize("ui.card.common.turn_off")}
+            .label=${this.menuai.localize("ui.card.common.turn_off")}
             @click=${this._turnOff}
             .disabled=${this.stateObj.state === UNAVAILABLE}
             class=${classMap({
@@ -117,7 +117,7 @@ export class HaStateControlToggle extends LitElement {
         .checked=${isOn}
         .showHandle=${stateActive(this.stateObj)}
         @change=${this._valueChanged}
-        .ariaLabel=${this.hass.localize("ui.card.common.toggle")}
+        .ariaLabel=${this.menuai.localize("ui.card.common.toggle")}
         style=${styleMap({
           "--control-switch-on-color": onColor,
           "--control-switch-off-color": offColor,

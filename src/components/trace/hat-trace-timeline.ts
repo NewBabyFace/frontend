@@ -42,7 +42,7 @@ import type {
   TriggerTraceStep,
 } from "../../data/trace";
 import { getDataFromPath, isTriggerPath } from "../../data/trace";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./ha-timeline";
 import type { HaTimeline } from "./ha-timeline";
 
@@ -60,7 +60,7 @@ class RenderedTimeTracker {
   private lastReportedTime: Date;
 
   constructor(
-    private hass: HomeAssistant,
+    private menuai: menuai,
     private entries: TemplateResult[],
     trace: AutomationTraceExtended
   ) {
@@ -74,7 +74,7 @@ class RenderedTimeTracker {
   renderTime(from: Date, to: Date): void {
     this.entries.push(html`
       <ha-timeline label>
-        ${relativeTime(from, this.hass.locale, to, false)} later
+        ${relativeTime(from, this.menuai.locale, to, false)} later
       </ha-timeline>
     `);
     this.lastReportedTime = to;
@@ -195,7 +195,7 @@ class ActionRenderer {
   private keys: string[];
 
   constructor(
-    private hass: HomeAssistant,
+    private menuai: menuai,
     private entityReg: EntityRegistryEntry[],
     private labelReg: LabelRegistryEntry[],
     private floorReg: Record<string, FloorRegistryEntry>,
@@ -269,7 +269,7 @@ class ActionRenderer {
     } catch (_err: any) {
       this._renderEntry(
         path,
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.automation.trace.messages.path_error",
           {
             path: path,
@@ -314,7 +314,7 @@ class ActionRenderer {
     this._renderEntry(
       path,
       describeAction(
-        this.hass,
+        this.menuai,
         this.entityReg,
         this.labelReg,
         this.floorReg,
@@ -339,7 +339,7 @@ class ActionRenderer {
   private _handleTrigger(index: number, triggerStep: TriggerTraceStep): number {
     this._renderEntry(
       triggerStep.path,
-      this.hass.localize(
+      this.menuai.localize(
         "ui.panel.config.automation.trace.messages.triggered_by",
         {
           triggeredBy: triggerStep.changed_variables.trigger?.alias
@@ -350,8 +350,8 @@ class ActionRenderer {
           trigger: this.trace.trigger,
           time: formatDateTimeWithSeconds(
             new Date(triggerStep.timestamp),
-            this.hass.locale,
-            this.hass.config
+            this.menuai.locale,
+            this.menuai.config
           ),
         }
       ),
@@ -386,12 +386,12 @@ class ActionRenderer {
     const disabled = chooseConfig.enabled === false;
     const name =
       chooseConfig.alias ||
-      this.hass.localize("ui.panel.config.automation.trace.messages.choose");
+      this.menuai.localize("ui.panel.config.automation.trace.messages.choose");
 
     if (defaultExecuted) {
       this._renderEntry(
         choosePath,
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.automation.trace.messages.default_action_executed",
           { name: name }
         ),
@@ -409,12 +409,12 @@ class ActionRenderer {
       const choiceName = choiceConfig
         ? `${
             choiceConfig.alias ||
-            this.hass.localize(
+            this.menuai.localize(
               "ui.panel.config.automation.trace.messages.option_executed",
               { option: choiceNumeric }
             )
           }`
-        : this.hass.localize(
+        : this.menuai.localize(
             "ui.panel.config.automation.trace.messages.error",
             { error: chooseTrace.error }
           );
@@ -427,7 +427,7 @@ class ActionRenderer {
     } else {
       this._renderEntry(
         choosePath,
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.automation.trace.messages.no_action_executed",
           { name: name }
         ),
@@ -486,7 +486,7 @@ class ActionRenderer {
     const name =
       repeatConfig.alias ||
       describeAction(
-        this.hass,
+        this.menuai,
         this.entityReg,
         this.labelReg,
         this.floorReg,
@@ -521,7 +521,7 @@ class ActionRenderer {
     const disabled = ifConfig.enabled === false;
     const name =
       ifConfig.alias ||
-      this.hass.localize("ui.panel.config.automation.trace.messages.if");
+      this.menuai.localize("ui.panel.config.automation.trace.messages.if");
 
     if (ifTrace.result?.choice) {
       const choiceConfig = this._getDataFromPath(
@@ -529,11 +529,11 @@ class ActionRenderer {
       ) as any;
       const choiceName = choiceConfig
         ? choiceConfig.alias ||
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.trace.messages.action_executed",
             { action: ifTrace.result.choice }
           )
-        : this.hass.localize(
+        : this.menuai.localize(
             "ui.panel.config.automation.trace.messages.error",
             { error: ifTrace.error }
           );
@@ -541,7 +541,7 @@ class ActionRenderer {
     } else {
       this._renderEntry(
         ifPath,
-        this.hass.localize(
+        this.menuai.localize(
           "ui.panel.config.automation.trace.messages.no_action_executed",
           { name: name }
         ),
@@ -586,7 +586,7 @@ class ActionRenderer {
       sequencePath,
       sequenceConfig.alias ||
         describeAction(
-          this.hass,
+          this.menuai,
           this.entityReg,
           this.labelReg,
           this.floorReg,
@@ -619,7 +619,7 @@ class ActionRenderer {
 
     const name =
       parallelConfig.alias ||
-      this.hass.localize(
+      this.menuai.localize(
         "ui.panel.config.automation.trace.messages.execute_in_parallel"
       );
 
@@ -652,7 +652,7 @@ class ActionRenderer {
       <ha-timeline .icon=${icon} data-path=${path} .notEnabled=${disabled}>
         ${description}${disabled
           ? html`<span class="disabled">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.trace.messages.disabled"
               )}</span
             >`
@@ -668,7 +668,7 @@ class ActionRenderer {
 
 @customElement("hat-trace-timeline")
 export class HaAutomationTracer extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trace?: AutomationTraceExtended;
 
@@ -698,14 +698,14 @@ export class HaAutomationTracer extends LitElement {
 
     const entries: TemplateResult[] = [];
 
-    const timeTracker = new RenderedTimeTracker(this.hass, entries, this.trace);
+    const timeTracker = new RenderedTimeTracker(this.menuai, entries, this.trace);
     const logbookRenderer = new LogbookRenderer(
       entries,
       timeTracker,
       this.logbookEntries || []
     );
     const actionRenderer = new ActionRenderer(
-      this.hass,
+      this.menuai,
       this._entityReg,
       this._labelReg,
       this._floorReg,
@@ -729,8 +729,8 @@ export class HaAutomationTracer extends LitElement {
     const renderFinishedAt = () =>
       formatDateTimeWithSeconds(
         new Date(this.trace!.timestamp.finish!),
-        this.hass.locale,
-        this.hass.config
+        this.menuai.locale,
+        this.menuai.config
       );
     const renderRuntime = () =>
       (
@@ -747,21 +747,21 @@ export class HaAutomationTracer extends LitElement {
 
     if (this.trace.state === "running") {
       entry = {
-        description: this.hass.localize(
+        description: this.menuai.localize(
           "ui.panel.config.automation.trace.messages.still_running"
         ),
         icon: mdiProgressClock,
       };
     } else if (this.trace.state === "debugged") {
       entry = {
-        description: this.hass.localize(
+        description: this.menuai.localize(
           "ui.panel.config.automation.trace.messages.debugged"
         ),
         icon: mdiProgressWrench,
       };
     } else if (this.trace.script_execution === "finished") {
       entry = {
-        description: this.hass.localize(
+        description: this.menuai.localize(
           "ui.panel.config.automation.trace.messages.finished",
           {
             time: renderFinishedAt(),
@@ -772,7 +772,7 @@ export class HaAutomationTracer extends LitElement {
       };
     } else if (this.trace.script_execution === "aborted") {
       entry = {
-        description: this.hass.localize(
+        description: this.menuai.localize(
           "ui.panel.config.automation.trace.messages.aborted",
           {
             time: renderFinishedAt(),
@@ -783,7 +783,7 @@ export class HaAutomationTracer extends LitElement {
       };
     } else if (this.trace.script_execution === "cancelled") {
       entry = {
-        description: this.hass.localize(
+        description: this.menuai.localize(
           "ui.panel.config.automation.trace.messages.cancelled",
           {
             time: renderFinishedAt(),
@@ -823,7 +823,7 @@ export class HaAutomationTracer extends LitElement {
       }
 
       entry = {
-        description: html`${this.hass.localize(
+        description: html`${this.menuai.localize(
           `ui.panel.config.automation.trace.messages.${message}`,
           {
             reason: this.trace.script_execution,

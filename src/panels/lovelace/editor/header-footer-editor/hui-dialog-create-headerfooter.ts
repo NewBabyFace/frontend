@@ -4,9 +4,9 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { createCloseHeading } from "../../../../components/ha-dialog";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceHeaderFooterConfig } from "../../header-footer/types";
 import { headerFooterElements } from "../lovelace-headerfooters";
 import { getHeaderFooterStubConfig } from "./get-headerfooter-stub-config";
@@ -15,9 +15,9 @@ import type { CreateHeaderFooterDialogParams } from "./show-create-headerfooter-
 @customElement("hui-dialog-create-headerfooter")
 export class HuiCreateDialogHeaderFooter
   extends LitElement
-  implements HassDialog<CreateHeaderFooterDialogParams>
+  implements menuaiDialog<CreateHeaderFooterDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: CreateHeaderFooterDialogParams;
 
@@ -43,11 +43,11 @@ export class HuiCreateDialogHeaderFooter
         open
         scrimClickAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass!.localize(
+          this.menuai,
+          this.menuai!.localize(
             `ui.panel.lovelace.editor.header-footer.choose_header_footer`,
             {
-              type: this.hass!.localize(
+              type: this.menuai!.localize(
                 `ui.panel.lovelace.editor.header-footer.${this._params.type}`
               ),
             }
@@ -71,7 +71,7 @@ export class HuiCreateDialogHeaderFooter
               >
                 <ha-svg-icon .path=${headerFooter.icon}></ha-svg-icon>
                 <div .id=${"card-name-" + index} role="none presentation">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     `ui.panel.lovelace.editor.header-footer.types.${headerFooter.type}.name`
                   )}
                 </div>
@@ -81,7 +81,7 @@ export class HuiCreateDialogHeaderFooter
         </div>
         <div slot="primaryAction">
           <mwc-button @click=${this._cancel}>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </mwc-button>
         </div>
       </ha-dialog>
@@ -101,9 +101,9 @@ export class HuiCreateDialogHeaderFooter
     const type = (ev.currentTarget as any).type;
     let config: LovelaceHeaderFooterConfig = { type };
 
-    if (this.hass) {
+    if (this.menuai) {
       config = await getHeaderFooterStubConfig(
-        this.hass,
+        this.menuai,
         type,
         this._params?.entities || [],
         []

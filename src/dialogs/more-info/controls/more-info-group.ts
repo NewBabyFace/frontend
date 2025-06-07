@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { property, state } from "lit/decorators";
@@ -6,7 +6,7 @@ import { dynamicElement } from "../../../common/dom/dynamic-element-directive";
 import type { GroupEntity } from "../../../data/group";
 import { computeGroupDomain } from "../../../data/group";
 import "../../../state-summary/state-card-content";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 import {
   domainMoreInfoType,
@@ -14,25 +14,25 @@ import {
 } from "../state_more_info_control";
 
 class MoreInfoGroup extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: GroupEntity;
 
-  @state() private _groupDomainStateObj?: HassEntity;
+  @state() private _groupDomainStateObj?: menuaiEntity;
 
   @state() private _moreInfoType?: string;
 
   protected updated(changedProperties: PropertyValues) {
     if (
-      !this.hass ||
+      !this.menuai ||
       !this.stateObj ||
-      (!changedProperties.has("hass") && !changedProperties.has("stateObj"))
+      (!changedProperties.has("menuai") && !changedProperties.has("stateObj"))
     ) {
       return;
     }
 
     const states = this.stateObj.attributes.entity_id
-      .map((entity_id) => this.hass.states[entity_id])
+      .map((entity_id) => this.menuai.states[entity_id])
       .filter((entityState) => entityState);
 
     if (!states.length) {
@@ -70,24 +70,24 @@ class MoreInfoGroup extends LitElement {
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
     return html`${this._moreInfoType
       ? dynamicElement(this._moreInfoType, {
-          hass: this.hass,
+          menuai: this.menuai,
           stateObj: this._groupDomainStateObj,
         })
       : ""}
     ${this.stateObj.attributes.entity_id.map((entity_id) => {
-      const entityState = this.hass!.states[entity_id];
+      const entityState = this.menuai!.states[entity_id];
       if (!entityState) {
         return "";
       }
       return html`
         <state-card-content
           .stateObj=${entityState}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
         ></state-card-content>
       `;
     })}`;

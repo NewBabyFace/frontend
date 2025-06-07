@@ -7,22 +7,22 @@ import {
 } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../../src/components/ha-spinner";
-import type { HassioAddonDetails } from "../../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../../src/data/menuaiio/addon";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import { hassioStyle } from "../../resources/hassio-style";
+import type { menuai } from "../../../../src/types";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
 import "../../../../src/panels/config/logs/error-log-card";
 import "../../../../src/components/search-input";
 import { extractSearchParam } from "../../../../src/common/url/search-params";
 
-@customElement("hassio-addon-log-tab")
-class HassioAddonLogDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-log-tab")
+class menuaiioAddonLogDashboard extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public addon?: HassioAddonDetails;
+  @property({ attribute: false }) public addon?: menuaiioAddonDetails;
 
   @state() private _filter = extractSearchParam("filter") || "";
 
@@ -34,14 +34,14 @@ class HassioAddonLogDashboard extends LitElement {
       <div class="search">
         <search-input
           @value-changed=${this._filterChanged}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .filter=${this._filter}
           .label=${this.supervisor.localize("ui.panel.config.logs.search")}
         ></search-input>
       </div>
       <div class="content">
         <error-log-card
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .localizeFunc=${this.supervisor.localize}
           .header=${this.addon.name}
           .provider=${this.addon.slug}
@@ -59,7 +59,7 @@ class HassioAddonLogDashboard extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         .content {
           margin: auto;
@@ -87,6 +87,6 @@ class HassioAddonLogDashboard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-log-tab": HassioAddonLogDashboard;
+    "menuaiio-addon-log-tab": menuaiioAddonLogDashboard;
   }
 }

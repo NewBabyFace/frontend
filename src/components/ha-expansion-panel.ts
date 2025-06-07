@@ -230,7 +230,7 @@ declare global {
   }
 
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "expanded-changed": {
       expanded: boolean;
     };

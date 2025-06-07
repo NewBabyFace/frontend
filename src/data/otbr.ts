@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface OTBRInfo {
   active_dataset_tlvs: string;
@@ -11,37 +11,37 @@ export interface OTBRInfo {
 
 export type OTBRInfoDict = Record<string, OTBRInfo>;
 
-export const getOTBRInfo = (hass: HomeAssistant): Promise<OTBRInfoDict> =>
-  hass.callWS({
+export const getOTBRInfo = (menuai: menuai): Promise<OTBRInfoDict> =>
+  menuai.callWS({
     type: "otbr/info",
   });
 
 export const OTBRCreateNetwork = (
-  hass: HomeAssistant,
+  menuai: menuai,
   extended_address: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "otbr/create_network",
     extended_address,
   });
 
 export const OTBRSetNetwork = (
-  hass: HomeAssistant,
+  menuai: menuai,
   extended_address: string,
   dataset_id: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "otbr/set_network",
     extended_address,
     dataset_id,
   });
 
 export const OTBRSetChannel = (
-  hass: HomeAssistant,
+  menuai: menuai,
   extended_address: string,
   channel: number
 ): Promise<{ delay: number }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "otbr/set_channel",
     extended_address,
     channel,

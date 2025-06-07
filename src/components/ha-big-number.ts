@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import { formatNumber } from "../common/number/format_number";
 import { blankBeforeUnit } from "../common/translations/blank_before_unit";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("ha-big-number")
 export class HaBigNumber extends LitElement {
@@ -15,7 +15,7 @@ export class HaBigNumber extends LitElement {
   @property({ attribute: "unit-position" })
   public unitPosition: "top" | "bottom" = "top";
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false })
   public formatOptions: Intl.NumberFormatOptions = {};
@@ -23,7 +23,7 @@ export class HaBigNumber extends LitElement {
   protected render() {
     const formatted = formatNumber(
       this.value,
-      this.hass?.locale,
+      this.menuai?.locale,
       this.formatOptions
     );
     const [integer] = formatted.includes(".")
@@ -34,7 +34,7 @@ export class HaBigNumber extends LitElement {
 
     const formattedValue = `${this.value}${
       this.unit
-        ? `${blankBeforeUnit(this.unit, this.hass?.locale)}${this.unit}`
+        ? `${blankBeforeUnit(this.unit, this.menuai?.locale)}${this.unit}`
         : ""
     }`;
 

@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface Webhook {
   webhook_id: string;
@@ -11,7 +11,7 @@ export interface WebhookError {
   message: string;
 }
 
-export const fetchWebhooks = (hass: HomeAssistant): Promise<Webhook[]> =>
-  hass.callWS({
+export const fetchWebhooks = (menuai: menuai): Promise<Webhook[]> =>
+  menuai.callWS({
     type: "webhook/list",
   });

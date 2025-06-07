@@ -1,13 +1,13 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 
-interface ImageEntityAttributes extends HassEntityAttributeBase {
+interface ImageEntityAttributes extends menuaiEntityAttributeBase {
   access_token: string;
 }
 
-export interface ImageEntity extends HassEntityBase {
+export interface ImageEntity extends menuaiEntityBase {
   attributes: ImageEntityAttributes;
 }
 

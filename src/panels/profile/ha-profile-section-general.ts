@@ -11,9 +11,9 @@ import type { CoreFrontendUserData } from "../../data/frontend";
 import { subscribeFrontendUserData } from "../../data/frontend";
 import { showConfirmationDialog } from "../../dialogs/generic/show-dialog-box";
 import { showEditSidebarDialog } from "../../dialogs/sidebar/show-dialog-edit-sidebar";
-import "../../layouts/hass-tabs-subpage";
+import "../../layouts/menuai-tabs-subpage";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant, Route } from "../../types";
+import type { menuai, Route } from "../../types";
 import { isMobileClient } from "../../util/is_mobile";
 import "./ha-advanced-mode-row";
 import "./ha-enable-shortcuts-row";
@@ -34,7 +34,7 @@ import "./ha-set-vibrate-row";
 
 @customElement("ha-profile-section-general")
 class HaProfileSectionGeneral extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -46,7 +46,7 @@ class HaProfileSectionGeneral extends LitElement {
 
   private _getCoreData() {
     this._unsubCoreData = subscribeFrontendUserData(
-      this.hass.connection,
+      this.menuai.connection,
       "core",
       ({ value }) => {
         this._coreUserData = value;
@@ -56,7 +56,7 @@ class HaProfileSectionGeneral extends LitElement {
 
   public connectedCallback() {
     super.connectedCallback();
-    if (this.hass) {
+    if (this.menuai) {
       this._getCoreData();
     }
 
@@ -94,92 +94,92 @@ class HaProfileSectionGeneral extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage
+      <menuai-tabs-subpage
         main-page
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .tabs=${profileSections}
         .route=${this.route}
       >
-        <div slot="title">${this.hass.localize("panel.profile")}</div>
+        <div slot="title">${this.menuai.localize("panel.profile")}</div>
         <div class="content">
-          <ha-card .header=${this.hass.user!.name}>
+          <ha-card .header=${this.menuai.user!.name}>
             <div class="card-content">
-              ${this.hass.localize("ui.panel.profile.current_user", {
-                fullName: this.hass.user!.name,
+              ${this.menuai.localize("ui.panel.profile.current_user", {
+                fullName: this.menuai.user!.name,
               })}
-              ${this.hass.user!.is_owner
-                ? this.hass.localize("ui.panel.profile.is_owner")
+              ${this.menuai.user!.is_owner
+                ? this.menuai.localize("ui.panel.profile.is_owner")
                 : ""}
             </div>
             <div class="card-actions">
               <mwc-button class="warning" @click=${this._handleLogOut}>
-                ${this.hass.localize("ui.panel.profile.logout")}
+                ${this.menuai.localize("ui.panel.profile.logout")}
               </mwc-button>
             </div>
           </ha-card>
           <ha-card
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.profile.user_settings_header"
             )}
           >
             <div class="card-content">
-              ${this.hass.localize("ui.panel.profile.user_settings_detail")}
+              ${this.menuai.localize("ui.panel.profile.user_settings_detail")}
             </div>
             <ha-pick-language-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-language-row>
             <ha-pick-number-format-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-number-format-row>
             <ha-pick-time-format-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-time-format-row>
             <ha-pick-date-format-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-date-format-row>
             <ha-pick-time-zone-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-time-zone-row>
             <ha-pick-first-weekday-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-first-weekday-row>
             <ha-settings-row .narrow=${this.narrow}>
               <span slot="heading">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.profile.customize_sidebar.header"
                 )}
               </span>
               <span slot="description">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.profile.customize_sidebar.description"
                 )}
               </span>
               <mwc-button @click=${this._customizeSidebar}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.profile.customize_sidebar.button"
                 )}
               </mwc-button>
             </ha-settings-row>
-            ${this.hass.user!.is_admin
+            ${this.menuai.user!.is_admin
               ? html`
                   <ha-advanced-mode-row
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .narrow=${this.narrow}
                     .coreUserData=${this._coreUserData}
                   ></ha-advanced-mode-row>
                 `
               : ""}
-            ${this.hass.user!.is_admin
+            ${this.menuai.user!.is_admin
               ? html`
                   <ha-entity-id-picker-row
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .narrow=${this.narrow}
                     .coreUserData=${this._coreUserData}
                   ></ha-entity-id-picker-row>
@@ -187,28 +187,28 @@ class HaProfileSectionGeneral extends LitElement {
               : ""}
           </ha-card>
           <ha-card
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               isExternal
                 ? "ui.panel.profile.mobile_app_settings"
                 : "ui.panel.profile.browser_settings"
             )}
           >
             <div class="card-content">
-              ${this.hass.localize("ui.panel.profile.client_settings_detail")}
+              ${this.menuai.localize("ui.panel.profile.client_settings_detail")}
             </div>
             <ha-pick-theme-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-theme-row>
             <ha-pick-dashboard-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-pick-dashboard-row>
-            ${this.hass.dockedSidebar !== "auto" || !this.narrow
+            ${this.menuai.dockedSidebar !== "auto" || !this.narrow
               ? html`
                   <ha-force-narrow-row
                     .narrow=${this.narrow}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                   ></ha-force-narrow-row>
                 `
               : ""}
@@ -216,7 +216,7 @@ class HaProfileSectionGeneral extends LitElement {
               ? html`
                   <ha-set-vibrate-row
                     .narrow=${this.narrow}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                   ></ha-set-vibrate-row>
                 `
               : ""}
@@ -224,26 +224,26 @@ class HaProfileSectionGeneral extends LitElement {
               ? html`
                   <ha-push-notifications-row
                     .narrow=${this.narrow}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                   ></ha-push-notifications-row>
                 `
               : ""}
             <ha-set-suspend-row
               .narrow=${this.narrow}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
             ></ha-set-suspend-row>
             ${!isMobileClient
               ? html`
                   <ha-enable-shortcuts-row
                     id="shortcuts"
                     .narrow=${this.narrow}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                   ></ha-enable-shortcuts-row>
                 `
               : ""}
           </ha-card>
         </div>
-      </hass-tabs-subpage>
+      </menuai-tabs-subpage>
     `;
   }
 
@@ -253,10 +253,10 @@ class HaProfileSectionGeneral extends LitElement {
 
   private _handleLogOut() {
     showConfirmationDialog(this, {
-      title: this.hass.localize("ui.panel.profile.logout_title"),
-      text: this.hass.localize("ui.panel.profile.logout_text"),
-      confirmText: this.hass.localize("ui.panel.profile.logout"),
-      confirm: () => fireEvent(this, "hass-logout"),
+      title: this.menuai.localize("ui.panel.profile.logout_title"),
+      text: this.menuai.localize("ui.panel.profile.logout_text"),
+      confirmText: this.menuai.localize("ui.panel.profile.logout"),
+      confirm: () => fireEvent(this, "menuai-logout"),
       destructive: true,
     });
   }

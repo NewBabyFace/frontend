@@ -1,5 +1,5 @@
 import type { HaFormSchema } from "../components/ha-form/types";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { RefreshTokenType } from "./refresh_token";
 
 export interface AuthUrlSearchParams {
@@ -23,7 +23,7 @@ export interface SignedPath {
   path: string;
 }
 
-export const hassUrl = __HASS_URL__;
+export const menuaiUrl = __menuai_URL__;
 
 export const autocompleteLoginFields = (schema: HaFormSchema[]) =>
   schema.map((field) => {
@@ -41,9 +41,9 @@ export const autocompleteLoginFields = (schema: HaFormSchema[]) =>
   });
 
 export const getSignedPath = (
-  hass: HomeAssistant,
+  menuai: menuai,
   path: string
-): Promise<SignedPath> => hass.callWS({ type: "auth/sign_path", path });
+): Promise<SignedPath> => menuai.callWS({ type: "auth/sign_path", path });
 
 export const fetchAuthProviders = () =>
   fetch("/auth/providers", {
@@ -104,57 +104,57 @@ export const redirectWithAuthCode = (
 };
 
 export const createAuthForUser = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   userId: string,
   username: string,
   password: string
 ) =>
-  hass.callWS({
-    type: "config/auth_provider/homeassistant/create",
+  menuai.callWS({
+    type: "config/auth_provider/menuai/create",
     user_id: userId,
     username,
     password,
   });
 
 export const changePassword = (
-  hass: HomeAssistant,
+  menuai: menuai,
   current_password: string,
   new_password: string
 ) =>
-  hass.callWS({
-    type: "config/auth_provider/homeassistant/change_password",
+  menuai.callWS({
+    type: "config/auth_provider/menuai/change_password",
     current_password,
     new_password,
   });
 
 export const adminChangePassword = (
-  hass: HomeAssistant,
+  menuai: menuai,
   userId: string,
   password: string
 ) =>
-  hass.callWS<undefined>({
-    type: "config/auth_provider/homeassistant/admin_change_password",
+  menuai.callWS<undefined>({
+    type: "config/auth_provider/menuai/admin_change_password",
     user_id: userId,
     password,
   });
 
 export const adminChangeUsername = (
-  hass: HomeAssistant,
+  menuai: menuai,
   userId: string,
   username: string
 ) =>
-  hass.callWS<undefined>({
-    type: "config/auth_provider/homeassistant/admin_change_username",
+  menuai.callWS<undefined>({
+    type: "config/auth_provider/menuai/admin_change_username",
     user_id: userId,
     username,
   });
 
 export const deleteAllRefreshTokens = (
-  hass: HomeAssistant,
+  menuai: menuai,
   token_type?: RefreshTokenType,
   delete_current_token?: boolean
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "auth/delete_all_refresh_tokens",
     token_type,
     delete_current_token,

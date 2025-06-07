@@ -1,9 +1,9 @@
 import type { CSSResultGroup } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { mdiClose, mdiPlay, mdiStop } from "@mdi/js";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { stopPropagation } from "../../../../common/dom/stop_propagation";
 import {
   getMobileCloseToBottomAnimation,
@@ -24,9 +24,9 @@ import { haStyle } from "../../../../resources/styles";
 
 @customElement("ha-more-info-siren-advanced-controls")
 class MoreInfoSirenAdvancedControls extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() _stateObj?: HassEntity;
+  @state() _stateObj?: menuaiEntity;
 
   @state() _tone?: string;
 
@@ -36,7 +36,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
 
   @query("ha-md-dialog") private _dialog?: HaMdDialog;
 
-  public showDialog({ stateObj }: { stateObj: HassEntity }) {
+  public showDialog({ stateObj }: { stateObj: menuaiEntity }) {
     this._stateObj = stateObj;
   }
 
@@ -76,11 +76,11 @@ class MoreInfoSirenAdvancedControls extends LitElement {
           <ha-icon-button
             slot="navigationIcon"
             @click=${this.closeDialog}
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title" id="dialog-light-color-favorite-title"
-            >${this.hass.localize(
+            >${this.menuai.localize(
               "ui.components.siren.advanced_controls"
             )}</span
           >
@@ -90,7 +90,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
             ${supportsTones
               ? html`
                   <ha-select
-                    .label=${this.hass.localize("ui.components.siren.tone")}
+                    .label=${this.menuai.localize("ui.components.siren.tone")}
                     @closed=${stopPropagation}
                     @change=${this._handleToneChange}
                     .value=${this._tone}
@@ -116,7 +116,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
               ? html`
                   <ha-textfield
                     type="number"
-                    .label=${this.hass.localize("ui.components.siren.volume")}
+                    .label=${this.menuai.localize("ui.components.siren.volume")}
                     .suffix=${"%"}
                     .value=${this._volume ? this._volume * 100 : undefined}
                     @change=${this._handleVolumeChange}
@@ -130,7 +130,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
               ? html`
                   <ha-textfield
                     type="number"
-                    .label=${this.hass.localize("ui.components.siren.duration")}
+                    .label=${this.menuai.localize("ui.components.siren.duration")}
                     .value=${this._duration}
                     suffix="s"
                     @change=${this._handleDurationChange}
@@ -140,13 +140,13 @@ class MoreInfoSirenAdvancedControls extends LitElement {
           </div>
           <div class="controls">
             <ha-control-button
-              .label=${this.hass.localize("ui.card.common.turn_on")}
+              .label=${this.menuai.localize("ui.card.common.turn_on")}
               @click=${this._turnOn}
             >
               <ha-svg-icon .path=${mdiPlay}></ha-svg-icon>
             </ha-control-button>
             <ha-control-button
-              .label=${this.hass.localize("ui.card.common.turn_off")}
+              .label=${this.menuai.localize("ui.card.common.turn_off")}
               @click=${this._turnOff}
             >
               <ha-svg-icon .path=${mdiStop}></ha-svg-icon>
@@ -155,7 +155,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
         </div>
         <div slot="actions">
           <ha-button @click=${this.closeDialog}>
-            ${this.hass.localize("ui.common.close")}
+            ${this.menuai.localize("ui.common.close")}
           </ha-button>
         </div>
       </ha-md-dialog>
@@ -181,7 +181,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
   }
 
   private async _turnOn() {
-    await this.hass.callService("siren", "turn_on", {
+    await this.menuai.callService("siren", "turn_on", {
       entity_id: this._stateObj!.entity_id,
       tone: this._tone,
       volume_level: this._volume,
@@ -190,7 +190,7 @@ class MoreInfoSirenAdvancedControls extends LitElement {
   }
 
   private async _turnOff() {
-    await this.hass.callService("siren", "turn_off", {
+    await this.menuai.callService("siren", "turn_off", {
       entity_id: this._stateObj!.entity_id,
     });
   }

@@ -33,7 +33,7 @@ import { browseLocalMediaPlayer } from "../../data/media_source";
 import { isTTSMediaSource } from "../../data/tts";
 import { showAlertDialog } from "../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   brandsUrl,
   extractDomainFromBrandUrl,
@@ -56,7 +56,7 @@ import type { TtsMediaPickedEvent } from "./ha-browse-media-tts";
 import { loadVirtualizer } from "../../resources/virtualizer";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "media-picked": MediaPickedEvent;
     "media-browsed": {
       // Items of the new browse stack
@@ -76,7 +76,7 @@ export interface MediaPlayerItemId {
 
 @customElement("ha-media-player-browse")
 export class HaMediaPlayerBrowse extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -250,10 +250,10 @@ export class HaMediaPlayerBrowse extends LitElement {
           });
         } else if (
           err.code === "entity_not_found" &&
-          isUnavailableState(this.hass.states[this.entityId]?.state)
+          isUnavailableState(this.menuai.states[this.entityId]?.state)
         ) {
           this._setError({
-            message: this.hass.localize(
+            message: this.menuai.localize(
               `ui.components.media-browser.media_player_unavailable`
             ),
             code: "entity_not_found",
@@ -279,11 +279,11 @@ export class HaMediaPlayerBrowse extends LitElement {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.size > 1 || !changedProps.has("hass")) {
+    if (changedProps.size > 1 || !changedProps.has("menuai")) {
       return true;
     }
-    const oldHass = changedProps.get("hass") as this["hass"];
-    return oldHass === undefined || oldHass.localize !== this.hass.localize;
+    const oldmenuai = changedProps.get("menuai") as this["menuai"];
+    return oldmenuai === undefined || oldmenuai.localize !== this.menuai.localize;
   }
 
   protected firstUpdated(): void {
@@ -331,7 +331,7 @@ export class HaMediaPlayerBrowse extends LitElement {
 
     const currentItem = this._currentItem;
 
-    const subtitle = this.hass.localize(
+    const subtitle = this.menuai.localize(
       `ui.components.media-browser.class.${currentItem.media_class}`
     );
     const children = currentItem.children || [];
@@ -376,14 +376,14 @@ export class HaMediaPlayerBrowse extends LitElement {
                                         >
                                           <ha-svg-icon
                                             slot="icon"
-                                            .label=${this.hass.localize(
+                                            .label=${this.menuai.localize(
                                               `ui.components.media-browser.${this.action}-media`
                                             )}
                                             .path=${this.action === "play"
                                               ? mdiPlay
                                               : mdiPlus}
                                           ></ha-svg-icon>
-                                          ${this.hass.localize(
+                                          ${this.menuai.localize(
                                             `ui.components.media-browser.${this.action}`
                                           )}
                                         </ha-fab>
@@ -408,14 +408,14 @@ export class HaMediaPlayerBrowse extends LitElement {
                                     @click=${this._actionClicked}
                                   >
                                     <ha-svg-icon
-                                      .label=${this.hass.localize(
+                                      .label=${this.menuai.localize(
                                         `ui.components.media-browser.${this.action}-media`
                                       )}
                                       .path=${this.action === "play"
                                         ? mdiPlay
                                         : mdiPlus}
                                     ></ha-svg-icon>
-                                    ${this.hass.localize(
+                                    ${this.menuai.localize(
                                       `ui.components.media-browser.${this.action}`
                                     )}
                                   </mwc-button>
@@ -445,7 +445,7 @@ export class HaMediaPlayerBrowse extends LitElement {
                   ? html`
                       <ha-browse-media-tts
                         .item=${currentItem}
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .action=${this.action}
                         @tts-picked=${this._ttsPicked}
                       ></ha-browse-media-tts>
@@ -463,13 +463,13 @@ export class HaMediaPlayerBrowse extends LitElement {
                                     ></ha-svg-icon>
                                   </span>
                                   <span>
-                                    ${this.hass.localize(
+                                    ${this.menuai.localize(
                                       "ui.components.media-browser.file_management.highlight_button"
                                     )}
                                   </span>
                                 </div>
                               `
-                            : this.hass.localize(
+                            : this.menuai.localize(
                                 "ui.components.media-browser.no_items"
                               )}
                         </div>
@@ -507,7 +507,7 @@ export class HaMediaPlayerBrowse extends LitElement {
                             ? html`
                                 <div class="grid not-shown">
                                   <div class="title">
-                                    ${this.hass.localize(
+                                    ${this.menuai.localize(
                                       "ui.components.media-browser.not_shown",
                                       { count: currentItem.not_shown }
                                     )}
@@ -536,7 +536,7 @@ export class HaMediaPlayerBrowse extends LitElement {
                                       : "avatar"}
                                   >
                                     <span class="title">
-                                      ${this.hass.localize(
+                                      ${this.menuai.localize(
                                         "ui.components.media-browser.not_shown",
                                         { count: currentItem.not_shown }
                                       )}
@@ -595,7 +595,7 @@ export class HaMediaPlayerBrowse extends LitElement {
                       can_expand: child.can_expand,
                     })}"
                     .item=${child}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       `ui.components.media-browser.${this.action}-media`
                     )}
                     .path=${this.action === "play" ? mdiPlay : mdiPlus}
@@ -652,7 +652,7 @@ export class HaMediaPlayerBrowse extends LitElement {
                       show: !mediaClass.show_list_images || !child.thumbnail,
                     })}"
                     .item=${child}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       `ui.components.media-browser.${this.action}-media`
                     )}
                     .path=${this.action === "play" ? mdiPlay : mdiPlus}
@@ -675,7 +675,7 @@ export class HaMediaPlayerBrowse extends LitElement {
     if (thumbnailUrl.startsWith("/")) {
       // Thumbnails served by local API require authentication
       return new Promise((resolve, reject) => {
-        this.hass
+        this.menuai
           .fetchWithAuth(thumbnailUrl!)
           // Since we are fetching with an authorization header, we cannot just put the
           // URL directly into the document; we need to embed the image. We could do this
@@ -701,7 +701,7 @@ export class HaMediaPlayerBrowse extends LitElement {
         domain: extractDomainFromBrandUrl(thumbnailUrl),
         type: "icon",
         useFallback: true,
-        darkOptimized: this.hass.themes?.darkMode,
+        darkOptimized: this.menuai.themes?.darkMode,
       });
     }
 
@@ -753,8 +753,8 @@ export class HaMediaPlayerBrowse extends LitElement {
     mediaContentType?: string
   ): Promise<MediaPlayerItem> {
     return entityId !== BROWSER_PLAYER
-      ? browseMediaPlayer(this.hass, entityId, mediaContentId, mediaContentType)
-      : browseLocalMediaPlayer(this.hass, mediaContentId);
+      ? browseMediaPlayer(this.menuai, entityId, mediaContentId, mediaContentType)
+      : browseLocalMediaPlayer(this.menuai, mediaContentId);
   }
 
   private _measureCard(): void {
@@ -787,7 +787,7 @@ export class HaMediaPlayerBrowse extends LitElement {
 
     this._closeDialogAction();
     showAlertDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.components.media-browser.media_browsing_error"
       ),
       text: this._renderError(error),
@@ -798,28 +798,28 @@ export class HaMediaPlayerBrowse extends LitElement {
     if (err.message === "Media directory does not exist.") {
       return html`
         <h2>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.components.media-browser.no_local_media_found"
           )}
         </h2>
         <p>
-          ${this.hass.localize("ui.components.media-browser.no_media_folder")}
+          ${this.menuai.localize("ui.components.media-browser.no_media_folder")}
           <br />
-          ${this.hass.localize("ui.components.media-browser.setup_local_help", {
+          ${this.menuai.localize("ui.components.media-browser.setup_local_help", {
             documentation: html`<a
               href=${documentationUrl(
-                this.hass,
+                this.menuai,
                 "/more-info/local-media/setup-media"
               )}
               target="_blank"
               rel="noreferrer"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.components.media-browser.documentation"
               )}</a
             >`,
           })}
           <br />
-          ${this.hass.localize("ui.components.media-browser.local_media_files")}
+          ${this.menuai.localize("ui.components.media-browser.local_media_files")}
         </p>
       `;
     }

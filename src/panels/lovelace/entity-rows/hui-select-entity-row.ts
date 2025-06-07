@@ -9,7 +9,7 @@ import { UNAVAILABLE } from "../../../data/entity";
 import { forwardHaptic } from "../../../data/haptics";
 import type { SelectEntity } from "../../../data/select";
 import { setSelectOption } from "../../../data/select";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntitiesCardEntityConfig } from "../cards/types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
@@ -18,7 +18,7 @@ import type { LovelaceRow } from "./types";
 
 @customElement("hui-select-entity-row")
 class HuiSelectEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntitiesCardEntityConfig;
 
@@ -35,25 +35,25 @@ class HuiSelectEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity] as
+    const stateObj = this.menuai.states[this._config.entity] as
       | SelectEntity
       | undefined;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
       <hui-generic-entity-row
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this._config}
         hide-name
       >
@@ -71,7 +71,7 @@ class HuiSelectEntityRow extends LitElement implements LovelaceRow {
             ? stateObj.attributes.options.map(
                 (option) => html`
                   <ha-list-item .value=${option}>
-                    ${this.hass!.formatEntityState(stateObj, option)}
+                    ${this.menuai!.formatEntityState(stateObj, option)}
                   </ha-list-item>
                 `
               )
@@ -93,7 +93,7 @@ class HuiSelectEntityRow extends LitElement implements LovelaceRow {
   `;
 
   private _handleAction(ev): void {
-    const stateObj = this.hass!.states[this._config!.entity] as SelectEntity;
+    const stateObj = this.menuai!.states[this._config!.entity] as SelectEntity;
 
     const option = ev.target.value;
 
@@ -106,7 +106,7 @@ class HuiSelectEntityRow extends LitElement implements LovelaceRow {
 
     forwardHaptic("light");
 
-    setSelectOption(this.hass!, stateObj.entity_id, option);
+    setSelectOption(this.menuai!, stateObj.entity_id, option);
   }
 }
 

@@ -9,9 +9,9 @@ import "../../../../components/ha-dialog";
 import "../../../../components/ha-dialog-header";
 import "../../../../components/sl-tab-group";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { computeBadges } from "../../common/generate-lovelace-config";
 import "../card-editor/hui-entity-picker-table";
 import { findLovelaceContainer } from "../lovelace-path";
@@ -21,7 +21,7 @@ import { showEditBadgeDialog } from "./show-edit-badge-dialog";
 import { showSuggestBadgeDialog } from "./show-suggest-badge-dialog";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "selected-changed": SelectedChangedEvent;
   }
 }
@@ -33,9 +33,9 @@ interface SelectedChangedEvent {
 @customElement("hui-dialog-create-badge")
 export class HuiCreateDialogBadge
   extends LitElement
-  implements HassDialog<CreateBadgeDialogParams>
+  implements menuaiDialog<CreateBadgeDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: CreateBadgeDialogParams;
 
@@ -74,11 +74,11 @@ export class HuiCreateDialogBadge
     }
 
     const title = this._containerConfig.title
-      ? this.hass!.localize(
+      ? this.menuai!.localize(
           "ui.panel.lovelace.editor.edit_badge.pick_badge_title",
           { name: this._containerConfig.title }
         )
-      : this.hass!.localize("ui.panel.lovelace.editor.edit_badge.pick_badge");
+      : this.menuai!.localize("ui.panel.lovelace.editor.edit_badge.pick_badge");
 
     return html`
       <ha-dialog
@@ -93,7 +93,7 @@ export class HuiCreateDialogBadge
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span slot="title">${title}</span>
@@ -104,7 +104,7 @@ export class HuiCreateDialogBadge
               panel="badge"
               dialogInitialFocus
             >
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.lovelace.editor.badge_picker.by_badge"
               )}
             </sl-tab>
@@ -112,7 +112,7 @@ export class HuiCreateDialogBadge
               slot="nav"
               .active=${this._currTab === "entity"}
               panel="entity"
-              >${this.hass!.localize(
+              >${this.menuai!.localize(
                 "ui.panel.lovelace.editor.badge_picker.by_entity"
               )}</sl-tab
             >
@@ -124,14 +124,14 @@ export class HuiCreateDialogBadge
                 <hui-badge-picker
                   .suggestedBadges=${this._params.suggestedBadges}
                   .lovelace=${this._params.lovelaceConfig}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   @config-changed=${this._handleBadgePicked}
                 ></hui-badge-picker>
               `
             : html`
                 <hui-entity-picker-table
                   no-label-float
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .narrow=${true}
                   @selected-changed=${this._handleSelectedChanged}
                 ></hui-entity-picker-table>
@@ -140,12 +140,12 @@ export class HuiCreateDialogBadge
 
         <div slot="primaryAction">
           <mwc-button @click=${this._cancel}>
-            ${this.hass!.localize("ui.common.cancel")}
+            ${this.menuai!.localize("ui.common.cancel")}
           </mwc-button>
           ${this._selectedEntities.length
             ? html`
                 <mwc-button @click=${this._suggestBadges}>
-                  ${this.hass!.localize("ui.common.continue")}
+                  ${this.menuai!.localize("ui.common.continue")}
                 </mwc-button>
               `
             : ""}
@@ -259,7 +259,7 @@ export class HuiCreateDialogBadge
   }
 
   private _suggestBadges(): void {
-    const badgeConfig = computeBadges(this.hass.states, this._selectedEntities);
+    const badgeConfig = computeBadges(this.menuai.states, this._selectedEntities);
 
     showSuggestBadgeDialog(this, {
       lovelaceConfig: this._params!.lovelaceConfig,

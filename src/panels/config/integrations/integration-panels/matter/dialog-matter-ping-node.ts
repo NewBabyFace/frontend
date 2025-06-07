@@ -11,13 +11,13 @@ import "../../../../../components/ha-list-item";
 import "../../../../../components/ha-spinner";
 import { pingMatterNode } from "../../../../../data/matter";
 import { haStyle, haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { showToast } from "../../../../../util/toast";
 import type { MatterPingNodeDialogParams } from "./show-dialog-matter-ping-node";
 
 @customElement("dialog-matter-ping-node")
 class DialogMatterPingNode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private device_id?: string;
 
@@ -36,7 +36,7 @@ class DialogMatterPingNode extends LitElement {
     const ip = ev.currentTarget.ip;
     await copyToClipboard(ip);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -50,8 +50,8 @@ class DialogMatterPingNode extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.matter.ping_node.title")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.matter.ping_node.title")
         )}
       >
         ${this._status === "failed"
@@ -63,7 +63,7 @@ class DialogMatterPingNode extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       this._pingResultEntries
                         ? "ui.panel.config.matter.ping_node.no_ip_found"
                         : "ui.panel.config.matter.ping_node.ping_failed"
@@ -72,13 +72,13 @@ class DialogMatterPingNode extends LitElement {
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
             `
           : this._pingResultEntries
             ? html`
                 <h2>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.matter.ping_node.ping_complete"
                   )}
                 </h2>
@@ -99,7 +99,7 @@ class DialogMatterPingNode extends LitElement {
                   )}
                 </ha-list>
                 <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                  ${this.hass.localize("ui.common.close")}
+                  ${this.menuai.localize("ui.common.close")}
                 </mwc-button>
               `
             : this._status === "started"
@@ -109,7 +109,7 @@ class DialogMatterPingNode extends LitElement {
                     <div class="status">
                       <p>
                         <b>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.matter.ping_node.in_progress"
                           )}
                         </b>
@@ -117,24 +117,24 @@ class DialogMatterPingNode extends LitElement {
                     </div>
                   </div>
                   <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                    ${this.hass.localize("ui.common.close")}
+                    ${this.menuai.localize("ui.common.close")}
                   </mwc-button>
                 `
               : html`
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.matter.ping_node.introduction"
                     )}
                   </p>
                   <p>
                     <em>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.matter.ping_node.battery_device_warning"
                       )}
                     </em>
                   </p>
                   <mwc-button slot="primaryAction" @click=${this._startPing}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.matter.ping_node.start_ping"
                     )}
                   </mwc-button>
@@ -144,12 +144,12 @@ class DialogMatterPingNode extends LitElement {
   }
 
   private async _startPing(): Promise<void> {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._status = "started";
     try {
-      const pingResult = await pingMatterNode(this.hass, this.device_id!);
+      const pingResult = await pingMatterNode(this.menuai, this.device_id!);
       const pingResultEntries = Object.entries(pingResult);
       if (pingResultEntries.length === 0) {
         this._status = "failed";

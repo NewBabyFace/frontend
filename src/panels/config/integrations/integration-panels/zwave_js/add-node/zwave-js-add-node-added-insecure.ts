@@ -2,14 +2,14 @@ import { mdiCheckCircleOutline } from "@mdi/js";
 import { customElement, property } from "lit/decorators";
 import "@shoelace-style/shoelace/dist/components/animation/animation";
 import { css, html, LitElement } from "lit";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 
 import "../../../../../../components/ha-svg-icon";
 import "../../../../../../components/ha-alert";
 
 @customElement("zwave-js-add-node-added-insecure")
 export class ZWaveJsAddNodeFinished extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "device-name" }) public deviceName?: string;
 
@@ -22,18 +22,18 @@ export class ZWaveJsAddNodeFinished extends LitElement {
       </sl-animation>
       <ha-alert alert-type="warning">
         ${this.reason
-          ? this.hass.localize(
+          ? this.menuai.localize(
               `ui.panel.config.zwave_js.add_node.added_insecure.low_security_reason.${this.reason}`
             )
           : ""}
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.zwave_js.add_node.added_insecure.added_insecurely_text",
           {
             deviceName: html`<b>${this.deviceName}</b>`,
           }
         )}
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.zwave_js.add_node.added_insecure.try_again_text`
           )}
         </p>

@@ -9,7 +9,7 @@ import type {
   SchemaUnion,
   HaFormSchema,
 } from "../../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ScreenCondition } from "../../../common/validate-condition";
 
 const BREAKPOINT_VALUES = [0, 768, 1024, 1280, Infinity];
@@ -95,7 +95,7 @@ interface ScreenConditionData {
 
 @customElement("ha-card-condition-screen")
 export class HaCardConditionScreen extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: ScreenCondition;
 
@@ -107,13 +107,13 @@ export class HaCardConditionScreen extends LitElement {
 
   protected static validateUIConfig(
     condition: ScreenCondition,
-    hass: HomeAssistant
+    menuai: menuai
   ) {
     const valid =
       !condition.media_query || mediaQueryReverseMap.has(condition.media_query);
     if (!valid) {
       throw new Error(
-        hass.localize("ui.errors.config.media_query_not_supported")
+        menuai.localize("ui.errors.config.media_query_not_supported")
       );
     }
   }
@@ -160,9 +160,9 @@ export class HaCardConditionScreen extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .disabled=${this.disabled}
         @value-changed=${this._valueChanged}
         .computeLabel=${this._computeLabelCallback}
@@ -189,7 +189,7 @@ export class HaCardConditionScreen extends LitElement {
   ): string => {
     switch (schema.name) {
       case "breakpoints":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.lovelace.editor.condition-editor.condition.screen.${schema.name}`
         );
       default:

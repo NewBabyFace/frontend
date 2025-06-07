@@ -18,7 +18,7 @@ export abstract class HuiTypedElementEditor<
 
       if (!this.configElementType) {
         throw new Error(
-          this.hass.localize("ui.errors.config.no_type_provided")
+          this.menuai.localize("ui.errors.config.no_type_provided")
         );
       }
 

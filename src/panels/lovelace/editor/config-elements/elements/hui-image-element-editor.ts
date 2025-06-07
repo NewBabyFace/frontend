@@ -7,7 +7,7 @@ import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ImageElementConfig } from "../../../elements/types";
 import type { LovelacePictureElementEditor } from "../../../types";
 import { actionConfigStruct } from "../../structs/action-struct";
@@ -34,7 +34,7 @@ export class HuiImageElementEditor
   extends LitElement
   implements LovelacePictureElementEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ImageElementConfig;
 
@@ -112,15 +112,15 @@ export class HuiImageElementEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
@@ -134,10 +134,10 @@ export class HuiImageElementEditor
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     ) ||
-    this.hass!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
+    this.menuai!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
     schema.name;
 }
 

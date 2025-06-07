@@ -8,13 +8,13 @@ import type { DisableConfigEntryResult } from "../../../data/config_entries";
 import { enableConfigEntry } from "../../../data/config_entries";
 import type { IntegrationManifest } from "../../../data/integration";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { ConfigEntryExtended } from "./ha-config-integrations";
 import "./ha-integration-action-card";
 
 @customElement("ha-disabled-config-entry-card")
 export class HaDisabledConfigEntryCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entry!: ConfigEntryExtended;
 
@@ -23,13 +23,13 @@ export class HaDisabledConfigEntryCard extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-integration-action-card
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .manifest=${this.manifest}
-        .banner=${this.hass.localize(
+        .banner=${this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable.disabled_cause",
           {
             cause:
-              this.hass.localize(
+              this.menuai.localize(
                 `ui.panel.config.integrations.config_entry.disable.disabled_by.${this
                   .entry.disabled_by!}`
               ) || this.entry.disabled_by,
@@ -47,7 +47,7 @@ export class HaDisabledConfigEntryCard extends LitElement {
         </a>
         <ha-button
           @click=${this._handleEnable}
-          .label=${this.hass.localize("ui.common.enable")}
+          .label=${this.menuai.localize("ui.common.enable")}
         ></ha-button>
       </ha-integration-action-card>
     `;
@@ -58,10 +58,10 @@ export class HaDisabledConfigEntryCard extends LitElement {
 
     let result: DisableConfigEntryResult;
     try {
-      result = await enableConfigEntry(this.hass, entryId);
+      result = await enableConfigEntry(this.menuai, entryId);
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.disable_error"
         ),
         text: err.message,
@@ -71,7 +71,7 @@ export class HaDisabledConfigEntryCard extends LitElement {
 
     if (result.require_restart) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_entry.enable_restart_confirm"
         ),
       });

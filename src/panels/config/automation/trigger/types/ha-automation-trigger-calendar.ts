@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import type { CalendarTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 import type { HaDurationData } from "../../../../../components/ha-duration-input";
 import "../../../../../components/ha-form/ha-form";
@@ -13,7 +13,7 @@ import type { SchemaUnion } from "../../../../../components/ha-form/types";
 
 @customElement("ha-automation-trigger-calendar")
 export class HaCalendarTrigger extends LitElement implements TriggerElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: CalendarTrigger;
 
@@ -79,7 +79,7 @@ export class HaCalendarTrigger extends LitElement implements TriggerElement {
   }
 
   protected render() {
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
     // Convert from string representation to ha form duration representation
     const trigger_offset = this.trigger.offset;
     const duration: HaDurationData = createDurationData(trigger_offset)!;
@@ -100,7 +100,7 @@ export class HaCalendarTrigger extends LitElement implements TriggerElement {
       <ha-form
         .schema=${schema}
         .data=${data}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -128,9 +128,9 @@ export class HaCalendarTrigger extends LitElement implements TriggerElement {
   ): string => {
     switch (schema.name) {
       case "entity_id":
-        return this.hass.localize("ui.components.entity.entity-picker.entity");
+        return this.menuai.localize("ui.components.entity.entity-picker.entity");
       case "event":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.calendar.event"
         );
     }

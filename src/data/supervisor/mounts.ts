@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export enum SupervisorMountType {
   BIND = "bind",
@@ -67,9 +67,9 @@ export interface SupervisorMounts {
 }
 
 export const fetchSupervisorMounts = async (
-  hass: HomeAssistant
+  menuai: menuai
 ): Promise<SupervisorMounts> =>
-  hass.callWS({
+  menuai.callWS({
     type: "supervisor/api",
     endpoint: `/mounts`,
     method: "get",
@@ -77,10 +77,10 @@ export const fetchSupervisorMounts = async (
   });
 
 export const createSupervisorMount = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: SupervisorMountRequestParams
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "supervisor/api",
     endpoint: `/mounts`,
     method: "post",
@@ -89,10 +89,10 @@ export const createSupervisorMount = async (
   });
 
 export const updateSupervisorMount = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: Partial<SupervisorMountRequestParams>
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "supervisor/api",
     endpoint: `/mounts/${data.name}`,
     method: "put",
@@ -101,10 +101,10 @@ export const updateSupervisorMount = async (
   });
 
 export const removeSupervisorMount = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   name: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "supervisor/api",
     endpoint: `/mounts/${name}`,
     method: "delete",
@@ -112,10 +112,10 @@ export const removeSupervisorMount = async (
   });
 
 export const reloadSupervisorMount = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: SupervisorMount
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "supervisor/api",
     endpoint: `/mounts/${data.name}/reload`,
     method: "post",
@@ -123,10 +123,10 @@ export const reloadSupervisorMount = async (
   });
 
 export const changeMountOptions = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   data: MountOptions
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "supervisor/api",
     endpoint: `/mounts/options`,
     method: "post",

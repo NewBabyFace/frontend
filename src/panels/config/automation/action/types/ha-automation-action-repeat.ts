@@ -6,7 +6,7 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-textfield";
 import type { RepeatAction } from "../../../../../data/script";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../ha-automation-action";
 import type { ActionElement } from "../ha-automation-action-row";
 
@@ -24,7 +24,7 @@ const getType = (action) => OPTIONS.find((option) => option in action);
 
 @customElement("ha-automation-action-repeat")
 export class HaRepeatAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -94,7 +94,7 @@ export class HaRepeatAction extends LitElement implements ActionElement {
     const action = this.action.repeat;
     const type = getType(action);
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       type ?? "count",
       "count" in action && typeof action.count === "string"
         ? isTemplate(action.count)
@@ -103,7 +103,7 @@ export class HaRepeatAction extends LitElement implements ActionElement {
 
     const data = { ...action, type };
     return html`<ha-form
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .data=${data}
       .schema=${schema}
       .disabled=${this.disabled}
@@ -171,34 +171,34 @@ export class HaRepeatAction extends LitElement implements ActionElement {
   ): string => {
     switch (schema.name) {
       case "type":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.repeat.type_select"
         );
       case "count":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.repeat.type.count.label"
         );
       case "while":
         return (
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.actions.type.repeat.type.while.conditions"
           ) + ":"
         );
       case "until":
         return (
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.actions.type.repeat.type.until.conditions"
           ) + ":"
         );
       case "for_each":
         return (
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.actions.type.repeat.type.for_each.items"
           ) + ":"
         );
       case "sequence":
         return (
-          this.hass.localize(
+          this.menuai.localize(
             "ui.panel.config.automation.editor.actions.type.repeat.sequence"
           ) + ":"
         );

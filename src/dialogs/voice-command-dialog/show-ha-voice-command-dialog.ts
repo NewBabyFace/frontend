@@ -1,5 +1,5 @@
 import { fireEvent } from "../../common/dom/fire_event";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 const loadVoiceCommandDialog = () => import("./ha-voice-command-dialog");
 
@@ -10,11 +10,11 @@ export interface VoiceCommandDialogParams {
 
 export const showVoiceCommandDialog = (
   element: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   dialogParams: VoiceCommandDialogParams
 ): void => {
-  if (hass.auth.external?.config.hasAssist) {
-    hass.auth.external!.fireMessage({
+  if (menuai.auth.external?.config.hasAssist) {
+    menuai.auth.external!.fireMessage({
       type: "assist/show",
       payload: {
         pipeline_id: dialogParams.pipeline_id,

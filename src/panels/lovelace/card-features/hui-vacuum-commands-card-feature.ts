@@ -7,7 +7,7 @@ import {
   mdiStop,
   mdiTargetVariant,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { computeDomain } from "../../../common/entity/compute_domain";
@@ -24,7 +24,7 @@ import {
   canStop,
   isCleaning,
 } from "../../../data/vacuum";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -53,7 +53,7 @@ export const VACUUM_COMMANDS_FEATURES: Record<
 };
 
 export const supportsVacuumCommand = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   command: VacuumCommand
 ): boolean =>
   VACUUM_COMMANDS_FEATURES[command].some((feature) =>
@@ -120,11 +120,11 @@ export const VACUUM_COMMANDS_BUTTONS: Record<
 };
 
 export const supportsVacuumCommandsCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -139,27 +139,27 @@ class HuiVacuumCommandCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: VacuumCommandsCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as
+    return this.menuai.states[this.context.entity_id!] as
       | VacuumEntity
       | undefined;
   }
 
   static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     context: LovelaceCardFeatureContext
   ): VacuumCommandsCardFeatureConfig {
     const stateObj = context.entity_id
-      ? hass.states[context.entity_id]
+      ? menuai.states[context.entity_id]
       : undefined;
     return {
       type: "vacuum-commands",
@@ -188,7 +188,7 @@ class HuiVacuumCommandCardFeature
   private _onCommandTap(ev): void {
     ev.stopPropagation();
     const entry = (ev.target! as any).entry as VacuumButton;
-    this.hass!.callService("vacuum", entry.serviceName, {
+    this.menuai!.callService("vacuum", entry.serviceName, {
       entity_id: this._stateObj!.entity_id,
     });
   }
@@ -196,10 +196,10 @@ class HuiVacuumCommandCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsVacuumCommandsCardFeature(this.hass, this.context)
+      !supportsVacuumCommandsCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -217,7 +217,7 @@ class HuiVacuumCommandCardFeature
           return html`
             <ha-control-button
               .entry=${button}
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 // @ts-ignore
                 `ui.dialogs.more_info_control.vacuum.${button.translationKey}`
               )}

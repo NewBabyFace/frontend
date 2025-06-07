@@ -1,6 +1,6 @@
 import { mdiChartLine, mdiHelpCircle, mdiShape } from "@mdi/js";
 import type { ComboBoxLitRenderer } from "@vaadin/combo-box/lit";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing, type PropertyValues } from "lit";
 import { customElement, property, query } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -18,7 +18,7 @@ import {
   getStatisticLabel,
   type StatisticsMetaData,
 } from "../../data/recorder";
-import type { HomeAssistant, ValueChangedEvent } from "../../types";
+import type { menuai, ValueChangedEvent } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 import "../ha-combo-box-item";
 import "../ha-generic-picker";
@@ -41,13 +41,13 @@ type StatisticItemType = "entity" | "external" | "no_state";
 
 interface StatisticComboBoxItem extends PickerComboBoxItem {
   statistic_id?: string;
-  stateObj?: HassEntity;
+  stateObj?: menuaiEntity;
   type?: StatisticItemType;
 }
 
 @customElement("ha-statistic-picker")
 export class HaStatisticPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
@@ -132,12 +132,12 @@ export class HaStatisticPicker extends LitElement {
   }
 
   private async _getStatisticIds() {
-    this.statisticIds = await getStatisticIds(this.hass, this.statisticTypes);
+    this.statisticIds = await getStatisticIds(this.menuai, this.statisticTypes);
   }
 
   private _getItems = () =>
     this._getStatisticsItems(
-      this.hass,
+      this.menuai,
       this.statisticIds,
       this.includeStatisticsUnitOfMeasurement,
       this.includeUnitClass,
@@ -151,7 +151,7 @@ export class HaStatisticPicker extends LitElement {
     return [
       {
         id: MISSING_ID,
-        primary: this.hass.localize(
+        primary: this.menuai.localize(
           "ui.components.statistic-picker.missing_entity"
         ),
         icon_path: mdiHelpCircle,
@@ -161,7 +161,7 @@ export class HaStatisticPicker extends LitElement {
 
   private _getStatisticsItems = memoizeOne(
     (
-      hass: HomeAssistant,
+      menuai: menuai,
       statisticIds?: StatisticsMetaData[],
       includeStatisticsUnitOfMeasurement?: string | string[],
       includeUnitClass?: string | string[],
@@ -193,7 +193,7 @@ export class HaStatisticPicker extends LitElement {
         const includeDeviceClasses: (string | null)[] =
           ensureArray(includeDeviceClass);
         statisticIds = statisticIds.filter((meta) => {
-          const stateObj = this.hass.states[meta.statistic_id];
+          const stateObj = this.menuai.states[meta.statistic_id];
           if (!stateObj) {
             return true;
           }
@@ -203,7 +203,7 @@ export class HaStatisticPicker extends LitElement {
         });
       }
 
-      const isRTL = computeRTL(this.hass);
+      const isRTL = computeRTL(this.menuai);
 
       const output: StatisticComboBoxItem[] = [];
 
@@ -215,12 +215,12 @@ export class HaStatisticPicker extends LitElement {
         ) {
           return;
         }
-        const stateObj = this.hass.states[meta.statistic_id];
+        const stateObj = this.menuai.states[meta.statistic_id];
 
         if (!stateObj) {
           if (!entitiesOnly) {
             const id = meta.statistic_id;
-            const label = getStatisticLabel(this.hass, meta.statistic_id, meta);
+            const label = getStatisticLabel(this.menuai, meta.statistic_id, meta);
             const type =
               meta.statistic_id.includes(":") &&
               !meta.statistic_id.includes(".")
@@ -232,7 +232,7 @@ export class HaStatisticPicker extends LitElement {
               output.push({
                 id,
                 primary: label,
-                secondary: this.hass.localize(
+                secondary: this.menuai.localize(
                   "ui.components.statistic-picker.no_state"
                 ),
                 type,
@@ -242,7 +242,7 @@ export class HaStatisticPicker extends LitElement {
               });
             } else if (type === "external") {
               const domain = id.split(":")[0];
-              const domainName = domainToName(this.hass.localize, domain);
+              const domainName = domainToName(this.menuai.localize, domain);
               output.push({
                 id,
                 statistic_id: id,
@@ -259,10 +259,10 @@ export class HaStatisticPicker extends LitElement {
         }
         const id = meta.statistic_id;
 
-        const { area, device } = getEntityContext(stateObj, hass);
+        const { area, device } = getEntityContext(stateObj, menuai);
 
         const friendlyName = computeStateName(stateObj); // Keep this for search
-        const entityName = computeEntityName(stateObj, hass);
+        const entityName = computeEntityName(stateObj, menuai);
         const deviceName = device ? computeDeviceName(device) : undefined;
         const areaName = area ? computeAreaName(area) : undefined;
 
@@ -316,7 +316,7 @@ export class HaStatisticPicker extends LitElement {
       ${item.stateObj
         ? html`
             <state-badge
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${item.stateObj}
               slot="start"
             ></state-badge>
@@ -334,16 +334,16 @@ export class HaStatisticPicker extends LitElement {
   };
 
   private _computeItem(statisticId: string): StatisticComboBoxItem {
-    const stateObj = this.hass.states[statisticId];
+    const stateObj = this.menuai.states[statisticId];
 
     if (stateObj) {
-      const { area, device } = getEntityContext(stateObj, this.hass);
+      const { area, device } = getEntityContext(stateObj, this.menuai);
 
-      const entityName = computeEntityName(stateObj, this.hass);
+      const entityName = computeEntityName(stateObj, this.menuai);
       const deviceName = device ? computeDeviceName(device) : undefined;
       const areaName = area ? computeAreaName(area) : undefined;
 
-      const isRTL = computeRTL(this.hass);
+      const isRTL = computeRTL(this.menuai);
 
       const primary = entityName || deviceName || statisticId;
       const secondary = [areaName, entityName ? deviceName : undefined]
@@ -382,9 +382,9 @@ export class HaStatisticPicker extends LitElement {
 
       if (type === "external") {
         const sortingPrefix = `${TYPE_ORDER.indexOf("external")}`;
-        const label = getStatisticLabel(this.hass, statisticId, statistic);
+        const label = getStatisticLabel(this.menuai, statisticId, statistic);
         const domain = statisticId.split(":")[0];
-        const domainName = domainToName(this.hass.localize, domain);
+        const domainName = domainToName(this.menuai.localize, domain);
 
         return {
           id: statisticId,
@@ -400,12 +400,12 @@ export class HaStatisticPicker extends LitElement {
     }
 
     const sortingPrefix = `${TYPE_ORDER.indexOf("external")}`;
-    const label = getStatisticLabel(this.hass, statisticId, statistic);
+    const label = getStatisticLabel(this.menuai, statisticId, statistic);
 
     return {
       id: statisticId,
       primary: label,
-      secondary: this.hass.localize("ui.components.statistic-picker.no_state"),
+      secondary: this.menuai.localize("ui.components.statistic-picker.no_state"),
       type: "no_state",
       sorting_label: [sortingPrefix, label].join("_"),
       search_labels: [label, statisticId],
@@ -417,7 +417,7 @@ export class HaStatisticPicker extends LitElement {
     item,
     { index }
   ) => {
-    const showEntityId = this.hass.userData?.showEntityIdPicker;
+    const showEntityId = this.menuai.userData?.showEntityIdPicker;
     return html`
       <ha-combo-box-item type="button" compact .borderTop=${index !== 0}>
         ${item.icon_path
@@ -433,7 +433,7 @@ export class HaStatisticPicker extends LitElement {
                 <state-badge
                   slot="start"
                   .stateObj=${item.stateObj}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                 ></state-badge>
               `
             : nothing}
@@ -455,14 +455,14 @@ export class HaStatisticPicker extends LitElement {
   protected render() {
     const placeholder =
       this.placeholder ??
-      this.hass.localize("ui.components.statistic-picker.placeholder");
-    const notFoundLabel = this.hass.localize(
+      this.menuai.localize("ui.components.statistic-picker.placeholder");
+    const notFoundLabel = this.menuai.localize(
       "ui.components.statistic-picker.no_match"
     );
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         .allowCustomValue=${this.allowCustomEntity}
         .label=${this.label}
@@ -505,7 +505,7 @@ export class HaStatisticPicker extends LitElement {
 
     if (value === MISSING_ID) {
       window.open(
-        documentationUrl(this.hass, this.helpMissingEntityUrl),
+        documentationUrl(this.menuai, this.helpMissingEntityUrl),
         "_blank"
       );
       return;

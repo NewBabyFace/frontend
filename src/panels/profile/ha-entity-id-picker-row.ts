@@ -7,11 +7,11 @@ import "../../components/ha-settings-row";
 import "../../components/ha-switch";
 import type { CoreFrontendUserData } from "../../data/frontend";
 import { saveFrontendUserData } from "../../data/frontend";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-entity-id-picker-row")
 class EntityIdPickerRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -26,10 +26,10 @@ class EntityIdPickerRow extends LitElement {
         : nothing}
       <ha-settings-row .narrow=${this.narrow}>
         <span slot="heading">
-          ${this.hass.localize("ui.panel.profile.entity_id_picker.title")}</span
+          ${this.menuai.localize("ui.panel.profile.entity_id_picker.title")}</span
         >
         <span slot="description">
-          ${this.hass.localize("ui.panel.profile.entity_id_picker.description")}
+          ${this.menuai.localize("ui.panel.profile.entity_id_picker.description")}
         </span>
         <ha-switch
           .checked=${this.coreUserData && this.coreUserData.showEntityIdPicker}
@@ -42,7 +42,7 @@ class EntityIdPickerRow extends LitElement {
 
   private async _toggled(ev) {
     try {
-      saveFrontendUserData(this.hass.connection, "core", {
+      saveFrontendUserData(this.menuai.connection, "core", {
         ...this.coreUserData,
         showEntityIdPicker: ev.currentTarget.checked,
       });

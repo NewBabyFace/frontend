@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface GoogleEntity {
   entity_id: string;
@@ -7,17 +7,17 @@ export interface GoogleEntity {
   disable_2fa?: boolean;
 }
 
-export const fetchCloudGoogleEntities = (hass: HomeAssistant) =>
-  hass.callWS<GoogleEntity[]>({ type: "cloud/google_assistant/entities" });
+export const fetchCloudGoogleEntities = (menuai: menuai) =>
+  menuai.callWS<GoogleEntity[]>({ type: "cloud/google_assistant/entities" });
 
 export const fetchCloudGoogleEntity = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string
 ) =>
-  hass.callWS<GoogleEntity>({
+  menuai.callWS<GoogleEntity>({
     type: "cloud/google_assistant/entities/get",
     entity_id,
   });
 
-export const syncCloudGoogleEntities = (hass: HomeAssistant) =>
-  hass.callApi("POST", "cloud/google_actions/sync");
+export const syncCloudGoogleEntities = (menuai: menuai) =>
+  menuai.callApi("POST", "cloud/google_actions/sync");

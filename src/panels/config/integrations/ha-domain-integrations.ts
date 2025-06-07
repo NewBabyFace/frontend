@@ -21,7 +21,7 @@ import {
 import type { Brand, Integration } from "../../../data/integrations";
 import { showConfigFlowDialog } from "../../../dialogs/config-flow/show-dialog-config-flow";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import "./ha-integration-list-item";
 import { showYamlIntegrationDialog } from "./show-add-integration-dialog";
@@ -30,7 +30,7 @@ const standardToDomain = { zigbee: "zha", zwave: "zwave_js" } as const;
 
 @customElement("ha-domain-integrations")
 class HaDomainIntegrations extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property() public domain!: string;
 
@@ -43,7 +43,7 @@ class HaDomainIntegrations extends LitElement {
     return html`<ha-list>
       ${this.flowsInProgress?.length
         ? html`<h3>
-              ${this.hass.localize("ui.panel.config.integrations.discovered")}
+              ${this.menuai.localize("ui.panel.config.integrations.discovered")}
             </h3>
             ${this.flowsInProgress.map(
               (flow) =>
@@ -61,13 +61,13 @@ class HaDomainIntegrations extends LitElement {
                       domain: flow.handler,
                       type: "icon",
                       useFallback: true,
-                      darkOptimized: this.hass.themes?.darkMode,
+                      darkOptimized: this.menuai.themes?.darkMode,
                     })}
                     crossorigin="anonymous"
                     referrerpolicy="no-referrer"
                   />
                   <span
-                    >${localizeConfigFlowTitle(this.hass.localize, flow)}</span
+                    >${localizeConfigFlowTitle(this.menuai.localize, flow)}</span
                   >
                   <ha-icon-next slot="meta"></ha-icon-next>
                 </ha-list-item>`
@@ -77,7 +77,7 @@ class HaDomainIntegrations extends LitElement {
             "integrations" in this.integration &&
             this.integration.integrations
               ? html`<h3>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.integrations.available_integrations"
                   )}
                 </h3>`
@@ -107,13 +107,13 @@ class HaDomainIntegrations extends LitElement {
                     domain,
                     type: "icon",
                     useFallback: true,
-                    darkOptimized: this.hass.themes?.darkMode,
+                    darkOptimized: this.menuai.themes?.darkMode,
                   })}
                   crossorigin="anonymous"
                   referrerpolicy="no-referrer"
                 />
                 <span
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.panel.config.integrations.add_${domain}_device`
                   )}</span
                 >
@@ -133,20 +133,20 @@ class HaDomainIntegrations extends LitElement {
                 return 0;
               }
               return caseInsensitiveStringCompare(
-                a[1].name || domainToName(this.hass.localize, a[0]),
-                b[1].name || domainToName(this.hass.localize, b[0]),
-                this.hass.locale.language
+                a[1].name || domainToName(this.menuai.localize, a[0]),
+                b[1].name || domainToName(this.menuai.localize, b[0]),
+                this.menuai.locale.language
               );
             })
             .map(
               ([dom, val]) =>
                 html`<ha-integration-list-item
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .domain=${dom}
                   .integration=${{
                     ...val,
                     domain: dom,
-                    name: val.name || domainToName(this.hass.localize, dom),
+                    name: val.name || domainToName(this.menuai.localize, dom),
                     is_built_in: val.is_built_in !== false,
                     cloud: val.iot_class?.startsWith("cloud_"),
                   }}
@@ -170,13 +170,13 @@ class HaDomainIntegrations extends LitElement {
                 domain: this.domain,
                 type: "icon",
                 useFallback: true,
-                darkOptimized: this.hass.themes?.darkMode,
+                darkOptimized: this.menuai.themes?.darkMode,
               })}
               crossorigin="anonymous"
               referrerpolicy="no-referrer"
             />
             <span
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 `ui.panel.config.integrations.add_${
                   this.domain as (typeof PROTOCOL_INTEGRATIONS)[number]
                 }_device`
@@ -197,28 +197,28 @@ class HaDomainIntegrations extends LitElement {
                   domain: this.domain,
                   name:
                     this.integration.name ||
-                    domainToName(this.hass.localize, this.domain),
+                    domainToName(this.menuai.localize, this.domain),
                   is_built_in: this.integration.is_built_in !== false,
                   cloud: this.integration.iot_class?.startsWith("cloud_"),
                 }}
                 hasMeta
               >
-                ${this.hass.localize("ui.panel.config.integrations.new_flow", {
+                ${this.menuai.localize("ui.panel.config.integrations.new_flow", {
                   integration:
                     this.integration.name ||
-                    domainToName(this.hass.localize, this.domain),
+                    domainToName(this.menuai.localize, this.domain),
                 })}
                 <ha-icon-next slot="meta"></ha-icon-next>
               </ha-list-item>`
             : html`<ha-integration-list-item
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .domain=${this.domain}
                 .integration=${{
                   ...this.integration,
                   domain: this.domain,
                   name:
                     this.integration.name ||
-                    domainToName(this.hass.localize, this.domain),
+                    domainToName(this.menuai.localize, this.domain),
                   is_built_in: this.integration.is_built_in !== false,
                   cloud: this.integration.iot_class?.startsWith("cloud_"),
                 }}
@@ -237,7 +237,7 @@ class HaDomainIntegrations extends LitElement {
 
     if (
       ["cloud", "google_assistant", "alexa"].includes(domain) &&
-      isComponentLoaded(this.hass, "cloud")
+      isComponentLoaded(this.menuai, "cloud")
     ) {
       navigate("/config/cloud");
       return;
@@ -270,7 +270,7 @@ class HaDomainIntegrations extends LitElement {
       (!("integration_type" in this.integration!) &&
         !this.integration!.integrations?.[domain]?.config_flow)
     ) {
-      const manifest = await fetchIntegrationManifest(this.hass, domain);
+      const manifest = await fetchIntegrationManifest(this.menuai, domain);
       showYamlIntegrationDialog(this, { manifest });
       return;
     }
@@ -280,9 +280,9 @@ class HaDomainIntegrations extends LitElement {
       root instanceof ShadowRoot ? (root.host as HTMLElement) : this,
       {
         startFlowHandler: domain,
-        showAdvanced: this.hass.userData?.showAdvanced,
+        showAdvanced: this.menuai.userData?.showAdvanced,
         navigateToResult: true,
-        manifest: await fetchIntegrationManifest(this.hass, domain),
+        manifest: await fetchIntegrationManifest(this.menuai, domain),
       }
     );
     fireEvent(this, "close-dialog");
@@ -299,8 +299,8 @@ class HaDomainIntegrations extends LitElement {
       {
         continueFlowId: flow.flow_id,
         navigateToResult: true,
-        showAdvanced: this.hass.userData?.showAdvanced,
-        manifest: await fetchIntegrationManifest(this.hass, flow.handler),
+        showAdvanced: this.menuai.userData?.showAdvanced,
+        manifest: await fetchIntegrationManifest(this.menuai, flow.handler),
       }
     );
     fireEvent(this, "close-dialog");
@@ -315,7 +315,7 @@ class HaDomainIntegrations extends LitElement {
     fireEvent(this, "close-dialog");
     protocolIntegrationPicked(
       root instanceof ShadowRoot ? (root.host as HTMLElement) : this,
-      this.hass,
+      this.menuai,
       domain,
       { brand: this.domain }
     );

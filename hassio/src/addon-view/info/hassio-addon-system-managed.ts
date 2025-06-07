@@ -7,8 +7,8 @@ import "../../../../src/components/ha-alert";
 import "../../../../src/components/ha-button";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 
-@customElement("hassio-addon-system-managed")
-class HassioAddonSystemManaged extends LitElement {
+@customElement("menuaiio-addon-system-managed")
+class menuaiioAddonSystemManaged extends LitElement {
   @property({ type: Boolean }) public narrow = false;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
@@ -51,10 +51,10 @@ class HassioAddonSystemManaged extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-system-managed": HassioAddonSystemManaged;
+    "menuaiio-addon-system-managed": menuaiioAddonSystemManaged;
   }
 
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "system-managed-take-control": undefined;
   }
 }

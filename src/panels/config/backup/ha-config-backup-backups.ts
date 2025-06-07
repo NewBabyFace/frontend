@@ -14,7 +14,7 @@ import memoizeOne from "memoize-one";
 import { isComponentLoaded } from "../../../common/config/is_component_loaded";
 import { relativeTime } from "../../../common/datetime/relative_time";
 import { storage } from "../../../common/decorators/storage";
-import { fireEvent, type HASSDomEvent } from "../../../common/dom/fire_event";
+import { fireEvent, type menuaiDomEvent } from "../../../common/dom/fire_event";
 import { computeDomain } from "../../../common/entity/compute_domain";
 import { shouldHandleRequestSelectedEvent } from "../../../common/mwc/handle-request-selected-event";
 import { navigate } from "../../../common/navigate";
@@ -55,16 +55,16 @@ import {
 import type { ManagerStateEvent } from "../../../data/backup_manager";
 import type { CloudStatus } from "../../../data/cloud";
 import type { DataTableFiltersValues } from "../../../data/data_table_filters";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
 import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage-data-table";
-import type { HaTabsSubpageDataTable } from "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-tabs-subpage-data-table";
+import type { HaTabsSubpageDataTable } from "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { bytesToString } from "../../../util/bytes-to-string";
 import { showGenerateBackupDialog } from "./dialogs/show-dialog-generate-backup";
@@ -80,7 +80,7 @@ interface BackupRow extends DataTableRowData, BackupContent {
 
 @customElement("ha-config-backup-backups")
 class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatus;
 
@@ -117,7 +117,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
   })
   private _activeCollapsed: string[] = [];
 
-  @query("hass-tabs-subpage-data-table", true)
+  @query("menuai-tabs-subpage-data-table", true)
   private _dataTable!: HaTabsSubpageDataTable;
 
   public connectedCallback() {
@@ -165,7 +165,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
         filterable: true,
         sortable: true,
         template: (backup) =>
-          relativeTime(new Date(backup.date), this.hass.locale),
+          relativeTime(new Date(backup.date), this.menuai.locale),
       },
       formatted_type: {
         title: localize("ui.panel.config.backup.backup_type"),
@@ -192,7 +192,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
             <div style="display: flex; gap: 4px;">
               ${displayedAgentIds.map((agentId) => {
                 const name = computeBackupAgentName(
-                  this.hass.localize,
+                  this.menuai.localize,
                   agentId,
                   this.agents
                 );
@@ -222,7 +222,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
                       domain,
                       type: "icon",
                       useFallback: true,
-                      darkOptimized: this.hass.themes?.darkMode,
+                      darkOptimized: this.menuai.themes?.darkMode,
                     })}
                     height="24"
                     crossorigin="anonymous"
@@ -255,16 +255,16 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
         type: "overflow-menu",
         template: (backup) => html`
           <ha-icon-overflow-menu
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             narrow
             .items=${[
               {
-                label: this.hass.localize("ui.common.download"),
+                label: this.menuai.localize("ui.common.download"),
                 path: mdiDownload,
                 action: () => this._downloadBackup(backup),
               },
               {
-                label: this.hass.localize("ui.common.delete"),
+                label: this.menuai.localize("ui.common.delete"),
                 path: mdiDelete,
                 action: () => this._deleteBackup(backup),
                 warning: true,
@@ -281,10 +281,10 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
     (
       activeGrouping: string | undefined,
       localize: LocalizeFunc,
-      isHassio: boolean
+      ismenuaiio: boolean
     ) =>
       activeGrouping === "formatted_type"
-        ? getBackupTypes(isHassio).map((type) =>
+        ? getBackupTypes(ismenuaiio).map((type) =>
             localize(`ui.panel.config.backup.type.${type}`)
           )
         : undefined
@@ -299,7 +299,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
@@ -309,18 +309,18 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
       backups: BackupContent[],
       filters: DataTableFiltersValues,
       localize: LocalizeFunc,
-      isHassio: boolean
+      ismenuaiio: boolean
     ): BackupRow[] => {
       const typeFilter = filters["ha-filter-states"] as string[] | undefined;
       let filteredBackups = backups;
       if (typeFilter?.length) {
         filteredBackups = filteredBackups.filter((backup) => {
-          const type = computeBackupType(backup, isHassio);
+          const type = computeBackupType(backup, ismenuaiio);
           return typeFilter.includes(type);
         });
       }
       return filteredBackups.map((backup) => {
-        const type = computeBackupType(backup, isHassio);
+        const type = computeBackupType(backup, ismenuaiio);
         const agentIds = Object.keys(backup.agents);
         return {
           ...backup,
@@ -339,12 +339,12 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
   protected render(): TemplateResult {
     const backupInProgress =
       "state" in this.manager && this.manager.state === "in_progress";
-    const isHassio = isComponentLoaded(this.hass, "hassio");
+    const ismenuaiio = isComponentLoaded(this.menuai, "menuaiio");
     const data = this._data(
       this.backups,
       this._filters,
-      this.hass.localize,
-      isHassio
+      this.menuai.localize,
+      ismenuaiio
     );
     const maxDisplayedAgents = Math.min(
       this._maxAgents(data),
@@ -352,15 +352,15 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
     );
 
     return html`
-      <hass-tabs-subpage-data-table
+      <menuai-tabs-subpage-data-table
         has-fab
         .tabs=${[
           {
-            name: this.hass.localize("ui.panel.config.backup.backups.header"),
+            name: this.menuai.localize("ui.panel.config.backup.backups.header"),
             path: `/config/backup/list`,
           },
         ]}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config/backup/overview"
         clickable
@@ -380,18 +380,18 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
         .initialCollapsedGroups=${this._activeCollapsed}
         .groupOrder=${this._groupOrder(
           this._activeGrouping,
-          this.hass.localize,
-          isHassio
+          this.menuai.localize,
+          ismenuaiio
         )}
         @grouping-changed=${this._handleGroupingChanged}
         @collapsed-changed=${this._handleCollapseChanged}
         @selection-changed=${this._handleSelectionChanged}
         .route=${this.route}
         @row-click=${this._showBackupDetails}
-        .columns=${this._columns(this.hass.localize, maxDisplayedAgents)}
+        .columns=${this._columns(this.menuai.localize, maxDisplayedAgents)}
         .data=${data}
-        .noDataText=${this.hass.localize("ui.panel.config.backup.no_backups")}
-        .searchLabel=${this.hass.localize(
+        .noDataText=${this.menuai.localize("ui.panel.config.backup.no_backups")}
+        .searchLabel=${this.menuai.localize(
           "ui.panel.config.backup.picker.search"
         )}
       >
@@ -399,7 +399,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
           <ha-button-menu>
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item
@@ -407,7 +407,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
               @request-selected=${this._uploadBackup}
             >
               <ha-svg-icon slot="graphic" .path=${mdiUpload}></ha-svg-icon>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.backup.backups.menu.upload_backup"
               )}
             </ha-list-item>
@@ -418,14 +418,14 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
           ${!this.narrow
             ? html`
                 <ha-button @click=${this._deleteSelected} class="warning">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.backups.delete_selected"
                   )}
                 </ha-button>
               `
             : html`
                 <ha-icon-button
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.backup.backups.delete_selected"
                   )}
                   .path=${mdiDelete}
@@ -436,10 +436,10 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
         </div>
 
         <ha-filter-states
-          .hass=${this.hass}
-          .label=${this.hass.localize("ui.panel.config.backup.backup_type")}
+          .menuai=${this.menuai}
+          .label=${this.menuai.localize("ui.panel.config.backup.backup_type")}
           .value=${this._filters["ha-filter-states"]}
-          .states=${this._states(this.hass.localize, isHassio)}
+          .states=${this._states(this.menuai.localize, ismenuaiio)}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
           expanded
@@ -450,7 +450,7 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
               <ha-fab
                 slot="fab"
                 ?disabled=${backupInProgress}
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.backup.backups.new_backup"
                 )}
                 extended
@@ -467,12 +467,12 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
               </ha-fab>
             `
           : nothing}
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
-  private _states = memoizeOne((localize: LocalizeFunc, isHassio: boolean) =>
-    getBackupTypes(isHassio).map((type) => ({
+  private _states = memoizeOne((localize: LocalizeFunc, ismenuaiio: boolean) =>
+    getBackupTypes(ismenuaiio).map((type) => ({
       value: type,
       label: localize(`ui.panel.config.backup.type.${type}`),
     }))
@@ -526,12 +526,12 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
         return;
       }
 
-      await generateBackup(this.hass, params);
+      await generateBackup(this.menuai, params);
       fireEvent(this, "ha-refresh-backup-info");
       return;
     }
     if (type === "automatic") {
-      await generateBackupWithAutomaticSettings(this.hass);
+      await generateBackupWithAutomaticSettings(this.menuai);
       fireEvent(this, "ha-refresh-backup-info");
     }
   }
@@ -542,14 +542,14 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
   }
 
   private async _downloadBackup(backup: BackupContent): Promise<void> {
-    downloadBackup(this.hass, this, backup, this.config);
+    downloadBackup(this.menuai, this, backup, this.config);
   }
 
   private async _deleteBackup(backup: BackupContent): Promise<void> {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize("ui.panel.config.backup.dialogs.delete.title"),
-      text: this.hass.localize("ui.panel.config.backup.dialogs.delete.text"),
-      confirmText: this.hass.localize("ui.common.delete"),
+      title: this.menuai.localize("ui.panel.config.backup.dialogs.delete.title"),
+      text: this.menuai.localize("ui.panel.config.backup.dialogs.delete.text"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
     });
 
@@ -558,13 +558,13 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
     }
 
     try {
-      await deleteBackup(this.hass, backup.backup_id);
+      await deleteBackup(this.menuai, backup.backup_id);
       if (this._selected.includes(backup.backup_id)) {
         this._selected = this._selected.filter((id) => id !== backup.backup_id);
       }
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.backup.dialogs.delete.failed"
         ),
         text: extractApiErrorMessage(err),
@@ -576,13 +576,13 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
 
   private async _deleteSelected() {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.panel.config.backup.dialogs.delete_selected.title"
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.backup.dialogs.delete_selected.text"
       ),
-      confirmText: this.hass.localize("ui.common.delete"),
+      confirmText: this.menuai.localize("ui.common.delete"),
       destructive: true,
     });
 
@@ -592,11 +592,11 @@ class HaConfigBackupBackups extends SubscribeMixin(LitElement) {
 
     try {
       await Promise.all(
-        this._selected.map((slug) => deleteBackup(this.hass, slug))
+        this._selected.map((slug) => deleteBackup(this.menuai, slug))
       );
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.backup.dialogs.delete_selected.failed"
         ),
         text: extractApiErrorMessage(err),

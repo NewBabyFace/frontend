@@ -4,7 +4,7 @@ import { ifDefined } from "lit/directives/if-defined";
 import type { ImageEntity } from "../../../data/image";
 import { computeImageUrl } from "../../../data/image";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeTooltip } from "../common/compute-tooltip";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
@@ -20,7 +20,7 @@ export class HuiImageElement extends LitElement implements LovelaceElement {
     return document.createElement("hui-image-element-editor");
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ImageElementConfig;
 
@@ -42,17 +42,17 @@ export class HuiImageElement extends LitElement implements LovelaceElement {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
     let stateObj: ImageEntity | undefined;
     if (this._config.image_entity) {
-      stateObj = this.hass.states[this._config.image_entity] as ImageEntity;
+      stateObj = this.menuai.states[this._config.image_entity] as ImageEntity;
     }
 
     return html`
       <hui-image
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entity=${this._config.entity}
         .image=${stateObj ? computeImageUrl(stateObj) : this._config.image}
         .stateImage=${this._config.state_image}
@@ -60,7 +60,7 @@ export class HuiImageElement extends LitElement implements LovelaceElement {
         .cameraView=${this._config.camera_view}
         .filter=${this._config.filter}
         .stateFilter=${this._config.state_filter}
-        .title=${computeTooltip(this.hass, this._config)}
+        .title=${computeTooltip(this.menuai, this._config)}
         .aspectRatio=${this._config.aspect_ratio}
         .darkModeImage=${this._config.dark_mode_image}
         .darkModeFilter=${this._config.dark_mode_filter}
@@ -93,7 +93,7 @@ export class HuiImageElement extends LitElement implements LovelaceElement {
   `;
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 }
 

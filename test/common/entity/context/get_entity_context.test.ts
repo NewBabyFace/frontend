@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getEntityContext } from "../../../../src/common/entity/context/get_entity_context";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import {
   mockArea,
   mockDevice,
@@ -17,16 +17,16 @@ describe("getEntityContext", () => {
     const stateObj = mockStateObj({
       entity_id: "light.living_room",
     });
-    const hass = {
+    const menuai = {
       entities: {
         "light.living_room": entity,
       },
       devices: {},
       areas: {},
       floors: {},
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getEntityContext(stateObj, hass);
+    const result = getEntityContext(stateObj, menuai);
 
     expect(result).toEqual({
       entity,
@@ -56,7 +56,7 @@ describe("getEntityContext", () => {
       entity_id: "light.living_room",
     });
 
-    const hass = {
+    const menuai = {
       entities: {
         "light.living_room": entity,
       },
@@ -69,9 +69,9 @@ describe("getEntityContext", () => {
       floors: {
         floor_1: floor,
       },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getEntityContext(stateObj, hass);
+    const result = getEntityContext(stateObj, menuai);
 
     expect(result).toEqual({
       entity,
@@ -92,7 +92,7 @@ describe("getEntityContext", () => {
       entity_id: "sensor.kitchen",
     });
 
-    const hass = {
+    const menuai = {
       entities: {
         "sensor.kitchen": entity,
       },
@@ -103,9 +103,9 @@ describe("getEntityContext", () => {
       floors: {
         floor_2: floor,
       },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getEntityContext(stateObj, hass);
+    const result = getEntityContext(stateObj, menuai);
 
     expect(result).toEqual({
       entity,
@@ -127,7 +127,7 @@ describe("getEntityContext", () => {
       entity_id: "sensor.bedroom",
     });
 
-    const hass = {
+    const menuai = {
       entities: {
         "sensor.bedroom": entity,
       },
@@ -136,9 +136,9 @@ describe("getEntityContext", () => {
         area_3: area,
       },
       floors: {},
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
 
-    const result = getEntityContext(stateObj, hass);
+    const result = getEntityContext(stateObj, menuai);
 
     expect(result).toEqual({
       entity,

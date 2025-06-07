@@ -14,12 +14,12 @@ import "../../../components/ha-markdown";
 import type { RepairsIssue } from "../../../data/repairs";
 import { ignoreRepairsIssue } from "../../../data/repairs";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { RepairsIssueDialogParams } from "./show-repair-issue-dialog";
 
 @customElement("dialog-repairs-issue")
 class DialogRepairsIssue extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _issue?: RepairsIssue;
 
@@ -51,14 +51,14 @@ class DialogRepairsIssue extends LitElement {
       return nothing;
     }
 
-    const learnMoreUrlIsHomeAssistant =
-      this._issue.learn_more_url?.startsWith("homeassistant://") || false;
+    const learnMoreUrlIsmenuai =
+      this._issue.learn_more_url?.startsWith("menuai://") || false;
 
     const dialogTitle =
-      this.hass.localize(
+      this.menuai.localize(
         `component.${this._issue.domain}.issues.${this._issue.translation_key || this._issue.issue_id}.title`,
         this._issue.translation_placeholders || {}
-      ) || this.hass!.localize("ui.panel.config.repairs.dialog.title");
+      ) || this.menuai!.localize("ui.panel.config.repairs.dialog.title");
 
     return html`
       <ha-md-dialog
@@ -70,7 +70,7 @@ class DialogRepairsIssue extends LitElement {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.close") ?? "Close"}
+            .label=${this.menuai.localize("ui.common.close") ?? "Close"}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
@@ -82,7 +82,7 @@ class DialogRepairsIssue extends LitElement {
           >
           <dialog-repairs-issue-subtitle
             slot="subtitle"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .issue=${this._issue}
           ></dialog-repairs-issue-subtitle>
         </ha-dialog-header>
@@ -90,7 +90,7 @@ class DialogRepairsIssue extends LitElement {
           ${this._issue.breaks_in_ha_version
             ? html`
                 <ha-alert alert-type="warning">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.repairs.dialog.breaks_in_version",
                     { version: this._issue.breaks_in_ha_version }
                   )}
@@ -102,7 +102,7 @@ class DialogRepairsIssue extends LitElement {
             allow-svg
             breaks
             @click=${this._clickHandler}
-            .content=${this.hass.localize(
+            .content=${this.menuai.localize(
               `component.${this._issue.domain}.issues.${
                 this._issue.translation_key || this._issue.issue_id
               }.description`,
@@ -113,7 +113,7 @@ class DialogRepairsIssue extends LitElement {
           ${this._issue.dismissed_version
             ? html`
                 <br /><span class="dismissed">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.repairs.dialog.ignored_in_version",
                     { version: this._issue.dismissed_version }
                   )}</span
@@ -124,27 +124,27 @@ class DialogRepairsIssue extends LitElement {
         <div slot="actions">
           <ha-button @click=${this._ignoreIssue}>
             ${this._issue!.ignored
-              ? this.hass!.localize("ui.panel.config.repairs.dialog.unignore")
-              : this.hass!.localize("ui.panel.config.repairs.dialog.ignore")}
+              ? this.menuai!.localize("ui.panel.config.repairs.dialog.unignore")
+              : this.menuai!.localize("ui.panel.config.repairs.dialog.ignore")}
           </ha-button>
           ${this._issue.learn_more_url
             ? html`
                 <a
                   rel="noopener noreferrer"
-                  href=${learnMoreUrlIsHomeAssistant
+                  href=${learnMoreUrlIsmenuai
                     ? this._issue.learn_more_url.replace(
-                        "homeassistant://",
+                        "menuai://",
                         "/"
                       )
                     : this._issue.learn_more_url}
-                  .target=${learnMoreUrlIsHomeAssistant ? "" : "_blank"}
+                  .target=${learnMoreUrlIsmenuai ? "" : "_blank"}
                 >
                   <ha-button
-                    @click=${learnMoreUrlIsHomeAssistant
+                    @click=${learnMoreUrlIsmenuai
                       ? this.closeDialog
                       : undefined}
                   >
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.repairs.dialog.learn"
                     )}
                   </ha-button>
@@ -157,7 +157,7 @@ class DialogRepairsIssue extends LitElement {
   }
 
   private _ignoreIssue() {
-    ignoreRepairsIssue(this.hass, this._issue!, !this._issue!.ignored);
+    ignoreRepairsIssue(this.menuai, this._issue!, !this._issue!.ignored);
     this.closeDialog();
   }
 

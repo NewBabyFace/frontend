@@ -7,7 +7,7 @@ import {
   differenceInMilliseconds,
   startOfHour,
 } from "date-fns";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -35,7 +35,7 @@ import {
   updateCalendarEvent,
 } from "../../data/calendar";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../lovelace/components/hui-generic-entity-row";
 import "./ha-recurrence-rule-editor";
 import { showConfirmEventDialog } from "./show-confirm-event-dialog-box";
@@ -45,7 +45,7 @@ const CALENDAR_DOMAINS = ["calendar"];
 
 @customElement("dialog-calendar-event-editor")
 class DialogCalendarEventEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: string;
 
@@ -70,8 +70,8 @@ class DialogCalendarEventEditor extends LitElement {
   @state() private _submitting = false;
 
   // Dates are displayed in the timezone according to the user's profile
-  // which may be different from the Home Assistant timezone. When
-  // events are persisted, they are relative to the Home Assistant
+  // which may be different from the MenuAI timezone. When
+  // events are persisted, they are relative to the MenuAI
   // timezone, but floating without a timezone.
   private _timeZone?: string;
 
@@ -81,14 +81,14 @@ class DialogCalendarEventEditor extends LitElement {
     this._params = params;
     this._calendarId =
       params.calendarId ||
-      Object.values(this.hass.states).find(
+      Object.values(this.menuai.states).find(
         (stateObj) =>
           computeStateDomain(stateObj) === "calendar" &&
           supportsFeature(stateObj, CalendarEntityFeature.CREATE_EVENT)
       )?.entity_id;
     this._timeZone = resolveTimeZone(
-      this.hass.locale.time_zone,
-      this.hass.config.time_zone
+      this.menuai.locale.time_zone,
+      this.menuai.config.time_zone
     );
     if (params.entry) {
       const entry = params.entry!;
@@ -148,8 +148,8 @@ class DialogCalendarEventEditor extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             `ui.components.calendar.event.${isCreate ? "add" : "edit"}`
           )
         )}
@@ -170,17 +170,17 @@ class DialogCalendarEventEditor extends LitElement {
           <ha-textfield
             class="summary"
             name="summary"
-            .label=${this.hass.localize("ui.components.calendar.event.summary")}
+            .label=${this.menuai.localize("ui.components.calendar.event.summary")}
             .value=${this._summary}
             required
             @input=${this._handleSummaryChanged}
-            .validationMessage=${this.hass.localize("ui.common.error_required")}
+            .validationMessage=${this.menuai.localize("ui.common.error_required")}
             dialogInitialFocus
           ></ha-textfield>
           <ha-textarea
             class="description"
             name="description"
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.components.calendar.event.description"
             )}
             .value=${this._description}
@@ -189,8 +189,8 @@ class DialogCalendarEventEditor extends LitElement {
           ></ha-textarea>
           <ha-entity-picker
             name="calendar"
-            .hass=${this.hass}
-            .label=${this.hass.localize("ui.components.calendar.label")}
+            .menuai=${this.menuai}
+            .label=${this.menuai.localize("ui.components.calendar.label")}
             .value=${this._calendarId!}
             .includeDomains=${CALENDAR_DOMAINS}
             .entityFilter=${this._isEditableCalendar}
@@ -199,7 +199,7 @@ class DialogCalendarEventEditor extends LitElement {
             @value-changed=${this._handleCalendarChanged}
           ></ha-entity-picker>
           <ha-formfield
-            .label=${this.hass.localize("ui.components.calendar.event.all_day")}
+            .label=${this.menuai.localize("ui.components.calendar.event.all_day")}
           >
             <ha-switch
               id="all_day"
@@ -210,20 +210,20 @@ class DialogCalendarEventEditor extends LitElement {
 
           <div>
             <span class="label"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.components.calendar.event.start"
               )}:</span
             >
             <div class="flex">
               <ha-date-input
                 .value=${startDate}
-                .locale=${this.hass.locale}
+                .locale=${this.menuai.locale}
                 @value-changed=${this._startDateChanged}
               ></ha-date-input>
               ${!this._allDay
                 ? html`<ha-time-input
                     .value=${startTime}
-                    .locale=${this.hass.locale}
+                    .locale=${this.menuai.locale}
                     @value-changed=${this._startTimeChanged}
                   ></ha-time-input>`
                 : ""}
@@ -231,30 +231,30 @@ class DialogCalendarEventEditor extends LitElement {
           </div>
           <div>
             <span class="label"
-              >${this.hass.localize("ui.components.calendar.event.end")}:</span
+              >${this.menuai.localize("ui.components.calendar.event.end")}:</span
             >
             <div class="flex">
               <ha-date-input
                 .value=${endDate}
                 .min=${startDate}
-                .locale=${this.hass.locale}
+                .locale=${this.menuai.locale}
                 @value-changed=${this._endDateChanged}
               ></ha-date-input>
               ${!this._allDay
                 ? html`<ha-time-input
                     .value=${endTime}
-                    .locale=${this.hass.locale}
+                    .locale=${this.menuai.locale}
                     @value-changed=${this._endTimeChanged}
                   ></ha-time-input>`
                 : ""}
             </div>
           </div>
           <ha-recurrence-rule-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .dtstart=${this._dtstart}
             .allDay=${this._allDay}
-            .locale=${this.hass.locale}
-            .timezone=${this.hass.config.time_zone}
+            .locale=${this.menuai.locale}
+            .timezone=${this.menuai.config.time_zone}
             .value=${this._rrule || ""}
             @value-changed=${this._handleRRuleChanged}
           >
@@ -267,7 +267,7 @@ class DialogCalendarEventEditor extends LitElement {
                 @click=${this._createEvent}
                 .disabled=${this._submitting}
               >
-                ${this.hass.localize("ui.components.calendar.event.add")}
+                ${this.menuai.localize("ui.components.calendar.event.add")}
               </mwc-button>
             `
           : html`
@@ -276,7 +276,7 @@ class DialogCalendarEventEditor extends LitElement {
                 @click=${this._saveEvent}
                 .disabled=${this._submitting}
               >
-                ${this.hass.localize("ui.components.calendar.event.save")}
+                ${this.menuai.localize("ui.components.calendar.event.save")}
               </mwc-button>
               ${this._params.canDelete
                 ? html`
@@ -286,7 +286,7 @@ class DialogCalendarEventEditor extends LitElement {
                       @click=${this._deleteEvent}
                       .disabled=${this._submitting}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.components.calendar.event.delete"
                       )}
                     </mwc-button>
@@ -297,7 +297,7 @@ class DialogCalendarEventEditor extends LitElement {
     `;
   }
 
-  private _isEditableCalendar = (entityStateObj: HassEntity) =>
+  private _isEditableCalendar = (entityStateObj: menuaiEntity) =>
     supportsFeature(entityStateObj, CalendarEntityFeature.CREATE_EVENT);
 
   private _getLocaleStrings = memoizeOne(
@@ -356,7 +356,7 @@ class DialogCalendarEventEditor extends LitElement {
     // duration the same.
     if (this._dtend! <= this._dtstart!) {
       this._dtend = addMilliseconds(this._dtstart, duration);
-      this._info = this.hass.localize(
+      this._info = this.menuai.localize(
         "ui.components.calendar.event.end_auto_adjusted"
       );
     }
@@ -380,7 +380,7 @@ class DialogCalendarEventEditor extends LitElement {
     // duration the same.
     if (this._dtend! <= this._dtstart!) {
       this._dtend = addMilliseconds(new Date(this._dtstart), duration);
-      this._info = this.hass.localize(
+      this._info = this.menuai.localize(
         "ui.components.calendar.event.end_auto_adjusted"
       );
     }
@@ -407,12 +407,12 @@ class DialogCalendarEventEditor extends LitElement {
     } else {
       data.dtstart = `${this._formatDate(
         this._dtstart!,
-        this.hass.config.time_zone
-      )}T${this._formatTime(this._dtstart!, this.hass.config.time_zone)}`;
+        this.menuai.config.time_zone
+      )}T${this._formatTime(this._dtstart!, this.menuai.config.time_zone)}`;
       data.dtend = `${this._formatDate(
         this._dtend!,
-        this.hass.config.time_zone
-      )}T${this._formatTime(this._dtend!, this.hass.config.time_zone)}`;
+        this.menuai.config.time_zone
+      )}T${this._formatTime(this._dtend!, this.menuai.config.time_zone)}`;
     }
     return data;
   }
@@ -430,14 +430,14 @@ class DialogCalendarEventEditor extends LitElement {
 
   private async _createEvent() {
     if (!this._summary || !this._calendarId) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.calendar.event.not_all_required_fields"
       );
       return;
     }
 
     if (!this._isValidStartEnd()) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.calendar.event.invalid_duration"
       );
       return;
@@ -446,7 +446,7 @@ class DialogCalendarEventEditor extends LitElement {
     this._submitting = true;
     try {
       await createCalendarEvent(
-        this.hass!,
+        this.menuai!,
         this._calendarId!,
         this._calculateData()
       );
@@ -462,14 +462,14 @@ class DialogCalendarEventEditor extends LitElement {
 
   private async _saveEvent() {
     if (!this._summary || !this._calendarId) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.calendar.event.not_all_required_fields"
       );
       return;
     }
 
     if (!this._isValidStartEnd()) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.components.calendar.event.invalid_duration"
       );
       return;
@@ -480,16 +480,16 @@ class DialogCalendarEventEditor extends LitElement {
     let range: RecurrenceRange | undefined = RecurrenceRange.THISEVENT;
     if (entry.recurrence_id) {
       range = await showConfirmEventDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.components.calendar.event.confirm_update.update"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.components.calendar.event.confirm_update.recurring_prompt"
         ),
-        confirmText: this.hass.localize(
+        confirmText: this.menuai.localize(
           "ui.components.calendar.event.confirm_update.update_this"
         ),
-        confirmFutureText: this.hass.localize(
+        confirmFutureText: this.menuai.localize(
           "ui.components.calendar.event.confirm_update.update_future"
         ),
       });
@@ -511,7 +511,7 @@ class DialogCalendarEventEditor extends LitElement {
     }
     try {
       await updateCalendarEvent(
-        this.hass!,
+        this.menuai!,
         this._calendarId!,
         entry.uid!,
         eventData,
@@ -532,25 +532,25 @@ class DialogCalendarEventEditor extends LitElement {
     this._submitting = true;
     const entry = this._params!.entry!;
     const range = await showConfirmEventDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.components.calendar.event.confirm_delete.delete"
       ),
       text: entry.recurrence_id
-        ? this.hass.localize(
+        ? this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.recurring_prompt"
           )
-        : this.hass.localize(
+        : this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.prompt"
           ),
       confirmText: entry.recurrence_id
-        ? this.hass.localize(
+        ? this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.delete_this"
           )
-        : this.hass.localize(
+        : this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.delete"
           ),
       confirmFutureText: entry.recurrence_id
-        ? this.hass.localize(
+        ? this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.delete_future"
           )
         : undefined,
@@ -562,7 +562,7 @@ class DialogCalendarEventEditor extends LitElement {
     }
     try {
       await deleteCalendarEvent(
-        this.hass!,
+        this.menuai!,
         this._calendarId!,
         entry.uid!,
         entry.recurrence_id || "",

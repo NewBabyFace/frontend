@@ -7,7 +7,7 @@ import "../../../components/ha-icon-next";
 import "../../../components/ha-state-icon";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
 import "../../../state-display/state-display";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
 import { hasAction } from "../common/has-action";
@@ -37,15 +37,15 @@ export class HuiHeadingCard extends LitElement implements LovelaceCard {
     return document.createElement("hui-heading-card-editor");
   }
 
-  public static getStubConfig(hass: HomeAssistant): HeadingCardConfig {
+  public static getStubConfig(menuai: menuai): HeadingCardConfig {
     return {
       type: "heading",
       icon: "mdi:fridge",
-      heading: hass.localize("ui.panel.lovelace.cards.heading.default_heading"),
+      heading: menuai.localize("ui.panel.lovelace.cards.heading.default_heading"),
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public preview = false;
 
@@ -73,11 +73,11 @@ export class HuiHeadingCard extends LitElement implements LovelaceCard {
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
@@ -112,7 +112,7 @@ export class HuiHeadingCard extends LitElement implements LovelaceCard {
                     (config) => html`
                       <hui-heading-badge
                         .config=${config}
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .preview=${this.preview}
                       >
                       </hui-heading-badge>

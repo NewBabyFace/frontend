@@ -7,7 +7,7 @@ import { computeDomain } from "../../../../common/entity/compute_domain";
 import type { LocalizeFunc } from "../../../../common/translations/localize";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { EntitiesCardEntityConfig } from "../../cards/types";
 import type { LovelaceRowEditor } from "../../types";
 import { entitiesConfigStruct } from "../structs/entities-struct";
@@ -28,7 +28,7 @@ export class HuiGenericEntityRowEditor
   extends LitElement
   implements LovelaceRowEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntitiesCardEntityConfig;
 
@@ -82,15 +82,15 @@ export class HuiGenericEntityRowEditor
   });
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const schema = this._schema(this._config.entity, this.hass.localize);
+    const schema = this._schema(this._config.entity, this.menuai.localize);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -108,11 +108,11 @@ export class HuiGenericEntityRowEditor
   ) => {
     switch (schema.name) {
       case "secondary_info":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.entity-row.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

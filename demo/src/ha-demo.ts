@@ -1,10 +1,10 @@
 import { customElement } from "lit/decorators";
 import { isNavigationClick } from "../../src/common/dom/is-navigation-click";
 import { navigate } from "../../src/common/navigate";
-import type { MockHomeAssistant } from "../../src/fake_data/provide_hass";
-import { provideHass } from "../../src/fake_data/provide_hass";
-import { HomeAssistantAppEl } from "../../src/layouts/home-assistant";
-import type { HomeAssistant } from "../../src/types";
+import type { Mockmenuai } from "../../src/fake_data/provide_menuai";
+import { providemenuai } from "../../src/fake_data/provide_menuai";
+import { menuaiAppEl } from "../../src/layouts/home-assistant";
+import type { menuai } from "../../src/types";
 import { selectedDemoConfig } from "./configs/demo-configs";
 import { mockAreaRegistry } from "./stubs/area_registry";
 import { mockAuth } from "./stubs/auth";
@@ -27,40 +27,40 @@ import { mockTodo } from "./stubs/todo";
 import { mockTranslations } from "./stubs/translations";
 
 @customElement("ha-demo")
-export class HaDemo extends HomeAssistantAppEl {
-  protected async _initializeHass() {
-    const initial: Partial<MockHomeAssistant> = {
+export class HaDemo extends menuaiAppEl {
+  protected async _initializemenuai() {
+    const initial: Partial<Mockmenuai> = {
       panelUrl: (this as any)._panelUrl,
-      // Override updateHass so that the correct hass lifecycle methods are called
-      updateHass: (hassUpdate: Partial<HomeAssistant>) =>
-        this._updateHass(hassUpdate),
+      // Override updatemenuai so that the correct menuai lifecycle methods are called
+      updatemenuai: (menuaiUpdate: Partial<menuai>) =>
+        this._updatemenuai(menuaiUpdate),
     };
 
-    const hass = (this.hass = provideHass(this, initial));
+    const menuai = (this.menuai = providemenuai(this, initial));
     const localizePromise =
       // @ts-ignore
-      this._loadFragmentTranslations(hass.language, "page-demo").then(
-        () => this.hass!.localize
+      this._loadFragmentTranslations(menuai.language, "page-demo").then(
+        () => this.menuai!.localize
       );
 
-    mockLovelace(hass, localizePromise);
-    mockAuth(hass);
-    mockTranslations(hass);
-    mockHistory(hass);
-    mockRecorder(hass);
-    mockTodo(hass);
-    mockSensor(hass);
-    mockSystemLog(hass);
-    mockTemplate(hass);
-    mockEvents(hass);
-    mockMediaPlayer(hass);
-    mockFrontend(hass);
-    mockIcons(hass);
-    mockEnergy(hass);
-    mockPersistentNotification(hass);
-    mockConfigEntries(hass);
-    mockAreaRegistry(hass);
-    mockEntityRegistry(hass, [
+    mockLovelace(menuai, localizePromise);
+    mockAuth(menuai);
+    mockTranslations(menuai);
+    mockHistory(menuai);
+    mockRecorder(menuai);
+    mockTodo(menuai);
+    mockSensor(menuai);
+    mockSystemLog(menuai);
+    mockTemplate(menuai);
+    mockEvents(menuai);
+    mockMediaPlayer(menuai);
+    mockFrontend(menuai);
+    mockIcons(menuai);
+    mockEnergy(menuai);
+    mockPersistentNotification(menuai);
+    mockConfigEntries(menuai);
+    mockAreaRegistry(menuai);
+    mockEntityRegistry(menuai, [
       {
         config_entry_id: "co2signal",
         config_subentry_id: null,
@@ -105,14 +105,14 @@ export class HaDemo extends HomeAssistantAppEl {
       },
     ]);
 
-    hass.addEntities(energyEntities());
+    menuai.addEntities(energyEntities());
 
     // Once config is loaded AND localize, set entities and apply theme.
     Promise.all([selectedDemoConfig, localizePromise]).then(
       ([conf, localize]) => {
-        hass.addEntities(conf.entities(localize));
+        menuai.addEntities(conf.entities(localize));
         if (conf.theme) {
-          hass.mockTheme(conf.theme());
+          menuai.mockTheme(conf.theme());
         }
       }
     );
@@ -133,7 +133,7 @@ export class HaDemo extends HomeAssistantAppEl {
       { capture: true }
     );
 
-    (this as any).hassConnected();
+    (this as any).menuaiConnected();
   }
 }
 

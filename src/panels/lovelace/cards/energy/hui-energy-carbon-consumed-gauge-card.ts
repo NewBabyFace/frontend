@@ -15,7 +15,7 @@ import {
   getSummedData,
 } from "../../../../data/energy";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { createEntityNotFoundWarning } from "../../components/hui-warning";
 import type { LovelaceCard } from "../../types";
 import { severityMap } from "../hui-gauge-card";
@@ -31,13 +31,13 @@ class HuiEnergyCarbonGaugeCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyCarbonGaugeCardConfig;
 
   @state() private _data?: EnergyData;
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
   public getCardSize(): number {
     return 4;
@@ -47,9 +47,9 @@ class HuiEnergyCarbonGaugeCard
     this._config = config;
   }
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -61,20 +61,20 @@ class HuiEnergyCarbonGaugeCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass") ||
+      !changedProps.has("menuai") ||
       (!!this._data?.co2SignalEntity &&
-        this.hass.states[this._data.co2SignalEntity] !==
-          changedProps.get("hass").states[this._data.co2SignalEntity])
+        this.menuai.states[this._data.co2SignalEntity] !==
+          changedProps.get("menuai").states[this._data.co2SignalEntity])
     );
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
     if (!this._data) {
-      return html`${this.hass.localize(
+      return html`${this.menuai.localize(
         "ui.panel.lovelace.cards.energy.loading"
       )}`;
     }
@@ -83,11 +83,11 @@ class HuiEnergyCarbonGaugeCard
       return nothing;
     }
 
-    const co2State = this.hass.states[this._data.co2SignalEntity];
+    const co2State = this.menuai.states[this._data.co2SignalEntity];
 
     if (!co2State) {
-      return html`<hui-warning .hass=${this.hass}>
-        ${createEntityNotFoundWarning(this.hass, this._data.co2SignalEntity)}
+      return html`<hui-warning .menuai=${this.menuai}>
+        ${createEntityNotFoundWarning(this.menuai, this._data.co2SignalEntity)}
       </hui-warning>`;
     }
 
@@ -127,14 +127,14 @@ class HuiEnergyCarbonGaugeCard
                 max="100"
                 .value=${value}
                 .formatOptions=${FORMAT_OPTIONS}
-                .locale=${this.hass.locale}
+                .locale=${this.menuai.locale}
                 label="%"
                 style=${styleMap({
                   "--gauge-color": this._computeSeverity(value),
                 })}
               ></ha-gauge>
               <ha-tooltip
-                .content=${this.hass.localize(
+                .content=${this.menuai.localize(
                   "ui.panel.lovelace.cards.energy.carbon_consumed_gauge.card_indicates_energy_used"
                 )}
                 placement="left"
@@ -143,12 +143,12 @@ class HuiEnergyCarbonGaugeCard
                 <ha-svg-icon .path=${mdiInformation}></ha-svg-icon>
               </ha-tooltip>
               <div class="name">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.lovelace.cards.energy.carbon_consumed_gauge.low_carbon_energy_consumed"
                 )}
               </div>
             `
-          : html`${this.hass.localize(
+          : html`${this.menuai.localize(
               "ui.panel.lovelace.cards.energy.carbon_consumed_gauge.low_carbon_energy_not_calculated"
             )}`}
       </ha-card>

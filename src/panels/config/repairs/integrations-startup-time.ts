@@ -14,13 +14,13 @@ import {
   fetchIntegrationManifests,
   fetchIntegrationSetups,
 } from "../../../data/integration";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { documentationUrl } from "../../../util/documentation-url";
 
 @customElement("integrations-startup-time")
 class IntegrationsStartupTime extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -45,7 +45,7 @@ class IntegrationsStartupTime extends LitElement {
           const manifest = this._manifests && this._manifests[setup.domain];
           const docLink = manifest
             ? manifest.is_built_in
-              ? documentationUrl(this.hass, `/integrations/${manifest.domain}`)
+              ? documentationUrl(this.menuai, `/integrations/${manifest.domain}`)
               : manifest.documentation
             : "";
 
@@ -59,14 +59,14 @@ class IntegrationsStartupTime extends LitElement {
                   domain: setup.domain,
                   type: "icon",
                   useFallback: true,
-                  darkOptimized: this.hass.themes?.darkMode,
+                  darkOptimized: this.menuai.themes?.darkMode,
                 })}
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"
                 slot="start"
               />
               <span>
-                ${domainToName(this.hass.localize, setup.domain, manifest)}
+                ${domainToName(this.menuai.localize, setup.domain, manifest)}
               </span>
               <span slot="supporting-text">${setup.domain}</span>
               <div slot="end">
@@ -81,14 +81,14 @@ class IntegrationsStartupTime extends LitElement {
 
   private async _fetchManifests() {
     const manifests = {};
-    for (const manifest of await fetchIntegrationManifests(this.hass)) {
+    for (const manifest of await fetchIntegrationManifests(this.menuai)) {
       manifests[manifest.domain] = manifest;
     }
     this._manifests = manifests;
   }
 
   private async _fetchSetups() {
-    const setups = await fetchIntegrationSetups(this.hass);
+    const setups = await fetchIntegrationSetups(this.menuai);
     this._setups = setups.sort((a, b) => {
       if (a.seconds === b.seconds) {
         return 0;

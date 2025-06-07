@@ -8,7 +8,7 @@ import { getEnergyInfo, saveEnergyPreferences } from "../../../data/energy";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../config/energy/components/ha-energy-battery-settings";
 import "../../config/energy/components/ha-energy-device-settings";
 import "../../config/energy/components/ha-energy-gas-settings";
@@ -19,7 +19,7 @@ import type { Lovelace, LovelaceCard } from "../../lovelace/types";
 
 @customElement("energy-setup-wizard-card")
 export class EnergySetupWizard extends LitElement implements LovelaceCard {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace?: Lovelace;
 
@@ -43,73 +43,73 @@ export class EnergySetupWizard extends LitElement implements LovelaceCard {
   }
 
   protected firstUpdated() {
-    this.hass.loadFragmentTranslation("config");
+    this.menuai.loadFragmentTranslation("config");
     this._fetchconfig();
   }
 
   protected render(): TemplateResult {
     return html`
       <p>
-        ${this.hass.localize("ui.panel.energy.setup.step", {
+        ${this.menuai.localize("ui.panel.energy.setup.step", {
           step: this._step + 1,
           steps: 6,
         })}
       </p>
       ${this._step === 0
         ? html`<ha-energy-grid-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences}
             @value-changed=${this._prefsChanged}
           ></ha-energy-grid-settings>`
         : this._step === 1
           ? html`<ha-energy-solar-settings
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .preferences=${this._preferences}
               .info=${this._info}
               @value-changed=${this._prefsChanged}
             ></ha-energy-solar-settings>`
           : this._step === 2
             ? html`<ha-energy-battery-settings
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .preferences=${this._preferences}
                 @value-changed=${this._prefsChanged}
               ></ha-energy-battery-settings>`
             : this._step === 3
               ? html`<ha-energy-gas-settings
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .preferences=${this._preferences}
                   @value-changed=${this._prefsChanged}
                 ></ha-energy-gas-settings>`
               : this._step === 4
                 ? html`<ha-energy-water-settings
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .preferences=${this._preferences}
                     @value-changed=${this._prefsChanged}
                   ></ha-energy-water-settings>`
                 : html`<ha-energy-device-settings
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .preferences=${this._preferences}
                     @value-changed=${this._prefsChanged}
                   ></ha-energy-device-settings>`}
       <div class="buttons">
         ${this._step > 0
           ? html`<mwc-button outlined @click=${this._back}
-              >${this.hass.localize("ui.panel.energy.setup.back")}</mwc-button
+              >${this.menuai.localize("ui.panel.energy.setup.back")}</mwc-button
             >`
           : html`<div></div>`}
         ${this._step < 4
           ? html`<mwc-button unelevated @click=${this._next}
-              >${this.hass.localize("ui.panel.energy.setup.next")}</mwc-button
+              >${this.menuai.localize("ui.panel.energy.setup.next")}</mwc-button
             >`
           : html`<mwc-button unelevated @click=${this._setupDone}>
-              ${this.hass.localize("ui.panel.energy.setup.done")}
+              ${this.menuai.localize("ui.panel.energy.setup.done")}
             </mwc-button>`}
       </div>
     `;
   }
 
   private async _fetchconfig() {
-    this._info = await getEnergyInfo(this.hass);
+    this._info = await getEnergyInfo(this.menuai);
   }
 
   private _prefsChanged(ev: CustomEvent) {
@@ -140,10 +140,10 @@ export class EnergySetupWizard extends LitElement implements LovelaceCard {
       this._preferences.energy_sources.length === 0
     ) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.energy.setup.no_statistics_selected_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.energy.setup.no_statistics_selected_description"
         ),
       });
@@ -151,7 +151,7 @@ export class EnergySetupWizard extends LitElement implements LovelaceCard {
     }
     try {
       this._preferences = await saveEnergyPreferences(
-        this.hass,
+        this.menuai,
         this._preferences
       );
     } catch (err: any) {

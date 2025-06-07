@@ -6,7 +6,7 @@ import { blankBeforePercent } from "../../common/translations/blank_before_perce
 import "../../components/ha-progress-ring";
 import "../../components/ha-spinner";
 import type { DataEntryFlowStepProgress } from "../../data/data_entry_flow";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { FlowConfig } from "./show-dialog-data-entry-flow";
 import { configFlowContentStyles } from "./styles";
 
@@ -16,7 +16,7 @@ class StepFlowProgress extends LitElement {
   public flowConfig!: FlowConfig;
 
   @property({ attribute: false })
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property({ attribute: false })
   public step!: DataEntryFlowStepProgress;
@@ -31,13 +31,13 @@ class StepFlowProgress extends LitElement {
           ? html`
               <ha-progress-ring .value=${this.progress} size="large"
                 >${this.progress}${blankBeforePercent(
-                  this.hass.locale
+                  this.menuai.locale
                 )}%</ha-progress-ring
               >
             `
           : html` <ha-spinner size="large"></ha-spinner> `}
         ${this.flowConfig.renderShowFormProgressDescription(
-          this.hass,
+          this.menuai,
           this.step
         )}
       </div>

@@ -1,12 +1,12 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { domainToName } from "../../../data/integration";
 import type { RepairsIssue } from "../../../data/repairs";
 
 @customElement("dialog-repairs-issue-subtitle")
 class DialogRepairsIssueSubtitle extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Object }) public issue!: RepairsIssue;
 
@@ -18,14 +18,14 @@ class DialogRepairsIssueSubtitle extends LitElement {
   }
 
   protected render() {
-    const domainName = domainToName(this.hass.localize, this.issue.domain);
+    const domainName = domainToName(this.menuai.localize, this.issue.domain);
     const reportedBy = domainName
-      ? ` · ${this.hass.localize("ui.panel.config.repairs.reported_by", {
+      ? ` · ${this.menuai.localize("ui.panel.config.repairs.reported_by", {
           integration: domainName,
         })}`
       : "";
 
-    const severity = this.hass.localize(
+    const severity = this.menuai.localize(
       `ui.panel.config.repairs.${this.issue.severity}`
     );
 

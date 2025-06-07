@@ -3,7 +3,7 @@ import type { PropertyValues } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { TemplateTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../../../../../components/ha-form/ha-form";
 import { createDurationData } from "../../../../../common/datetime/create_duration_data";
 import { fireEvent } from "../../../../../common/dom/fire_event";
@@ -17,7 +17,7 @@ const SCHEMA = [
 
 @customElement("ha-automation-trigger-template")
 export class HaTemplateTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: TemplateTrigger;
 
@@ -36,7 +36,7 @@ export class HaTemplateTrigger extends LitElement {
       fireEvent(
         this,
         "ui-mode-not-available",
-        Error(this.hass.localize("ui.errors.config.no_template_editor_support"))
+        Error(this.menuai.localize("ui.errors.config.no_template_editor_support"))
       );
     }
   }
@@ -51,7 +51,7 @@ export class HaTemplateTrigger extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${SCHEMA}
         @value-changed=${this._valueChanged}
@@ -78,7 +78,7 @@ export class HaTemplateTrigger extends LitElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<typeof SCHEMA>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.triggers.type.template.${schema.name}`
     );
 }

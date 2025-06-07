@@ -9,7 +9,7 @@ import { fireEvent } from "../common/dom/fire_event";
 import { mainWindow } from "../common/dom/get_main_window";
 import { navigate } from "../common/navigate";
 import { showAutomationEditor } from "../data/automation";
-import type { HomeAssistantMain } from "../layouts/home-assistant-main";
+import type { menuaiMain } from "../layouts/home-assistant-main";
 import type {
   EMIncomingMessageBarCodeScanAborted,
   EMIncomingMessageBarCodeScanResult,
@@ -25,16 +25,16 @@ const barCodeListeners = new Set<
   ) => boolean
 >();
 
-export const attachExternalToApp = (hassMainEl: HomeAssistantMain) => {
+export const attachExternalToApp = (menuaiMainEl: menuaiMain) => {
   window.addEventListener("haptic", (ev) =>
-    hassMainEl.hass.auth.external!.fireMessage({
+    menuaiMainEl.menuai.auth.external!.fireMessage({
       type: "haptic",
       payload: { hapticType: ev.detail },
     })
   );
 
-  hassMainEl.hass.auth.external!.addCommandHandler((msg) =>
-    handleExternalMessage(hassMainEl, msg)
+  menuaiMainEl.menuai.auth.external!.addCommandHandler((msg) =>
+    handleExternalMessage(menuaiMainEl, msg)
   );
 };
 
@@ -52,13 +52,13 @@ export const addExternalBarCodeListener = (
 };
 
 export const handleExternalMessage = (
-  hassMainEl: HomeAssistantMain,
+  menuaiMainEl: menuaiMain,
   msg: EMIncomingMessageCommands
 ): boolean => {
-  const bus = hassMainEl.hass.auth.external!;
+  const bus = menuaiMainEl.menuai.auth.external!;
 
   if (msg.command === "restart") {
-    hassMainEl.hass.connection.reconnect(true);
+    menuaiMainEl.menuai.connection.reconnect(true);
     bus.fireMessage({
       id: msg.id,
       type: "result",
@@ -74,7 +74,7 @@ export const handleExternalMessage = (
       result: null,
     });
   } else if (msg.command === "notifications/show") {
-    fireEvent(hassMainEl, "hass-show-notifications");
+    fireEvent(menuaiMainEl, "menuai-show-notifications");
     bus.fireMessage({
       id: msg.id,
       type: "result",
@@ -91,7 +91,7 @@ export const handleExternalMessage = (
       });
       return true;
     }
-    fireEvent(hassMainEl, "hass-toggle-menu");
+    fireEvent(menuaiMainEl, "menuai-toggle-menu");
     bus.fireMessage({
       id: msg.id,
       type: "result",
@@ -108,7 +108,7 @@ export const handleExternalMessage = (
       });
       return true;
     }
-    fireEvent(hassMainEl, "hass-toggle-menu", { open: true });
+    fireEvent(menuaiMainEl, "menuai-toggle-menu", { open: true });
     bus.fireMessage({
       id: msg.id,
       type: "result",
@@ -163,7 +163,7 @@ export const handleExternalMessage = (
 };
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "improv-discovered-device": ImprovDiscoveredDevice;
     "improv-device-setup-done": undefined;
   }

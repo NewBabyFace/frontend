@@ -5,22 +5,22 @@ import "../../../../src/components/ha-alert";
 import "../../../../src/components/ha-spinner";
 import "../../../../src/components/ha-markdown";
 import { customElement, property, state } from "lit/decorators";
-import type { HassioAddonDetails } from "../../../../src/data/hassio/addon";
-import { fetchHassioAddonDocumentation } from "../../../../src/data/hassio/addon";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
-import "../../../../src/layouts/hass-loading-screen";
+import type { menuaiioAddonDetails } from "../../../../src/data/menuaiio/addon";
+import { fetchmenuaiioAddonDocumentation } from "../../../../src/data/menuaiio/addon";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
+import "../../../../src/layouts/menuai-loading-screen";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import { hassioStyle } from "../../resources/hassio-style";
+import type { menuai } from "../../../../src/types";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 
-@customElement("hassio-addon-documentation-tab")
-class HassioAddonDocumentationDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-documentation-tab")
+class menuaiioAddonDocumentationDashboard extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public addon?: HassioAddonDetails;
+  @property({ attribute: false }) public addon?: menuaiioAddonDetails;
 
   @state() private _error?: string;
 
@@ -47,7 +47,7 @@ class HassioAddonDocumentationDashboard extends LitElement {
                   .content=${this._content}
                   lazy-images
                 ></ha-markdown>`
-              : html`<hass-loading-screen no-toolbar></hass-loading-screen>`}
+              : html`<menuai-loading-screen no-toolbar></menuai-loading-screen>`}
           </div>
         </ha-card>
       </div>
@@ -57,7 +57,7 @@ class HassioAddonDocumentationDashboard extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           display: block;
@@ -77,8 +77,8 @@ class HassioAddonDocumentationDashboard extends LitElement {
   private async _loadData(): Promise<void> {
     this._error = undefined;
     try {
-      this._content = await fetchHassioAddonDocumentation(
-        this.hass,
+      this._content = await fetchmenuaiioAddonDocumentation(
+        this.menuai,
         this.addon!.slug
       );
     } catch (err: any) {
@@ -92,6 +92,6 @@ class HassioAddonDocumentationDashboard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-documentation-tab": HassioAddonDocumentationDashboard;
+    "menuaiio-addon-documentation-tab": menuaiioAddonDocumentationDashboard;
   }
 }

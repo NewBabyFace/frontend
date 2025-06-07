@@ -1,12 +1,12 @@
 import { mdiVolumeHigh, mdiVolumeOff } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup } from "lit";
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../components/ha-attributes";
 import "../../../state-control/ha-state-control-toggle";
 import "../../../components/ha-button";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-state-header";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 import { supportsFeature } from "../../../common/entity/supports-feature";
@@ -15,12 +15,12 @@ import { showSirenAdvancedControlsView } from "../components/siren/show-dialog-s
 
 @customElement("more-info-siren")
 class MoreInfoSiren extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -40,24 +40,24 @@ class MoreInfoSiren extends LitElement {
 
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
       ></ha-more-info-state-header>
       <div class="controls">
         <ha-state-control-toggle
           .stateObj=${this.stateObj}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .iconPathOn=${mdiVolumeHigh}
           .iconPathOff=${mdiVolumeOff}
         ></ha-state-control-toggle>
         ${allowAdvanced
           ? html`<ha-button @click=${this._showAdvancedControlsDialog}>
-              ${this.hass.localize("ui.components.siren.advanced_controls")}
+              ${this.menuai.localize("ui.components.siren.advanced_controls")}
             </ha-button>`
           : nothing}
       </div>
       <ha-attributes
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
       ></ha-attributes>
     `;

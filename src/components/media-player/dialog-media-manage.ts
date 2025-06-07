@@ -19,7 +19,7 @@ import {
 } from "../../data/media_source";
 import { showConfirmationDialog } from "../../dialogs/generic/show-dialog-box";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-button";
 import "../ha-check-list-item";
 import "../ha-dialog";
@@ -34,7 +34,7 @@ import type { MediaManageDialogParams } from "./show-media-manage-dialog";
 
 @customElement("dialog-media-manage")
 class DialogMediaManage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _currentItem?: MediaPlayerItem;
 
@@ -89,14 +89,14 @@ class DialogMediaManage extends LitElement {
           ${this._selected.size === 0
             ? html`
                 <span slot="title">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.components.media-browser.file_management.title"
                   )}
                 </span>
 
                 <ha-media-upload-button
                   .disabled=${this._deleting}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .currentItem=${this._params.currentItem}
                   @uploading=${this._startUploading}
                   @media-refresh=${this._doneUploading}
@@ -106,11 +106,11 @@ class DialogMediaManage extends LitElement {
                   ? ""
                   : html`
                       <ha-icon-button
-                        .label=${this.hass.localize("ui.common.close")}
+                        .label=${this.menuai.localize("ui.common.close")}
                         .path=${mdiClose}
                         dialogAction="close"
                         slot="navigationIcon"
-                        dir=${computeRTLDirection(this.hass)}
+                        dir=${computeRTLDirection(this.menuai)}
                       ></ha-icon-button>
                     `}
               `
@@ -119,7 +119,7 @@ class DialogMediaManage extends LitElement {
                   class="danger"
                   slot="navigationIcon"
                   .disabled=${this._deleting}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     `ui.components.media-browser.file_management.${
                       this._deleting ? "deleting" : "delete"
                     }`,
@@ -135,7 +135,7 @@ class DialogMediaManage extends LitElement {
                   : html`
                       <ha-button
                         slot="actionItems"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           `ui.components.media-browser.file_management.deselect_all`
                         )}
                         @click=${this._handleDeselectAll}
@@ -157,13 +157,13 @@ class DialogMediaManage extends LitElement {
           : !children.length
             ? html`<div class="no-items">
                 <p>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.components.media-browser.file_management.no_items"
                   )}
                 </p>
                 ${this._currentItem?.children?.length
                   ? html`<span class="folders"
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.components.media-browser.file_management.folders_not_supported"
                       )}</span
                     >`
@@ -203,16 +203,16 @@ class DialogMediaManage extends LitElement {
                   )}
                 </ha-list>
               `}
-        ${isComponentLoaded(this.hass, "hassio")
-          ? html`<ha-tip .hass=${this.hass}>
-              ${this.hass.localize(
+        ${isComponentLoaded(this.menuai, "menuaiio")
+          ? html`<ha-tip .menuai=${this.menuai}>
+              ${this.menuai.localize(
                 "ui.components.media-browser.file_management.tip_media_storage",
                 {
                   storage: html`<a
                     href="/config/storage"
                     @click=${this.closeDialog}
                   >
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.components.media-browser.file_management.tip_storage_panel"
                     )}</a
                   >`,
@@ -247,7 +247,7 @@ class DialogMediaManage extends LitElement {
   private async _handleDelete() {
     if (
       !(await showConfirmationDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.components.media-browser.file_management.confirm_delete",
           { count: this._selected.size }
         ),
@@ -274,11 +274,11 @@ class DialogMediaManage extends LitElement {
       await Promise.all(
         toDelete.map(async (item) => {
           if (isLocalMediaSourceContentId(item.media_content_id)) {
-            await removeLocalMedia(this.hass, item.media_content_id);
+            await removeLocalMedia(this.menuai, item.media_content_id);
           } else if (isImageUploadMediaSourceContentId(item.media_content_id)) {
             const media_id = getIdFromUrl(item.media_content_id);
             if (media_id) {
-              await deleteImage(this.hass, media_id);
+              await deleteImage(this.menuai, media_id);
             }
           }
           this._currentItem = {
@@ -297,7 +297,7 @@ class DialogMediaManage extends LitElement {
     this._selected = new Set();
     this._currentItem = undefined;
     this._currentItem = await browseLocalMediaPlayer(
-      this.hass,
+      this.menuai,
       this._params!.currentItem.media_content_id
     );
   }

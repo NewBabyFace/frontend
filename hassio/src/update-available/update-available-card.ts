@@ -24,40 +24,40 @@ import "../../../src/components/ha-md-list-item";
 import "../../../src/components/ha-svg-icon";
 import "../../../src/components/ha-switch";
 import type { HaSwitch } from "../../../src/components/ha-switch";
-import type { HassioAddonDetails } from "../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../src/data/menuaiio/addon";
 import {
-  fetchHassioAddonChangelog,
-  fetchHassioAddonInfo,
-  updateHassioAddon,
-} from "../../../src/data/hassio/addon";
+  fetchmenuaiioAddonChangelog,
+  fetchmenuaiioAddonInfo,
+  updatemenuaiioAddon,
+} from "../../../src/data/menuaiio/addon";
 import {
   extractApiErrorMessage,
   ignoreSupervisorError,
-} from "../../../src/data/hassio/common";
-import { fetchHassioHassOsInfo, updateOS } from "../../../src/data/hassio/host";
+} from "../../../src/data/menuaiio/common";
+import { fetchmenuaiiomenuaiOsInfo, updateOS } from "../../../src/data/menuaiio/host";
 import {
-  fetchHassioHomeAssistantInfo,
-  fetchHassioSupervisorInfo,
+  fetchmenuaiiomenuaiInfo,
+  fetchmenuaiioSupervisorInfo,
   updateSupervisor,
-} from "../../../src/data/hassio/supervisor";
+} from "../../../src/data/menuaiio/supervisor";
 import { updateCore } from "../../../src/data/supervisor/core";
 import type { StoreAddon } from "../../../src/data/supervisor/store";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import { showAlertDialog } from "../../../src/dialogs/generic/show-dialog-box";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../src/types";
+import type { menuai, Route } from "../../../src/types";
 import { addonArchIsSupported, extractChangelog } from "../util/addon";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "update-complete": undefined;
   }
 }
 
 const SUPERVISOR_UPDATE_NAMES = {
-  core: "Home Assistant Core",
-  os: "Home Assistant Operating System",
-  supervisor: "Home Assistant Supervisor",
+  core: "MenuAI Core",
+  os: "MenuAI Operating System",
+  supervisor: "MenuAI Supervisor",
 };
 
 type UpdateType = "os" | "supervisor" | "core" | "addon";
@@ -91,7 +91,7 @@ const changelogUrl = (
 
 @customElement("update-available-card")
 class UpdateAvailableCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -105,7 +105,7 @@ class UpdateAvailableCard extends LitElement {
 
   @state() private _changelogContent?: string;
 
-  @state() private _addonInfo?: HassioAddonDetails;
+  @state() private _addonInfo?: menuaiioAddonDetails;
 
   @state() private _updating = false;
 
@@ -262,7 +262,7 @@ class UpdateAvailableCard extends LitElement {
     // Addon backup
     if (
       this._updateType === "addon" &&
-      atLeastVersion(this.hass.config.version, 2025, 2, 0)
+      atLeastVersion(this.menuai.config.version, 2025, 2, 0)
     ) {
       const version = this._version;
       return {
@@ -324,7 +324,7 @@ class UpdateAvailableCard extends LitElement {
 
   private async _loadAddonData() {
     try {
-      this._addonInfo = await fetchHassioAddonInfo(this.hass, this.addonSlug!);
+      this._addonInfo = await fetchmenuaiioAddonInfo(this.menuai, this.addonSlug!);
     } catch (err) {
       showAlertDialog(this, {
         title: this._updateType,
@@ -342,8 +342,8 @@ class UpdateAvailableCard extends LitElement {
 
     if (this._addonInfo.changelog) {
       try {
-        const content = await fetchHassioAddonChangelog(
-          this.hass,
+        const content = await fetchmenuaiioAddonChangelog(
+          this.menuai,
           this.addonSlug!
         );
         this._changelogContent = extractChangelog(this._addonInfo, content);
@@ -368,7 +368,7 @@ class UpdateAvailableCard extends LitElement {
           "addon.dashboard.not_available_version",
           {
             core_version_installed: this.supervisor.core.version,
-            core_version_needed: addonStoreInfo.homeassistant,
+            core_version_needed: addonStoreInfo.menuai,
           }
         );
       }
@@ -377,7 +377,7 @@ class UpdateAvailableCard extends LitElement {
 
   private async _loadSupervisorData() {
     try {
-      const supervisor = await fetchHassioSupervisorInfo(this.hass);
+      const supervisor = await fetchmenuaiioSupervisorInfo(this.menuai);
       fireEvent(this, "supervisor-update", { supervisor });
     } catch (err) {
       showAlertDialog(this, {
@@ -389,7 +389,7 @@ class UpdateAvailableCard extends LitElement {
 
   private async _loadCoreData() {
     try {
-      const core = await fetchHassioHomeAssistantInfo(this.hass);
+      const core = await fetchmenuaiiomenuaiInfo(this.menuai);
       fireEvent(this, "supervisor-update", { core });
     } catch (err) {
       showAlertDialog(this, {
@@ -401,7 +401,7 @@ class UpdateAvailableCard extends LitElement {
 
   private async _loadOsData() {
     try {
-      const os = await fetchHassioHassOsInfo(this.hass);
+      const os = await fetchmenuaiiomenuaiOsInfo(this.menuai);
       fireEvent(this, "supervisor-update", { os });
     } catch (err) {
       showAlertDialog(this, {
@@ -421,20 +421,20 @@ class UpdateAvailableCard extends LitElement {
 
     try {
       if (this._updateType === "addon") {
-        await updateHassioAddon(
-          this.hass,
+        await updatemenuaiioAddon(
+          this.menuai,
           this.addonSlug!,
           this._shouldCreateBackup
         );
       } else if (this._updateType === "core") {
-        await updateCore(this.hass, this._shouldCreateBackup);
+        await updateCore(this.menuai, this._shouldCreateBackup);
       } else if (this._updateType === "os") {
-        await updateOS(this.hass);
+        await updateOS(this.menuai);
       } else if (this._updateType === "supervisor") {
-        await updateSupervisor(this.hass);
+        await updateSupervisor(this.menuai);
       }
     } catch (err: any) {
-      if (this.hass.connection.connected && !ignoreSupervisorError(err)) {
+      if (this.menuai.connection.connected && !ignoreSupervisorError(err)) {
         this._error = extractApiErrorMessage(err);
         this._updating = false;
         return;

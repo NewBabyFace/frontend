@@ -3,7 +3,7 @@ import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { DataEntryFlowStepExternal } from "../../data/data_entry_flow";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { FlowConfig } from "./show-dialog-data-entry-flow";
 import { configFlowContentStyles } from "./styles";
 
@@ -11,16 +11,16 @@ import { configFlowContentStyles } from "./styles";
 class StepFlowExternal extends LitElement {
   @property({ attribute: false }) public flowConfig!: FlowConfig;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public step!: DataEntryFlowStepExternal;
 
   protected render(): TemplateResult {
-    const localize = this.hass.localize;
+    const localize = this.menuai.localize;
 
     return html`
       <div class="content">
-        ${this.flowConfig.renderExternalStepDescription(this.hass, this.step)}
+        ${this.flowConfig.renderExternalStepDescription(this.menuai, this.step)}
         <div class="open-button">
           <a href=${this.step.url} target="_blank" rel="noreferrer">
             <mwc-button raised>

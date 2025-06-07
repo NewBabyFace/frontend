@@ -5,7 +5,7 @@ import { demoThemeArsaboo } from "./theme";
 
 export const demoArsaboo: DemoConfig = {
   authorName: "Arsaboo",
-  authorUrl: "https://github.com/arsaboo/homeassistant-config/",
+  authorUrl: "https://github.com/arsaboo/menuai-config/",
   name: "ARS Home",
   lovelace: demoLovelaceArsaboo,
   entities: demoEntitiesArsaboo,

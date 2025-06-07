@@ -5,7 +5,7 @@ import { assert, assign, object, optional, string } from "superstruct";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
 import "../../../../components/ha-theme-picker";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { PictureCardConfig } from "../../cards/types";
 import "../../components/hui-action-editor";
 import type { LovelaceCardEditor } from "../../types";
@@ -71,7 +71,7 @@ export class HuiPictureCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: PictureCardConfig;
 
@@ -81,13 +81,13 @@ export class HuiPictureCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
@@ -103,17 +103,17 @@ export class HuiPictureCardEditor
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) => {
     switch (schema.name) {
       case "theme":
-        return `${this.hass!.localize(
+        return `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.theme"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.optional"
         )})`;
       default:
         return (
-          this.hass!.localize(
+          this.menuai!.localize(
             `ui.panel.lovelace.editor.card.picture-card.${schema.name}`
           ) ||
-          this.hass!.localize(
+          this.menuai!.localize(
             `ui.panel.lovelace.editor.card.generic.${schema.name}`
           )
         );

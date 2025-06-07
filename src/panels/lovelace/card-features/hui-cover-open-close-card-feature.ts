@@ -17,7 +17,7 @@ import {
   CoverEntityFeature,
   type CoverEntity,
 } from "../../../data/cover";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -26,11 +26,11 @@ import type {
 } from "./types";
 
 export const supportsCoverOpenCloseCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -46,17 +46,17 @@ class HuiCoverOpenCloseCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: CoverOpenCloseCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as CoverEntity | undefined;
+    return this.menuai.states[this.context.entity_id!] as CoverEntity | undefined;
   }
 
   static getStubConfig(): CoverOpenCloseCardFeatureConfig {
@@ -74,21 +74,21 @@ class HuiCoverOpenCloseCardFeature
 
   private _onOpenTap(ev): void {
     ev.stopPropagation();
-    this.hass!.callService("cover", "open_cover", {
+    this.menuai!.callService("cover", "open_cover", {
       entity_id: this._stateObj!.entity_id,
     });
   }
 
   private _onCloseTap(ev): void {
     ev.stopPropagation();
-    this.hass!.callService("cover", "close_cover", {
+    this.menuai!.callService("cover", "close_cover", {
       entity_id: this._stateObj!.entity_id,
     });
   }
 
   private _onStopTap(ev): void {
     ev.stopPropagation();
-    this.hass!.callService("cover", "stop_cover", {
+    this.menuai!.callService("cover", "stop_cover", {
       entity_id: this._stateObj!.entity_id,
     });
   }
@@ -96,10 +96,10 @@ class HuiCoverOpenCloseCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsCoverOpenCloseCardFeature(this.hass, this.context)
+      !supportsCoverOpenCloseCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -109,7 +109,7 @@ class HuiCoverOpenCloseCardFeature
         ${supportsFeature(this._stateObj, CoverEntityFeature.OPEN)
           ? html`
               <ha-control-button
-                .label=${this.hass.localize("ui.card.cover.open_cover")}
+                .label=${this.menuai.localize("ui.card.cover.open_cover")}
                 @click=${this._onOpenTap}
                 .disabled=${!canOpen(this._stateObj)}
               >
@@ -122,7 +122,7 @@ class HuiCoverOpenCloseCardFeature
         ${supportsFeature(this._stateObj, CoverEntityFeature.STOP)
           ? html`
               <ha-control-button
-                .label=${this.hass.localize("ui.card.cover.stop_cover")}
+                .label=${this.menuai.localize("ui.card.cover.stop_cover")}
                 @click=${this._onStopTap}
                 .disabled=${!canStop(this._stateObj)}
               >
@@ -133,7 +133,7 @@ class HuiCoverOpenCloseCardFeature
         ${supportsFeature(this._stateObj, CoverEntityFeature.CLOSE)
           ? html`
               <ha-control-button
-                .label=${this.hass.localize("ui.card.cover.close_cover")}
+                .label=${this.menuai.localize("ui.card.cover.close_cover")}
                 @click=${this._onCloseTap}
                 .disabled=${!canClose(this._stateObj)}
               >

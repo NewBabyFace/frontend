@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface MQTTMessage {
   topic: string;
@@ -35,22 +35,22 @@ export interface MQTTDeviceDebugInfo {
 }
 
 export const subscribeMQTTTopic = (
-  hass: HomeAssistant,
+  menuai: menuai,
   topic: string,
   callback: (message: MQTTMessage) => void,
   qos?: number
 ) =>
-  hass.connection.subscribeMessage<MQTTMessage>(callback, {
+  menuai.connection.subscribeMessage<MQTTMessage>(callback, {
     type: "mqtt/subscribe",
     topic,
     qos,
   });
 
 export const fetchMQTTDebugInfo = (
-  hass: HomeAssistant,
+  menuai: menuai,
   deviceId: string
 ): Promise<MQTTDeviceDebugInfo> =>
-  hass.callWS<MQTTDeviceDebugInfo>({
+  menuai.callWS<MQTTDeviceDebugInfo>({
     type: "mqtt/device/debug_info",
     device_id: deviceId,
   });

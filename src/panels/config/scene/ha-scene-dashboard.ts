@@ -26,7 +26,7 @@ import { computeCssColor } from "../../../common/color/compute-color";
 import { formatShortDateTime } from "../../../common/datetime/format_date_time";
 import { relativeTime } from "../../../common/datetime/relative_time";
 import { storage } from "../../../common/decorators/storage";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import { fireEvent } from "../../../common/dom/fire_event";
 import { computeStateName } from "../../../common/entity/compute_state_name";
 import { navigate } from "../../../common/navigate";
@@ -94,10 +94,10 @@ import {
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
 import { showMoreInfoDialog } from "../../../dialogs/more-info/show-ha-more-info-dialog";
-import "../../../layouts/hass-tabs-subpage-data-table";
+import "../../../layouts/menuai-tabs-subpage-data-table";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { showToast } from "../../../util/toast";
 import { showAreaRegistryDetailDialog } from "../areas/show-dialog-area-registry-detail";
@@ -115,7 +115,7 @@ type SceneItem = SceneEntity & {
 
 @customElement("ha-scene-dashboard")
 class HaSceneDashboard extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -200,7 +200,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
     (
       scenes: SceneEntity[],
       entityReg: EntityRegistryEntry[],
-      areas: HomeAssistant["areas"],
+      areas: menuai["areas"],
       categoryReg?: CategoryRegistryEntry[],
       labelReg?: LabelRegistryEntry[],
       filteredScenes?: string[] | null
@@ -247,7 +247,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           type: "icon",
           template: (scene) => html`
             <ha-state-icon
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${scene}
             ></ha-state-icon>
           `,
@@ -302,14 +302,14 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
             const dayDifference = differenceInDays(now, date);
             return html`
               ${dayDifference > 3
-                ? formatShortDateTime(date, this.hass.locale, this.hass.config)
-                : relativeTime(date, this.hass.locale)}
+                ? formatShortDateTime(date, this.menuai.locale, this.menuai.config)
+                : relativeTime(date, this.menuai.locale)}
             `;
           },
         },
         only_editable: {
           title: "",
-          label: this.hass.localize(
+          label: this.menuai.localize(
             "ui.panel.config.scene.picker.headers.editable"
           ),
           type: "icon",
@@ -319,7 +319,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
               ? html`
                   <ha-tooltip
                     placement="left"
-                    .content=${this.hass.localize(
+                    .content=${this.menuai.localize(
                       "ui.panel.config.scene.picker.only_editable"
                     )}
                   >
@@ -333,40 +333,40 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
         },
         actions: {
           title: "",
-          label: this.hass.localize("ui.panel.config.generic.headers.actions"),
+          label: this.menuai.localize("ui.panel.config.generic.headers.actions"),
           type: "overflow-menu",
           showNarrow: true,
           moveable: false,
           hideable: false,
           template: (scene) => html`
             <ha-icon-overflow-menu
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               narrow
               .items=${[
                 {
                   path: mdiPlay,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.scene.picker.apply"
                   ),
                   action: () => this._activateScene(scene),
                 },
                 {
                   path: mdiInformationOutline,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.scene.picker.show_info"
                   ),
                   action: () => this._showInfo(scene),
                 },
                 {
                   path: mdiCog,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.automation.picker.show_settings"
                   ),
                   action: () => this._openSettings(scene),
                 },
                 {
                   path: mdiTag,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     `ui.panel.config.scene.picker.${scene.category ? "edit_category" : "assign_category"}`
                   ),
                   action: () => this._editCategory(scene),
@@ -376,14 +376,14 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 },
                 {
                   path: mdiContentDuplicate,
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.scene.picker.duplicate"
                   ),
                   action: () => this._duplicate(scene),
                   disabled: !scene.attributes.id,
                 },
                 {
-                  label: this.hass.localize(
+                  label: this.menuai.localize(
                     "ui.panel.config.scene.picker.delete"
                   ),
                   path: mdiDelete,
@@ -409,12 +409,12 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
     }
   }
 
-  protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+  protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
     return [
-      subscribeCategoryRegistry(this.hass.connection, "scene", (categories) => {
+      subscribeCategoryRegistry(this.menuai.connection, "scene", (categories) => {
         this._categories = categories;
       }),
-      subscribeLabelRegistry(this.hass.connection, (labels) => {
+      subscribeLabelRegistry(this.menuai.connection, (labels) => {
         this._labels = labels;
       }),
     ];
@@ -435,7 +435,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
       )}
       <ha-md-menu-item .value=${null} .clickAction=${this._handleBulkCategory}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.automation.picker.bulk_actions.no_category"
           )}
         </div>
@@ -443,19 +443,19 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateCategory}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.category.editor.add")}
+          ${this.menuai.localize("ui.panel.config.category.editor.add")}
         </div>
       </ha-md-menu-item>`;
 
     const labelItems = html` ${this._labels?.map((label) => {
         const color = label.color ? computeCssColor(label.color) : undefined;
         const selected = this._selected.every((entityId) =>
-          this.hass.entities[entityId]?.labels.includes(label.label_id)
+          this.menuai.entities[entityId]?.labels.includes(label.label_id)
         );
         const partial =
           !selected &&
           this._selected.some((entityId) =>
-            this.hass.entities[entityId]?.labels.includes(label.label_id)
+            this.menuai.entities[entityId]?.labels.includes(label.label_id)
           );
         return html`<ha-md-menu-item
           .value=${label.label_id}
@@ -480,11 +480,11 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateLabel}>
         <div slot="headline">
-          ${this.hass.localize("ui.panel.config.labels.add_label")}
+          ${this.menuai.localize("ui.panel.config.labels.add_label")}
         </div></ha-md-menu-item
       >`;
 
-    const areaItems = html`${Object.values(this.hass.areas).map(
+    const areaItems = html`${Object.values(this.menuai.areas).map(
         (area) =>
           html`<ha-md-menu-item
             .value=${area.area_id}
@@ -501,7 +501,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
       )}
       <ha-md-menu-item .value=${null} .clickAction=${this._handleBulkArea}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.devices.picker.bulk_actions.no_area"
           )}
         </div>
@@ -509,7 +509,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
       <ha-md-divider role="separator" tabindex="-1"></ha-md-divider>
       <ha-md-menu-item .clickAction=${this._bulkCreateArea}>
         <div slot="headline">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.devices.picker.bulk_actions.add_area"
           )}
         </div>
@@ -517,7 +517,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
 
     const areasInOverflow =
       (this._sizeController.value && this._sizeController.value < 900) ||
-      (!this._sizeController.value && this.hass.dockedSidebar === "docked");
+      (!this._sizeController.value && this.menuai.dockedSidebar === "docked");
 
     const labelsInOverflow =
       areasInOverflow &&
@@ -526,20 +526,20 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
     const scenes = this._scenes(
       this.scenes,
       this._entityReg,
-      this.hass.areas,
+      this.menuai.areas,
       this._categories,
       this._labels,
       this._filteredScenes
     );
 
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${configSections.automations}
-        .searchLabel=${this.hass.localize(
+        .searchLabel=${this.menuai.localize(
           "ui.panel.config.scene.picker.search",
           { number: scenes.length }
         )}
@@ -555,7 +555,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 Array.isArray(val) ? val.length : val
               )
         ).length}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         id="entity_id"
         .initialGroupColumn=${this._activeGrouping ?? "category"}
         .initialCollapsedGroups=${this._activeCollapsed}
@@ -569,7 +569,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
         .data=${scenes}
         .empty=${!this.scenes.length}
         .activeFilters=${this._activeFilters}
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.scene.picker.no_scenes"
         )}
         @clear-filter=${this._clearFilter}
@@ -582,12 +582,12 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
         <ha-icon-button
           slot="toolbar-icon"
           @click=${this._showHelp}
-          .label=${this.hass.localize("ui.common.help")}
+          .label=${this.menuai.localize("ui.common.help")}
           .path=${mdiHelpCircle}
         ></ha-icon-button>
 
         <ha-filter-floor-areas
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"scene"}
           .value=${this._filters["ha-filter-floor-areas"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -597,7 +597,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-floor-areas>
         <ha-filter-devices
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"scene"}
           .value=${this._filters["ha-filter-devices"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -607,7 +607,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-devices>
         <ha-filter-entities
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .type=${"scene"}
           .value=${this._filters["ha-filter-entities"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -617,7 +617,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-entities>
         <ha-filter-labels
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._filters["ha-filter-labels"]?.value}
           @data-table-filter-changed=${this._filterChanged}
           slot="filter-pane"
@@ -626,7 +626,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           @expanded-changed=${this._filterExpanded}
         ></ha-filter-labels>
         <ha-filter-categories
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           scope="scene"
           .value=${this._filters["ha-filter-categories"]?.value}
           @data-table-filter-changed=${this._filterChanged}
@@ -640,7 +640,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           ? html`<ha-md-button-menu slot="selection-bar">
                 <ha-assist-chip
                   slot="trigger"
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.automation.picker.bulk_actions.move_category"
                   )}
                 >
@@ -656,7 +656,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 : html`<ha-md-button-menu slot="selection-bar">
                     <ha-assist-chip
                       slot="trigger"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.automation.picker.bulk_actions.add_label"
                       )}
                     >
@@ -672,7 +672,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 : html`<ha-md-button-menu slot="selection-bar">
                     <ha-assist-chip
                       slot="trigger"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.devices.picker.bulk_actions.move_area"
                       )}
                     >
@@ -690,7 +690,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
             ${
               this.narrow
                 ? html`<ha-assist-chip
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.picker.bulk_action"
                     )}
                     slot="trigger"
@@ -702,7 +702,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                   </ha-assist-chip>`
                 : html`<ha-icon-button
                     .path=${mdiDotsVertical}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       "ui.panel.config.automation.picker.bulk_action"
                     )}
                     slot="trigger"
@@ -718,7 +718,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.picker.bulk_actions.move_category"
                         )}
                       </div>
@@ -736,7 +736,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.automation.picker.bulk_actions.add_label"
                         )}
                       </div>
@@ -754,7 +754,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
                 ? html`<ha-sub-menu>
                     <ha-md-menu-item slot="item">
                       <div slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.devices.picker.bulk_actions.move_area"
                         )}
                       </div>
@@ -773,27 +773,27 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
           ? html`<div class="empty" slot="empty">
               <ha-svg-icon .path=${mdiPalette}></ha-svg-icon>
               <h1>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.scene.picker.empty_header"
                 )}
               </h1>
               <p>
-                ${this.hass.localize("ui.panel.config.scene.picker.empty_text")}
+                ${this.menuai.localize("ui.panel.config.scene.picker.empty_text")}
               </p>
               <a
-                href=${documentationUrl(this.hass, "/docs/scene/editor/")}
+                href=${documentationUrl(this.menuai, "/docs/scene/editor/")}
                 target="_blank"
                 rel="noreferrer"
               >
                 <ha-button>
-                  ${this.hass.localize("ui.panel.config.common.learn_more")}
+                  ${this.menuai.localize("ui.panel.config.common.learn_more")}
                 </ha-button>
               </a>
             </div>`
           : nothing}
         <a href="/config/scene/edit/new" slot="fab">
           <ha-fab
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.scene.picker.add_scene"
             )}
             extended
@@ -801,7 +801,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
             <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
           </ha-fab>
         </a>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -924,12 +924,12 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
 
-  private _handleRowClicked(ev: HASSDomEvent<RowClickedEvent>) {
+  private _handleRowClicked(ev: menuaiDomEvent<RowClickedEvent>) {
     const scene = this.scenes.find((a) => a.entity_id === ev.detail.id);
 
     if (scene?.attributes.id) {
@@ -946,7 +946,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           categories: { scene: category },
         })
       );
@@ -955,7 +955,7 @@ class HaSceneDashboard extends SubscribeMixin(LitElement) {
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -977,11 +977,11 @@ ${rejected
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           labels:
             action === "add"
-              ? this.hass.entities[entityId].labels.concat(label)
-              : this.hass.entities[entityId].labels.filter(
+              ? this.menuai.entities[entityId].labels.concat(label)
+              : this.menuai.entities[entityId].labels.filter(
                   (lbl) => lbl !== label
                 ),
         })
@@ -991,7 +991,7 @@ ${rejected
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1012,7 +1012,7 @@ ${rejected
     const promises: Promise<UpdateEntityRegistryEntryResult>[] = [];
     this._selected.forEach((entityId) => {
       promises.push(
-        updateEntityRegistryEntry(this.hass, entityId, {
+        updateEntityRegistryEntry(this.menuai, entityId, {
           area_id: area,
         })
       );
@@ -1021,7 +1021,7 @@ ${rejected
     if (hasRejectedItems(result)) {
       const rejected = rejectedItems(result);
       showAlertDialog(this, {
-        title: this.hass.localize("ui.panel.config.common.multiselect.failed", {
+        title: this.menuai.localize("ui.panel.config.common.multiselect.failed", {
           number: rejected.length,
         }),
         text: html`<pre>
@@ -1036,7 +1036,7 @@ ${rejected
   private _bulkCreateArea = () => {
     showAreaRegistryDetailDialog(this, {
       createEntry: async (values) => {
-        const area = await createAreaRegistryEntry(this.hass, values);
+        const area = await createAreaRegistryEntry(this.menuai, values);
         this._bulkAddArea(area.area_id);
         return area;
       },
@@ -1049,10 +1049,10 @@ ${rejected
     );
     if (!entityReg) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_support"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.scene.picker.no_category_entity_reg"
         ),
       });
@@ -1065,7 +1065,7 @@ ${rejected
   }
 
   private _showInfo(scene: SceneEntity) {
-    fireEvent(this, "hass-more-info", { entityId: scene.entity_id });
+    fireEvent(this, "menuai-more-info", { entityId: scene.entity_id });
   }
 
   private _openSettings(scene: SceneEntity) {
@@ -1076,9 +1076,9 @@ ${rejected
   }
 
   private _activateScene = async (scene: SceneEntity) => {
-    await activateScene(this.hass, scene.entity_id);
+    await activateScene(this.menuai, scene.entity_id);
     showToast(this, {
-      message: this.hass.localize("ui.panel.config.scene.activated", {
+      message: this.menuai.localize("ui.panel.config.scene.activated", {
         name: computeStateName(scene),
       }),
     });
@@ -1087,15 +1087,15 @@ ${rejected
 
   private _deleteConfirm(scene: SceneEntity): void {
     showConfirmationDialog(this, {
-      title: this.hass!.localize(
+      title: this.menuai!.localize(
         "ui.panel.config.scene.picker.delete_confirm_title"
       ),
-      text: this.hass!.localize(
+      text: this.menuai!.localize(
         "ui.panel.config.scene.picker.delete_confirm_text",
         { name: computeStateName(scene) }
       ),
-      confirmText: this.hass!.localize("ui.common.delete"),
-      dismissText: this.hass!.localize("ui.common.cancel"),
+      confirmText: this.menuai!.localize("ui.common.delete"),
+      dismissText: this.menuai!.localize("ui.common.cancel"),
       confirm: () => this._delete(scene),
       destructive: true,
     });
@@ -1103,17 +1103,17 @@ ${rejected
 
   private async _delete(scene: SceneEntity): Promise<void> {
     if (scene.attributes.id) {
-      await deleteScene(this.hass, scene.attributes.id);
+      await deleteScene(this.menuai, scene.attributes.id);
     }
   }
 
   private async _duplicate(scene) {
     if (scene.attributes.id) {
-      const config = await getSceneConfig(this.hass, scene.attributes.id);
+      const config = await getSceneConfig(this.menuai, scene.attributes.id);
       showSceneEditor({
         ...config,
         id: undefined,
-        name: `${config?.name} (${this.hass.localize(
+        name: `${config?.name} (${this.menuai.localize(
           "ui.panel.config.scene.picker.duplicate"
         )})`,
       });
@@ -1122,16 +1122,16 @@ ${rejected
 
   private _showHelp() {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.panel.config.scene.picker.header"),
+      title: this.menuai.localize("ui.panel.config.scene.picker.header"),
       text: html`
-        ${this.hass.localize("ui.panel.config.scene.picker.introduction")}
+        ${this.menuai.localize("ui.panel.config.scene.picker.introduction")}
         <p>
           <a
-            href=${documentationUrl(this.hass, "/docs/scene/editor/")}
+            href=${documentationUrl(this.menuai, "/docs/scene/editor/")}
             target="_blank"
             rel="noreferrer"
           >
-            ${this.hass.localize("ui.panel.config.scene.picker.learn_more")}
+            ${this.menuai.localize("ui.panel.config.scene.picker.learn_more")}
           </a>
         </p>
       `,
@@ -1143,7 +1143,7 @@ ${rejected
       scope: "scene",
       createEntry: async (values) => {
         const category = await createCategoryRegistryEntry(
-          this.hass,
+          this.menuai,
           "scene",
           values
         );
@@ -1156,7 +1156,7 @@ ${rejected
   private _bulkCreateLabel = () => {
     showLabelDetailDialog(this, {
       createEntry: async (values) => {
-        const label = await createLabelRegistryEntry(this.hass, values);
+        const label = await createLabelRegistryEntry(this.menuai, values);
         this._bulkLabel(label.label_id, "add");
       },
     });
@@ -1191,7 +1191,7 @@ ${rejected
           display: block;
           height: 100%;
         }
-        hass-tabs-subpage-data-table {
+        menuai-tabs-subpage-data-table {
           --data-table-row-height: 60px;
         }
         a {

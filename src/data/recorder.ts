@@ -1,7 +1,7 @@
 import type { Connection } from "home-assistant-js-websocket";
 import { computeStateName } from "../common/entity/compute_state_name";
 import type { HaDurationData } from "../components/ha-duration-input";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface RecorderInfo {
   backlog: number | null;
@@ -147,25 +147,25 @@ export const getRecorderInfo = (conn: Connection) =>
   });
 
 export const getStatisticIds = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statistic_type?: "mean" | "sum"
 ) =>
-  hass.callWS<StatisticsMetaData[]>({
+  menuai.callWS<StatisticsMetaData[]>({
     type: "recorder/list_statistic_ids",
     statistic_type,
   });
 
 export const getStatisticMetadata = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statistic_ids?: string[]
 ) =>
-  hass.callWS<StatisticsMetaData[]>({
+  menuai.callWS<StatisticsMetaData[]>({
     type: "recorder/get_statistics_metadata",
     statistic_ids,
   });
 
 export const fetchStatistics = (
-  hass: HomeAssistant,
+  menuai: menuai,
   startTime: Date,
   endTime?: Date,
   statistic_ids?: string[],
@@ -173,7 +173,7 @@ export const fetchStatistics = (
   units?: StatisticsUnitConfiguration,
   types?: StatisticsTypes
 ) =>
-  hass.callWS<Statistics>({
+  menuai.callWS<Statistics>({
     type: "recorder/statistics_during_period",
     start_time: startTime.toISOString(),
     end_time: endTime?.toISOString(),
@@ -184,7 +184,7 @@ export const fetchStatistics = (
   });
 
 export const fetchStatistic = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statistic_id: string,
   period: {
     fixed_period?: { start: string | Date; end: string | Date };
@@ -193,7 +193,7 @@ export const fetchStatistic = (
   },
   units?: StatisticsUnitConfiguration
 ) =>
-  hass.callWS<Statistic>({
+  menuai.callWS<Statistic>({
     type: "recorder/statistic_during_period",
     statistic_id,
     units,
@@ -213,24 +213,24 @@ export const fetchStatistic = (
     rolling_window: period.rolling_window,
   });
 
-export const validateStatistics = (hass: HomeAssistant) =>
-  hass.callWS<StatisticsValidationResults>({
+export const validateStatistics = (menuai: menuai) =>
+  menuai.callWS<StatisticsValidationResults>({
     type: "recorder/validate_statistics",
   });
 
 export const updateStatisticsMetadata = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statistic_id: string,
   unit_of_measurement: string | null
 ) =>
-  hass.callWS<undefined>({
+  menuai.callWS<undefined>({
     type: "recorder/update_statistics_metadata",
     statistic_id,
     unit_of_measurement,
   });
 
-export const clearStatistics = (hass: HomeAssistant, statistic_ids: string[]) =>
-  hass.callWS<undefined>({
+export const clearStatistics = (menuai: menuai, statistic_ids: string[]) =>
+  menuai.callWS<undefined>({
     type: "recorder/clear_statistics",
     statistic_ids,
   });
@@ -308,14 +308,14 @@ export const statisticsMetaHasType = (
 };
 
 export const adjustStatisticsSum = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statistic_id: string,
   start_time: number,
   adjustment: number,
   adjustment_unit_of_measurement: string | null
 ): Promise<void> => {
   const start_time_iso = new Date(start_time).toISOString();
-  return hass.callWS<undefined>({
+  return menuai.callWS<undefined>({
     type: "recorder/adjust_sum_statistics",
     statistic_id,
     start_time: start_time_iso,
@@ -325,11 +325,11 @@ export const adjustStatisticsSum = (
 };
 
 export const getStatisticLabel = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statisticsId: string,
   statisticsMetaData: StatisticsMetaData | undefined
 ): string => {
-  const entity = hass.states[statisticsId];
+  const entity = menuai.states[statisticsId];
   if (entity) {
     return computeStateName(entity);
   }
@@ -337,13 +337,13 @@ export const getStatisticLabel = (
 };
 
 export const getDisplayUnit = (
-  hass: HomeAssistant,
+  menuai: menuai,
   statisticsId: string | undefined,
   statisticsMetaData: StatisticsMetaData | undefined
 ): string | null | undefined => {
   let unit: string | undefined;
   if (statisticsId) {
-    unit = hass.states[statisticsId]?.attributes.unit_of_measurement;
+    unit = menuai.states[statisticsId]?.attributes.unit_of_measurement;
   }
   return unit === undefined
     ? statisticsMetaData?.statistics_unit_of_measurement
@@ -353,5 +353,5 @@ export const getDisplayUnit = (
 export const isExternalStatistic = (statisticsId: string): boolean =>
   statisticsId.includes(":");
 
-export const updateStatisticsIssues = (hass: HomeAssistant) =>
-  hass.callWS<undefined>({ type: "recorder/update_statistics_issues" });
+export const updateStatisticsIssues = (menuai: menuai) =>
+  menuai.callWS<undefined>({ type: "recorder/update_statistics_issues" });

@@ -8,11 +8,11 @@ import type {
   CastConfig,
   LovelaceRow,
 } from "../../../src/panels/lovelace/entity-rows/types";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
 @customElement("cast-demo-row")
 class CastDemoRow extends LitElement implements LovelaceRow {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _castManager?: CastManager | null;
 

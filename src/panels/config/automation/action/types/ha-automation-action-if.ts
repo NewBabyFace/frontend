@@ -5,14 +5,14 @@ import { fireEvent } from "../../../../../common/dom/fire_event";
 import "../../../../../components/ha-textfield";
 import type { Action, IfAction } from "../../../../../data/script";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { Condition } from "../../../../lovelace/common/validate-condition";
 import "../ha-automation-action";
 import type { ActionElement } from "../ha-automation-action-row";
 
 @customElement("ha-automation-action-if")
 export class HaIfAction extends LitElement implements ActionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -34,7 +34,7 @@ export class HaIfAction extends LitElement implements ActionElement {
 
     return html`
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.if.if"
         )}*:
       </h3>
@@ -42,12 +42,12 @@ export class HaIfAction extends LitElement implements ActionElement {
         .conditions=${action.if}
         .disabled=${this.disabled}
         @value-changed=${this._ifChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
       ></ha-automation-condition>
 
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.if.then"
         )}*:
       </h3>
@@ -55,13 +55,13 @@ export class HaIfAction extends LitElement implements ActionElement {
         .actions=${action.then}
         .disabled=${this.disabled}
         @value-changed=${this._thenChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
       ></ha-automation-action>
       ${this._showElse || action.else
         ? html`
             <h3>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.if.else"
               )}:
             </h3>
@@ -69,7 +69,7 @@ export class HaIfAction extends LitElement implements ActionElement {
               .actions=${action.else || []}
               .disabled=${this.disabled}
               @value-changed=${this._elseChanged}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
             ></ha-automation-action>
           `
@@ -79,7 +79,7 @@ export class HaIfAction extends LitElement implements ActionElement {
               @click=${this._addElse}
               .disabled=${this.disabled}
             >
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.type.if.add_else"
               )}
             </button>

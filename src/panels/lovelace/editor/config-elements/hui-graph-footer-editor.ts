@@ -2,13 +2,13 @@ import type { CSSResultGroup } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/entity/ha-entity-picker";
 import "../../../../components/ha-formfield";
 import "../../../../components/ha-switch";
 import "../../../../components/ha-textfield";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { graphHeaderFooterConfigStruct } from "../../header-footer/structs";
 import type { GraphHeaderFooterConfig } from "../../header-footer/types";
 import type { LovelaceCardEditor } from "../../types";
@@ -22,7 +22,7 @@ export class HuiGraphFooterEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: GraphHeaderFooterConfig;
 
@@ -44,7 +44,7 @@ export class HuiGraphFooterEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -52,10 +52,10 @@ export class HuiGraphFooterEditor
       <div class="card-config">
         <ha-entity-picker
           allow-custom-entity
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.lovelace.editor.card.generic.entity"
           )}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._entity}
           .configValue=${"entity"}
           .includeDomains=${includeDomains}
@@ -64,7 +64,7 @@ export class HuiGraphFooterEditor
         ></ha-entity-picker>
         <div class="side-by-side">
           <ha-formfield
-            label=${this.hass.localize(
+            label=${this.menuai.localize(
               "ui.panel.lovelace.editor.card.sensor.show_more_detail"
             )}
           >
@@ -76,9 +76,9 @@ export class HuiGraphFooterEditor
           </ha-formfield>
           <ha-textfield
             type="number"
-            .label="${this.hass.localize(
+            .label="${this.menuai.localize(
               "ui.panel.lovelace.editor.card.generic.hours_to_show"
-            )} (${this.hass.localize(
+            )} (${this.menuai.localize(
               "ui.panel.lovelace.editor.card.config.optional"
             )})"
             .value=${this._hours_to_show}
@@ -92,7 +92,7 @@ export class HuiGraphFooterEditor
   }
 
   private _change(ev: Event) {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -110,8 +110,8 @@ export class HuiGraphFooterEditor
     fireEvent(this, "config-changed", { config: this._config });
   }
 
-  private _valueChanged(ev: HASSDomEvent<EntitiesEditorEvent>): void {
-    if (!this._config || !this.hass) {
+  private _valueChanged(ev: menuaiDomEvent<EntitiesEditorEvent>): void {
+    if (!this._config || !this.menuai) {
       return;
     }
     const target = ev.target! as EditorTarget;

@@ -5,11 +5,11 @@ import "../components/ha-spinner";
 import "../components/ha-icon-button-arrow-prev";
 import "../components/ha-menu-button";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-@customElement("hass-loading-screen")
-class HassLoadingScreen extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+@customElement("menuai-loading-screen")
+class menuaiLoadingScreen extends LitElement {
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean, attribute: "no-toolbar" })
   public noToolbar = false;
@@ -28,13 +28,13 @@ class HassLoadingScreen extends LitElement {
             ${this.rootnav || history.state?.root
               ? html`
                   <ha-menu-button
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .narrow=${this.narrow}
                   ></ha-menu-button>
                 `
               : html`
                   <ha-icon-button-arrow-prev
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     @click=${this._handleBack}
                   ></ha-icon-button-arrow-prev>
                 `}
@@ -101,6 +101,6 @@ class HassLoadingScreen extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hass-loading-screen": HassLoadingScreen;
+    "menuai-loading-screen": menuaiLoadingScreen;
   }
 }

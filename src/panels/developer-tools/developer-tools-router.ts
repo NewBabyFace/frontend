@@ -1,11 +1,11 @@
 import { customElement, property } from "lit/decorators";
-import type { RouterOptions } from "../../layouts/hass-router-page";
-import { HassRouterPage } from "../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../types";
+import type { RouterOptions } from "../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../layouts/menuai-router-page";
+import type { menuai } from "../../types";
 
 @customElement("developer-tools-router")
-class DeveloperToolsRouter extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DeveloperToolsRouter extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -70,7 +70,7 @@ class DeveloperToolsRouter extends HassRouterPage {
   }
 
   protected updatePageEl(el) {
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.narrow = this.narrow;
   }
 }

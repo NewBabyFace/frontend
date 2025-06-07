@@ -2,7 +2,7 @@ import type { Connection } from "home-assistant-js-websocket";
 import { createCollection } from "home-assistant-js-websocket";
 import type { Store } from "home-assistant-js-websocket/dist/store";
 import { debounce } from "../common/util/debounce";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { DataEntryFlowStep } from "./data_entry_flow";
 
 export interface RepairsIssue {
@@ -44,11 +44,11 @@ export const fetchRepairsIssueData = (
   });
 
 export const ignoreRepairsIssue = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   issue: RepairsIssue,
   ignore: boolean
 ) =>
-  hass.callWS<string>({
+  menuai.callWS<string>({
     type: "repairs/ignore_issue",
     issue_id: issue.issue_id,
     domain: issue.domain,
@@ -56,27 +56,27 @@ export const ignoreRepairsIssue = async (
   });
 
 export const createRepairsFlow = (
-  hass: HomeAssistant,
+  menuai: menuai,
   handler: string,
   issue_id: string
 ) =>
-  hass.callApi<DataEntryFlowStep>("POST", "repairs/issues/fix", {
+  menuai.callApi<DataEntryFlowStep>("POST", "repairs/issues/fix", {
     handler,
     issue_id,
   });
 
-export const fetchRepairsFlow = (hass: HomeAssistant, flowId: string) =>
-  hass.callApi<DataEntryFlowStep>("GET", `repairs/issues/fix/${flowId}`);
+export const fetchRepairsFlow = (menuai: menuai, flowId: string) =>
+  menuai.callApi<DataEntryFlowStep>("GET", `repairs/issues/fix/${flowId}`);
 
 export const handleRepairsFlowStep = (
-  hass: HomeAssistant,
+  menuai: menuai,
   flowId: string,
   data: Record<string, any>
 ) =>
-  hass.callApi<DataEntryFlowStep>("POST", `repairs/issues/fix/${flowId}`, data);
+  menuai.callApi<DataEntryFlowStep>("POST", `repairs/issues/fix/${flowId}`, data);
 
-export const deleteRepairsFlow = (hass: HomeAssistant, flowId: string) =>
-  hass.callApi("DELETE", `repairs/issues/fix/${flowId}`);
+export const deleteRepairsFlow = (menuai: menuai, flowId: string) =>
+  menuai.callApi("DELETE", `repairs/issues/fix/${flowId}`);
 
 const subscribeRepairsIssueUpdates = (
   conn: Connection,

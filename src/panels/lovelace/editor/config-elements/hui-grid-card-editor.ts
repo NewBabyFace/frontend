@@ -62,7 +62,7 @@ export class HuiGridCardEditor extends HuiStackCardEditor {
   }
 
   protected _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(`ui.panel.lovelace.editor.card.grid.${schema.name}`);
+    this.menuai!.localize(`ui.panel.lovelace.editor.card.grid.${schema.name}`);
 }
 
 declare global {

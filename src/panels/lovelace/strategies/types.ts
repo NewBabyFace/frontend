@@ -2,11 +2,11 @@ import type { LovelaceSectionConfig } from "../../../data/lovelace/config/sectio
 import type { LovelaceStrategyConfig } from "../../../data/lovelace/config/strategy";
 import type { LovelaceConfig } from "../../../data/lovelace/config/types";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceGenericElementEditor } from "../types";
 
 export interface LovelaceStrategy<T = any> {
-  generate(config: LovelaceStrategyConfig, hass: HomeAssistant): Promise<T>;
+  generate(config: LovelaceStrategyConfig, menuai: menuai): Promise<T>;
   getConfigElement?: () => LovelaceStrategyEditor;
   noEditor?: boolean;
   configRequired?: boolean;

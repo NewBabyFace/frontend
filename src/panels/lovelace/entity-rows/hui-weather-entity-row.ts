@@ -15,7 +15,7 @@ import {
   subscribeForecast,
   weatherSVGStyles,
 } from "../../../data/weather";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntitiesCardEntityConfig } from "../cards/types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
@@ -27,7 +27,7 @@ import type { LovelaceRow } from "./types";
 
 @customElement("hui-weather-entity-row")
 class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntitiesCardEntityConfig;
 
@@ -44,14 +44,14 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
 
   private async _subscribeForecastEvents() {
     this._unsubscribeForecastEvents();
-    if (!this.hass || !this._config || !this.isConnected) {
+    if (!this.menuai || !this._config || !this.isConnected) {
       return;
     }
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
     const forecastType = getDefaultForecastType(stateObj);
     if (forecastType) {
       this._subscribed = subscribeForecast(
-        this.hass!,
+        this.menuai!,
         stateObj.entity_id,
         forecastType,
         (event) => {
@@ -85,7 +85,7 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
     return (
       hasConfigOrEntityChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
@@ -97,23 +97,23 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity] as WeatherEntity;
+    const stateObj = this.menuai.states[this._config.entity] as WeatherEntity;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     const pointer = hasAnyAction(this._config);
 
-    const hasSecondary = this._config.secondary_info;
+    const menuaiecondary = this._config.secondary_info;
     const weatherStateIcon = getWeatherStateIcon(stateObj.state, this);
 
     const forecastData = getForecast(stateObj.attributes, this._forecastEvent);
@@ -140,14 +140,14 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
           <ha-state-icon
             class="weather-icon"
             .stateObj=${stateObj}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
           ></ha-state-icon>
         `}
       </div>
       <div
         class="info ${classMap({
           pointer,
-          "text-content": !hasSecondary,
+          "text-content": !menuaiecondary,
         })}"
         @action=${this._handleAction}
         .actionHandler=${actionHandler({
@@ -156,7 +156,7 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
         })}
       >
         ${this._config.name || computeStateName(stateObj)}
-        ${hasSecondary
+        ${menuaiecondary
           ? html`
               <div class="secondary">
                 ${this._config.secondary_info === "entity-id"
@@ -164,7 +164,7 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
                   : this._config.secondary_info === "last-changed"
                     ? html`
                         <ha-relative-time
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .datetime=${stateObj.last_changed}
                           capitalize
                         ></ha-relative-time>
@@ -172,7 +172,7 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
                     : this._config.secondary_info === "last-updated"
                       ? html`
                           <ha-relative-time
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .datetime=${stateObj.last_updated}
                             capitalize
                           ></ha-relative-time>
@@ -196,18 +196,18 @@ class HuiWeatherEntityRow extends LitElement implements LovelaceRow {
           ${isUnavailableState(stateObj.state) ||
           stateObj.attributes.temperature === undefined ||
           stateObj.attributes.temperature === null
-            ? this.hass.formatEntityState(stateObj)
-            : this.hass.formatEntityAttributeValue(stateObj, "temperature")}
+            ? this.menuai.formatEntityState(stateObj)
+            : this.menuai.formatEntityAttributeValue(stateObj, "temperature")}
         </div>
         <div class="secondary">
-          ${getSecondaryWeatherAttribute(this.hass!, stateObj, forecast!)}
+          ${getSecondaryWeatherAttribute(this.menuai!, stateObj, forecast!)}
         </div>
       </div>
     `;
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   static get styles(): CSSResultGroup {

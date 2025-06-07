@@ -21,7 +21,7 @@ import "../../../components/ha-svg-icon";
 import { ensureBadgeConfig } from "../../../data/lovelace/config/badge";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showEditBadgeDialog } from "../editor/badge-editor/show-edit-badge-dialog";
 import type { LovelaceCardPath } from "../editor/lovelace-path";
 import {
@@ -33,7 +33,7 @@ import type { Lovelace } from "../types";
 
 @customElement("hui-badge-edit-mode")
 export class HuiBadgeEditMode extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace!: Lovelace;
 
@@ -133,28 +133,28 @@ export class HuiBadgeEditMode extends LitElement {
           </ha-icon-button>
           <ha-list-item graphic="icon">
             <ha-svg-icon slot="graphic" .path=${mdiPencil}></ha-svg-icon>
-            ${this.hass.localize("ui.panel.lovelace.editor.edit_card.edit")}
+            ${this.menuai.localize("ui.panel.lovelace.editor.edit_card.edit")}
           </ha-list-item>
           <ha-list-item graphic="icon">
             <ha-svg-icon
               slot="graphic"
               .path=${mdiPlusCircleMultipleOutline}
             ></ha-svg-icon>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.lovelace.editor.edit_card.duplicate"
             )}
           </ha-list-item>
           <ha-list-item graphic="icon">
             <ha-svg-icon slot="graphic" .path=${mdiContentCopy}></ha-svg-icon>
-            ${this.hass.localize("ui.panel.lovelace.editor.edit_card.copy")}
+            ${this.menuai.localize("ui.panel.lovelace.editor.edit_card.copy")}
           </ha-list-item>
           <ha-list-item graphic="icon">
             <ha-svg-icon slot="graphic" .path=${mdiContentCut}></ha-svg-icon>
-            ${this.hass.localize("ui.panel.lovelace.editor.edit_card.cut")}
+            ${this.menuai.localize("ui.panel.lovelace.editor.edit_card.cut")}
           </ha-list-item>
           <li divider role="separator"></li>
           <ha-list-item graphic="icon" class="warning">
-            ${this.hass.localize("ui.panel.lovelace.editor.edit_card.delete")}
+            ${this.menuai.localize("ui.panel.lovelace.editor.edit_card.delete")}
             <ha-svg-icon
               class="warning"
               slot="graphic"

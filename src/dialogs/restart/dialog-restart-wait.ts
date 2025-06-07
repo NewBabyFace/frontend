@@ -15,12 +15,12 @@ import {
   type ManagerState,
 } from "../../data/backup_manager";
 import { haStyle, haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { RestartWaitDialogParams } from "./show-dialog-restart";
 
 @customElement("dialog-restart-wait")
 class DialogRestartWait extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _open = false;
 
@@ -69,11 +69,11 @@ class DialogRestartWait extends LitElement {
   private _getWaitMessage() {
     switch (this._backupState) {
       case "create_backup":
-        return this.hass.localize("ui.dialogs.restart.wait_for_backup");
+        return this.menuai.localize("ui.dialogs.restart.wait_for_backup");
       case "receive_backup":
-        return this.hass.localize("ui.dialogs.restart.wait_for_upload");
+        return this.menuai.localize("ui.dialogs.restart.wait_for_upload");
       case "restore_backup":
-        return this.hass.localize("ui.dialogs.restart.wait_for_restore");
+        return this.menuai.localize("ui.dialogs.restart.wait_for_restore");
       default:
         return "";
     }
@@ -95,7 +95,7 @@ class DialogRestartWait extends LitElement {
         <ha-dialog-header slot="headline">
           <ha-icon-button
             slot="navigationIcon"
-            .label=${this.hass.localize("ui.common.cancel")}
+            .label=${this.menuai.localize("ui.common.cancel")}
             .path=${mdiClose}
             @click=${this.closeDialog}
           ></ha-icon-button>
@@ -104,7 +104,7 @@ class DialogRestartWait extends LitElement {
         <div slot="content" class="content">
           ${this._error
             ? html`<ha-alert alert-type="error"
-                >${this.hass.localize("ui.dialogs.restart.error_backup_state", {
+                >${this.menuai.localize("ui.dialogs.restart.error_backup_state", {
                   error: this._error,
                 })}</ha-alert
               > `
@@ -120,7 +120,7 @@ class DialogRestartWait extends LitElement {
   private async _loadBackupState() {
     try {
       this._backupEventsSubscription = subscribeBackupEvents(
-        this.hass,
+        this.menuai,
         async (event) => {
           this._backupState = event.manager_state;
           if (this._backupState === "idle") {

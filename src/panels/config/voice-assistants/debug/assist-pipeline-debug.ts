@@ -16,14 +16,14 @@ import {
   listAssistPipelineRuns,
 } from "../../../../data/assist_pipeline";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
-import "../../../../layouts/hass-subpage";
+import "../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../types";
+import type { menuai, Route } from "../../../../types";
 import "./assist-render-pipeline-events";
 
 @customElement("assist-pipeline-debug")
 export class AssistPipelineDebug extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -40,10 +40,10 @@ export class AssistPipelineDebug extends LitElement {
   private _unsubRefreshEventsID?: number;
 
   protected render() {
-    return html`<hass-subpage
+    return html`<menuai-subpage
       .narrow=${this.narrow}
-      .hass=${this.hass}
-      .header=${this.hass.localize(
+      .menuai=${this.menuai}
+      .header=${this.menuai.localize(
         "ui.panel.config.voice_assistants.debug.header"
       )}
     >
@@ -52,7 +52,7 @@ export class AssistPipelineDebug extends LitElement {
         slot="toolbar-icon"
         ><ha-icon-button
           .path=${mdiMicrophoneMessage}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.voice_assistants.debug.start_debug_run"
           )}
         ></ha-icon-button
@@ -63,7 +63,7 @@ export class AssistPipelineDebug extends LitElement {
               <ha-icon-button
                 .disabled=${this._runs[this._runs.length - 1]
                   .pipeline_run_id === this._runId}
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.voice_assistants.debug.older_run"
                 )}
                 @click=${this._pickOlderRun}
@@ -77,15 +77,15 @@ export class AssistPipelineDebug extends LitElement {
                     html`<option value=${run.pipeline_run_id}>
                       ${formatDateTimeWithSeconds(
                         new Date(run.timestamp),
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       )}
                     </option>`
                 )}
               </select>
               <ha-icon-button
                 .disabled=${this._runs[0].pipeline_run_id === this._runId}
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.voice_assistants.debug.newer_run"
                 )}
                 @click=${this._pickNewerRun}
@@ -96,7 +96,7 @@ export class AssistPipelineDebug extends LitElement {
       </div>
       ${this._runs?.length === 0
         ? html`<div class="container">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.voice_assistants.debug.no_runs_found"
             )}
           </div>`
@@ -104,12 +104,12 @@ export class AssistPipelineDebug extends LitElement {
       <div class="content">
         ${this._events
           ? html`<assist-render-pipeline-events
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .events=${this._events}
             ></assist-render-pipeline-events>`
           : ""}
       </div>
-    </hass-subpage>`;
+    </menuai-subpage>`;
   }
 
   protected willUpdate(changedProperties) {
@@ -144,7 +144,7 @@ export class AssistPipelineDebug extends LitElement {
     }
     try {
       this._runs = (
-        await listAssistPipelineRuns(this.hass, this.pipelineId)
+        await listAssistPipelineRuns(this.menuai, this.pipelineId)
       ).pipeline_runs.reverse();
     } catch (e: any) {
       showAlertDialog(this, {
@@ -172,7 +172,7 @@ export class AssistPipelineDebug extends LitElement {
     }
     try {
       this._events = (
-        await getAssistPipelineRun(this.hass, this.pipelineId, this._runId)
+        await getAssistPipelineRun(this.menuai, this.pipelineId, this._runId)
       ).events;
     } catch (e: any) {
       showAlertDialog(this, {

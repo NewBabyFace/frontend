@@ -2,7 +2,7 @@
  * Broadcast haptic feedback requests
  */
 
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import { fireEvent } from "../common/dom/fire_event";
 
 // Allowed types are from iOS HIG.
@@ -19,12 +19,12 @@ export type HapticType =
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     haptic: HapticType;
   }
 
   interface GlobalEventHandlersEventMap {
-    haptic: HASSDomEvent<HapticType>;
+    haptic: menuaiDomEvent<HapticType>;
   }
 }
 

@@ -2,7 +2,7 @@ import { LitElement, css, html, nothing } from "lit";
 import { property, state } from "lit/decorators";
 import { computeRTLDirection } from "../../../common/util/compute_rtl";
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCard, LovelaceCardEditor } from "../types";
 import "./hui-card";
 import type { HuiCard } from "./hui-card";
@@ -21,7 +21,7 @@ export abstract class HuiStackCard<T extends StackCardConfig = StackCardConfig>
     return { cards: [] };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public preview = false;
 
@@ -50,9 +50,9 @@ export abstract class HuiStackCard<T extends StackCardConfig = StackCardConfig>
     super.update(changedProperties);
 
     if (this._cards) {
-      if (changedProperties.has("hass")) {
+      if (changedProperties.has("menuai")) {
         this._cards.forEach((card) => {
-          card.hass = this.hass;
+          card.menuai = this.menuai;
         });
       }
       if (changedProperties.has("preview")) {
@@ -69,7 +69,7 @@ export abstract class HuiStackCard<T extends StackCardConfig = StackCardConfig>
 
   private _createCardElement(cardConfig: LovelaceCardConfig) {
     const element = document.createElement("hui-card");
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.preview = this.preview;
     element.config = cardConfig;
     element.load();
@@ -85,7 +85,7 @@ export abstract class HuiStackCard<T extends StackCardConfig = StackCardConfig>
       ${this._config.title
         ? html`<h1 class="card-header">${this._config.title}</h1>`
         : ""}
-      <div id="root" dir=${this.hass ? computeRTLDirection(this.hass) : "ltr"}>
+      <div id="root" dir=${this.menuai ? computeRTLDirection(this.menuai) : "ltr"}>
         ${this._cards}
       </div>
     `;

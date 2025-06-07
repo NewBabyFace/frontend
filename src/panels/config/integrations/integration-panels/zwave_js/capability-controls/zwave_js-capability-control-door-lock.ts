@@ -1,7 +1,7 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import type { DeviceRegistryEntry } from "../../../../../../data/device_registry";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { invokeZWaveCCApi } from "../../../../../../data/zwave_js";
 import "../../../../../../components/ha-button";
 import "../../../../../../components/buttons/ha-progress-button";
@@ -14,7 +14,7 @@ import "../../../../../../components/ha-formfield";
 import "../../../../../../components/ha-spinner";
 import type { HaSwitch } from "../../../../../../components/ha-switch";
 import type { HaProgressButton } from "../../../../../../components/buttons/ha-progress-button";
-import { extractApiErrorMessage } from "../../../../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../../../../data/menuaiio/common";
 
 type DoorHandleStatus = [boolean, boolean, boolean, boolean];
 
@@ -72,7 +72,7 @@ const DEFAULT_MODE = DoorLockMode.Unsecured;
 
 @customElement("zwave_js-capability-control-door_lock")
 class ZWaveJSCapabilityDoorLock extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -114,14 +114,14 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
 
     return html`
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.title"
         )}
       </h3>
 
       <div class="row">
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.mode"
           )}
           .value=${this._currentDoorLockMode?.toString() ?? ""}
@@ -130,7 +130,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
           ${supportedDoorLockModes.map(
             (mode) => html`
               <ha-list-item .value=${mode.toString()}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.modes.${mode}`
                 )}
               </ha-list-item>
@@ -140,7 +140,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
       </div>
       <div class="row">
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.operation_type"
           )}
           .value=${this._configuration.operationType.toString()}
@@ -149,7 +149,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
           ${this._capabilities.supportedOperationTypes.map(
             (type) => html`
               <ha-list-item .value=${type.toString()}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.operation_types.${type}`
                 )}
               </ha-list-item>
@@ -163,7 +163,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
             <div class="row">
               <ha-textfield
                 type="number"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.lock_timeout"
                 )}
                 .value=${this._configuration.lockTimeoutConfiguration?.toString() ??
@@ -172,7 +172,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
                 key="lockTimeoutConfiguration"
                 required
                 min="1"
-                .helper=${this.hass.localize(
+                .helper=${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.lock_timeout_helper"
                 )}
               >
@@ -184,7 +184,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
         ? html`
             <div class="row">
               <ha-formfield
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.twist_assist"
                 )}
               >
@@ -202,7 +202,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
         ? html`
             <div class="row">
               <ha-formfield
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.block_to_block"
                 )}
               >
@@ -221,7 +221,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
             <div class="row">
               <ha-textfield
                 type="number"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.auto_relock_time"
                 )}
                 .value=${this._configuration?.autoRelockTime?.toString() ?? ""}
@@ -237,7 +237,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
             <div class="row">
               <ha-textfield
                 type="number"
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.config.zwave_js.node_installer.capability_controls.door_lock.hold_release_time"
                 )}
                 .value=${this._configuration?.holdAndReleaseTime?.toString() ??
@@ -255,7 +255,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
           @click=${isValid ? this._saveConfig : undefined}
           .disabled=${!isValid}
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </ha-progress-button>
       </div>
     `;
@@ -270,7 +270,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
   private async _loadConfiguration() {
     try {
       const config = await invokeZWaveCCApi<DoorLockConfiguration | null>(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -292,7 +292,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
   private async _loadCapabilities() {
     try {
       const capabilities = await invokeZWaveCCApi<DoorLockCapabilities | null>(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -319,7 +319,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
       const data = await invokeZWaveCCApi<{
         currentMode: DoorLockMode;
       } | null>(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -407,7 +407,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
 
     try {
       await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -416,7 +416,7 @@ class ZWaveJSCapabilityDoorLock extends LitElement {
         true
       );
       await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,

@@ -3,12 +3,12 @@ import { customElement, property } from "lit/decorators";
 import "../../../components/ha-card";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./ha-debug-connection-row";
 
 @customElement("developer-tools-debug")
 class HaPanelDevDebug extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -16,12 +16,12 @@ class HaPanelDevDebug extends SubscribeMixin(LitElement) {
     return html`
       <div class="content">
         <ha-card
-          .header=${this.hass.localize(
+          .header=${this.menuai.localize(
             "ui.panel.developer-tools.tabs.debug.title"
           )}
         >
           <ha-debug-connection-row
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .narrow=${this.narrow}
           ></ha-debug-connection-row>
         </ha-card>

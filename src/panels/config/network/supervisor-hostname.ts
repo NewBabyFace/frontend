@@ -11,17 +11,17 @@ import "../../../components/ha-icon-button";
 import "../../../components/ha-radio";
 import "../../../components/ha-settings-row";
 import "../../../components/ha-textfield";
-import { extractApiErrorMessage } from "../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../data/menuaiio/common";
 import {
   changeHostOptions,
-  fetchHassioHostInfo,
-} from "../../../data/hassio/host";
+  fetchmenuaiioHostInfo,
+} from "../../../data/menuaiio/host";
 import { showAlertDialog } from "../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("supervisor-hostname")
-export class HassioHostname extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+export class menuaiioHostname extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -34,7 +34,7 @@ export class HassioHostname extends LitElement {
   }
 
   private async _fetchHostInfo() {
-    const hostInfo = await fetchHassioHostInfo(this.hass);
+    const hostInfo = await fetchmenuaiioHostInfo(this.menuai);
     this._hostname = hostInfo.hostname;
   }
 
@@ -47,13 +47,13 @@ export class HassioHostname extends LitElement {
       <ha-card
         class="no-padding"
         outlined
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.config.network.supervisor.hostname.title"
         )}
       >
         <div class="card-content">
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.network.supervisor.hostname.description"
             )}
           </p>
@@ -61,7 +61,7 @@ export class HassioHostname extends LitElement {
             .disabled=${this._processing}
             .value=${this._hostname}
             @change=${this._handleChange}
-            placeholder="homeassistant"
+            placeholder="menuai"
           >
           </ha-textfield>
         </div>
@@ -69,7 +69,7 @@ export class HassioHostname extends LitElement {
           <mwc-button @click=${this._save} .disabled=${this._processing}>
             ${this._processing
               ? html`<ha-spinner size="small"></ha-spinner>`
-              : this.hass.localize("ui.common.save")}
+              : this.menuai.localize("ui.common.save")}
           </mwc-button>
         </div>
       </ha-card>
@@ -83,10 +83,10 @@ export class HassioHostname extends LitElement {
   private async _save() {
     this._processing = true;
     try {
-      await changeHostOptions(this.hass, { hostname: this._hostname });
+      await changeHostOptions(this.menuai, { hostname: this._hostname });
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.network.supervisor.hostname.failed_to_set_hostname"
         ),
         text: extractApiErrorMessage(err),
@@ -114,6 +114,6 @@ export class HassioHostname extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "supervisor-hostname": HassioHostname;
+    "supervisor-hostname": menuaiioHostname;
   }
 }

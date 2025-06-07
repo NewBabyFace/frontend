@@ -1,7 +1,7 @@
 import type { PropertyValues, TemplateResult } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../components/demo-cards";
 
 const CONFIGS = [
@@ -48,7 +48,7 @@ class DemoIframe extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    provideHass(this._demos);
+    providemenuai(this._demos);
   }
 }
 

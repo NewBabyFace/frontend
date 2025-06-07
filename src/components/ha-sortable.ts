@@ -7,7 +7,7 @@ import { fireEvent } from "../common/dom/fire_event";
 import type { SortableInstance } from "../resources/sortable";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "item-moved": {
       oldIndex: number;
       newIndex: number;

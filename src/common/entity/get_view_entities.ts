@@ -1,4 +1,4 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { GroupEntity } from "../../data/group";
 import { computeDomain } from "./compute_domain";
 import { getGroupEntities } from "./get_group_entities";
@@ -6,9 +6,9 @@ import { getGroupEntities } from "./get_group_entities";
 // Return an object containing all entities that the view will show
 // including embedded groups.
 export const getViewEntities = (
-  entities: HassEntities,
+  entities: menuaiEntities,
   view: GroupEntity
-): HassEntities => {
+): menuaiEntities => {
   const viewEntities = {};
 
   view.attributes.entity_id.forEach((entityId) => {

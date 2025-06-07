@@ -1,7 +1,7 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { showToast } from "./toast";
 
-export const showSaveSuccessToast = (el: HTMLElement, hass: HomeAssistant) =>
+export const showSaveSuccessToast = (el: HTMLElement, menuai: menuai) =>
   showToast(el, {
-    message: hass!.localize("ui.common.successfully_saved"),
+    message: menuai!.localize("ui.common.successfully_saved"),
   });

@@ -7,7 +7,7 @@ import { createCloseHeading } from "../../../../components/ha-dialog";
 import "../../../../components/ha-form/ha-form";
 import "../../../../components/ha-button";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   ScheduleBlockInfo,
   ScheduleBlockInfoDialogParams,
@@ -15,7 +15,7 @@ import type {
 import type { SchemaUnion } from "../../../../components/ha-form/types";
 
 class DialogScheduleBlockInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _error?: Record<string, string>;
 
@@ -74,15 +74,15 @@ class DialogScheduleBlockInfo extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass!.localize(
+          this.menuai,
+          this.menuai!.localize(
             "ui.dialogs.helper_settings.schedule.edit_schedule_block"
           )
         )}
       >
         <div>
           <ha-form
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .schema=${this._schema(this._expand)}
             .data=${this._data}
             .error=${this._error}
@@ -95,10 +95,10 @@ class DialogScheduleBlockInfo extends LitElement {
           class="warning"
           @click=${this._deleteBlock}
         >
-          ${this.hass!.localize("ui.common.delete")}
+          ${this.menuai!.localize("ui.common.delete")}
         </ha-button>
         <ha-button slot="primaryAction" @click=${this._updateBlock}>
-          ${this.hass!.localize("ui.common.save")}
+          ${this.menuai!.localize("ui.common.save")}
         </ha-button>
       </ha-dialog>
     `;
@@ -132,13 +132,13 @@ class DialogScheduleBlockInfo extends LitElement {
   ) => {
     switch (schema.name) {
       case "from":
-        return this.hass!.localize("ui.dialogs.helper_settings.schedule.start");
+        return this.menuai!.localize("ui.dialogs.helper_settings.schedule.start");
       case "to":
-        return this.hass!.localize("ui.dialogs.helper_settings.schedule.end");
+        return this.menuai!.localize("ui.dialogs.helper_settings.schedule.end");
       case "data":
-        return this.hass!.localize("ui.dialogs.helper_settings.schedule.data");
+        return this.menuai!.localize("ui.dialogs.helper_settings.schedule.data");
       case "advanced_settings":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           "ui.dialogs.helper_settings.generic.advanced_settings"
         );
     }

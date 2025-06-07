@@ -21,14 +21,14 @@ import {
   getLoggedErrorIntegration,
   isCustomIntegrationError,
 } from "../../../data/system_log";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { fileDownload } from "../../../util/file_download";
 import { showSystemLogDetailDialog } from "./show-dialog-system-log-detail";
 import { formatSystemLogTime } from "./util";
 
 @customElement("system-log-card")
 export class SystemLogCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public filter = "";
 
@@ -40,23 +40,23 @@ export class SystemLogCard extends LitElement {
 
   public async fetchData(): Promise<void> {
     this._items = undefined;
-    this._items = await fetchSystemLog(this.hass!);
+    this._items = await fetchSystemLog(this.menuai!);
   }
 
   private _timestamp(item: LoggedError): string {
     return formatSystemLogTime(
       item.timestamp,
-      this.hass.locale,
-      this.hass.config
+      this.menuai.locale,
+      this.menuai.config
     );
   }
 
   private _multipleMessages(item: LoggedError): string {
-    return this.hass.localize("ui.panel.config.logs.multiple_messages", {
+    return this.menuai.localize("ui.panel.config.logs.multiple_messages", {
       time: formatSystemLogTime(
         item.first_occurred,
-        this.hass.locale,
-        this.hass.config
+        this.menuai.locale,
+        this.menuai.config
       ),
       counter: item.count,
     });
@@ -88,7 +88,7 @@ export class SystemLogCard extends LitElement {
   protected render() {
     const filteredItems = this._items
       ? this._getFilteredItems(
-          this.hass.localize,
+          this.menuai.localize,
           this._items,
           this.filter.toLowerCase()
         )
@@ -112,14 +112,14 @@ export class SystemLogCard extends LitElement {
                     <ha-icon-button
                       .path=${mdiDownload}
                       @click=${this._downloadLogs}
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.logs.download_logs"
                       )}
                     ></ha-icon-button>
                     <ha-icon-button
                       .path=${mdiRefresh}
                       @click=${this.fetchData}
-                      .label=${this.hass.localize("ui.common.refresh")}
+                      .label=${this.menuai.localize("ui.common.refresh")}
                     ></ha-icon-button>
 
                     <ha-button-menu @action=${this._handleOverflowAction}>
@@ -130,7 +130,7 @@ export class SystemLogCard extends LitElement {
                           slot="graphic"
                           .path=${mdiText}
                         ></ha-svg-icon>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.logs.show_full_logs"
                         )}
                       </ha-list-item>
@@ -140,12 +140,12 @@ export class SystemLogCard extends LitElement {
                 ${this._items.length === 0
                   ? html`
                       <div class="card-content empty-content">
-                        ${this.hass.localize("ui.panel.config.logs.no_issues")}
+                        ${this.menuai.localize("ui.panel.config.logs.no_issues")}
                       </div>
                     `
                   : filteredItems.length === 0 && this.filter
                     ? html`<div class="card-content">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.logs.no_issues_search",
                           { term: this.filter }
                         )}
@@ -162,17 +162,17 @@ export class SystemLogCard extends LitElement {
                               <span slot="secondary" class="secondary">
                                 ${this._timestamp(item)} –
                                 ${html`(<span class=${item.level}
-                                    >${this.hass.localize(
+                                    >${this.menuai.localize(
                                       `ui.panel.config.logs.level.${item.level}`
                                     )}</span
                                   >) `}
                                 ${integrations[idx]
                                   ? `${domainToName(
-                                      this.hass!.localize,
+                                      this.menuai!.localize,
                                       integrations[idx]!
                                     )}${
                                       isCustomIntegrationError(item)
-                                        ? ` (${this.hass.localize(
+                                        ? ` (${this.menuai.localize(
                                             "ui.panel.config.logs.custom_integration"
                                           )})`
                                         : ""
@@ -189,10 +189,10 @@ export class SystemLogCard extends LitElement {
 
                 <div class="card-actions">
                   <ha-call-service-button
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     domain="system_log"
                     service="clear"
-                    >${this.hass.localize(
+                    >${this.menuai.localize(
                       "ui.panel.config.logs.clear"
                     )}</ha-call-service-button
                   >
@@ -207,7 +207,7 @@ export class SystemLogCard extends LitElement {
     super.firstUpdated(changedProps);
     this.fetchData();
     this.loaded = true;
-    this.addEventListener("hass-service-called", (ev) =>
+    this.addEventListener("menuai-service-called", (ev) =>
       this.serviceCalled(ev)
     );
   }
@@ -231,7 +231,7 @@ export class SystemLogCard extends LitElement {
     const timeString = new Date().toISOString().replace(/:/g, "-");
     const downloadUrl = getErrorLogDownloadUrl;
     const logFileName = `home-assistant_${timeString}.log`;
-    const signedUrl = await getSignedPath(this.hass, downloadUrl);
+    const signedUrl = await getSignedPath(this.menuai, downloadUrl);
     fileDownload(signedUrl.path, logFileName);
   }
 

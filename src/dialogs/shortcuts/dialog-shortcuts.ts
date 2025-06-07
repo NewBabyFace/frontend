@@ -3,7 +3,7 @@ import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-button";
 import { createCloseHeading } from "../../components/ha-dialog";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { haStyleDialog } from "../../resources/styles";
 import "../../components/ha-alert";
 import "../../components/chips/ha-assist-chip";
@@ -123,7 +123,7 @@ const _SHORTCUTS: Section[] = [
 
 @customElement("dialog-shortcuts")
 class DialogShortcuts extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -141,13 +141,13 @@ class DialogShortcuts extends LitElement {
     translationKey: LocalizeKeys
   ) {
     const keys = shortcuts.map((shortcut) =>
-      typeof shortcut === "string" ? shortcut : this.hass.localize(shortcut.key)
+      typeof shortcut === "string" ? shortcut : this.menuai.localize(shortcut.key)
     );
 
     return html`
       <div class="shortcut">
         ${keys.map((key) => html` <span>${key.toUpperCase()}</span>`)}
-        ${this.hass.localize(translationKey)}
+        ${this.menuai.localize(translationKey)}
       </div>
     `;
   }
@@ -164,18 +164,18 @@ class DialogShortcuts extends LitElement {
         @closed=${this.closeDialog}
         defaultAction="ignore"
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.dialogs.shortcuts.title")
+          this.menuai,
+          this.menuai.localize("ui.dialogs.shortcuts.title")
         )}
       >
         <div class="content">
           ${_SHORTCUTS.map(
             (section) => html`
-              <h3>${this.hass.localize(section.key)}</h3>
+              <h3>${this.menuai.localize(section.key)}</h3>
               <div class="items">
                 ${section.items.map((item) => {
                   if (item.type === "text") {
-                    return html`<p>${this.hass.localize(item.key)}</p>`;
+                    return html`<p>${this.menuai.localize(item.key)}</p>`;
                   }
                   if (item.type === "shortcut") {
                     return this._renderShortcut(item.shortcut, item.key);
@@ -188,9 +188,9 @@ class DialogShortcuts extends LitElement {
         </div>
 
         <ha-alert>
-          ${this.hass.localize("ui.dialogs.shortcuts.enable_shortcuts_hint", {
+          ${this.menuai.localize("ui.dialogs.shortcuts.enable_shortcuts_hint", {
             user_profile: html`<a href="/profile/general#shortcuts"
-              >${this.hass.localize(
+              >${this.menuai.localize(
                 "ui.dialogs.shortcuts.enable_shortcuts_hint_user_profile"
               )}</a
             >`,

@@ -3,18 +3,18 @@ import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../../../components/ha-code-editor";
 import type { ZHADevice } from "../../../../../data/zha";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 @customElement("zha-device-zigbee-info")
 class ZHADeviceZigbeeInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device?: ZHADevice;
 
   @state() private _signature: any;
 
   protected updated(changedProperties: PropertyValues): void {
-    if (changedProperties.has("device") && this.hass && this.device) {
+    if (changedProperties.has("device") && this.menuai && this.device) {
       this._signature = JSON.stringify(
         {
           ...this.device.signature,

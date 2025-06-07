@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface InputText {
   id: string;
@@ -21,37 +21,37 @@ export interface InputTextMutableParams {
   mode: "text" | "password";
 }
 
-export const setValue = (hass: HomeAssistant, entity: string, value: string) =>
-  hass.callService(entity.split(".", 1)[0], "set_value", {
+export const setValue = (menuai: menuai, entity: string, value: string) =>
+  menuai.callService(entity.split(".", 1)[0], "set_value", {
     value,
     entity_id: entity,
   });
 
-export const fetchInputText = (hass: HomeAssistant) =>
-  hass.callWS<InputText[]>({ type: "input_text/list" });
+export const fetchInputText = (menuai: menuai) =>
+  menuai.callWS<InputText[]>({ type: "input_text/list" });
 
 export const createInputText = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: InputTextMutableParams
 ) =>
-  hass.callWS<InputText>({
+  menuai.callWS<InputText>({
     type: "input_text/create",
     ...values,
   });
 
 export const updateInputText = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<InputTextMutableParams>
 ) =>
-  hass.callWS<InputText>({
+  menuai.callWS<InputText>({
     type: "input_text/update",
     input_text_id: id,
     ...updates,
   });
 
-export const deleteInputText = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteInputText = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "input_text/delete",
     input_text_id: id,
   });

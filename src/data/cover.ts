@@ -1,10 +1,10 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { stateActive } from "../common/entity/state_active";
 import { supportsFeature } from "../common/entity/supports-feature";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { UNAVAILABLE } from "./entity";
 
 export const enum CoverEntityFeature {
@@ -100,18 +100,18 @@ export function canStopTilt(stateObj: CoverEntity): boolean {
   return stateObj.state !== UNAVAILABLE;
 }
 
-interface CoverEntityAttributes extends HassEntityAttributeBase {
+interface CoverEntityAttributes extends menuaiEntityAttributeBase {
   current_position?: number;
   current_tilt_position?: number;
 }
 
-export interface CoverEntity extends HassEntityBase {
+export interface CoverEntity extends menuaiEntityBase {
   attributes: CoverEntityAttributes;
 }
 
 export function computeCoverPositionStateDisplay(
   stateObj: CoverEntity,
-  hass: HomeAssistant,
+  menuai: menuai,
   position?: number
 ) {
   const statePosition = stateActive(stateObj)
@@ -122,7 +122,7 @@ export function computeCoverPositionStateDisplay(
   const currentPosition = position ?? statePosition;
 
   return currentPosition && currentPosition !== 100
-    ? hass.formatEntityAttributeValue(
+    ? menuai.formatEntityAttributeValue(
         stateObj,
         // Always use position as it's the same formatting as tilt position
         "current_position",

@@ -1,5 +1,5 @@
 import { mdiFlash, mdiFlashOff } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues, TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -8,22 +8,22 @@ import { computeStateDomain } from "../../common/entity/compute_state_domain";
 import { computeStateName } from "../../common/entity/compute_state_name";
 import { UNAVAILABLE, UNKNOWN, isUnavailableState } from "../../data/entity";
 import { forwardHaptic } from "../../data/haptics";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-formfield";
 import "../ha-icon-button";
 import "../ha-switch";
 
-const isOn = (stateObj?: HassEntity) =>
+const isOn = (stateObj?: menuaiEntity) =>
   stateObj !== undefined &&
   !STATES_OFF.includes(stateObj.state) &&
   !isUnavailableState(stateObj.state);
 
 @customElement("ha-entity-toggle")
 export class HaEntityToggle extends LitElement {
-  // hass is not a property so that we only re-render on stateObj changes
-  public hass?: HomeAssistant;
+  // menuai is not a property so that we only re-render on stateObj changes
+  public menuai?: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property() public label?: string;
 
@@ -109,7 +109,7 @@ export class HaEntityToggle extends LitElement {
   // result in the entity to be turned on. Since the state is not changing,
   // the resync is not called automatic.
   private async _callService(turnOn): Promise<void> {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return;
     }
     forwardHaptic("light");
@@ -127,7 +127,7 @@ export class HaEntityToggle extends LitElement {
       serviceDomain = "valve";
       service = turnOn ? "open_valve" : "close_valve";
     } else if (stateDomain === "group") {
-      serviceDomain = "homeassistant";
+      serviceDomain = "menuai";
       service = turnOn ? "turn_on" : "turn_off";
     } else {
       serviceDomain = stateDomain;
@@ -139,7 +139,7 @@ export class HaEntityToggle extends LitElement {
     // Optimistic update.
     this._isOn = turnOn;
 
-    await this.hass.callService(serviceDomain, service, {
+    await this.menuai.callService(serviceDomain, service, {
       entity_id: this.stateObj.entity_id,
     });
 

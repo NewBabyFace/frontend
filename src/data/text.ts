@@ -1,19 +1,19 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-interface TextEntityAttributes extends HassEntityAttributeBase {
+interface TextEntityAttributes extends menuaiEntityAttributeBase {
   min?: number;
   max?: number;
   pattern?: string;
   mode?: "text" | "password";
 }
 
-export interface TextEntity extends HassEntityBase {
+export interface TextEntity extends menuaiEntityBase {
   attributes: TextEntityAttributes;
 }
 
-export const setValue = (hass: HomeAssistant, entity: string, value: string) =>
-  hass.callService("text", "set_value", { value }, { entity_id: entity });
+export const setValue = (menuai: menuai, entity: string, value: string) =>
+  menuai.callService("text", "set_value", { value }, { entity_id: entity });

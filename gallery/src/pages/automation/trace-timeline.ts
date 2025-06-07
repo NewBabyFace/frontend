@@ -4,8 +4,8 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../../src/components/ha-card";
 import "../../../../src/components/trace/hat-trace-timeline";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { menuai } from "../../../../src/types";
 import { mockDemoTrace } from "../../data/traces/mock-demo-trace";
 import type { DemoTrace } from "../../data/traces/types";
 
@@ -27,10 +27,10 @@ const traces: DemoTrace[] = [
 
 @customElement("demo-automation-trace-timeline")
 export class DemoAutomationTraceTimeline extends LitElement {
-  @property({ attribute: false }) hass?: HomeAssistant;
+  @property({ attribute: false }) menuai?: menuai;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
     return html`
@@ -39,7 +39,7 @@ export class DemoAutomationTraceTimeline extends LitElement {
           <ha-card .header=${trace.trace.config.alias}>
             <div class="card-content">
               <hat-trace-timeline
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .trace=${trace.trace}
                 .logbookEntries=${trace.logbookEntries}
               ></hat-trace-timeline>
@@ -53,9 +53,9 @@ export class DemoAutomationTraceTimeline extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
   }
 
   static styles = css`

@@ -3,7 +3,7 @@ import {
   isDeletableEntity,
   deleteEntity,
 } from "../../../src/common/entity/delete_entity";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import type { EntityRegistryEntry } from "../../../src/data/entity_registry";
 import type { IntegrationManifest } from "../../../src/data/integration";
 import type { ConfigEntry } from "../../../src/data/config_entries";
@@ -11,22 +11,22 @@ import type { Helper } from "../../../src/panels/config/helpers/const";
 
 describe("isDeletableEntity", () => {
   it("should return true for restored entities", () => {
-    const hass = {
+    const menuai = {
       states: { "light.test": { attributes: { restored: true } } },
-    } as unknown as HomeAssistant;
-    const result = isDeletableEntity(hass, "light.test", [], [], [], []);
+    } as unknown as menuai;
+    const result = isDeletableEntity(menuai, "light.test", [], [], [], []);
     expect(result).toBe(true);
   });
 
   it("should return false for non-restored entities without config entry", () => {
-    const hass = {
+    const menuai = {
       states: { "light.test": { attributes: {} } },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "light.test" },
     ] as EntityRegistryEntry[];
     const result = isDeletableEntity(
-      hass,
+      menuai,
       "light.test",
       [],
       entityRegistry,
@@ -37,16 +37,16 @@ describe("isDeletableEntity", () => {
   });
 
   it("should return true for helper domain entities", () => {
-    const hass = {
+    const menuai = {
       states: { "input_boolean.test": { attributes: {} } },
       config: { components: ["input_boolean"] },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "input_boolean.test", unique_id: "123" },
     ] as EntityRegistryEntry[];
     const fetchedHelpers = [{ id: "123" }] as Helper[];
     const result = isDeletableEntity(
-      hass,
+      menuai,
       "input_boolean.test",
       [],
       entityRegistry,
@@ -57,14 +57,14 @@ describe("isDeletableEntity", () => {
   });
 
   it("should return false for non-helper domain entities without restored attribute", () => {
-    const hass = {
+    const menuai = {
       states: { "light.test": { attributes: {} } },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "light.test" },
     ] as EntityRegistryEntry[];
     const result = isDeletableEntity(
-      hass,
+      menuai,
       "light.test",
       [],
       entityRegistry,
@@ -75,9 +75,9 @@ describe("isDeletableEntity", () => {
   });
 
   it("should return true for entities with helper integration type", () => {
-    const hass = {
+    const menuai = {
       states: { "light.test": { attributes: {} } },
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "light.test", config_entry_id: "config_1" },
     ] as EntityRegistryEntry[];
@@ -88,7 +88,7 @@ describe("isDeletableEntity", () => {
       { domain: "light", integration_type: "helper" },
     ] as IntegrationManifest[];
     const result = isDeletableEntity(
-      hass,
+      menuai,
       "light.test",
       manifests,
       entityRegistry,
@@ -102,14 +102,14 @@ describe("isDeletableEntity", () => {
 describe("deleteEntity", () => {
   it("should call removeEntityRegistryEntry for restored entities", () => {
     const removeEntityRegistryEntry = vi.fn();
-    const hass = {
+    const menuai = {
       states: { "light.test": { attributes: { restored: true } } },
       callWS: removeEntityRegistryEntry,
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "light.test" },
     ] as EntityRegistryEntry[];
-    deleteEntity(hass, "light.test", [], entityRegistry, [], []);
+    deleteEntity(menuai, "light.test", [], entityRegistry, [], []);
     expect(removeEntityRegistryEntry).toHaveBeenCalledWith({
       type: "config/entity_registry/remove",
       entity_id: "light.test",
@@ -118,10 +118,10 @@ describe("deleteEntity", () => {
 
   it("should call deleteConfigEntry for entities with helper integration type", () => {
     const deleteConfigEntry = vi.fn();
-    const hass = {
+    const menuai = {
       states: { "light.test": { attributes: {} } },
       callApi: deleteConfigEntry,
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "light.test", config_entry_id: "config_1" },
     ] as EntityRegistryEntry[];
@@ -132,7 +132,7 @@ describe("deleteEntity", () => {
       { domain: "light", integration_type: "helper" },
     ] as IntegrationManifest[];
     deleteEntity(
-      hass,
+      menuai,
       "light.test",
       manifests,
       entityRegistry,
@@ -144,17 +144,17 @@ describe("deleteEntity", () => {
 
   it("should call HELPERS_CRUD.delete for helper domain entities", () => {
     const deleteCall = vi.fn();
-    const hass = {
+    const menuai = {
       states: { "input_boolean.test": { attributes: {} } },
       config: { components: ["input_boolean"] },
       callWS: deleteCall,
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "input_boolean.test", unique_id: "123" },
     ] as EntityRegistryEntry[];
     const fetchedHelpers = [{ id: "123" }] as Helper[];
     deleteEntity(
-      hass,
+      menuai,
       "input_boolean.test",
       [],
       entityRegistry,
@@ -169,17 +169,17 @@ describe("deleteEntity", () => {
 
   it("should call removeEntityRegistryEntry for helper domain entities", () => {
     const removeEntityRegistryEntry = vi.fn();
-    const hass = {
+    const menuai = {
       states: { "input_boolean.test": { attributes: { restored: true } } },
       config: { components: ["input_boolean"] },
       callWS: removeEntityRegistryEntry,
-    } as unknown as HomeAssistant;
+    } as unknown as menuai;
     const entityRegistry = [
       { entity_id: "input_boolean.test", unique_id: "124" },
     ] as EntityRegistryEntry[];
     const fetchedHelpers = [{ id: "123" }] as Helper[];
     deleteEntity(
-      hass,
+      menuai,
       "input_boolean.test",
       [],
       entityRegistry,

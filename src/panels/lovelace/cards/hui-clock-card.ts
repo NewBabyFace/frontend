@@ -3,7 +3,7 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../components/ha-alert";
 import "../../../components/ha-card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type {
   LovelaceCard,
   LovelaceCardEditor,
@@ -28,7 +28,7 @@ export class HuiClockCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ClockCardConfig;
 
@@ -50,24 +50,24 @@ export class HuiClockCard extends LitElement implements LovelaceCard {
   }
 
   private _initDate() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
-    let locale = this.hass?.locale;
+    let locale = this.menuai?.locale;
 
     if (this._config?.time_format) {
       locale = { ...locale, time_format: this._config.time_format };
     }
 
-    this._dateTimeFormat = new Intl.DateTimeFormat(this.hass.locale.language, {
+    this._dateTimeFormat = new Intl.DateTimeFormat(this.menuai.locale.language, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hourCycle: useAmPm(locale) ? "h12" : "h23",
       timeZone:
         this._config?.time_zone ||
-        resolveTimeZone(locale.time_zone, this.hass.config?.time_zone),
+        resolveTimeZone(locale.time_zone, this.menuai.config?.time_zone),
     });
 
     this._tick();
@@ -109,9 +109,9 @@ export class HuiClockCard extends LitElement implements LovelaceCard {
   }
 
   protected updated(changedProps: PropertyValues) {
-    if (changedProps.has("hass")) {
-      const oldHass = changedProps.get("hass");
-      if (!oldHass || oldHass.locale !== this.hass?.locale) {
+    if (changedProps.has("menuai")) {
+      const oldmenuai = changedProps.get("menuai");
+      if (!oldmenuai || oldmenuai.locale !== this.menuai?.locale) {
         this._initDate();
       }
     }

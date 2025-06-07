@@ -3,7 +3,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { stringCompare } from "../../../common/string/compare";
 import { fireEvent } from "../../../common/dom/fire_event";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 interface EventListenerCount {
   event: string;
@@ -12,7 +12,7 @@ interface EventListenerCount {
 
 @customElement("events-list")
 class EventsList extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public events: EventListenerCount[] = [];
 
@@ -26,7 +26,7 @@ class EventsList extends LitElement {
                 >${event.event}</a
               >
               <span>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.developer-tools.tabs.events.count_listeners",
                   {
                     count: event.listener_count,
@@ -41,12 +41,12 @@ class EventsList extends LitElement {
   }
 
   protected async firstUpdated() {
-    const events = await this.hass.callApi<EventListenerCount[]>(
+    const events = await this.menuai.callApi<EventListenerCount[]>(
       "GET",
       "events"
     );
     this.events = events.sort((e1, e2) =>
-      stringCompare(e1.event, e2.event, this.hass.locale.language)
+      stringCompare(e1.event, e2.event, this.menuai.locale.language)
     );
   }
 
@@ -77,7 +77,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "events-list": EventsList;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "event-selected": { eventType: string };
   }
 }

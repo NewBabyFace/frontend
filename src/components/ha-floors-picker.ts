@@ -1,15 +1,15 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { SubscribeMixin } from "../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { HaDevicePickerDeviceFilterFunc } from "./device/ha-device-picker";
 import "./ha-floor-picker";
 
 @customElement("ha-floors-picker")
 export class HaFloorsPicker extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public label?: string;
 
@@ -50,7 +50,7 @@ export class HaFloorsPicker extends SubscribeMixin(LitElement) {
   public deviceFilter?: HaDevicePickerDeviceFilterFunc;
 
   @property({ attribute: false })
-  public entityFilter?: (entity: HassEntity) => boolean;
+  public entityFilter?: (entity: menuaiEntity) => boolean;
 
   @property({ attribute: "picked-floor-label" })
   public pickedFloorLabel?: string;
@@ -63,7 +63,7 @@ export class HaFloorsPicker extends SubscribeMixin(LitElement) {
   @property({ type: Boolean }) public required = false;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -75,7 +75,7 @@ export class HaFloorsPicker extends SubscribeMixin(LitElement) {
             <ha-floor-picker
               .curValue=${floor}
               .noAdd=${this.noAdd}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .value=${floor}
               .label=${this.pickedFloorLabel}
               .includeDomains=${this.includeDomains}
@@ -92,7 +92,7 @@ export class HaFloorsPicker extends SubscribeMixin(LitElement) {
       <div>
         <ha-floor-picker
           .noAdd=${this.noAdd}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .label=${this.pickFloorLabel}
           .helper=${this.helper}
           .includeDomains=${this.includeDomains}

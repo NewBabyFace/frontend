@@ -8,16 +8,16 @@ import { navigate } from "../../../src/common/navigate";
 import { caseInsensitiveStringCompare } from "../../../src/common/string/compare";
 import "../../../src/components/ha-card";
 import "../../../src/components/search-input";
-import type { HassioAddonInfo } from "../../../src/data/hassio/addon";
+import type { menuaiioAddonInfo } from "../../../src/data/menuaiio/addon";
 import type { Supervisor } from "../../../src/data/supervisor/supervisor";
 import { haStyle } from "../../../src/resources/styles";
-import type { HomeAssistant } from "../../../src/types";
-import "../components/hassio-card-content";
-import { hassioStyle } from "../resources/hassio-style";
+import type { menuai } from "../../../src/types";
+import "../components/menuaiio-card-content";
+import { menuaiioStyle } from "../resources/menuaiio-style";
 
-@customElement("hassio-addons")
-class HassioAddons extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addons")
+class menuaiioAddons extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -29,7 +29,7 @@ class HassioAddons extends LitElement {
     return html`
       <div class="search">
         <search-input
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           suffix
           .filter=${this._filter}
           @value-changed=${this._handleSearchChange}
@@ -38,7 +38,7 @@ class HassioAddons extends LitElement {
         </search-input>
       </div>
       <div class="content">
-        ${!atLeastVersion(this.hass.config.version, 2021, 12)
+        ${!atLeastVersion(this.menuai.config.version, 2021, 12)
           ? html`<h1>${this.supervisor.localize("dashboard.addons")}</h1>`
           : ""}
         <div class="card-group">
@@ -56,8 +56,8 @@ class HassioAddons extends LitElement {
                 (addon) => html`
                   <ha-card outlined .addon=${addon} @click=${this._addonTapped}>
                     <div class="card-content">
-                      <hassio-card-content
-                        .hass=${this.hass}
+                      <menuaiio-card-content
+                        .menuai=${this.menuai}
                         .title=${addon.name}
                         .description=${addon.description}
                         available
@@ -83,13 +83,13 @@ class HassioAddons extends LitElement {
                             ? "running"
                             : "stopped"}
                         .iconImage=${atLeastVersion(
-                          this.hass.config.version,
+                          this.menuai.config.version,
                           0,
                           105
                         ) && addon.icon
-                          ? `/api/hassio/addons/${addon.slug}/icon`
+                          ? `/api/menuaiio/addons/${addon.slug}/icon`
                           : undefined}
-                      ></hassio-card-content>
+                      ></menuaiio-card-content>
                     </div>
                   </ha-card>
                 `
@@ -100,7 +100,7 @@ class HassioAddons extends LitElement {
   }
 
   private _getAddons = memoizeOne(
-    (addons: HassioAddonInfo[], filter?: string) => {
+    (addons: menuaiioAddonInfo[], filter?: string) => {
       if (filter) {
         addons = addons.filter((addon) => {
           const lowerCaseFilter = filter.toLowerCase();
@@ -112,7 +112,7 @@ class HassioAddons extends LitElement {
         });
       }
       return addons.sort((a, b) =>
-        caseInsensitiveStringCompare(a.name, b.name, this.hass.locale.language)
+        caseInsensitiveStringCompare(a.name, b.name, this.menuai.locale.language)
       );
     }
   );
@@ -124,7 +124,7 @@ class HassioAddons extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         ha-card {
           cursor: pointer;
@@ -149,16 +149,16 @@ class HassioAddons extends LitElement {
   }
 
   private _addonTapped(ev: any): void {
-    navigate(`/hassio/addon/${ev.currentTarget.addon.slug}/info`);
+    navigate(`/menuaiio/addon/${ev.currentTarget.addon.slug}/info`);
   }
 
   private _openStore(): void {
-    navigate("/hassio/store");
+    navigate("/menuaiio/store");
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addons": HassioAddons;
+    "menuaiio-addons": menuaiioAddons;
   }
 }

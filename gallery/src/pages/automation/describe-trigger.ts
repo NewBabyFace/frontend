@@ -6,8 +6,8 @@ import "../../../../src/components/ha-yaml-editor";
 import type { Trigger } from "../../../../src/data/automation";
 import { describeTrigger } from "../../../../src/data/automation_i18n";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { menuai } from "../../../../src/types";
 
 const ENTITIES = [
   getEntity("light", "kitchen", "on", {
@@ -30,7 +30,7 @@ const triggers = [
     zone: "zone.home",
     event: "enter",
   },
-  { trigger: "homeassistant", event: "start" },
+  { trigger: "menuai", event: "start" },
   {
     trigger: "numeric_state",
     entity_id: "light.kitchen",
@@ -57,7 +57,7 @@ const triggers = [
     trigger: "conversation",
     command: ["Turn on the lights", "Turn the lights on"],
   },
-  { trigger: "event", event_type: "homeassistant_started" },
+  { trigger: "event", event_type: "menuai_started" },
   {
     triggers: [
       { trigger: "state", entity_id: "light.kitchen", to: "on" },
@@ -73,12 +73,12 @@ const initialTrigger: Trigger = {
 
 @customElement("demo-automation-describe-trigger")
 export class DemoAutomationDescribeTrigger extends LitElement {
-  @property({ attribute: false }) hass!: HomeAssistant;
+  @property({ attribute: false }) menuai!: menuai;
 
   @state() _trigger = initialTrigger;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -87,7 +87,7 @@ export class DemoAutomationDescribeTrigger extends LitElement {
         <div class="trigger">
           <span>
             ${this._trigger
-              ? describeTrigger(this._trigger, this.hass, [])
+              ? describeTrigger(this._trigger, this.menuai, [])
               : "<invalid YAML>"}
           </span>
           <ha-yaml-editor
@@ -99,7 +99,7 @@ export class DemoAutomationDescribeTrigger extends LitElement {
         ${triggers.map(
           (conf) => html`
             <div class="trigger">
-              <span>${describeTrigger(conf as any, this.hass, [])}</span>
+              <span>${describeTrigger(conf as any, this.menuai, [])}</span>
               <pre>${dump(conf)}</pre>
             </div>
           `
@@ -110,10 +110,10 @@ export class DemoAutomationDescribeTrigger extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    hass.addEntities(ENTITIES);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    menuai.addEntities(ENTITIES);
   }
 
   private _dataChanged(ev: CustomEvent): void {

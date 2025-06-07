@@ -38,14 +38,14 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage-data-table";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-tabs-subpage-data-table";
+import type { menuai, Route } from "../../../types";
 import { configSections } from "../ha-panel-config";
 import { showLabelDetailDialog } from "./show-dialog-label-detail";
 
 @customElement("ha-config-labels")
 export class HaConfigLabels extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -144,8 +144,8 @@ export class HaConfigLabels extends LitElement {
           label.created_at
             ? formatShortDateTime(
                 new Date(label.created_at * 1000),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )
             : "—",
       },
@@ -158,8 +158,8 @@ export class HaConfigLabels extends LitElement {
           label.modified_at
             ? formatShortDateTime(
                 new Date(label.modified_at * 1000),
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )
             : "—",
       },
@@ -172,26 +172,26 @@ export class HaConfigLabels extends LitElement {
         type: "overflow-menu",
         template: (label) => html`
           <ha-icon-overflow-menu
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             narrow
             .items=${[
               {
-                label: this.hass.localize("ui.panel.config.entities.caption"),
+                label: this.menuai.localize("ui.panel.config.entities.caption"),
                 path: mdiShape,
                 action: () => this._navigateEntities(label),
               },
               {
-                label: this.hass.localize("ui.panel.config.devices.caption"),
+                label: this.menuai.localize("ui.panel.config.devices.caption"),
                 path: mdiDevices,
                 action: () => this._navigateDevices(label),
               },
               {
-                label: this.hass.localize("ui.panel.config.automation.caption"),
+                label: this.menuai.localize("ui.panel.config.automation.caption"),
                 path: mdiRobot,
                 action: () => this._navigateAutomations(label),
               },
               {
-                label: this.hass.localize("ui.common.delete"),
+                label: this.menuai.localize("ui.common.delete"),
                 path: mdiDelete,
                 action: () => this._removeLabel(label),
                 warning: true,
@@ -219,15 +219,15 @@ export class HaConfigLabels extends LitElement {
 
   protected render() {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
         .route=${this.route}
         .tabs=${configSections.areas}
-        .columns=${this._columns(this.hass.localize, this.narrow)}
+        .columns=${this._columns(this.menuai.localize, this.narrow)}
         .data=${this._data(this._labels)}
-        .noDataText=${this.hass.localize("ui.panel.config.labels.no_labels")}
+        .noDataText=${this.menuai.localize("ui.panel.config.labels.no_labels")}
         has-fab
         .initialSorting=${this._activeSorting}
         .columnOrder=${this._activeColumnOrder}
@@ -243,18 +243,18 @@ export class HaConfigLabels extends LitElement {
         <ha-icon-button
           slot="toolbar-icon"
           @click=${this._showHelp}
-          .label=${this.hass.localize("ui.common.help")}
+          .label=${this.menuai.localize("ui.common.help")}
           .path=${mdiHelpCircle}
         ></ha-icon-button>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize("ui.panel.config.labels.add_label")}
+          .label=${this.menuai.localize("ui.panel.config.labels.add_label")}
           extended
           @click=${this._addLabel}
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -265,16 +265,16 @@ export class HaConfigLabels extends LitElement {
 
   private _showHelp() {
     showAlertDialog(this, {
-      title: this.hass.localize("ui.panel.config.labels.caption"),
+      title: this.menuai.localize("ui.panel.config.labels.caption"),
       text: html`
-        ${this.hass.localize("ui.panel.config.labels.introduction")}
-        <p>${this.hass.localize("ui.panel.config.labels.introduction2")}</p>
+        ${this.menuai.localize("ui.panel.config.labels.introduction")}
+        <p>${this.menuai.localize("ui.panel.config.labels.introduction2")}</p>
       `,
     });
   }
 
   private async _fetchLabels() {
-    this._labels = await fetchLabelRegistry(this.hass.connection);
+    this._labels = await fetchLabelRegistry(this.menuai.connection);
   }
 
   private _addLabel() {
@@ -295,7 +295,7 @@ export class HaConfigLabels extends LitElement {
   private async _createLabel(
     values: LabelRegistryEntryMutableParams
   ): Promise<LabelRegistryEntry> {
-    const newTag = await createLabelRegistryEntry(this.hass, values);
+    const newTag = await createLabelRegistryEntry(this.menuai, values);
     this._labels = [...this._labels, newTag];
     return newTag;
   }
@@ -305,7 +305,7 @@ export class HaConfigLabels extends LitElement {
     values: Partial<LabelRegistryEntryMutableParams>
   ): Promise<LabelRegistryEntry> {
     const updated = await updateLabelRegistryEntry(
-      this.hass,
+      this.menuai,
       selectedLabel.label_id,
       values
     );
@@ -318,21 +318,21 @@ export class HaConfigLabels extends LitElement {
   private async _removeLabel(selectedLabel: LabelRegistryEntry) {
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass!.localize(
+        title: this.menuai!.localize(
           "ui.panel.config.labels.confirm_remove_title"
         ),
-        text: this.hass.localize("ui.panel.config.labels.confirm_remove", {
+        text: this.menuai.localize("ui.panel.config.labels.confirm_remove", {
           label: selectedLabel.name || selectedLabel.label_id,
         }),
-        dismissText: this.hass!.localize("ui.common.cancel"),
-        confirmText: this.hass!.localize("ui.common.remove"),
+        dismissText: this.menuai!.localize("ui.common.cancel"),
+        confirmText: this.menuai!.localize("ui.common.remove"),
         destructive: true,
       }))
     ) {
       return false;
     }
     try {
-      await deleteLabelRegistryEntry(this.hass, selectedLabel.label_id);
+      await deleteLabelRegistryEntry(this.menuai, selectedLabel.label_id);
       this._labels = this._labels.filter(
         (label) => label.label_id !== selectedLabel.label_id
       );

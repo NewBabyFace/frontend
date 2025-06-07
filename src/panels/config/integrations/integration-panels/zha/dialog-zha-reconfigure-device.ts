@@ -23,12 +23,12 @@ import {
   ZHA_CHANNEL_MSG_CFG_RPT,
 } from "../../../../../data/zha";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ZHAReconfigureDeviceDialogParams } from "./show-dialog-zha-reconfigure-device";
 
 @customElement("dialog-zha-reconfigure-device")
 class DialogZHAReconfigureDevice extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _status?: string;
 
@@ -75,8 +75,8 @@ class DialogZHAReconfigureDevice extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(`ui.dialogs.zha_reconfigure_device.heading`) +
+          this.menuai,
+          this.menuai.localize(`ui.dialogs.zha_reconfigure_device.heading`) +
             ": " +
             (this._params.device.user_given_name || this._params.device.name)
         )}
@@ -84,13 +84,13 @@ class DialogZHAReconfigureDevice extends LitElement {
         ${!this._status
           ? html`
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.dialogs.zha_reconfigure_device.introduction"
                 )}
               </p>
               <p>
                 <em>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.dialogs.zha_reconfigure_device.battery_device_warning"
                   )}
                 </em>
@@ -99,7 +99,7 @@ class DialogZHAReconfigureDevice extends LitElement {
                 slot="primaryAction"
                 @click=${this._startReconfiguration}
               >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.dialogs.zha_reconfigure_device.start_reconfiguration"
                 )}
               </mwc-button>
@@ -112,27 +112,27 @@ class DialogZHAReconfigureDevice extends LitElement {
                 <div class="status">
                   <p>
                     <b>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.dialogs.zha_reconfigure_device.in_progress"
                       )}
                     </b>
                   </p>
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.dialogs.zha_reconfigure_device.run_in_background"
                     )}
                   </p>
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
               <mwc-button slot="secondaryAction" @click=${this._toggleDetails}>
                 ${this._showDetails
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       `ui.dialogs.zha_reconfigure_device.button_hide`
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       `ui.dialogs.zha_reconfigure_device.button_show`
                     )}
               </mwc-button>
@@ -147,21 +147,21 @@ class DialogZHAReconfigureDevice extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.dialogs.zha_reconfigure_device.configuration_failed"
                     )}
                   </p>
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
               <mwc-button slot="secondaryAction" @click=${this._toggleDetails}>
                 ${this._showDetails
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       `ui.dialogs.zha_reconfigure_device.button_hide`
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       `ui.dialogs.zha_reconfigure_device.button_show`
                     )}
               </mwc-button>
@@ -176,21 +176,21 @@ class DialogZHAReconfigureDevice extends LitElement {
                 ></ha-svg-icon>
                 <div class="status">
                   <p>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.dialogs.zha_reconfigure_device.configuration_complete"
                     )}
                   </p>
                 </div>
               </div>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.close")}
+                ${this.menuai.localize("ui.common.close")}
               </mwc-button>
               <mwc-button slot="secondaryAction" @click=${this._toggleDetails}>
                 ${this._showDetails
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       `ui.dialogs.zha_reconfigure_device.button_hide`
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       `ui.dialogs.zha_reconfigure_device.button_show`
                     )}
               </mwc-button>
@@ -217,17 +217,17 @@ class DialogZHAReconfigureDevice extends LitElement {
           ? html`
               <div class="wrapper">
                 <h2 class="grid-item">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.dialogs.zha_reconfigure_device.cluster_header`
                   )}
                 </h2>
                 <h2 class="grid-item">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.dialogs.zha_reconfigure_device.bind_header`
                   )}
                 </h2>
                 <h2 class="grid-item">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.dialogs.zha_reconfigure_device.reporting_header`
                   )}
                 </h2>
@@ -267,13 +267,13 @@ class DialogZHAReconfigureDevice extends LitElement {
                               ? html`
                                   <div class="attributes">
                                     <div class="grid-item">
-                                      ${this.hass.localize(
+                                      ${this.menuai.localize(
                                         `ui.dialogs.zha_reconfigure_device.attribute`
                                       )}
                                     </div>
                                     <div class="grid-item">
                                       <div>
-                                        ${this.hass.localize(
+                                        ${this.menuai.localize(
                                           `ui.dialogs.zha_reconfigure_device.min_max_change`
                                         )}
                                       </div>
@@ -328,12 +328,12 @@ class DialogZHAReconfigureDevice extends LitElement {
   }
 
   private async _startReconfiguration(): Promise<void> {
-    if (!this.hass || !this._params) {
+    if (!this.menuai || !this._params) {
       return;
     }
     this._clusterConfigurationStatuses = new Map(
       (
-        await fetchClustersForZhaDevice(this.hass, this._params.device.ieee)
+        await fetchClustersForZhaDevice(this.menuai, this._params.device.ieee)
       ).map((cluster: Cluster) => [
         cluster.id,
         {
@@ -392,11 +392,11 @@ class DialogZHAReconfigureDevice extends LitElement {
   }
 
   private _subscribe(params: ZHAReconfigureDeviceDialogParams): void {
-    if (!this.hass) {
+    if (!this.menuai) {
       return;
     }
     this._subscribed = reconfigureNode(
-      this.hass,
+      this.menuai,
       params.device.ieee,
       this._handleMessage.bind(this)
     );

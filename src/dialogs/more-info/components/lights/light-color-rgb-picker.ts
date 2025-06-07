@@ -23,17 +23,17 @@ import {
   LightColorMode,
   lightSupportsColorMode,
 } from "../../../../data/light";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "color-changed": LightColor;
   }
 }
 
 @customElement("light-color-rgb-picker")
 class LightRgbColorPicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: LightEntity;
 
@@ -110,8 +110,8 @@ class LightRgbColorPicker extends LitElement {
       ${supportsRgbw || supportsRgbww
         ? html`<ha-labeled-slider
             labeled
-            .caption=${this.hass.localize("ui.card.light.color_brightness")}
-            icon="hass:brightness-7"
+            .caption=${this.menuai.localize("ui.card.light.color_brightness")}
+            icon="menuai:brightness-7"
             min="0"
             max="100"
             .value=${this._colorBrightnessSliderValue}
@@ -122,8 +122,8 @@ class LightRgbColorPicker extends LitElement {
         ? html`
             <ha-labeled-slider
               labeled
-              .caption=${this.hass.localize("ui.card.light.white_value")}
-              icon="hass:file-word-box"
+              .caption=${this.menuai.localize("ui.card.light.white_value")}
+              icon="menuai:file-word-box"
               min="0"
               max="100"
               .name=${"wv"}
@@ -136,8 +136,8 @@ class LightRgbColorPicker extends LitElement {
         ? html`
             <ha-labeled-slider
               labeled
-              .caption=${this.hass.localize("ui.card.light.cold_white_value")}
-              icon="hass:file-word-box-outline"
+              .caption=${this.menuai.localize("ui.card.light.cold_white_value")}
+              icon="menuai:file-word-box-outline"
               min="0"
               max="100"
               .name=${"cw"}
@@ -146,8 +146,8 @@ class LightRgbColorPicker extends LitElement {
             ></ha-labeled-slider>
             <ha-labeled-slider
               labeled
-              .caption=${this.hass.localize("ui.card.light.warm_white_value")}
-              icon="hass:file-word-box"
+              .caption=${this.menuai.localize("ui.card.light.warm_white_value")}
+              icon="menuai:file-word-box"
               min="0"
               max="100"
               .name=${"ww"}
@@ -215,7 +215,7 @@ class LightRgbColorPicker extends LitElement {
 
     if (
       this._isInteracting ||
-      (!changedProps.has("entityId") && !changedProps.has("hass"))
+      (!changedProps.has("entityId") && !changedProps.has("menuai"))
     ) {
       return;
     }
@@ -347,7 +347,7 @@ class LightRgbColorPicker extends LitElement {
 
   private _applyColor(color: LightColor, params?: Record<string, any>) {
     fireEvent(this, "color-changed", color);
-    this.hass.callService("light", "turn_on", {
+    this.menuai.callService("light", "turn_on", {
       entity_id: this.stateObj!.entity_id,
       ...color,
       ...params,

@@ -1,8 +1,8 @@
 import type {
-  HassEntities,
-  HassEntityAttributeBase,
-  HassEntityBase,
-  HassEvent,
+  menuaiEntities,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
+  menuaiEvent,
 } from "home-assistant-js-websocket";
 import { BINARY_STATE_ON } from "../common/const";
 import { computeDomain } from "../common/entity/compute_domain";
@@ -11,7 +11,7 @@ import { supportsFeature } from "../common/entity/supports-feature";
 import { formatNumber } from "../common/number/format_number";
 import { caseInsensitiveStringCompare } from "../common/string/compare";
 import { showAlertDialog } from "../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { showToast } from "../util/toast";
 import type { EntitySources } from "./entity_sources";
 
@@ -23,7 +23,7 @@ export enum UpdateEntityFeature {
   RELEASE_NOTES = 16,
 }
 
-interface UpdateEntityAttributes extends HassEntityAttributeBase {
+interface UpdateEntityAttributes extends menuaiEntityAttributeBase {
   auto_update: boolean | null;
   display_precision: number;
   installed_version: string | null;
@@ -36,7 +36,7 @@ interface UpdateEntityAttributes extends HassEntityAttributeBase {
   update_percentage: number | null;
 }
 
-export interface UpdateEntity extends HassEntityBase {
+export interface UpdateEntity extends menuaiEntityBase {
   attributes: UpdateEntityAttributes;
 }
 
@@ -55,18 +55,18 @@ export const updateCanInstall = (
 export const updateIsInstalling = (entity: UpdateEntity): boolean =>
   !!entity.attributes.in_progress;
 
-export const updateReleaseNotes = (hass: HomeAssistant, entityId: string) =>
-  hass.callWS<string | null>({
+export const updateReleaseNotes = (menuai: menuai, entityId: string) =>
+  menuai.callWS<string | null>({
     type: "update/release_notes",
     entity_id: entityId,
   });
 
-const HOME_ASSISTANT_CORE_TITLE = "Home Assistant Core";
-const HOME_ASSISTANT_SUPERVISOR_TITLE = "Home Assistant Supervisor";
-const HOME_ASSISTANT_OS_TITLE = "Home Assistant Operating System";
+const HOME_ASSISTANT_CORE_TITLE = "MenuAI Core";
+const HOME_ASSISTANT_SUPERVISOR_TITLE = "MenuAI Supervisor";
+const HOME_ASSISTANT_OS_TITLE = "MenuAI Operating System";
 
 export const filterUpdateEntities = (
-  entities: HassEntities,
+  entities: menuaiEntities,
   language?: string
 ) =>
   (
@@ -100,7 +100,7 @@ export const filterUpdateEntities = (
   });
 
 export const filterUpdateEntitiesWithInstall = (
-  entities: HassEntities,
+  entities: menuaiEntities,
   showSkipped = false
 ) =>
   filterUpdateEntities(entities).filter((entity) =>
@@ -109,16 +109,16 @@ export const filterUpdateEntitiesWithInstall = (
 
 export const checkForEntityUpdates = async (
   element: HTMLElement,
-  hass: HomeAssistant
+  menuai: menuai
 ) => {
-  const entities = filterUpdateEntities(hass.states, hass.locale.language).map(
+  const entities = filterUpdateEntities(menuai.states, menuai.locale.language).map(
     (entity) => entity.entity_id
   );
 
   if (!entities.length) {
     showAlertDialog(element, {
-      title: hass.localize("ui.panel.config.updates.no_update_entities.title"),
-      text: hass.localize(
+      title: menuai.localize("ui.panel.config.updates.no_update_entities.title"),
+      text: menuai.localize(
         "ui.panel.config.updates.no_update_entities.description"
       ),
       warning: true,
@@ -127,17 +127,17 @@ export const checkForEntityUpdates = async (
   }
 
   showToast(element, {
-    message: hass.localize("ui.panel.config.updates.checking_updates"),
+    message: menuai.localize("ui.panel.config.updates.checking_updates"),
   });
 
   let updated = 0;
 
-  const unsubscribeEvents = await hass.connection.subscribeEvents<HassEvent>(
+  const unsubscribeEvents = await menuai.connection.subscribeEvents<menuaiEvent>(
     (event) => {
       if (computeDomain(event.data.entity_id) === "update") {
         updated++;
         showToast(element, {
-          message: hass.localize("ui.panel.config.updates.updates_refreshed", {
+          message: menuai.localize("ui.panel.config.updates.updates_refreshed", {
             count: updated,
           }),
         });
@@ -146,7 +146,7 @@ export const checkForEntityUpdates = async (
     "state_changed"
   );
 
-  await hass.callService("homeassistant", "update_entity", {
+  await menuai.callService("menuai", "update_entity", {
     entity_id: entities,
   });
 
@@ -159,7 +159,7 @@ export const checkForEntityUpdates = async (
 
   if (updated === 0) {
     showToast(element, {
-      message: hass.localize("ui.panel.config.updates.no_new_updates"),
+      message: menuai.localize("ui.panel.config.updates.no_new_updates"),
     });
   }
 };
@@ -172,7 +172,7 @@ export const checkForEntityUpdates = async (
 // When update is not available and there is no latest_version show "Unavailable"
 export const computeUpdateStateDisplay = (
   stateObj: UpdateEntity,
-  hass: HomeAssistant
+  menuai: menuai
 ): string => {
   const state = stateObj.state;
   const attributes = stateObj.attributes;
@@ -184,7 +184,7 @@ export const computeUpdateStateDisplay = (
     if (isSkipped) {
       return attributes.latest_version!;
     }
-    return hass.formatEntityState(stateObj);
+    return menuai.formatEntityState(stateObj);
   }
 
   if (state === "on") {
@@ -193,18 +193,18 @@ export const computeUpdateStateDisplay = (
         supportsFeature(stateObj, UpdateEntityFeature.PROGRESS) &&
         attributes.update_percentage !== null;
       if (supportsProgress) {
-        return hass.localize("ui.card.update.installing_with_progress", {
-          progress: formatNumber(attributes.update_percentage!, hass.locale, {
+        return menuai.localize("ui.card.update.installing_with_progress", {
+          progress: formatNumber(attributes.update_percentage!, menuai.locale, {
             maximumFractionDigits: attributes.display_precision,
             minimumFractionDigits: attributes.display_precision,
           }),
         });
       }
-      return hass.localize("ui.card.update.installing");
+      return menuai.localize("ui.card.update.installing");
     }
   }
 
-  return hass.formatEntityState(stateObj);
+  return menuai.formatEntityState(stateObj);
 };
 
 export type UpdateType =
@@ -220,7 +220,7 @@ export const getUpdateType = (
   const entity_id = stateObj.entity_id;
   const domain = entitySources[entity_id]?.domain;
 
-  if (domain !== "hassio") {
+  if (domain !== "menuaiio") {
     return "generic";
   }
 

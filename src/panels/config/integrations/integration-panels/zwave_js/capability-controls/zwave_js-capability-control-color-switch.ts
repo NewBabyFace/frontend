@@ -1,11 +1,11 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import type { DeviceRegistryEntry } from "../../../../../../data/device_registry";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { invokeZWaveCCApi } from "../../../../../../data/zwave_js";
 import "../../../../../../components/ha-alert";
 import "../../../../../../components/ha-spinner";
-import { extractApiErrorMessage } from "../../../../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../../../../data/menuaiio/common";
 import "./zwave_js-capability-control-multilevel-switch";
 
 enum ColorComponent {
@@ -22,7 +22,7 @@ enum ColorComponent {
 
 @customElement("zwave_js-capability-control-color_switch")
 class ZWaveJSCapabilityColorSwitch extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -46,15 +46,15 @@ class ZWaveJSCapabilityColorSwitch extends LitElement {
     return this._color_components.map(
       (color) =>
         html` <h5>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.node_installer.capability_controls.color_switch.color_component"
             )}:
-            ${this.hass.localize(
+            ${this.menuai.localize(
               `ui.panel.config.zwave_js.node_installer.capability_controls.color_switch.colors.${color}`
             )}
           </h5>
           <zwave_js-capability-control-multilevel_switch
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .device=${this.device}
             .endpoint=${this.endpoint}
             .command_class=${this.command_class}
@@ -67,7 +67,7 @@ class ZWaveJSCapabilityColorSwitch extends LitElement {
   protected async firstUpdated() {
     try {
       this._color_components = (await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,

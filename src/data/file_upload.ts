@@ -1,9 +1,9 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-export const uploadFile = async (hass: HomeAssistant, file: File) => {
+export const uploadFile = async (menuai: menuai, file: File) => {
   const fd = new FormData();
   fd.append("file", file);
-  const resp = await hass.fetchWithAuth("/api/file_upload", {
+  const resp = await menuai.fetchWithAuth("/api/file_upload", {
     method: "POST",
     body: fd,
   });
@@ -16,7 +16,7 @@ export const uploadFile = async (hass: HomeAssistant, file: File) => {
   return data.file_id;
 };
 
-export const removeFile = async (hass: HomeAssistant, file_id: string) =>
-  hass.callApi("DELETE", "file_upload", {
+export const removeFile = async (menuai: menuai, file_id: string) =>
+  menuai.callApi("DELETE", "file_upload", {
     file_id,
   });

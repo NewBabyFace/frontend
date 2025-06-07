@@ -1,10 +1,10 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { computeStateDomain } from "./compute_state_domain";
 import { updateIcon } from "./update_icon";
 import { deviceTrackerIcon } from "./device_tracker_icon";
 
 export const stateIcon = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   state?: string
 ): string | undefined => {
   const domain = computeStateDomain(stateObj);

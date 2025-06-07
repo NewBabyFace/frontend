@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { createStyledHuiElement } from "../cards/picture-elements/create-styled-hui-element";
 import {
   checkConditionsMet,
@@ -19,7 +19,7 @@ class HuiConditionalElement extends HTMLElement implements LovelaceElement {
     return document.createElement("hui-conditional-element-editor");
   }
 
-  public _hass?: HomeAssistant;
+  public _menuai?: menuai;
 
   private _config?: ConditionalElementConfig;
 
@@ -55,22 +55,22 @@ class HuiConditionalElement extends HTMLElement implements LovelaceElement {
     this._updateElements();
   }
 
-  set hass(hass: HomeAssistant) {
-    this._hass = hass;
+  set menuai(menuai: menuai) {
+    this._menuai = menuai;
 
     this._updateElements();
   }
 
   private _updateElements() {
-    if (!this._hass || !this._config) {
+    if (!this._menuai || !this._config) {
       return;
     }
 
-    const visible = checkConditionsMet(this._config.conditions, this._hass);
+    const visible = checkConditionsMet(this._config.conditions, this._menuai);
 
     this._elements.forEach((el: LovelaceElement) => {
       if (visible) {
-        el.hass = this._hass;
+        el.menuai = this._menuai;
         if (!el.parentElement) {
           this.appendChild(el);
         }

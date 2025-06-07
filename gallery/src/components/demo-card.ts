@@ -5,7 +5,7 @@ import { customElement, property, query, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import "../../../src/panels/lovelace/cards/hui-card";
 import type { HuiCard } from "../../../src/panels/lovelace/cards/hui-card";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 
 export interface DemoCardConfig {
   heading: string;
@@ -14,7 +14,7 @@ export interface DemoCardConfig {
 
 @customElement("demo-card")
 class DemoCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public config!: DemoCardConfig;
 
@@ -41,7 +41,7 @@ class DemoCard extends LitElement {
       <div class="root">
         <hui-card
           .config=${this._config(this.config.config)}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           @card-updated=${this._cardUpdated}
         ></hui-card>
         ${this.showConfig

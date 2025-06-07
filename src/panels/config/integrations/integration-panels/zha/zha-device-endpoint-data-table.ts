@@ -12,7 +12,7 @@ import type {
   ZHADeviceEndpoint,
   ZHAEntityReference,
 } from "../../../../../data/zha";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 export interface DeviceEndpointRowData extends DataTableRowData {
   id: string;
@@ -25,7 +25,7 @@ export interface DeviceEndpointRowData extends DataTableRowData {
 
 @customElement("zha-device-endpoint-data-table")
 export class ZHADeviceEndpointDataTable extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -138,13 +138,13 @@ export class ZHADeviceEndpointDataTable extends LitElement {
   protected render(): TemplateResult {
     return html`
       <ha-data-table
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .columns=${this._columns(this.narrow)}
         .data=${this._deviceEndpoints(this.deviceEndpoints)}
         .selectable=${this.selectable}
         auto-height
-        .searchLabel=${this.hass.localize("ui.components.data-table.search")}
-        .noDataText=${this.hass.localize("ui.components.data-table.no-data")}
+        .searchLabel=${this.menuai.localize("ui.components.data-table.search")}
+        .noDataText=${this.menuai.localize("ui.components.data-table.no-data")}
       ></ha-data-table>
     `;
   }

@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { ManagerStateEvent } from "../../../../../data/backup_manager";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../ha-backup-summary-card";
 
 @customElement("ha-backup-overview-progress")
 export class HaBackupOverviewProgress extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public manager!: ManagerStateEvent;
 
@@ -15,7 +15,7 @@ export class HaBackupOverviewProgress extends LitElement {
     if (state === "idle") {
       return "";
     }
-    return this.hass.localize(
+    return this.menuai.localize(
       `ui.panel.config.backup.overview.progress.heading.${state}`
     );
   }
@@ -26,14 +26,14 @@ export class HaBackupOverviewProgress extends LitElement {
         if (!this.manager.stage) {
           return "";
         }
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.backup.overview.progress.description.create_backup.${this.manager.stage}`
         );
       case "restore_backup":
         if (!this.manager.stage) {
           return "";
         }
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.backup.overview.progress.description.restore_backup.${this.manager.stage}`
         );
 
@@ -41,7 +41,7 @@ export class HaBackupOverviewProgress extends LitElement {
         if (!this.manager.stage) {
           return "";
         }
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.backup.overview.progress.description.receive_backup.${this.manager.stage}`
         );
       default:
@@ -52,7 +52,7 @@ export class HaBackupOverviewProgress extends LitElement {
   protected render() {
     return html`
       <ha-backup-summary-card
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .heading=${this._heading}
         .description=${this._description}
         status="loading"

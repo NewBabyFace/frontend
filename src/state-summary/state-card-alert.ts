@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -6,13 +6,13 @@ import { stateActive } from "../common/entity/state_active";
 import "../components/entity/ha-entity-toggle";
 import "../components/entity/state-info";
 import { haStyle } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-alert")
 class StateCardAlert extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -20,7 +20,7 @@ class StateCardAlert extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         >
@@ -28,10 +28,10 @@ class StateCardAlert extends LitElement {
         <div class="state">
           ${stateActive(this.stateObj)
             ? html`<ha-entity-toggle
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${this.stateObj}
               ></ha-entity-toggle>`
-            : this.hass.formatEntityState(this.stateObj)}
+            : this.menuai.formatEntityState(this.stateObj)}
         </div>
       </div>
     `;

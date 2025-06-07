@@ -1,9 +1,9 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { navigate } from "../common/navigate";
-import type { HomeAssistant, ServiceCallResponse } from "../types";
+import type { menuai, ServiceCallResponse } from "../types";
 
 export const SCENE_IGNORED_DOMAINS = [
   "binary_sensor",
@@ -43,8 +43,8 @@ export const getSceneEditorInitData = () => {
   return data;
 };
 
-export interface SceneEntity extends HassEntityBase {
-  attributes: HassEntityAttributeBase & { id?: string };
+export interface SceneEntity extends menuaiEntityBase {
+  attributes: menuaiEntityAttributeBase & { id?: string };
 }
 
 export interface SceneConfig {
@@ -66,28 +66,28 @@ export type SceneMetaData = Record<
 >;
 
 export const activateScene = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ): Promise<ServiceCallResponse> =>
-  hass.callService("scene", "turn_on", { entity_id: entityId });
+  menuai.callService("scene", "turn_on", { entity_id: entityId });
 
 export const applyScene = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entities: SceneEntities
 ): Promise<ServiceCallResponse> =>
-  hass.callService("scene", "apply", { entities });
+  menuai.callService("scene", "apply", { entities });
 
 export const getSceneConfig = (
-  hass: HomeAssistant,
+  menuai: menuai,
   sceneId: string
 ): Promise<SceneConfig> =>
-  hass.callApi<SceneConfig>("GET", `config/scene/config/${sceneId}`);
+  menuai.callApi<SceneConfig>("GET", `config/scene/config/${sceneId}`);
 
 export const saveScene = (
-  hass: HomeAssistant,
+  menuai: menuai,
   sceneId: string,
   config: SceneConfig
-) => hass.callApi("POST", `config/scene/config/${sceneId}`, config);
+) => menuai.callApi("POST", `config/scene/config/${sceneId}`, config);
 
-export const deleteScene = (hass: HomeAssistant, id: string) =>
-  hass.callApi("DELETE", `config/scene/config/${id}`);
+export const deleteScene = (menuai: menuai, id: string) =>
+  menuai.callApi("DELETE", `config/scene/config/${id}`);

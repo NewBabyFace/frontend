@@ -3,14 +3,14 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { styleMap } from "lit/directives/style-map";
 import { voiceAssistants } from "../../../../data/expose";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { brandsUrl } from "../../../../util/brands-url";
 import "../../../../components/ha-svg-icon";
 import "../../../../components/ha-tooltip";
 
 @customElement("voice-assistants-expose-assistant-icon")
 export class VoiceAssistantExposeAssistantIcon extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public unsupported = false;
 
@@ -39,7 +39,7 @@ export class VoiceAssistantExposeAssistantIcon extends LitElement {
             src=${brandsUrl({
               domain: voiceAssistants[this.assistant].domain,
               type: "icon",
-              darkOptimized: this.hass.themes?.darkMode,
+              darkOptimized: this.menuai.themes?.darkMode,
             })}
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
@@ -56,13 +56,13 @@ export class VoiceAssistantExposeAssistantIcon extends LitElement {
         </div>
         <span slot="content">
           ${this.unsupported
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.voice_assistants.expose.not_supported"
               )
             : ""}
           ${this.unsupported && this.manual ? html`<br />` : nothing}
           ${this.manual
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 "ui.panel.config.voice_assistants.expose.manually_configured"
               )
             : nothing}

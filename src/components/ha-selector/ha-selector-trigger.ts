@@ -5,11 +5,11 @@ import type { Trigger } from "../../data/automation";
 import { migrateAutomationTrigger } from "../../data/automation";
 import type { TriggerSelector } from "../../data/selector";
 import "../../panels/config/automation/trigger/ha-automation-trigger";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-selector-trigger")
 export class HaTriggerSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -34,7 +34,7 @@ export class HaTriggerSelector extends LitElement {
       <ha-automation-trigger
         .disabled=${this.disabled}
         .triggers=${this._triggers(this.value)}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
       ></ha-automation-trigger>
     `;

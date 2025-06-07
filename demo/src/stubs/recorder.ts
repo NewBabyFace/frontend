@@ -10,7 +10,7 @@ import type {
   StatisticsMetaData,
   StatisticValue,
 } from "../../../src/data/recorder";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
 const generateMeanStatistics = (
   start: Date,
@@ -300,18 +300,18 @@ const statisticsFunctions: Record<
     return [...morning, ...production, ...evening, ...rest];
   },
 };
-export const mockRecorder = (mockHass: MockHomeAssistant) => {
-  mockHass.mockWS(
+export const mockRecorder = (mockmenuai: Mockmenuai) => {
+  mockmenuai.mockWS(
     "recorder/get_statistics_metadata",
     (): StatisticsMetaData[] => []
   );
-  mockHass.mockWS(
+  mockmenuai.mockWS(
     "recorder/list_statistic_ids",
     (): StatisticsMetaData[] => []
   );
-  mockHass.mockWS(
+  mockmenuai.mockWS(
     "recorder/statistics_during_period",
-    ({ statistic_ids, start_time, end_time, period }, hass): Statistics => {
+    ({ statistic_ids, start_time, end_time, period }, menuai): Statistics => {
       const start = new Date(start_time);
       const end = end_time ? new Date(end_time) : new Date();
 
@@ -321,7 +321,7 @@ export const mockRecorder = (mockHass: MockHomeAssistant) => {
         if (id in statisticsFunctions) {
           statistics[id] = statisticsFunctions[id](id, start, end, period);
         } else {
-          const entityState = hass.states[id];
+          const entityState = menuai.states[id];
           const state = entityState ? Number(entityState.state) : 1;
           statistics[id] =
             entityState && "last_reset" in entityState.attributes

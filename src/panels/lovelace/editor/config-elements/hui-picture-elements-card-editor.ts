@@ -12,13 +12,13 @@ import {
   string,
   type,
 } from "superstruct";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-card";
 import "../../../../components/ha-form/ha-form";
 import "../../../../components/ha-icon";
 import "../../../../components/ha-switch";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { PictureElementsCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import "../hui-sub-element-editor";
@@ -54,7 +54,7 @@ export class HuiPictureElementsCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: PictureElementsCardConfig;
 
@@ -105,14 +105,14 @@ export class HuiPictureElementsCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     if (this._subElementEditorConfig) {
       return html`
         <hui-sub-element-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .config=${this._subElementEditorConfig}
           @go-back=${this._goBack}
           @config-changed=${this._handleSubElementChanged}
@@ -123,14 +123,14 @@ export class HuiPictureElementsCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
-        .schema=${this._schema(this.hass.localize)}
+        .schema=${this._schema(this.menuai.localize)}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._formChanged}
       ></ha-form>
       <hui-picture-elements-card-row-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .elements=${this._config.elements}
         @elements-changed=${this._elementsChanged}
         @edit-detail-element=${this._editDetailElement}
@@ -140,7 +140,7 @@ export class HuiPictureElementsCardEditor
 
   private _formChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -171,7 +171,7 @@ export class HuiPictureElementsCardEditor
 
   private _handleSubElementChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -198,7 +198,7 @@ export class HuiPictureElementsCardEditor
     fireEvent(this, "config-changed", { config: this._config });
   }
 
-  private _editDetailElement(ev: HASSDomEvent<EditDetailElementEvent>): void {
+  private _editDetailElement(ev: menuaiDomEvent<EditDetailElementEvent>): void {
     this._subElementEditorConfig = ev.detail.subElementConfig;
   }
 
@@ -212,13 +212,13 @@ export class HuiPictureElementsCardEditor
       case "state_filter":
       case "dark_mode_filter":
         return (
-          this.hass!.localize(
+          this.menuai!.localize(
             `ui.panel.lovelace.editor.card.picture-elements.${schema.name}`
           ) || schema.name
         );
       default:
         return (
-          this.hass!.localize(
+          this.menuai!.localize(
             `ui.panel.lovelace.editor.card.generic.${schema.name}`
           ) || schema.name
         );

@@ -9,9 +9,9 @@ import {
   optional,
   string,
 } from "superstruct";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../../common/dom/fire_event";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../../../../../components/ha-form/ha-form";
 import type { LovelacePictureElementEditor } from "../../../types";
 import type {
@@ -42,7 +42,7 @@ export class HuiConditionalElementEditor
   extends LitElement
   implements LovelacePictureElementEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ConditionalElementConfig;
 
@@ -54,14 +54,14 @@ export class HuiConditionalElementEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     if (this._subElementEditorConfig) {
       return html`
         <hui-sub-element-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .config=${this._subElementEditorConfig}
           @go-back=${this._goBack}
           @config-changed=${this._handleSubElementChanged}
@@ -72,20 +72,20 @@ export class HuiConditionalElementEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._formChanged}
       ></ha-form>
       <ha-card-conditions-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .conditions=${this._config.conditions || []}
         @value-changed=${this._conditionChanged}
       >
       </ha-card-conditions-editor>
       <hui-picture-elements-card-row-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .elements=${this._config.elements || []}
         @elements-changed=${this._elementsChanged}
         @edit-detail-element=${this._editDetailElement}
@@ -131,7 +131,7 @@ export class HuiConditionalElementEditor
 
   private _handleSubElementChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
@@ -158,7 +158,7 @@ export class HuiConditionalElementEditor
     fireEvent(this, "config-changed", { config: this._config });
   }
 
-  private _editDetailElement(ev: HASSDomEvent<EditDetailElementEvent>): void {
+  private _editDetailElement(ev: menuaiDomEvent<EditDetailElementEvent>): void {
     this._subElementEditorConfig = ev.detail.subElementConfig;
   }
 
@@ -168,10 +168,10 @@ export class HuiConditionalElementEditor
   }
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     ) ||
-    this.hass!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
+    this.menuai!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
     schema.name;
 }
 

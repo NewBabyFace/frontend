@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import type { ZWaveJSAddNodeDevice } from "./data";
 
 import "../../../../../../components/ha-alert";
@@ -8,7 +8,7 @@ import "../../../../../../components/ha-button";
 
 @customElement("zwave-js-add-node-failed")
 export class ZWaveJsAddNodeFailed extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public error?: string;
 
@@ -18,16 +18,16 @@ export class ZWaveJsAddNodeFailed extends LitElement {
     return html`
       <ha-alert
         alert-type="error"
-        .title=${this.hass.localize(
+        .title=${this.menuai.localize(
           "ui.panel.config.zwave_js.add_node.inclusion_failed"
         )}
       >
         ${this.error ||
-        this.hass.localize("ui.panel.config.zwave_js.add_node.check_logs")}
+        this.menuai.localize("ui.panel.config.zwave_js.add_node.check_logs")}
       </ha-alert>
       ${this.error
         ? html`<div class="note">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.zwave_js.add_node.check_logs"
             )}
           </div>`
@@ -35,7 +35,7 @@ export class ZWaveJsAddNodeFailed extends LitElement {
       ${this.device?.id
         ? html`<a href=${`/config/devices/device/${this.device.id}`}>
             <ha-button>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.zwave_js.add_node.view_device"
               )}
             </ha-button>

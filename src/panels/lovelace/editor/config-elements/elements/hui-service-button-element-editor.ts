@@ -7,7 +7,7 @@ import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import "../../../../../components/ha-service-control";
 import type { ServiceAction } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ServiceButtonElementConfig } from "../../../elements/types";
 import type { LovelacePictureElementEditor } from "../../../types";
 
@@ -32,7 +32,7 @@ export class HuiServiceButtonElementEditor
   extends LitElement
   implements LovelacePictureElementEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ServiceButtonElementConfig;
 
@@ -50,22 +50,22 @@ export class HuiServiceButtonElementEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${SCHEMA}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
       <ha-service-control
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._serviceData(this._config)}
-        .showAdvanced=${this.hass.userData?.showAdvanced}
+        .showAdvanced=${this.menuai.userData?.showAdvanced}
         narrow
         @value-changed=${this._serviceDataChanged}
       ></ha-service-control>
@@ -100,10 +100,10 @@ export class HuiServiceButtonElementEditor
   }
 
   private _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     ) ||
-    this.hass!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
+    this.menuai!.localize(`ui.panel.lovelace.editor.elements.${schema.name}`) ||
     schema.name;
 
   static styles = css`

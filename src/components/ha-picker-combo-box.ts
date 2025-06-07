@@ -9,7 +9,7 @@ import { fireEvent } from "../common/dom/fire_event";
 import { caseInsensitiveStringCompare } from "../common/string/compare";
 import type { LocalizeFunc } from "../common/translations/localize";
 import { HaFuse } from "../resources/fuse";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import "./ha-combo-box";
 import type { HaComboBox } from "./ha-combo-box";
 import "./ha-combo-box-item";
@@ -57,7 +57,7 @@ export type PickerComboBoxSearchFn<T extends PickerComboBoxItem> = (
 
 @customElement("ha-picker-combo-box")
 export class HaPickerComboBox extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   // eslint-disable-next-line lit/no-native-attributes
   @property({ type: Boolean }) public autofocus = false;
@@ -144,13 +144,13 @@ export class HaPickerComboBox extends LitElement {
         caseInsensitiveStringCompare(
           entityA.sorting_label!,
           entityB.sorting_label!,
-          this.hass.locale.language
+          this.menuai.locale.language
         )
       );
 
     if (!sortedItems.length) {
       sortedItems.push(
-        this._defaultNotFoundItem(this.notFoundLabel, this.hass.localize)
+        this._defaultNotFoundItem(this.notFoundLabel, this.menuai.localize)
       );
     }
 
@@ -187,7 +187,7 @@ export class HaPickerComboBox extends LitElement {
         item-value-path="id"
         item-label-path="a11y_label"
         clear-initial-value
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._value}
         .label=${this.label}
         .helper=${this.helper}
@@ -251,7 +251,7 @@ export class HaPickerComboBox extends LitElement {
       const items = results.map((result) => result.item);
       if (items.length === 0) {
         items.push(
-          this._defaultNotFoundItem(this.notFoundLabel, this.hass.localize)
+          this._defaultNotFoundItem(this.notFoundLabel, this.menuai.localize)
         );
       }
       const additionalItems = this._getAdditionalItems(searchString);

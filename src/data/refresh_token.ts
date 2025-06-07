@@ -1,6 +1,6 @@
 declare global {
-  interface HASSDomEvents {
-    "hass-refresh-tokens": undefined;
+  interface menuaiDomEvents {
+    "menuai-refresh-tokens": undefined;
   }
 }
 

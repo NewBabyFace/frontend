@@ -1,27 +1,27 @@
-import type { HassConfig, HassEntity } from "home-assistant-js-websocket";
+import type { menuaiConfig, menuaiEntity } from "home-assistant-js-websocket";
 import type { FrontendLocaleData } from "../../data/translation";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { LocalizeFunc } from "./localize";
 
 export type FormatEntityStateFunc = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   state?: string
 ) => string;
 export type FormatEntityAttributeValueFunc = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   attribute: string,
   value?: any
 ) => string;
 export type FormatEntityAttributeNameFunc = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   attribute: string
 ) => string;
 
 export const computeFormatFunctions = async (
   localize: LocalizeFunc,
   locale: FrontendLocaleData,
-  config: HassConfig,
-  entities: HomeAssistant["entities"],
+  config: menuaiConfig,
+  entities: menuai["entities"],
   sensorNumericDeviceClasses: string[]
 ): Promise<{
   formatEntityState: FormatEntityStateFunc;

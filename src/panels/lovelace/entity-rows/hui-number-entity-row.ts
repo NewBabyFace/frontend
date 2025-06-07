@@ -6,7 +6,7 @@ import "../../../components/ha-slider";
 import "../../../components/ha-textfield";
 import { UNAVAILABLE } from "../../../data/entity";
 import { setValue } from "../../../data/input_text";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -14,7 +14,7 @@ import type { EntityConfig, LovelaceRow } from "./types";
 
 @customElement("hui-number-entity-row")
 class HuiNumberEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -57,22 +57,22 @@ class HuiNumberEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         ${stateObj.attributes.mode === "slider" ||
         (stateObj.attributes.mode === "auto" &&
           (Number(stateObj.attributes.max) - Number(stateObj.attributes.min)) /
@@ -90,7 +90,7 @@ class HuiNumberEntityRow extends LitElement implements LovelaceRow {
                   @change=${this._selectedValueChanged}
                 ></ha-slider>
                 <span class="state">
-                  ${this.hass.formatEntityState(stateObj)}
+                  ${this.menuai.formatEntityState(stateObj)}
                 </span>
               </div>
             `
@@ -167,10 +167,10 @@ class HuiNumberEntityRow extends LitElement implements LovelaceRow {
   }
 
   private _selectedValueChanged(ev): void {
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
 
     if (ev.target.value !== stateObj.state) {
-      setValue(this.hass!, stateObj.entity_id, ev.target.value!);
+      setValue(this.menuai!, stateObj.entity_id, ev.target.value!);
     }
   }
 }

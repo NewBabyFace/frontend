@@ -4,13 +4,13 @@ import { until } from "lit/directives/until";
 import { fireEvent } from "../../common/dom/fire_event";
 import { entityIcon } from "../../data/icons";
 import type { IconSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-icon-picker";
 import "../ha-state-icon";
 
 @customElement("ha-selector-icon")
 export class HaIconSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: IconSelector;
 
@@ -31,16 +31,16 @@ export class HaIconSelector extends LitElement {
   protected render() {
     const iconEntity = this.context?.icon_entity;
 
-    const stateObj = iconEntity ? this.hass.states[iconEntity] : undefined;
+    const stateObj = iconEntity ? this.menuai.states[iconEntity] : undefined;
 
     const placeholder =
       this.selector.icon?.placeholder ||
       stateObj?.attributes.icon ||
-      (stateObj && until(entityIcon(this.hass, stateObj)));
+      (stateObj && until(entityIcon(this.menuai, stateObj)));
 
     return html`
       <ha-icon-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .label=${this.label}
         .value=${this.value}
         .required=${this.required}
@@ -53,7 +53,7 @@ export class HaIconSelector extends LitElement {
           ? html`
               <ha-state-icon
                 slot="fallback"
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-state-icon>
             `

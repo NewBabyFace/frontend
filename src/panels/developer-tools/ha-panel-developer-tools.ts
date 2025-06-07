@@ -10,12 +10,12 @@ import "../../components/ha-icon-button";
 import "../../components/ha-list-item";
 import "../../components/sl-tab-group";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant, Route } from "../../types";
+import type { menuai, Route } from "../../types";
 import "./developer-tools-router";
 
 @customElement("ha-panel-developer-tools")
 class PanelDeveloperTools extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -23,7 +23,7 @@ class PanelDeveloperTools extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("title");
+    this.menuai.loadBackendTranslation("title");
   }
 
   protected render(): TemplateResult {
@@ -33,47 +33,47 @@ class PanelDeveloperTools extends LitElement {
         <div class="toolbar">
           <ha-menu-button
             slot="navigationIcon"
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .narrow=${this.narrow}
           ></ha-menu-button>
           <div class="main-title">
-            ${this.hass.localize("panel.developer_tools")}
+            ${this.menuai.localize("panel.developer_tools")}
           </div>
           <ha-button-menu slot="actionItems" @action=${this._handleMenuAction}>
             <ha-icon-button
               slot="trigger"
-              .label=${this.hass.localize("ui.common.menu")}
+              .label=${this.menuai.localize("ui.common.menu")}
               .path=${mdiDotsVertical}
             ></ha-icon-button>
             <ha-list-item>
-              ${this.hass.localize("ui.panel.developer-tools.tabs.debug.title")}
+              ${this.menuai.localize("ui.panel.developer-tools.tabs.debug.title")}
             </ha-list-item>
           </ha-button-menu>
         </div>
         <sl-tab-group @sl-tab-show=${this._handlePageSelected}>
           <sl-tab slot="nav" panel="yaml" .active=${page === "yaml"}>
-            ${this.hass.localize("ui.panel.developer-tools.tabs.yaml.title")}
+            ${this.menuai.localize("ui.panel.developer-tools.tabs.yaml.title")}
           </sl-tab>
           <sl-tab slot="nav" panel="state" .active=${page === "state"}>
-            ${this.hass.localize("ui.panel.developer-tools.tabs.states.title")}
+            ${this.menuai.localize("ui.panel.developer-tools.tabs.states.title")}
           </sl-tab>
           <sl-tab slot="nav" panel="action" .active=${page === "action"}>
-            ${this.hass.localize("ui.panel.developer-tools.tabs.actions.title")}
+            ${this.menuai.localize("ui.panel.developer-tools.tabs.actions.title")}
           </sl-tab>
           <sl-tab slot="nav" panel="template" .active=${page === "template"}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.developer-tools.tabs.templates.title"
             )}
           </sl-tab>
           <sl-tab slot="nav" panel="event" .active=${page === "event"}>
-            ${this.hass.localize("ui.panel.developer-tools.tabs.events.title")}
+            ${this.menuai.localize("ui.panel.developer-tools.tabs.events.title")}
           </sl-tab>
           <sl-tab
             slot="nav"
             panel="statistics"
             .active=${page === "statistics"}
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.developer-tools.tabs.statistics.title"
             )}
           </sl-tab>
@@ -85,7 +85,7 @@ class PanelDeveloperTools extends LitElement {
       <developer-tools-router
         .route=${this.route}
         .narrow=${this.narrow}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
       ></developer-tools-router>
     `;
   }

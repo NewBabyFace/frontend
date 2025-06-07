@@ -3,7 +3,7 @@ import type { PropertyValues } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../common/translations/localize";
 import type {
   DataTableColumnContainer,
@@ -24,16 +24,16 @@ import {
   showAlertDialog,
   showConfirmationDialog,
 } from "../../../dialogs/generic/show-dialog-box";
-import "../../../layouts/hass-tabs-subpage-data-table";
-import type { HaTabsSubpageDataTable } from "../../../layouts/hass-tabs-subpage-data-table";
-import type { HomeAssistant, Route } from "../../../types";
+import "../../../layouts/menuai-tabs-subpage-data-table";
+import type { HaTabsSubpageDataTable } from "../../../layouts/menuai-tabs-subpage-data-table";
+import type { menuai, Route } from "../../../types";
 import { configSections } from "../ha-panel-config";
 import { showAddApplicationCredentialDialog } from "./show-dialog-add-application-credential";
 import { storage } from "../../../common/decorators/storage";
 
 @customElement("ha-config-application-credentials")
 export class HaConfigApplicationCredentials extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() public _applicationCredentials: ApplicationCredential[] = [];
 
@@ -45,7 +45,7 @@ export class HaConfigApplicationCredentials extends LitElement {
 
   @state() private _selected: string[] = [];
 
-  @query("hass-tabs-subpage-data-table", true)
+  @query("menuai-tabs-subpage-data-table", true)
   private _dataTable!: HaTabsSubpageDataTable;
 
   @storage({
@@ -114,13 +114,13 @@ export class HaConfigApplicationCredentials extends LitElement {
           moveable: false,
           template: (credential) => html`
             <ha-icon-overflow-menu
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               narrow
               .items=${[
                 {
                   path: mdiDelete,
                   warning: true,
-                  label: this.hass.localize("ui.common.delete"),
+                  label: this.menuai.localize("ui.common.delete"),
                   action: () => this._deleteCredential(credential),
                 },
               ]}
@@ -150,16 +150,16 @@ export class HaConfigApplicationCredentials extends LitElement {
 
   protected render() {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
         back-path="/config"
         .tabs=${configSections.devices}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._getApplicationCredentials(
           this._applicationCredentials,
-          this.hass.localize
+          this.menuai.localize
         )}
         has-fab
         selectable
@@ -177,7 +177,7 @@ export class HaConfigApplicationCredentials extends LitElement {
           ${!this.narrow
             ? html`
                 <mwc-button @click=${this._deleteSelected} class="warning"
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.application_credentials.picker.remove_selected.button"
                   )}</mwc-button
                 >
@@ -188,10 +188,10 @@ export class HaConfigApplicationCredentials extends LitElement {
                   id="remove-btn"
                   @click=${this._deleteSelected}
                   .path=${mdiDelete}
-                  .label=${this.hass.localize("ui.common.remove")}
+                  .label=${this.menuai.localize("ui.common.remove")}
                 ></ha-icon-button>
                 <ha-help-tooltip
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.application_credentials.picker.remove_selected.button"
                   )}
                 >
@@ -200,7 +200,7 @@ export class HaConfigApplicationCredentials extends LitElement {
         </div>
         <ha-fab
           slot="fab"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.application_credentials.picker.add_application_credential"
           )}
           extended
@@ -208,60 +208,60 @@ export class HaConfigApplicationCredentials extends LitElement {
         >
           <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
         </ha-fab>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
   private _handleSelectionChanged(
-    ev: HASSDomEvent<SelectionChangedEvent>
+    ev: menuaiDomEvent<SelectionChangedEvent>
   ): void {
     this._selected = ev.detail.value;
   }
 
   private _deleteCredential = async (credential) => {
     const confirm = await showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         `ui.panel.config.application_credentials.picker.remove.confirm_title`
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.application_credentials.picker.remove_selected.confirm_text"
       ),
-      confirmText: this.hass.localize("ui.common.delete"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
       destructive: true,
     });
     if (!confirm) {
       return;
     }
-    await deleteApplicationCredential(this.hass, credential.id);
+    await deleteApplicationCredential(this.menuai, credential.id);
     await this._fetchApplicationCredentials();
   };
 
   private _deleteSelected() {
     showConfirmationDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         `ui.panel.config.application_credentials.picker.remove_selected.confirm_title`,
         { number: this._selected.length }
       ),
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.config.application_credentials.picker.remove_selected.confirm_text"
       ),
-      confirmText: this.hass.localize("ui.common.delete"),
-      dismissText: this.hass.localize("ui.common.cancel"),
+      confirmText: this.menuai.localize("ui.common.delete"),
+      dismissText: this.menuai.localize("ui.common.cancel"),
       destructive: true,
       confirm: async () => {
         try {
           await Promise.all(
             this._selected.map(async (applicationCredential) => {
               await deleteApplicationCredential(
-                this.hass,
+                this.menuai,
                 applicationCredential
               );
             })
           );
         } catch (err: any) {
           showAlertDialog(this, {
-            title: this.hass.localize(
+            title: this.menuai.localize(
               "ui.panel.config.application_credentials.picker.remove_selected.error_title"
             ),
             text: err.message,
@@ -275,11 +275,11 @@ export class HaConfigApplicationCredentials extends LitElement {
   }
 
   private async _loadTranslations() {
-    await this.hass.loadBackendTranslation("title", undefined, true);
+    await this.menuai.loadBackendTranslation("title", undefined, true);
   }
 
   private async _fetchApplicationCredentials() {
-    this._applicationCredentials = await fetchApplicationCredentials(this.hass);
+    this._applicationCredentials = await fetchApplicationCredentials(this.menuai);
   }
 
   private _addApplicationCredential() {

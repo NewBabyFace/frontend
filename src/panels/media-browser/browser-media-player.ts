@@ -7,7 +7,7 @@ import {
   MediaPlayerEntityFeature,
 } from "../../data/media-player";
 import type { ResolvedMediaSource } from "../../data/media_source";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export const ERR_UNSUPPORTED_MEDIA = "Unsupported Media";
 
@@ -20,7 +20,7 @@ export class BrowserMediaPlayer {
   private _removed = false;
 
   constructor(
-    public hass: HomeAssistant,
+    public menuai: menuai,
     public item: MediaPlayerItem,
     public resolved: ResolvedMediaSource,
     volume: number,

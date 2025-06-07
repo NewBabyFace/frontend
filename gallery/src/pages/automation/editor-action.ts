@@ -2,13 +2,13 @@ import type { TemplateResult } from "lit";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators";
 import "../../../../src/components/ha-formfield";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { menuai } from "../../../../src/types";
 import "../../components/demo-black-white-row";
 import { mockAreaRegistry } from "../../../../demo/src/stubs/area_registry";
 import { mockDeviceRegistry } from "../../../../demo/src/stubs/device_registry";
 import { mockEntityRegistry } from "../../../../demo/src/stubs/entity_registry";
-import { mockHassioSupervisor } from "../../../../demo/src/stubs/hassio_supervisor";
+import { mockmenuaiioSupervisor } from "../../../../demo/src/stubs/menuaiio_supervisor";
 import type { Action } from "../../../../src/data/script";
 import "../../../../src/panels/config/automation/action/ha-automation-action";
 import { HaChooseAction } from "../../../../src/panels/config/automation/action/types/ha-automation-action-choose";
@@ -46,7 +46,7 @@ const SCHEMAS: { name: string; actions: Action[] }[] = [
 
 @customElement("demo-automation-editor-action")
 class DemoHaAutomationEditorAction extends LitElement {
-  @state() private hass!: HomeAssistant;
+  @state() private menuai!: menuai;
 
   @state() private _disabled = false;
 
@@ -54,13 +54,13 @@ class DemoHaAutomationEditorAction extends LitElement {
 
   constructor() {
     super();
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    mockEntityRegistry(hass);
-    mockDeviceRegistry(hass);
-    mockAreaRegistry(hass);
-    mockHassioSupervisor(hass);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    mockEntityRegistry(menuai);
+    mockDeviceRegistry(menuai);
+    mockAreaRegistry(menuai);
+    mockmenuaiioSupervisor(menuai);
   }
 
   protected render(): TemplateResult {
@@ -84,7 +84,7 @@ class DemoHaAutomationEditorAction extends LitElement {
               (slot) => html`
                 <ha-automation-action
                   slot=${slot}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .actions=${this.data[sampleIdx]}
                   .sampleIdx=${sampleIdx}
                   .disabled=${this._disabled}

@@ -8,16 +8,16 @@ import "../../../../src/components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../src/components/ha-form/types";
 import "../../../../src/components/ha-icon-button";
 import "../../../../src/components/ha-settings-row";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import {
-  addHassioDockerRegistry,
-  fetchHassioDockerRegistries,
-  removeHassioDockerRegistry,
-} from "../../../../src/data/hassio/docker";
+  addmenuaiioDockerRegistry,
+  fetchmenuaiioDockerRegistries,
+  removemenuaiioDockerRegistry,
+} from "../../../../src/data/menuaiio/docker";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { showAlertDialog } from "../../../../src/dialogs/generic/show-dialog-box";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import type { RegistriesDialogParams } from "./show-dialog-registries";
 
 const SCHEMA = [
@@ -38,9 +38,9 @@ const SCHEMA = [
   },
 ] as const;
 
-@customElement("dialog-hassio-registries")
-class HassioRegistriesDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-registries")
+class menuaiioRegistriesDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
@@ -68,7 +68,7 @@ class HassioRegistriesDialog extends LitElement {
         escapeKeyAction
         hideActions
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._addingRegistry
             ? this.supervisor.localize("dialog.registries.title_add")
             : this.supervisor.localize("dialog.registries.title_manage")
@@ -166,7 +166,7 @@ class HassioRegistriesDialog extends LitElement {
   }
 
   private async _loadRegistries(): Promise<void> {
-    const registries = await fetchHassioDockerRegistries(this.hass);
+    const registries = await fetchmenuaiioDockerRegistries(this.menuai);
     this._registries = Object.keys(registries!.registries).map((key) => ({
       registry: key,
       username: registries.registries[key].username,
@@ -185,7 +185,7 @@ class HassioRegistriesDialog extends LitElement {
     };
 
     try {
-      await addHassioDockerRegistry(this.hass, data);
+      await addmenuaiioDockerRegistry(this.menuai, data);
       await this._loadRegistries();
       this._addingRegistry = false;
       this._input = {};
@@ -201,7 +201,7 @@ class HassioRegistriesDialog extends LitElement {
     const entry = (ev.currentTarget as any).entry;
 
     try {
-      await removeHassioDockerRegistry(this.hass, entry.registry);
+      await removemenuaiioDockerRegistry(this.menuai, entry.registry);
       await this._loadRegistries();
     } catch (err: any) {
       showAlertDialog(this, {
@@ -240,6 +240,6 @@ class HassioRegistriesDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-registries": HassioRegistriesDialog;
+    "dialog-menuaiio-registries": menuaiioRegistriesDialog;
   }
 }

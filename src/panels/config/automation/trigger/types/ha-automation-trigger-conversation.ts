@@ -8,7 +8,7 @@ import type { HaTextField } from "../../../../../components/ha-textfield";
 import "../../../../../components/ha-icon-button";
 import type { ConversationTrigger } from "../../../../../data/automation";
 import { showConfirmationDialog } from "../../../../../dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 
 const PATTERN = "^[^.。,，?¿？؟!！;；:：]+$";
@@ -18,7 +18,7 @@ export class HaConversationTrigger
   extends LitElement
   implements TriggerElement
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: ConversationTrigger;
 
@@ -42,7 +42,7 @@ export class HaConversationTrigger
                 iconTrailing
                 .index=${index}
                 .value=${option}
-                .validationMessage=${this.hass.localize(
+                .validationMessage=${this.menuai.localize(
                   "ui.panel.config.automation.editor.triggers.type.conversation.no_punctuation"
                 )}
                 autoValidate
@@ -62,10 +62,10 @@ export class HaConversationTrigger
       <ha-textfield
         class="flex-auto"
         id="option_input"
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.conversation.add_sentence"
         )}
-        .validationMessage=${this.hass.localize(
+        .validationMessage=${this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.conversation.no_punctuation"
         )}
         autoValidate
@@ -121,10 +121,10 @@ export class HaConversationTrigger
     const index = (ev.target as any).parentElement.index;
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.conversation.delete"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.automation.editor.triggers.type.conversation.confirm_delete"
         ),
         destructive: true,

@@ -20,7 +20,7 @@ import {
 } from "../common/datetime/calc_date";
 import { formatTime24h } from "../common/datetime/format_time";
 import { groupBy } from "../common/util/group-by";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type {
   Statistics,
   StatisticsMetaData,
@@ -203,46 +203,46 @@ export interface EnergyPreferencesValidation {
   device_consumption: EnergyValidationIssue[][];
 }
 
-export const getEnergyInfo = (hass: HomeAssistant) =>
-  hass.callWS<EnergyInfo>({
+export const getEnergyInfo = (menuai: menuai) =>
+  menuai.callWS<EnergyInfo>({
     type: "energy/info",
   });
 
-export const getEnergyPreferenceValidation = async (hass: HomeAssistant) => {
-  await hass.loadBackendTranslation("issues", "energy");
-  return hass.callWS<EnergyPreferencesValidation>({
+export const getEnergyPreferenceValidation = async (menuai: menuai) => {
+  await menuai.loadBackendTranslation("issues", "energy");
+  return menuai.callWS<EnergyPreferencesValidation>({
     type: "energy/validate",
   });
 };
 
-export const getEnergyPreferences = (hass: HomeAssistant) =>
-  hass.callWS<EnergyPreferences>({
+export const getEnergyPreferences = (menuai: menuai) =>
+  menuai.callWS<EnergyPreferences>({
     type: "energy/get_prefs",
   });
 
 export const saveEnergyPreferences = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   prefs: Partial<EnergyPreferences>
 ) => {
-  const newPrefs = hass.callWS<EnergyPreferences>({
+  const newPrefs = menuai.callWS<EnergyPreferences>({
     type: "energy/save_prefs",
     ...prefs,
   });
-  clearEnergyCollectionPreferences(hass);
+  clearEnergyCollectionPreferences(menuai);
   return newPrefs;
 };
 
 export type FossilEnergyConsumption = Record<string, number>;
 
 export const getFossilEnergyConsumption = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   startTime: Date,
   energy_statistic_ids: string[],
   co2_statistic_id: string,
   endTime?: Date,
   period: "5minute" | "hour" | "day" | "month" = "hour"
 ) =>
-  hass.callWS<FossilEnergyConsumption>({
+  menuai.callWS<FossilEnergyConsumption>({
     type: "energy/fossil_energy_consumption",
     start_time: startTime.toISOString(),
     end_time: endTime?.toISOString(),
@@ -343,22 +343,22 @@ export const getReferencedStatisticIds = (
 };
 
 const getEnergyData = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   prefs: EnergyPreferences,
   start: Date,
   end?: Date,
   compare?: boolean
 ): Promise<EnergyData> => {
-  const info = await getEnergyInfo(hass);
+  const info = await getEnergyInfo(menuai);
 
   let co2SignalEntity: string | undefined;
-  for (const entity of Object.values(hass.entities)) {
+  for (const entity of Object.values(menuai.entities)) {
     if (entity.platform !== "co2signal") {
       continue;
     }
 
     // The integration offers 2 entities. We want the % one.
-    const co2State = hass.states[entity.entity_id];
+    const co2State = menuai.states[entity.entity_id];
     if (!co2State || co2State.attributes.unit_of_measurement !== "%") {
       continue;
     }
@@ -397,7 +397,7 @@ const getEnergyData = async (
         ? "day"
         : "hour";
 
-  const lengthUnit = hass.config.unit_system.length || "";
+  const lengthUnit = menuai.config.unit_system.length || "";
   const energyUnits: StatisticsUnitConfiguration = {
     energy: "kWh",
     volume: lengthUnit === "km" ? "m³" : "ft³",
@@ -407,12 +407,12 @@ const getEnergyData = async (
   };
 
   const _energyStats: Statistics | Promise<Statistics> = energyStatIds.length
-    ? fetchStatistics(hass!, start, end, energyStatIds, period, energyUnits, [
+    ? fetchStatistics(menuai!, start, end, energyStatIds, period, energyUnits, [
         "change",
       ])
     : {};
   const _waterStats: Statistics | Promise<Statistics> = waterStatIds.length
-    ? fetchStatistics(hass!, start, end, waterStatIds, period, waterUnits, [
+    ? fetchStatistics(menuai!, start, end, waterStatIds, period, waterUnits, [
         "change",
       ])
     : {};
@@ -428,43 +428,43 @@ const getEnergyData = async (
       (calcDateProperty(
         start,
         isFirstDayOfMonth,
-        hass.locale,
-        hass.config
+        menuai.locale,
+        menuai.config
       ) as boolean) &&
       (calcDateProperty(
         end || new Date(),
         isLastDayOfMonth,
-        hass.locale,
-        hass.config
+        menuai.locale,
+        menuai.config
       ) as boolean)
     ) {
       // When comparing a month (or multiple), we want to start at the beginning of the month
       startCompare = calcDate(
         start,
         addMonths,
-        hass.locale,
-        hass.config,
+        menuai.locale,
+        menuai.config,
         -(calcDateDifferenceProperty(
           end || new Date(),
           start,
           differenceInMonths,
-          hass.locale,
-          hass.config
+          menuai.locale,
+          menuai.config
         ) as number) - 1
       );
     } else {
       startCompare = calcDate(
         start,
         addDays,
-        hass.locale,
-        hass.config,
+        menuai.locale,
+        menuai.config,
         (dayDifference + 1) * -1
       );
     }
     endCompare = addMilliseconds(start, -1);
     if (energyStatIds.length) {
       _energyStatsCompare = fetchStatistics(
-        hass!,
+        menuai!,
         startCompare,
         endCompare,
         energyStatIds,
@@ -475,7 +475,7 @@ const getEnergyData = async (
     }
     if (waterStatIds.length) {
       _waterStatsCompare = fetchStatistics(
-        hass!,
+        menuai!,
         startCompare,
         endCompare,
         waterStatIds,
@@ -492,7 +492,7 @@ const getEnergyData = async (
     | Promise<FossilEnergyConsumption>;
   if (co2SignalEntity !== undefined) {
     _fossilEnergyConsumption = getFossilEnergyConsumption(
-      hass!,
+      menuai!,
       start,
       consumptionStatIDs,
       co2SignalEntity,
@@ -501,7 +501,7 @@ const getEnergyData = async (
     );
     if (compare) {
       _fossilEnergyConsumptionCompare = getFossilEnergyConsumption(
-        hass!,
+        menuai!,
         startCompare,
         consumptionStatIDs,
         co2SignalEntity,
@@ -515,7 +515,7 @@ const getEnergyData = async (
   const _getStatisticMetadata:
     | Promise<StatisticsMetaData[]>
     | StatisticsMetaData[] = allStatIDs.length
-    ? getStatisticMetadata(hass, allStatIDs)
+    ? getStatisticMetadata(menuai, allStatIDs)
     : [];
   const [
     energyStats,
@@ -575,9 +575,9 @@ export interface EnergyCollection extends Collection<EnergyData> {
   _active: number;
 }
 
-const clearEnergyCollectionPreferences = (hass: HomeAssistant) => {
+const clearEnergyCollectionPreferences = (menuai: menuai) => {
   energyCollectionKeys.forEach((key) => {
-    const energyCollection = getEnergyDataCollection(hass, { key });
+    const energyCollection = getEnergyDataCollection(menuai, { key });
     energyCollection.clearPrefs();
     if (energyCollection._active) {
       energyCollection.refresh();
@@ -608,7 +608,7 @@ const scheduleHourlyRefresh = (collection: EnergyCollection) => {
 };
 
 export const getEnergyDataCollection = (
-  hass: HomeAssistant,
+  menuai: menuai,
   options: { prefs?: EnergyPreferences; key?: string } = {}
 ): EnergyCollection => {
   let key = "_energy";
@@ -619,26 +619,26 @@ export const getEnergyDataCollection = (
     key = `_${options.key}`;
   }
 
-  if ((hass.connection as any)[key]) {
-    return (hass.connection as any)[key];
+  if ((menuai.connection as any)[key]) {
+    return (menuai.connection as any)[key];
   }
 
   energyCollectionKeys.push(options.key);
 
   const collection = getCollection<EnergyData>(
-    hass.connection,
+    menuai.connection,
     key,
     async () => {
       if (!collection.prefs) {
         // This will raise if not found.
         // Detect by checking `e.code === "not_found"
-        collection.prefs = await getEnergyPreferences(hass);
+        collection.prefs = await getEnergyPreferences(menuai);
       }
 
       scheduleHourlyRefresh(collection);
 
       return getEnergyData(
-        hass,
+        menuai,
         collection.prefs,
         collection.start,
         collection.end,
@@ -671,7 +671,7 @@ export const getEnergyDataCollection = (
   collection.prefs = options.prefs;
 
   const now = new Date();
-  const hour = formatTime24h(now, hass.locale, hass.config).split(":")[0];
+  const hour = formatTime24h(now, menuai.locale, menuai.config).split(":")[0];
   // Set start to start of today if we have data for today, otherwise yesterday
   const preferredPeriod =
     (localStorage.getItem(`energy-default-period-${key}`) as DateRange) ||
@@ -679,7 +679,7 @@ export const getEnergyDataCollection = (
   const period =
     preferredPeriod === "today" && hour === "0" ? "yesterday" : preferredPeriod;
 
-  [collection.start, collection.end] = calcDateRange(hass, period);
+  [collection.start, collection.end] = calcDateRange(menuai, period);
 
   const scheduleUpdatePeriod = () => {
     collection._updatePeriodTimeout = window.setTimeout(
@@ -687,19 +687,19 @@ export const getEnergyDataCollection = (
         collection.start = calcDate(
           new Date(),
           startOfDay,
-          hass.locale,
-          hass.config
+          menuai.locale,
+          menuai.config
         );
         collection.end = calcDate(
           new Date(),
           endOfDay,
-          hass.locale,
-          hass.config
+          menuai.locale,
+          menuai.config
         );
         scheduleUpdatePeriod();
       },
       addHours(
-        calcDate(new Date(), endOfDay, hass.locale, hass.config),
+        calcDate(new Date(), endOfDay, menuai.locale, menuai.config),
         1
       ).getTime() - Date.now() // Switch to next day an hour after the day changed
     );
@@ -718,9 +718,9 @@ export const getEnergyDataCollection = (
     collection.end = newEnd;
     if (
       collection.start.getTime() ===
-        calcDate(new Date(), startOfDay, hass.locale, hass.config).getTime() &&
+        calcDate(new Date(), startOfDay, menuai.locale, menuai.config).getTime() &&
       collection.end?.getTime() ===
-        calcDate(new Date(), endOfDay, hass.locale, hass.config).getTime()
+        calcDate(new Date(), endOfDay, menuai.locale, menuai.config).getTime()
     ) {
       scheduleUpdatePeriod();
     }
@@ -731,8 +731,8 @@ export const getEnergyDataCollection = (
   return collection;
 };
 
-export const getEnergySolarForecasts = (hass: HomeAssistant) =>
-  hass.callWS<EnergySolarForecasts>({
+export const getEnergySolarForecasts = (menuai: menuai) =>
+  menuai.callWS<EnergySolarForecasts>({
     type: "energy/solar_forecast",
   });
 
@@ -764,7 +764,7 @@ export const getEnergyGasUnitClass = (
 };
 
 export const getEnergyGasUnit = (
-  hass: HomeAssistant,
+  menuai: menuai,
   prefs: EnergyPreferences,
   statisticsMetaData: Record<string, StatisticsMetaData> = {}
 ): string => {
@@ -773,11 +773,11 @@ export const getEnergyGasUnit = (
     return "kWh";
   }
 
-  return hass.config.unit_system.length === "km" ? "m³" : "ft³";
+  return menuai.config.unit_system.length === "km" ? "m³" : "ft³";
 };
 
-export const getEnergyWaterUnit = (hass: HomeAssistant): string =>
-  hass.config.unit_system.length === "km" ? "L" : "gal";
+export const getEnergyWaterUnit = (menuai: menuai): string =>
+  menuai.config.unit_system.length === "km" ? "L" : "gal";
 
 export const energyStatisticHelpUrl =
   "/docs/energy/faq/#troubleshooting-missing-entities";
@@ -1105,7 +1105,7 @@ export const computeConsumptionSingle = (data: {
 };
 
 export const formatConsumptionShort = (
-  hass: HomeAssistant,
+  menuai: menuai,
   consumption: number | null,
   unit: string
 ): string => {
@@ -1124,7 +1124,7 @@ export const formatConsumptionShort = (
     pickedUnit = units[unitIndex];
   }
   return (
-    formatNumber(val, hass.locale, {
+    formatNumber(val, menuai.locale, {
       maximumFractionDigits: val < 10 ? 2 : val < 100 ? 1 : 0,
     }) +
     " " +
@@ -1210,8 +1210,8 @@ export const calculateSolarConsumedGauge = (
   });
 
   const totalProduction = solarConsumed + solarReturned;
-  const hasSolarProduction = !!totalProduction;
-  if (hasSolarProduction) {
+  const menuaiolarProduction = !!totalProduction;
+  if (menuaiolarProduction) {
     return (solarConsumed / totalProduction) * 100;
   }
   return undefined;

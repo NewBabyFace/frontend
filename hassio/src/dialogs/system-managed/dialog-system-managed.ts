@@ -15,21 +15,21 @@ import {
   getConfigEntry,
   type ConfigEntry,
 } from "../../../../src/data/config_entries";
-import type { HassioAddonDetails } from "../../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../../src/data/menuaiio/addon";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
-import { mdiHomeAssistant } from "../../../../src/resources/home-assistant-logo-svg";
+import { mdimenuai } from "../../../../src/resources/home-assistant-logo-svg";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import { brandsUrl } from "../../../../src/util/brands-url";
 import type { SystemManagedDialogParams } from "./show-dialog-system-managed";
 
 @customElement("dialog-system-managed")
-class HassioSystemManagedDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class menuaiioSystemManagedDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _supervisor?: Supervisor;
 
-  @state() private _addon?: HassioAddonDetails;
+  @state() private _addon?: menuaiioAddonDetails;
 
   @state() private _open = false;
 
@@ -64,8 +64,8 @@ class HassioSystemManagedDialog extends LitElement {
     }
 
     const addonImage =
-      atLeastVersion(this.hass.config.version, 0, 105) && this._addon.icon
-        ? `/api/hassio/addons/${this._addon.slug}/icon`
+      atLeastVersion(this.menuai.config.version, 0, 105) && this._addon.icon
+        ? `/api/menuaiio/addons/${this._addon.slug}/icon`
         : undefined;
 
     return html`
@@ -82,7 +82,7 @@ class HassioSystemManagedDialog extends LitElement {
           <div class="icons">
             <ha-svg-icon
               class="primary"
-              .path=${mdiHomeAssistant}
+              .path=${mdimenuai}
             ></ha-svg-icon>
             <ha-svg-icon .path=${mdiSwapHorizontal}></ha-svg-icon>
             ${addonImage
@@ -110,7 +110,7 @@ class HassioSystemManagedDialog extends LitElement {
                       src=${brandsUrl({
                         domain: this._configEntry.domain,
                         type: "icon",
-                        darkOptimized: this.hass.themes?.darkMode,
+                        darkOptimized: this.menuai.themes?.darkMode,
                       })}
                       crossorigin="anonymous"
                       referrerpolicy="no-referrer"
@@ -140,7 +140,7 @@ class HassioSystemManagedDialog extends LitElement {
     if (this._addon?.system_managed_config_entry) {
       try {
         const { config_entry } = await getConfigEntry(
-          this.hass,
+          this.menuai,
           this._addon.system_managed_config_entry
         );
         this._configEntry = config_entry;
@@ -187,6 +187,6 @@ class HassioSystemManagedDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-system-managed": HassioSystemManagedDialog;
+    "dialog-system-managed": menuaiioSystemManagedDialog;
   }
 }

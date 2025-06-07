@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface WyomingInfo {
   asr: WyomingAsrInfo[];
@@ -18,5 +18,5 @@ interface WyomingTtsInfo extends WyomingBaseInfo {}
 
 interface WyomingAsrInfo extends WyomingBaseInfo {}
 
-export const fetchWyomingInfo = (hass: HomeAssistant) =>
-  hass.callWS<{ info: Record<string, WyomingInfo> }>({ type: "wyoming/info" });
+export const fetchWyomingInfo = (menuai: menuai) =>
+  menuai.callWS<{ info: Record<string, WyomingInfo> }>({ type: "wyoming/info" });

@@ -29,12 +29,12 @@ import {
 import type { ScriptConfig } from "../../../../data/script";
 import { showScriptEditor } from "../../../../data/script";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { DeviceAutomationDialogParams } from "./show-dialog-device-automation";
 
 @customElement("dialog-device-automation")
 export class DialogDeviceAutomation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _triggers: DeviceTrigger[] = [];
 
@@ -56,7 +56,7 @@ export class DialogDeviceAutomation extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("device_automation");
+    this.menuai.loadBackendTranslation("device_automation");
   }
 
   protected updated(changedProps): void {
@@ -76,16 +76,16 @@ export class DialogDeviceAutomation extends LitElement {
 
     const { device, script } = this._params;
 
-    fetchDeviceActions(this.hass, device.id).then((actions) => {
+    fetchDeviceActions(this.menuai, device.id).then((actions) => {
       this._actions = actions.sort(sortDeviceAutomations);
     });
     if (script) {
       return;
     }
-    fetchDeviceTriggers(this.hass, device.id).then((triggers) => {
+    fetchDeviceTriggers(this.menuai, device.id).then((triggers) => {
       this._triggers = triggers.sort(sortDeviceAutomations);
     });
-    fetchDeviceConditions(this.hass, device.id).then((conditions) => {
+    fetchDeviceConditions(this.menuai, device.id).then((conditions) => {
       this._conditions = conditions.sort(sortDeviceAutomations);
     });
   }
@@ -127,8 +127,8 @@ export class DialogDeviceAutomation extends LitElement {
 
     const mode = this._params.script ? "script" : "automation";
 
-    const title = this.hass.localize(`ui.panel.config.devices.${mode}.create`, {
-      type: this.hass.localize(
+    const title = this.menuai.localize(`ui.panel.config.devices.${mode}.create`, {
+      type: this.menuai.localize(
         `ui.panel.config.devices.type.${
           this._params.device.entry_type || "device"
         }`
@@ -140,7 +140,7 @@ export class DialogDeviceAutomation extends LitElement {
         open
         hideActions
         @closed=${this.closeDialog}
-        .heading=${createCloseHeading(this.hass, title)}
+        .heading=${createCloseHeading(this.menuai, title)}
       >
         <ha-list
           innerRole="listbox"
@@ -162,11 +162,11 @@ export class DialogDeviceAutomation extends LitElement {
                     slot="graphic"
                     .path=${mdiGestureTap}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.devices.automation.triggers.title`
                   )}
                   <span slot="secondary">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.devices.automation.triggers.description`
                     )}
                   </span>
@@ -187,11 +187,11 @@ export class DialogDeviceAutomation extends LitElement {
                     slot="graphic"
                     .path=${mdiAbTesting}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.devices.automation.conditions.title`
                   )}
                   <span slot="secondary">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.devices.automation.conditions.description`
                     )}
                   </span>
@@ -212,11 +212,11 @@ export class DialogDeviceAutomation extends LitElement {
                     slot="graphic"
                     .path=${mdiRoomService}
                   ></ha-svg-icon>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.devices.${mode}.actions.title`
                   )}
                   <span slot="secondary">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.devices.${mode}.actions.description`
                     )}
                   </span>
@@ -236,9 +236,9 @@ export class DialogDeviceAutomation extends LitElement {
             @request-selected=${this._handleRowClick}
           >
             <ha-svg-icon slot="graphic" .path=${mdiPencilOutline}></ha-svg-icon>
-            ${this.hass.localize(`ui.panel.config.devices.${mode}.new.title`)}
+            ${this.menuai.localize(`ui.panel.config.devices.${mode}.new.title`)}
             <span slot="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.devices.${mode}.new.description`
               )}
             </span>

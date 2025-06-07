@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import type {
-  HassEntity,
-  HassEntityAttributeBase,
+  menuaiEntity,
+  menuaiEntityAttributeBase,
 } from "home-assistant-js-websocket";
 import { supportsFeature } from "../common/entity/supports-feature";
 import { ClimateEntityFeature } from "../data/climate";
@@ -35,11 +35,11 @@ export class Entity {
 
   public state: string;
 
-  public baseAttributes: HassEntityAttributeBase & Record<string, any>;
+  public baseAttributes: menuaiEntityAttributeBase & Record<string, any>;
 
-  public attributes: HassEntityAttributeBase & Record<string, any>;
+  public attributes: menuaiEntityAttributeBase & Record<string, any>;
 
-  public hass?: any;
+  public menuai?: any;
 
   static CAPABILITY_ATTRIBUTES = new Set(CAPABILITY_ATTRIBUTES);
 
@@ -83,7 +83,7 @@ export class Entity {
     // eslint-disable-next-line
     console.log("update", this.entityId, this);
 
-    this.hass.updateStates({
+    this.menuai.updateStates({
       [this.entityId]: this.toState(),
     });
   }
@@ -111,7 +111,7 @@ class LightEntity extends Entity {
   ]);
 
   public async handleService(domain, service, data) {
-    if (!["homeassistant", this.domain].includes(domain)) {
+    if (!["menuai", this.domain].includes(domain)) {
       return;
     }
 
@@ -154,7 +154,7 @@ class LightEntity extends Entity {
 
 class ToggleEntity extends Entity {
   public async handleService(domain, service, data) {
-    if (!["homeassistant", this.domain].includes(domain)) {
+    if (!["menuai", this.domain].includes(domain)) {
       return;
     }
 
@@ -380,7 +380,7 @@ class ClimateEntity extends Entity {
 
     if (
       supportsFeature(
-        state as HassEntity,
+        state as menuaiEntity,
         ClimateEntityFeature.TARGET_TEMPERATURE
       )
     ) {
@@ -395,7 +395,7 @@ class ClimateEntity extends Entity {
     }
     if (
       supportsFeature(
-        state as HassEntity,
+        state as menuaiEntity,
         ClimateEntityFeature.TARGET_TEMPERATURE_RANGE
       )
     ) {
@@ -443,13 +443,13 @@ class WaterHeaterEntity extends Entity {
 
 class GroupEntity extends Entity {
   public async handleService(domain, service, data) {
-    if (!["homeassistant", this.domain].includes(domain)) {
+    if (!["menuai", this.domain].includes(domain)) {
       return;
     }
 
     await Promise.all(
       this.attributes.entity_id.map((ent) => {
-        const entity = this.hass.mockEntities[ent];
+        const entity = this.menuai.mockEntities[ent];
         return entity.handleService(entity.domain, service, data);
       })
     );
@@ -483,7 +483,7 @@ export const getEntity = (
 ): Entity =>
   new (TYPES[domain] || Entity)(domain, objectId, state, baseAttributes);
 
-type LimitedEntity = Pick<HassEntity, "state" | "attributes" | "entity_id">;
+type LimitedEntity = Pick<menuaiEntity, "state" | "attributes" | "entity_id">;
 
 export const convertEntities = (
   states: Record<string, LimitedEntity>

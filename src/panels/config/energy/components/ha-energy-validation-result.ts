@@ -2,11 +2,11 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../../components/ha-alert";
 import type { EnergyValidationIssue } from "../../../../data/energy";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-energy-validation-result")
 class EnergyValidationMessage extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public issues!: EnergyValidationIssue[];
 
@@ -19,11 +19,11 @@ class EnergyValidationMessage extends LitElement {
       (issue) => html`
         <ha-alert
           alert-type="warning"
-          .title=${this.hass.localize(
+          .title=${this.menuai.localize(
             `component.energy.issues.${issue.type}.title`
           ) || issue.type}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `component.energy.issues.${issue.type}.description`,
             issue.translation_placeholders
           )}
@@ -32,7 +32,7 @@ class EnergyValidationMessage extends LitElement {
                   href="https://www.home-assistant.io/integrations/recorder#configure-filter"
                   target="_blank"
                   rel="noopener noreferrer"
-                  >${this.hass.localize("ui.panel.config.common.learn_more")}</a
+                  >${this.menuai.localize("ui.panel.config.common.learn_more")}</a
                 >)`
             : ""}
           <ul>

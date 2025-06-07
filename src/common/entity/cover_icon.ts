@@ -5,9 +5,9 @@ import {
   mdiArrowExpandHorizontal,
   mdiArrowUp,
 } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
-export const computeOpenIcon = (stateObj: HassEntity): string => {
+export const computeOpenIcon = (stateObj: menuaiEntity): string => {
   switch (stateObj.attributes.device_class) {
     case "awning":
     case "door":
@@ -19,7 +19,7 @@ export const computeOpenIcon = (stateObj: HassEntity): string => {
   }
 };
 
-export const computeCloseIcon = (stateObj: HassEntity): string => {
+export const computeCloseIcon = (stateObj: menuaiEntity): string => {
   switch (stateObj.attributes.device_class) {
     case "awning":
     case "door":

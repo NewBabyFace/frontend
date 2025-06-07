@@ -18,11 +18,11 @@ import {
   fanPercentageToSpeed,
   fanSpeedToPercentage,
 } from "../../data/fan";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-state-control-fan-speed")
 export class HaStateControlFanSpeed extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: FanEntity;
 
@@ -47,7 +47,7 @@ export class HaStateControlFanSpeed extends LitElement {
 
     const percentage = fanSpeedToPercentage(this.stateObj, speed);
 
-    this.hass.callService("fan", "set_percentage", {
+    this.menuai.callService("fan", "set_percentage", {
       entity_id: this.stateObj!.entity_id,
       percentage: percentage,
     });
@@ -59,7 +59,7 @@ export class HaStateControlFanSpeed extends LitElement {
 
     this.sliderValue = value;
 
-    this.hass.callService("fan", "set_percentage", {
+    this.menuai.callService("fan", "set_percentage", {
       entity_id: this.stateObj!.entity_id,
       percentage: value,
     });
@@ -67,9 +67,9 @@ export class HaStateControlFanSpeed extends LitElement {
 
   private _localizeSpeed(speed: FanSpeed) {
     if (speed === "on" || speed === "off") {
-      return this.hass.formatEntityState(this.stateObj, speed);
+      return this.menuai.formatEntityState(this.stateObj, speed);
     }
-    return this.hass.localize(`ui.card.fan.speed.${speed}`) || speed;
+    return this.menuai.localize(`ui.card.fan.speed.${speed}`) || speed;
   }
 
   protected render() {
@@ -93,9 +93,9 @@ export class HaStateControlFanSpeed extends LitElement {
           .value=${this.speedValue}
           @value-changed=${this._speedValueChanged}
           .ariaLabel=${computeAttributeNameDisplay(
-            this.hass.localize,
+            this.menuai.localize,
             this.stateObj,
-            this.hass.entities,
+            this.menuai.entities,
             "percentage"
           )}
           style=${styleMap({
@@ -118,9 +118,9 @@ export class HaStateControlFanSpeed extends LitElement {
         .step=${this.stateObj.attributes.percentage_step ?? 1}
         @value-changed=${this._valueChanged}
         .ariaLabel=${computeAttributeNameDisplay(
-          this.hass.localize,
+          this.menuai.localize,
           this.stateObj,
-          this.hass.entities,
+          this.menuai.entities,
           "percentage"
         )}
         style=${styleMap({
@@ -129,7 +129,7 @@ export class HaStateControlFanSpeed extends LitElement {
         })}
         .disabled=${this.stateObj.state === UNAVAILABLE}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.fan.percentage}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       >
       </ha-control-slider>
     `;

@@ -1,4 +1,4 @@
-import type { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { subHours, differenceInDays } from "date-fns";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
@@ -20,7 +20,7 @@ import {
   getDisplayUnit,
   getStatisticMetadata,
 } from "../../../data/recorder";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import { hasConfigOrEntitiesChanged } from "../common/has-changed";
 import { processConfigEntities } from "../common/process-config-entities";
@@ -37,19 +37,19 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFill: string[]
   ): StatisticsGraphCardConfig {
     const includeDomains = ["sensor"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFill,
       includeDomains,
-      (stateObj: HassEntity) => "state_class" in stateObj.attributes
+      (stateObj: menuaiEntity) => "state_class" in stateObj.attributes
     );
     return {
       type: "statistics-graph",
@@ -57,7 +57,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StatisticsGraphCardConfig;
 
@@ -104,7 +104,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
 
   private _subscribeEnergy() {
     if (!this._energySub) {
-      this._energySub = getEnergyDataCollection(this.hass!, {
+      this._energySub = getEnergyDataCollection(this.menuai!, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._energyStart = data.start;
@@ -174,7 +174,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
     return (
       hasConfigOrEntitiesChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
@@ -188,7 +188,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
       | StatisticsGraphCardConfig
       | undefined;
 
-    if (this.hass) {
+    if (this.menuai) {
       if (this._config.energy_date_selection && !this._energySub) {
         this._subscribeEnergy();
         return;
@@ -254,7 +254,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -272,7 +272,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
           })}"
         >
           <statistics-chart
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .isLoadingData=${!this._statistics}
             .statisticsData=${this._statistics}
             .metadata=${this._metadata}
@@ -310,7 +310,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
 
   private async _getStatisticsMetaData(statisticIds: string[] | undefined) {
     const statsMetadataArray = await getStatisticMetadata(
-      this.hass!,
+      this.menuai!,
       statisticIds
     );
     const statisticsMetaData = {};
@@ -333,7 +333,7 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
       if (this._config!.unit && this._metadata) {
         const metadata = Object.values(this._metadata).find(
           (metaData) =>
-            getDisplayUnit(this.hass!, metaData?.statistic_id, metaData) ===
+            getDisplayUnit(this.menuai!, metaData?.statistic_id, metaData) ===
             this._config!.unit
         );
         if (metadata) {
@@ -345,13 +345,13 @@ export class HuiStatisticsGraphCard extends LitElement implements LovelaceCard {
         const metadata = this._metadata[this._entities[0]];
         unitClass = metadata?.unit_class;
         this._unit = unitClass
-          ? getDisplayUnit(this.hass!, metadata.statistic_id, metadata) ||
+          ? getDisplayUnit(this.menuai!, metadata.statistic_id, metadata) ||
             undefined
           : undefined;
       }
       const unitconfig = unitClass ? { [unitClass]: this._unit } : undefined;
       const statistics = await fetchStatistics(
-        this.hass!,
+        this.menuai!,
         startDate,
         endDate,
         this._entities,

@@ -1,7 +1,7 @@
 import "@lit-labs/virtualizer";
 import "@material/mwc-button";
 import { mdiClose } from "@mdi/js";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -18,13 +18,13 @@ import "../../../components/ha-list";
 import type { ExposeEntitySettings } from "../../../data/expose";
 import { voiceAssistants } from "../../../data/expose";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./entity-voice-settings";
 import type { ExposeEntityDialogParams } from "./show-dialog-expose-entity";
 
 @customElement("dialog-expose-entity")
 class DialogExposeEntity extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: ExposeEntityDialogParams;
 
@@ -48,7 +48,7 @@ class DialogExposeEntity extends LitElement {
       return nothing;
     }
 
-    const header = this.hass.localize(
+    const header = this.menuai.localize(
       "ui.panel.config.voice_assistants.expose.expose_dialog.header"
     );
 
@@ -63,7 +63,7 @@ class DialogExposeEntity extends LitElement {
           <h2 class="header" slot="title">
             ${header}
             <span class="subtitle">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.expose.expose_dialog.expose_to",
                 {
                   assistants: this._params.filterAssistants
@@ -74,13 +74,13 @@ class DialogExposeEntity extends LitElement {
             </span>
           </h2>
           <ha-icon-button
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             dialogAction="close"
             slot="navigationIcon"
           ></ha-icon-button>
           <search-input
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .filter=${this._filter}
             @value-changed=${this._filterChanged}
           ></search-input>
@@ -100,7 +100,7 @@ class DialogExposeEntity extends LitElement {
           @click=${this._expose}
           .disabled=${this._selected.length === 0}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.voice_assistants.expose.expose_dialog.expose_entities",
             { count: this._selected.length }
           )}
@@ -136,7 +136,7 @@ class DialogExposeEntity extends LitElement {
       filter?: string
     ) => {
       const lowerFilter = filter?.toLowerCase();
-      return Object.values(this.hass.states).filter(
+      return Object.values(this.menuai.states).filter(
         (entity) =>
           this._params!.filterAssistants.some(
             (ass) => !exposedEntities[entity.entity_id]?.[ass]
@@ -148,7 +148,7 @@ class DialogExposeEntity extends LitElement {
     }
   );
 
-  private _renderItem = (entityState: HassEntity) => html`
+  private _renderItem = (entityState: menuaiEntity) => html`
     <ha-check-list-item
       graphic="icon"
       twoLine
@@ -159,7 +159,7 @@ class DialogExposeEntity extends LitElement {
       <ha-state-icon
         title=${ifDefined(entityState?.state)}
         slot="graphic"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${entityState}
       ></ha-state-icon>
       ${computeStateName(entityState)}

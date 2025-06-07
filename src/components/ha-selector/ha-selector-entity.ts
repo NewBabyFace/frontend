@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -11,13 +11,13 @@ import {
   filterSelectorEntities,
   computeCreateDomains,
 } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../entity/ha-entities-picker";
 import "../entity/ha-entity-picker";
 
 @customElement("ha-selector-entity")
 export class HaEntitySelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: EntitySelector;
 
@@ -61,7 +61,7 @@ export class HaEntitySelector extends LitElement {
 
     if (!this.selector.entity?.multiple) {
       return html`<ha-entity-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .label=${this.label}
         .helper=${this.helper}
@@ -77,7 +77,7 @@ export class HaEntitySelector extends LitElement {
 
     return html`
       <ha-entities-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .label=${this.label}
         .helper=${this.helper}
@@ -98,7 +98,7 @@ export class HaEntitySelector extends LitElement {
       this._hasIntegration(this.selector) &&
       !this._entitySources
     ) {
-      fetchEntitySourcesWithCache(this.hass).then((sources) => {
+      fetchEntitySourcesWithCache(this.menuai).then((sources) => {
         this._entitySources = sources;
       });
     }
@@ -107,7 +107,7 @@ export class HaEntitySelector extends LitElement {
     }
   }
 
-  private _filterEntities = (entity: HassEntity): boolean => {
+  private _filterEntities = (entity: menuaiEntity): boolean => {
     if (!this.selector?.entity?.filter) {
       return true;
     }

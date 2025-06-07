@@ -21,7 +21,7 @@ import {
   string,
 } from "superstruct";
 import { storage } from "../../../../common/decorators/storage";
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type {
   HaFormSchema,
@@ -33,7 +33,7 @@ import "../../../../components/ha-icon-button-arrow-prev";
 import "../../../../components/sl-tab-group";
 import type { LovelaceCardConfig } from "../../../../data/lovelace/config/card";
 import type { LovelaceConfig } from "../../../../data/lovelace/config/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { StackCardConfig } from "../../cards/types";
 import type { LovelaceCardEditor } from "../../types";
 import "../card-editor/hui-card-element-editor";
@@ -64,7 +64,7 @@ export class HuiStackCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public lovelace?: LovelaceConfig;
 
@@ -105,7 +105,7 @@ export class HuiStackCardEditor
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
     const selected = this._selectedCard!;
@@ -115,7 +115,7 @@ export class HuiStackCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this.formData()}
         .schema=${this._schema}
         .computeLabel=${this._computeLabelCallback}
@@ -145,7 +145,7 @@ export class HuiStackCardEditor
                     class="gui-mode-button"
                     @click=${this._toggleMode}
                     .disabled=${!this._guiModeAvailable}
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       isGuiMode
                         ? "ui.panel.lovelace.editor.edit_card.show_code_editor"
                         : "ui.panel.lovelace.editor.edit_card.show_visual_editor"
@@ -155,7 +155,7 @@ export class HuiStackCardEditor
 
                   <ha-icon-button-arrow-prev
                     .disabled=${selected === 0}
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.move_before"
                     )}
                     @click=${this._handleMove}
@@ -163,7 +163,7 @@ export class HuiStackCardEditor
                   ></ha-icon-button-arrow-prev>
 
                   <ha-icon-button-arrow-next
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.move_after"
                     )}
                     .disabled=${selected === numcards - 1}
@@ -172,7 +172,7 @@ export class HuiStackCardEditor
                   ></ha-icon-button-arrow-next>
 
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.copy"
                     )}
                     .path=${mdiContentCopy}
@@ -180,7 +180,7 @@ export class HuiStackCardEditor
                   ></ha-icon-button>
 
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.cut"
                     )}
                     .path=${mdiContentCut}
@@ -188,7 +188,7 @@ export class HuiStackCardEditor
                   ></ha-icon-button>
 
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.editor.edit_card.delete"
                     )}
                     .path=${mdiDelete}
@@ -198,7 +198,7 @@ export class HuiStackCardEditor
                 ${keyed(
                   this._getKey(this._config.cards, selected),
                   html`<hui-card-element-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .value=${this._config.cards[selected]}
                     .lovelace=${this.lovelace}
                     @config-changed=${this._handleConfigChanged}
@@ -208,7 +208,7 @@ export class HuiStackCardEditor
               `
             : html`
                 <hui-card-picker
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .lovelace=${this.lovelace}
                   @config-changed=${this._handleCardPicked}
                 ></hui-card-picker>
@@ -239,7 +239,7 @@ export class HuiStackCardEditor
     this._selectedCard = parseInt(ev.detail.name, 10);
   }
 
-  protected _handleConfigChanged(ev: HASSDomEvent<ConfigChangedEvent>) {
+  protected _handleConfigChanged(ev: menuaiDomEvent<ConfigChangedEvent>) {
     ev.stopPropagation();
     if (!this._config) {
       return;
@@ -307,7 +307,7 @@ export class HuiStackCardEditor
     fireEvent(this, "config-changed", { config: this._config });
   }
 
-  protected _handleGUIModeChanged(ev: HASSDomEvent<GUIModeChangedEvent>): void {
+  protected _handleGUIModeChanged(ev: menuaiDomEvent<GUIModeChangedEvent>): void {
     ev.stopPropagation();
     this._GUImode = ev.detail.guiMode;
     this._guiModeAvailable = ev.detail.guiModeAvailable;
@@ -322,7 +322,7 @@ export class HuiStackCardEditor
   }
 
   protected _computeLabelCallback = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass!.localize(
+    this.menuai!.localize(
       `ui.panel.lovelace.editor.card.${this._config!.type}.${schema.name}`
     );
 

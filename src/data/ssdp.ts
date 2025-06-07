@@ -18,7 +18,7 @@ export interface SSDPDiscoveryData extends DataTableRowData {
   ssdp_server: string | undefined;
   ssdp_headers: Record<string, unknown>;
   ssdp_all_locations: string[];
-  x_homeassistant_matching_domains: string[];
+  x_menuai_matching_domains: string[];
 }
 
 interface SSDPRemoveDiscoveryData {

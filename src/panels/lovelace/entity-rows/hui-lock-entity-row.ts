@@ -3,7 +3,7 @@ import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { isUnavailableState } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -13,7 +13,7 @@ import { confirmAction } from "../common/confirm-action";
 
 @customElement("hui-lock-entity-row")
 class HuiLockEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: ConfirmableRowConfig;
 
@@ -29,30 +29,30 @@ class HuiLockEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         <mwc-button
           @click=${this._callService}
           .disabled=${isUnavailableState(stateObj.state)}
           class="text-content"
         >
           ${stateObj.state === "locked"
-            ? this.hass!.localize("ui.card.lock.unlock")
-            : this.hass!.localize("ui.card.lock.lock")}
+            ? this.menuai!.localize("ui.card.lock.unlock")
+            : this.menuai!.localize("ui.card.lock.lock")}
         </mwc-button>
       </hui-generic-entity-row>
     `;
@@ -68,18 +68,18 @@ class HuiLockEntityRow extends LitElement implements LovelaceRow {
 
   private async _callService(ev): Promise<void> {
     ev.stopPropagation();
-    const stateObj = this.hass!.states[this._config!.entity];
+    const stateObj = this.menuai!.states[this._config!.entity];
     const action = stateObj.state === "locked" ? "unlock" : "lock";
     if (
       !this._config?.confirmation ||
       (await confirmAction(
         this,
-        this.hass!,
+        this.menuai!,
         this._config.confirmation,
-        this.hass!.localize(`ui.card.lock.${action}`)
+        this.menuai!.localize(`ui.card.lock.${action}`)
       ))
     ) {
-      callProtectedLockService(this, this.hass!, stateObj, action);
+      callProtectedLockService(this, this.menuai!, stateObj, action);
     }
   }
 }

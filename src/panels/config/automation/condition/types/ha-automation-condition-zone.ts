@@ -5,7 +5,7 @@ import { computeStateDomain } from "../../../../../common/entity/compute_state_d
 import { hasLocation } from "../../../../../common/entity/has_location";
 import "../../../../../components/entity/ha-entity-picker";
 import type { ZoneCondition } from "../../../../../data/automation";
-import type { ValueChangedEvent, HomeAssistant } from "../../../../../types";
+import type { ValueChangedEvent, menuai } from "../../../../../types";
 
 function zoneAndLocationFilter(stateObj) {
   return hasLocation(stateObj) && computeStateDomain(stateObj) !== "zone";
@@ -15,7 +15,7 @@ const includeDomains = ["zone"];
 
 @customElement("ha-automation-condition-zone")
 export class HaZoneCondition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: ZoneCondition;
 
@@ -33,23 +33,23 @@ export class HaZoneCondition extends LitElement {
     const { entity_id, zone } = this.condition;
     return html`
       <ha-entity-picker
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.conditions.type.zone.entity"
         )}
         .value=${entity_id}
         @value-changed=${this._entityPicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         allow-custom-entity
         .entityFilter=${zoneAndLocationFilter}
       ></ha-entity-picker>
       <ha-entity-picker
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.conditions.type.zone.zone"
         )}
         .value=${zone}
         @value-changed=${this._zonePicked}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         allow-custom-entity
         .includeDomains=${includeDomains}

@@ -1,6 +1,6 @@
 import type { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { navigate } from "../common/navigate";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { subscribeDeviceRegistry } from "./device_registry";
 import { isComponentLoaded } from "../common/config/is_component_loaded";
 import { getThreadDataSetTLV, listThreadDataSets } from "./thread";
@@ -48,21 +48,21 @@ export interface MatterCommissioningParameters {
   setup_qr_code: string;
 }
 
-export const canCommissionMatterExternal = (hass: HomeAssistant) =>
-  hass.auth.external?.config.canCommissionMatter;
+export const canCommissionMatterExternal = (menuai: menuai) =>
+  menuai.auth.external?.config.canCommissionMatter;
 
-export const startExternalCommissioning = async (hass: HomeAssistant) => {
-  if (isComponentLoaded(hass, "thread")) {
-    const datasets = await listThreadDataSets(hass);
+export const startExternalCommissioning = async (menuai: menuai) => {
+  if (isComponentLoaded(menuai, "thread")) {
+    const datasets = await listThreadDataSets(menuai);
     const preferredDataset = datasets.datasets.find(
       (dataset) => dataset.preferred
     );
     if (preferredDataset) {
-      return hass.auth.external!.fireMessage({
+      return menuai.auth.external!.fireMessage({
         type: "matter/commission",
         payload: {
           active_operational_dataset: (
-            await getThreadDataSetTLV(hass, preferredDataset.dataset_id)
+            await getThreadDataSetTLV(menuai, preferredDataset.dataset_id)
           ).tlv,
           border_agent_id: preferredDataset.preferred_border_agent_id,
           mac_extended_address: preferredDataset.preferred_extended_address,
@@ -72,17 +72,17 @@ export const startExternalCommissioning = async (hass: HomeAssistant) => {
     }
   }
 
-  return hass.auth.external!.fireMessage({
+  return menuai.auth.external!.fireMessage({
     type: "matter/commission",
   });
 };
 
 export const redirectOnNewMatterDevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   callback?: () => void
 ): UnsubscribeFunc => {
   let curMatterDevices: Set<string> | undefined;
-  const unsubDeviceReg = subscribeDeviceRegistry(hass.connection, (entries) => {
+  const unsubDeviceReg = subscribeDeviceRegistry(menuai.connection, (entries) => {
     if (!curMatterDevices) {
       curMatterDevices = new Set(
         Object.values(entries)
@@ -111,91 +111,91 @@ export const redirectOnNewMatterDevice = (
   };
 };
 
-export const addMatterDevice = (hass: HomeAssistant) => {
-  startExternalCommissioning(hass);
+export const addMatterDevice = (menuai: menuai) => {
+  startExternalCommissioning(menuai);
 };
 
 export const commissionMatterDevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   code: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/commission",
     code,
   });
 
 export const acceptSharedMatterDevice = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pin: number
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/commission_on_network",
     pin,
   });
 
 export const matterSetWifi = (
-  hass: HomeAssistant,
+  menuai: menuai,
   network_name: string,
   password: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/set_wifi_credentials",
     network_name,
     password,
   });
 
 export const matterSetThread = (
-  hass: HomeAssistant,
+  menuai: menuai,
   thread_operation_dataset: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/set_thread",
     thread_operation_dataset,
   });
 
 export const getMatterNodeDiagnostics = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<MatterNodeDiagnostics> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/node_diagnostics",
     device_id,
   });
 
 export const pingMatterNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<MatterPingResult> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/ping_node",
     device_id,
   });
 
 export const openMatterCommissioningWindow = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<MatterCommissioningParameters> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/open_commissioning_window",
     device_id,
   });
 
 export const removeMatterFabric = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string,
   fabric_index: number
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/remove_matter_fabric",
     device_id,
     fabric_index,
   });
 
 export const interviewMatterNode = (
-  hass: HomeAssistant,
+  menuai: menuai,
   device_id: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "matter/interview_node",
     device_id,
   });

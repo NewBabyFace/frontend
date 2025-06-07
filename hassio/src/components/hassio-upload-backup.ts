@@ -4,23 +4,23 @@ import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { fireEvent } from "../../../src/common/dom/fire_event";
 import "../../../src/components/ha-file-upload";
-import type { HassioBackup } from "../../../src/data/hassio/backup";
-import { uploadBackup } from "../../../src/data/hassio/backup";
-import { extractApiErrorMessage } from "../../../src/data/hassio/common";
+import type { menuaiioBackup } from "../../../src/data/menuaiio/backup";
+import { uploadBackup } from "../../../src/data/menuaiio/backup";
+import { extractApiErrorMessage } from "../../../src/data/menuaiio/common";
 import { showAlertDialog } from "../../../src/dialogs/generic/show-dialog-box";
-import type { HomeAssistant } from "../../../src/types";
+import type { menuai } from "../../../src/types";
 import type { LocalizeFunc } from "../../../src/common/translations/localize";
 
 declare global {
-  interface HASSDomEvents {
-    "hassio-backup-uploaded": { backup: HassioBackup };
+  interface menuaiDomEvents {
+    "menuaiio-backup-uploaded": { backup: menuaiioBackup };
     "backup-cleared": undefined;
   }
 }
 
-@customElement("hassio-upload-backup")
-export class HassioUploadBackup extends LitElement {
-  public hass?: HomeAssistant;
+@customElement("menuaiio-upload-backup")
+export class menuaiioUploadBackup extends LitElement {
+  public menuai?: menuai;
 
   @property({ attribute: false }) public localize?: LocalizeFunc;
 
@@ -31,7 +31,7 @@ export class HassioUploadBackup extends LitElement {
   public render(): TemplateResult {
     return html`
       <ha-file-upload
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .uploading=${this._uploading}
         .icon=${mdiFolderUpload}
         accept="application/x-tar"
@@ -61,15 +61,15 @@ export class HassioUploadBackup extends LitElement {
     if (!["application/x-tar"].includes(file.type)) {
       showAlertDialog(this, {
         title: "Unsupported file format",
-        text: "Please choose a Home Assistant backup file (.tar)",
+        text: "Please choose a MenuAI backup file (.tar)",
         confirmText: "ok",
       });
       return;
     }
     this._uploading = true;
     try {
-      const backup = await uploadBackup(this.hass, file);
-      fireEvent(this, "hassio-backup-uploaded", { backup: backup.data });
+      const backup = await uploadBackup(this.menuai, file);
+      fireEvent(this, "menuaiio-backup-uploaded", { backup: backup.data });
     } catch (err: any) {
       showAlertDialog(this, {
         title: "Upload failed",
@@ -84,6 +84,6 @@ export class HassioUploadBackup extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-upload-backup": HassioUploadBackup;
+    "menuaiio-upload-backup": menuaiioUploadBackup;
   }
 }

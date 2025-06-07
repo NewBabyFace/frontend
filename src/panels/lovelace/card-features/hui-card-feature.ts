@@ -1,6 +1,6 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiErrorCard } from "../cards/hui-error-card";
 import { createCardFeatureElement } from "../create-element/create-card-feature-element";
 import type { LovelaceCardFeature } from "../types";
@@ -11,7 +11,7 @@ import type {
 
 @customElement("hui-card-feature")
 export class HuiCardFeature extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public context!: LovelaceCardFeatureContext;
 
@@ -37,13 +37,13 @@ export class HuiCardFeature extends LitElement {
       this.feature
     ) as LovelaceCardFeature;
 
-    if (this.hass) {
-      element.hass = this.hass;
+    if (this.menuai) {
+      element.menuai = this.menuai;
       element.context = this.context;
       element.color = this.color;
       // Backwards compatibility from custom card features
       if (this.context.entity_id) {
-        const stateObj = this.hass.states[this.context.entity_id];
+        const stateObj = this.menuai.states[this.context.entity_id];
         if (stateObj) {
           element.stateObj = stateObj;
         }

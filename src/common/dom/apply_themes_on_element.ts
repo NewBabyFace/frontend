@@ -1,7 +1,7 @@
 import type { ThemeVars } from "../../data/ws-themes";
 import { darkColorVariables } from "../../resources/theme/color.globals";
 import { derivedStyles } from "../../resources/theme/theme";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import {
   hex2rgb,
   lab2hex,
@@ -24,15 +24,15 @@ let PROCESSED_THEMES: Record<string, ProcessedTheme> = {};
  * Apply a theme to an element by setting the CSS variables on it.
  *
  * element: Element to apply theme on.
- * themes: HASS theme information (e.g. active dark mode and globally active theme name).
+ * themes: menuai theme information (e.g. active dark mode and globally active theme name).
  * selectedTheme: Selected theme (used to override the globally active theme for this element).
  * themeSettings: Additional settings such as selected colors.
  */
 export const applyThemesOnElement = (
   element,
-  themes: HomeAssistant["themes"],
+  themes: menuai["themes"],
   selectedTheme?: string,
-  themeSettings?: Partial<HomeAssistant["selectedTheme"]>,
+  themeSettings?: Partial<menuai["selectedTheme"]>,
   main?: boolean
 ) => {
   // If there is no explicitly desired theme provided, and the element is the main element we automatically

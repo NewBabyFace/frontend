@@ -1,7 +1,7 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
-export const canToggleDomain = (hass: HomeAssistant, domain: string) => {
-  const services = hass.services[domain];
+export const canToggleDomain = (menuai: menuai, domain: string) => {
+  const services = menuai.services[domain];
   if (!services) {
     return false;
   }

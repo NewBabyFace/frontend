@@ -10,13 +10,13 @@ import "../../../components/ha-settings-row";
 import "../../../components/ha-textfield";
 import { updateEntityRegistryEntry } from "../../../data/entity_registry";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "./ha-category-picker";
 import type { AssignCategoryDialogParams } from "./show-dialog-assign-category";
 
 @customElement("dialog-assign-category")
 class DialogAssignCategory extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _scope?: string;
 
@@ -51,10 +51,10 @@ class DialogAssignCategory extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           entry
-            ? this.hass.localize("ui.panel.config.category.assign.edit")
-            : this.hass.localize("ui.panel.config.category.assign.assign")
+            ? this.menuai.localize("ui.panel.config.category.assign.edit")
+            : this.menuai.localize("ui.panel.config.category.assign.assign")
         )}
       >
         <div>
@@ -63,7 +63,7 @@ class DialogAssignCategory extends LitElement {
             : ""}
           <div class="form">
             <ha-category-picker
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .scope=${this._scope}
               .value=${this._category}
               @value-changed=${this._categoryChanged}
@@ -71,14 +71,14 @@ class DialogAssignCategory extends LitElement {
           </div>
         </div>
         <mwc-button slot="secondaryAction" @click=${this.closeDialog}>
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button
           slot="primaryAction"
           @click=${this._updateEntry}
           .disabled=${this._submitting}
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </mwc-button>
       </ha-dialog>
     `;
@@ -96,7 +96,7 @@ class DialogAssignCategory extends LitElement {
     this._error = undefined;
     try {
       await updateEntityRegistryEntry(
-        this.hass,
+        this.menuai,
         this._params!.entityReg.entity_id,
         {
           categories: { [this._scope!]: this._category || null },
@@ -106,7 +106,7 @@ class DialogAssignCategory extends LitElement {
     } catch (err: any) {
       this._error =
         err.message ||
-        this.hass.localize("ui.panel.config.category.assign.unknown_error");
+        this.menuai.localize("ui.panel.config.category.assign.unknown_error");
     } finally {
       this._submitting = false;
     }

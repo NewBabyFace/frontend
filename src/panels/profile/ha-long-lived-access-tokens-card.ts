@@ -16,12 +16,12 @@ import {
   showPromptDialog,
 } from "../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { showLongLivedAccessTokenDialog } from "./show-long-lived-access-token-dialog";
 
 @customElement("ha-long-lived-access-tokens-card")
 class HaLongLivedTokens extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public refreshTokens?: RefreshToken[];
 
@@ -37,12 +37,12 @@ class HaLongLivedTokens extends LitElement {
 
     return html`
       <ha-card
-        .header=${this.hass.localize(
+        .header=${this.menuai.localize(
           "ui.panel.profile.long_lived_access_tokens.header"
         )}
       >
         <div class="card-content">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.profile.long_lived_access_tokens.description"
           )}
 
@@ -51,13 +51,13 @@ class HaLongLivedTokens extends LitElement {
             target="_blank"
             rel="noreferrer"
           >
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.profile.long_lived_access_tokens.learn_auth_requests"
             )}
           </a>
           ${!accessTokens?.length
             ? html`<p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.profile.long_lived_access_tokens.empty_state"
                 )}
               </p>`
@@ -66,12 +66,12 @@ class HaLongLivedTokens extends LitElement {
                   html`<ha-settings-row two-line>
                     <span slot="heading">${token.client_name}</span>
                     <div slot="description">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.profile.long_lived_access_tokens.created",
                         {
                           date: relativeTime(
                             new Date(token.created_at),
-                            this.hass.locale
+                            this.menuai.locale
                           ),
                         }
                       )}
@@ -79,7 +79,7 @@ class HaLongLivedTokens extends LitElement {
                     <ha-icon-button
                       .token=${token}
                       .disabled=${token.is_current}
-                      .label=${this.hass.localize("ui.common.delete")}
+                      .label=${this.menuai.localize("ui.common.delete")}
                       .path=${mdiDelete}
                       @click=${this._deleteToken}
                     ></ha-icon-button>
@@ -89,7 +89,7 @@ class HaLongLivedTokens extends LitElement {
 
         <div class="card-actions">
           <mwc-button @click=${this._createToken}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.profile.long_lived_access_tokens.create"
             )}
           </mwc-button>
@@ -100,10 +100,10 @@ class HaLongLivedTokens extends LitElement {
 
   private async _createToken(): Promise<void> {
     const name = await showPromptDialog(this, {
-      text: this.hass.localize(
+      text: this.menuai.localize(
         "ui.panel.profile.long_lived_access_tokens.prompt_name"
       ),
-      inputLabel: this.hass.localize(
+      inputLabel: this.menuai.localize(
         "ui.panel.profile.long_lived_access_tokens.name"
       ),
     });
@@ -113,7 +113,7 @@ class HaLongLivedTokens extends LitElement {
     }
 
     try {
-      const token = await this.hass.callWS<string>({
+      const token = await this.menuai.callWS<string>({
         type: "auth/long_lived_access_token",
         lifespan: 3650,
         client_name: name,
@@ -121,10 +121,10 @@ class HaLongLivedTokens extends LitElement {
 
       showLongLivedAccessTokenDialog(this, { token, name });
 
-      fireEvent(this, "hass-refresh-tokens");
+      fireEvent(this, "menuai-refresh-tokens");
     } catch (err: any) {
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.long_lived_access_tokens.create_failed"
         ),
         text: err.message,
@@ -136,28 +136,28 @@ class HaLongLivedTokens extends LitElement {
     const token = (ev.currentTarget as any).token;
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.long_lived_access_tokens.confirm_delete_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.profile.long_lived_access_tokens.confirm_delete_text",
           { name: token.client_name }
         ),
-        confirmText: this.hass.localize("ui.common.delete"),
+        confirmText: this.menuai.localize("ui.common.delete"),
         destructive: true,
       }))
     ) {
       return;
     }
     try {
-      await this.hass.callWS({
+      await this.menuai.callWS({
         type: "auth/delete_refresh_token",
         refresh_token_id: token.id,
       });
-      fireEvent(this, "hass-refresh-tokens");
+      fireEvent(this, "menuai-refresh-tokens");
     } catch (err: any) {
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.long_lived_access_tokens.delete_failed"
         ),
         text: err.message,

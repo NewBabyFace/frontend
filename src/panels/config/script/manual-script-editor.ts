@@ -30,7 +30,7 @@ import {
   normalizeScriptConfig,
 } from "../../../data/script";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import "../automation/action/ha-automation-action";
 import type HaAutomationAction from "../automation/action/ha-automation-action";
@@ -53,7 +53,7 @@ const scriptConfigStruct = object({
 
 @customElement("manual-script-editor")
 export class HaManualScriptEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -80,7 +80,7 @@ export class HaManualScriptEditor extends LitElement {
       value: {
         ...this.config,
         fields: {
-          [this.hass.localize("ui.panel.config.script.editor.field.field") ||
+          [this.menuai.localize("ui.panel.config.script.editor.field.field") ||
           "field"]: {
             selector: {
               text: null,
@@ -137,13 +137,13 @@ export class HaManualScriptEditor extends LitElement {
       ${this.config.fields
         ? html`<div class="header">
               <h2 id="fields-heading" class="name">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.script.editor.field.fields"
                 )}
               </h2>
               <a
                 href=${documentationUrl(
-                  this.hass,
+                  this.menuai,
                   "/integrations/script/#fields"
                 )}
                 target="_blank"
@@ -151,7 +151,7 @@ export class HaManualScriptEditor extends LitElement {
               >
                 <ha-icon-button
                   .path=${mdiHelpCircle}
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     "ui.panel.config.script.editor.field.link_help_fields"
                   )}
                 ></ha-icon-button>
@@ -164,23 +164,23 @@ export class HaManualScriptEditor extends LitElement {
               .fields=${this.config.fields}
               .highlightedFields=${this._pastedConfig?.fields}
               @value-changed=${this._fieldsChanged}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .disabled=${this.disabled}
             ></ha-script-fields>`
         : nothing}
 
       <div class="header">
         <h2 id="sequence-heading" class="name">
-          ${this.hass.localize("ui.panel.config.script.editor.sequence")}
+          ${this.menuai.localize("ui.panel.config.script.editor.sequence")}
         </h2>
         <a
-          href=${documentationUrl(this.hass, "/docs/scripts/")}
+          href=${documentationUrl(this.menuai, "/docs/scripts/")}
           target="_blank"
           rel="noreferrer"
         >
           <ha-icon-button
             .path=${mdiHelpCircle}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.script.editor.link_available_actions"
             )}
           ></ha-icon-button>
@@ -194,7 +194,7 @@ export class HaManualScriptEditor extends LitElement {
         .highlightedActions=${this._pastedConfig?.sequence || []}
         .path=${["sequence"]}
         @value-changed=${this._sequenceChanged}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .disabled=${this.disabled}
       ></ha-automation-action>
@@ -243,7 +243,7 @@ export class HaManualScriptEditor extends LitElement {
       loaded = load(paste);
     } catch (_err: any) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.panel.config.script.editor.paste_invalid_config"
         ),
         duration: 4000,
@@ -289,7 +289,7 @@ export class HaManualScriptEditor extends LitElement {
       assert(normalized, scriptConfigStruct);
     } catch (_err: any) {
       showToast(this, {
-        message: this.hass.localize(
+        message: this.menuai.localize(
           "ui.panel.config.script.editor.paste_invalid_config"
         ),
         duration: 4000,
@@ -372,12 +372,12 @@ export class HaManualScriptEditor extends LitElement {
 
   private _showPastedToastWithUndo() {
     showToast(this, {
-      message: this.hass.localize(
+      message: this.menuai.localize(
         "ui.panel.config.script.editor.paste_toast_message"
       ),
       duration: 4000,
       action: {
-        text: this.hass.localize("ui.common.undo"),
+        text: this.menuai.localize("ui.common.undo"),
         action: () => {
           fireEvent(this, "value-changed", {
             value: {

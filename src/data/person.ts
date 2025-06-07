@@ -1,8 +1,8 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface BasePerson {
   name: string;
@@ -22,7 +22,7 @@ export interface PersonMutableParams {
   picture: string | null;
 }
 
-interface PersonEntityAttributes extends HassEntityAttributeBase {
+interface PersonEntityAttributes extends menuaiEntityAttributeBase {
   id?: string;
   user_id?: string;
   device_trackers?: string[];
@@ -32,38 +32,38 @@ interface PersonEntityAttributes extends HassEntityAttributeBase {
   longitude?: number;
 }
 
-export interface PersonEntity extends HassEntityBase {
+export interface PersonEntity extends menuaiEntityBase {
   attributes: PersonEntityAttributes;
 }
 
-export const fetchPersons = (hass: HomeAssistant) =>
-  hass.callWS<{
+export const fetchPersons = (menuai: menuai) =>
+  menuai.callWS<{
     storage: Person[];
     config: Person[];
   }>({ type: "person/list" });
 
 export const createPerson = (
-  hass: HomeAssistant,
+  menuai: menuai,
   values: PersonMutableParams
 ) =>
-  hass.callWS<Person>({
+  menuai.callWS<Person>({
     type: "person/create",
     ...values,
   });
 
 export const updatePerson = (
-  hass: HomeAssistant,
+  menuai: menuai,
   personId: string,
   updates: Partial<PersonMutableParams>
 ) =>
-  hass.callWS<Person>({
+  menuai.callWS<Person>({
     type: "person/update",
     person_id: personId,
     ...updates,
   });
 
-export const deletePerson = (hass: HomeAssistant, personId: string) =>
-  hass.callWS({
+export const deletePerson = (menuai: menuai, personId: string) =>
+  menuai.callWS({
     type: "person/delete",
     person_id: personId,
   });

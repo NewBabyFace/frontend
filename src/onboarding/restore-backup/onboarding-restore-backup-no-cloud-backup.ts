@@ -82,7 +82,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "onboarding-restore-backup-no-cloud-backup": OnboardingRestoreBackupNoCloudBackup;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "sign-out": undefined;
   }
 }

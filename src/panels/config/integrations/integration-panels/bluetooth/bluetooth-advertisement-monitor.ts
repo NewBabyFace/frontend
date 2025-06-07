@@ -4,7 +4,7 @@ import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { storage } from "../../../../../common/decorators/storage";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import type {
   DataTableColumnContainer,
@@ -23,11 +23,11 @@ import {
   subscribeBluetoothScannersDetails,
 } from "../../../../../data/bluetooth";
 import type { DeviceRegistryEntry } from "../../../../../data/device_registry";
-import "../../../../../layouts/hass-tabs-subpage-data-table";
+import "../../../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import { showBluetoothDeviceInfoDialog } from "./show-dialog-bluetooth-device-info";
-import type { PageNavigation } from "../../../../../layouts/hass-tabs-subpage";
+import type { PageNavigation } from "../../../../../layouts/menuai-tabs-subpage";
 
 export const bluetoothAdvertisementMonitorTabs: PageNavigation[] = [
   {
@@ -42,7 +42,7 @@ export const bluetoothAdvertisementMonitorTabs: PageNavigation[] = [
 
 @customElement("bluetooth-advertisement-monitor")
 export class BluetoothAdvertisementMonitorPanel extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -78,21 +78,21 @@ export class BluetoothAdvertisementMonitorPanel extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass) {
+    if (this.menuai) {
       this._unsub_advertisements = subscribeBluetoothAdvertisements(
-        this.hass.connection,
+        this.menuai.connection,
         (data) => {
           this._data = data;
         }
       );
       this._unsub_scanners = subscribeBluetoothScannersDetails(
-        this.hass.connection,
+        this.menuai.connection,
         (scanners) => {
           this._scanners = scanners;
         }
       );
 
-      const devices = Object.values(this.hass.devices);
+      const devices = Object.values(this.menuai.devices);
       const bluetoothDevices = devices.filter((device) =>
         device.connections.find((connection) => connection[0] === "bluetooth")
       );
@@ -177,7 +177,7 @@ export class BluetoothAdvertisementMonitorPanel extends LitElement {
           defaultHidden: false,
           template: (ad) =>
             html`<ha-relative-time
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .datetime=${ad.datetime}
               capitalize
             ></ha-relative-time>`,
@@ -216,13 +216,13 @@ export class BluetoothAdvertisementMonitorPanel extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._dataWithNamedSourceAndIds(this._data)}
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.bluetooth.no_advertisements_found"
         )}
         @row-click=${this._handleRowClicked}
@@ -233,7 +233,7 @@ export class BluetoothAdvertisementMonitorPanel extends LitElement {
         filter=${this.address || ""}
         clickable
         .tabs=${bluetoothAdvertisementMonitorTabs}
-      ></hass-tabs-subpage-data-table>
+      ></menuai-tabs-subpage-data-table>
     `;
   }
 
@@ -245,7 +245,7 @@ export class BluetoothAdvertisementMonitorPanel extends LitElement {
     this._activeCollapsed = ev.detail.value;
   }
 
-  private _handleRowClicked(ev: HASSDomEvent<RowClickedEvent>) {
+  private _handleRowClicked(ev: menuaiDomEvent<RowClickedEvent>) {
     const entry = this._data.find((ent) => ent.address === ev.detail.id);
     showBluetoothDeviceInfoDialog(this, {
       entry: entry!,

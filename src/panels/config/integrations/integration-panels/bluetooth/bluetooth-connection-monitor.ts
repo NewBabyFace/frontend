@@ -20,14 +20,14 @@ import {
   subscribeBluetoothAdvertisements,
 } from "../../../../../data/bluetooth";
 import type { DeviceRegistryEntry } from "../../../../../data/device_registry";
-import "../../../../../layouts/hass-tabs-subpage-data-table";
+import "../../../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import "../../../../../components/ha-metric";
 
 @customElement("bluetooth-connection-monitor")
 export class BluetoothConnectionMonitorPanel extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -70,22 +70,22 @@ export class BluetoothConnectionMonitorPanel extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass) {
+    if (this.menuai) {
       this._unsubScanners = subscribeBluetoothScannersDetails(
-        this.hass.connection,
+        this.menuai.connection,
         (scanners) => {
           this._scanners = scanners;
         }
       );
       this._unsub_advertisements = subscribeBluetoothAdvertisements(
-        this.hass.connection,
+        this.menuai.connection,
         (data) => {
           for (const device of data) {
             this._addressNames[device.address] = device.name;
           }
         }
       );
-      const devices = Object.values(this.hass.devices);
+      const devices = Object.values(this.menuai.devices);
       const bluetoothDevices = devices.filter((device) =>
         device.connections.find((connection) => connection[0] === "bluetooth")
       );
@@ -107,7 +107,7 @@ export class BluetoothConnectionMonitorPanel extends LitElement {
     }
     this._unsubConnectionAllocations =
       await subscribeBluetoothConnectionAllocations(
-        this.hass.connection,
+        this.menuai.connection,
         (data) => {
           for (const allocation of data) {
             this._connectionAllocationData[allocation.source] = allocation;
@@ -210,20 +210,20 @@ export class BluetoothConnectionMonitorPanel extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage-data-table
-        .hass=${this.hass}
+      <menuai-tabs-subpage-data-table
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._dataWithNamedSourceAndIds(this._data)}
         .initialGroupColumn=${this._activeGrouping}
         .initialCollapsedGroups=${this._activeCollapsed}
-        .noDataText=${this.hass.localize(
+        .noDataText=${this.menuai.localize(
           "ui.panel.config.bluetooth.no_connections"
         )}
         @grouping-changed=${this._handleGroupingChanged}
         @collapsed-changed=${this._handleCollapseChanged}
-      ></hass-tabs-subpage-data-table>
+      ></menuai-tabs-subpage-data-table>
     `;
   }
 

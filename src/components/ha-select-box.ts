@@ -5,7 +5,7 @@ import { classMap } from "lit/directives/class-map";
 import { styleMap } from "lit/directives/style-map";
 import type { HaRadio } from "./ha-radio";
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { computeRTL } from "../common/util/compute_rtl";
 import { stopPropagation } from "../common/dom/stop_propagation";
 
@@ -25,7 +25,7 @@ export interface SelectBoxOption {
 
 @customElement("ha-select-box")
 export class HaSelectBox extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public options: SelectBoxOption[] = [];
 
@@ -52,8 +52,8 @@ export class HaSelectBox extends LitElement {
     const disabled = option.disabled || this.disabled || false;
     const selected = option.value === this.value;
 
-    const isDark = this.hass?.themes.darkMode || false;
-    const isRTL = this.hass ? computeRTL(this.hass) : false;
+    const isDark = this.menuai?.themes.darkMode || false;
+    const isRTL = this.menuai ? computeRTL(this.menuai) : false;
 
     const imageSrc =
       typeof option.image === "object"

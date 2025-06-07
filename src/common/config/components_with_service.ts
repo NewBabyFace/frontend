@@ -1,9 +1,9 @@
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 /** Return an array of domains with the service. */
 export const componentsWithService = (
-  hass: HomeAssistant,
+  menuai: menuai,
   service: string
 ): string[] =>
-  hass &&
-  Object.keys(hass.services).filter((key) => service in hass.services[key]);
+  menuai &&
+  Object.keys(menuai.services).filter((key) => service in menuai.services[key]);

@@ -24,8 +24,8 @@ gulp.task(
   )
 );
 
-gulp.task("clean-hassio", async () =>
-  deleteSync([paths.hassio_output_root, paths.build_dir])
+gulp.task("clean-menuaiio", async () =>
+  deleteSync([paths.menuaiio_output_root, paths.build_dir])
 );
 
 gulp.task(

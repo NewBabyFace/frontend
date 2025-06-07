@@ -1,7 +1,7 @@
 import type { PropertyValues } from "lit";
 import { ReactiveElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { evaluateStateFilter } from "../common/evaluate-filter";
 import { processConfigEntities } from "../common/process-config-entities";
 import {
@@ -22,7 +22,7 @@ export class HuiEntityFilterBadge
 {
   @property({ attribute: false }) public preview = false;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EntityFilterBadgeConfig;
 
@@ -69,9 +69,9 @@ export class HuiEntityFilterBadge
   protected shouldUpdate(changedProperties: PropertyValues): boolean {
     if (
       changedProperties.has("_config") ||
-      (changedProperties.has("hass") &&
+      (changedProperties.has("menuai") &&
         this._haveEntitiesChanged(
-          changedProperties.get("hass") as HomeAssistant | undefined
+          changedProperties.get("menuai") as menuai | undefined
         ))
     ) {
       return true;
@@ -81,18 +81,18 @@ export class HuiEntityFilterBadge
 
   protected update(changedProperties: PropertyValues) {
     super.update(changedProperties);
-    if (!this.hass || !this._configEntities) {
+    if (!this.menuai || !this._configEntities) {
       return;
     }
 
     if (this._elements) {
       for (const element of this._elements) {
-        element.hass = this.hass;
+        element.menuai = this.menuai;
       }
     }
 
     const entitiesList = this._configEntities.filter((entityConf) => {
-      const stateObj = this.hass.states[entityConf.entity];
+      const stateObj = this.menuai.states[entityConf.entity];
       if (!stateObj) return false;
 
       const conditions = entityConf.conditions ?? this._config!.conditions;
@@ -100,7 +100,7 @@ export class HuiEntityFilterBadge
         const conditionWithEntity = conditions.map((condition) =>
           addEntityToCondition(condition, entityConf.entity)
         );
-        return checkConditionsMet(conditionWithEntity, this.hass!);
+        return checkConditionsMet(conditionWithEntity, this.menuai!);
       }
 
       const filters = entityConf.state_filter ?? this._config!.state_filter;
@@ -126,7 +126,7 @@ export class HuiEntityFilterBadge
       this._elements = [];
       for (const badgeConfig of entitiesList) {
         const element = document.createElement("hui-badge");
-        element.hass = this.hass;
+        element.menuai = this.menuai;
         element.preview = this.preview;
         element.config = {
           type: "entity",
@@ -156,23 +156,23 @@ export class HuiEntityFilterBadge
     this.style.gap = "8px";
   }
 
-  private _haveEntitiesChanged(oldHass?: HomeAssistant): boolean {
-    if (!oldHass) {
+  private _haveEntitiesChanged(oldmenuai?: menuai): boolean {
+    if (!oldmenuai) {
       return true;
     }
 
-    if (!this._oldEntities || this.hass.localize !== oldHass.localize) {
+    if (!this._oldEntities || this.menuai.localize !== oldmenuai.localize) {
       return true;
     }
 
     for (const config of this._configEntities!) {
-      if (this.hass.states[config.entity] !== oldHass.states[config.entity]) {
+      if (this.menuai.states[config.entity] !== oldmenuai.states[config.entity]) {
         return true;
       }
       if (config.conditions) {
         const entityIds = extractConditionEntityIds(config.conditions);
         for (const entityId of entityIds) {
-          if (this.hass.states[entityId] !== oldHass.states[entityId]) {
+          if (this.menuai.states[entityId] !== oldmenuai.states[entityId]) {
             return true;
           }
         }
@@ -182,7 +182,7 @@ export class HuiEntityFilterBadge
     if (this._config?.conditions) {
       const entityIds = extractConditionEntityIds(this._config?.conditions);
       for (const entityId of entityIds) {
-        if (this.hass.states[entityId] !== oldHass.states[entityId]) {
+        if (this.menuai.states[entityId] !== oldmenuai.states[entityId]) {
           return true;
         }
       }

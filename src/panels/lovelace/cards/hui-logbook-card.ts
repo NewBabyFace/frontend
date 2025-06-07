@@ -3,11 +3,11 @@ import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import memoizeOne from "memoize-one";
-import type { HassServiceTarget } from "home-assistant-js-websocket";
+import type { menuaiServiceTarget } from "home-assistant-js-websocket";
 import { isComponentLoaded } from "../../../common/config/is_component_loaded";
 import { applyThemesOnElement } from "../../../common/dom/apply_themes_on_element";
 import "../../../components/ha-card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../../logbook/ha-logbook";
 import type { HaLogbook } from "../../logbook/ha-logbook";
 import { findEntities } from "../common/find-entities";
@@ -29,14 +29,14 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFill: string[]
   ) {
     const includeDomains = ["light", "switch"];
     const maxEntities = 3;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFill,
@@ -50,7 +50,7 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public layout?: string;
 
@@ -58,7 +58,7 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
 
   @state() private _time?: HaLogbook["time"];
 
-  @state() private _targetPickerValue: HassServiceTarget = {};
+  @state() private _targetPickerValue: menuaiServiceTarget = {};
 
   public getCardSize(): number {
     return 9 + (this._config?.title ? 1 : 0);
@@ -66,7 +66,7 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
 
   public validateTarget(
     config: LogbookCardConfig
-  ): HassServiceTarget | undefined {
+  ): menuaiServiceTarget | undefined {
     if (
       (config.entities && !config.entities.length) ||
       (config.target &&
@@ -121,9 +121,9 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
   private _getEntityIds(): string[] | undefined {
     const entities = this._getMemoizedEntityIds(
       this._targetPickerValue,
-      this.hass.entities,
-      this.hass.devices,
-      this.hass.areas
+      this.menuai.entities,
+      this.menuai.devices,
+      this.menuai.areas
     );
     if (entities.length === 0) {
       return undefined;
@@ -133,12 +133,12 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
 
   private _getMemoizedEntityIds = memoizeOne(
     (
-      targetPickerValue: HassServiceTarget,
-      entities: HomeAssistant["entities"],
-      devices: HomeAssistant["devices"],
-      areas: HomeAssistant["areas"]
+      targetPickerValue: menuaiServiceTarget,
+      entities: menuai["entities"],
+      devices: menuai["devices"],
+      areas: menuai["areas"]
     ): string[] =>
-      resolveEntityIDs(this.hass, targetPickerValue, entities, devices, areas)
+      resolveEntityIDs(this.menuai, targetPickerValue, entities, devices, areas)
   );
 
   protected update(changedProperties) {
@@ -150,32 +150,32 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
     const configChanged = changedProperties.has("_config");
-    const hassChanged = changedProperties.has("hass");
-    const oldHass = changedProperties.get("hass") as HomeAssistant | undefined;
+    const menuaiChanged = changedProperties.has("menuai");
+    const oldmenuai = changedProperties.get("menuai") as menuai | undefined;
     const oldConfig = changedProperties.get("_config") as LogbookCardConfig;
 
     if (
-      (hassChanged && oldHass?.themes !== this.hass.themes) ||
+      (menuaiChanged && oldmenuai?.themes !== this.menuai.themes) ||
       (configChanged && oldConfig?.theme !== this._config.theme)
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
-    if (!isComponentLoaded(this.hass, "logbook")) {
+    if (!isComponentLoaded(this.menuai, "logbook")) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${this.hass.localize("ui.components.logbook.not_loaded", {
+        <hui-warning .menuai=${this.menuai}>
+          ${this.menuai.localize("ui.components.logbook.not_loaded", {
             platform: "logbook",
           })}</hui-warning
         >
@@ -189,7 +189,7 @@ export class HuiLogbookCard extends LitElement implements LovelaceCard {
       >
         <div class="content">
           <ha-logbook
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .time=${this._time}
             .entityIds=${this._getEntityIds()}
             narrow

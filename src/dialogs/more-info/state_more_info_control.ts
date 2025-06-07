@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { computeStateDomain } from "../../common/entity/compute_state_domain";
 import {
   DOMAINS_HIDE_DEFAULT_MORE_INFO,
@@ -41,7 +41,7 @@ const LAZY_LOADED_MORE_INFO_CONTROL = {
   weather: () => import("./controls/more-info-weather"),
 };
 
-export const stateMoreInfoType = (stateObj: HassEntity): string => {
+export const stateMoreInfoType = (stateObj: menuaiEntity): string => {
   const domain = computeStateDomain(stateObj);
   return domainMoreInfoType(domain);
 };

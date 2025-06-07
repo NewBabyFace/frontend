@@ -11,7 +11,7 @@ import type {
   LovelaceViewConfig,
   LovelaceViewHeaderConfig,
 } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { HuiBadge } from "../badges/hui-badge";
 import "../badges/hui-view-badges";
 import type { HuiCard } from "../cards/hui-card";
@@ -28,7 +28,7 @@ export const DEFAULT_VIEW_HEADER_BADGES_WRAP = "wrap";
 
 @customElement("hui-view-header")
 export class HuiViewHeader extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public lovelace!: Lovelace;
 
@@ -98,8 +98,8 @@ export class HuiViewHeader extends LitElement {
     }
 
     if (this.card) {
-      if (changedProperties.has("hass")) {
-        this.card.hass = this.hass;
+      if (changedProperties.has("menuai")) {
+        this.card.menuai = this.menuai;
       }
       if (changedProperties.has("lovelace")) {
         this.card.preview = this.lovelace.editMode;
@@ -109,7 +109,7 @@ export class HuiViewHeader extends LitElement {
 
   private _createCardElement(cardConfig: LovelaceCardConfig) {
     const element = document.createElement("hui-card");
-    element.hass = this.hass;
+    element.menuai = this.menuai;
     element.preview = this.lovelace.editMode;
     element.config = cardConfig;
     element.load();
@@ -120,7 +120,7 @@ export class HuiViewHeader extends LitElement {
     const cardConfig: LovelaceCardConfig = {
       type: "markdown",
       text_only: true,
-      content: this.hass.localize(
+      content: this.menuai.localize(
         "ui.panel.lovelace.editor.edit_view_header.default_title",
         { user: "{{ user }}" }
       ),
@@ -173,7 +173,7 @@ export class HuiViewHeader extends LitElement {
     config.header = headerConfig;
 
     const updatedConfig = replaceView(
-      this.hass,
+      this.menuai,
       this.lovelace.config,
       this.viewIndex,
       config
@@ -215,7 +215,7 @@ export class HuiViewHeader extends LitElement {
             <div class="actions-container">
               <div class="actions">
                 <ha-icon-button
-                  .label=${this.hass.localize("ui.common.edit")}
+                  .label=${this.menuai.localize("ui.common.edit")}
                   @click=${this._configure}
                   .path=${mdiPencil}
                 ></ha-icon-button>
@@ -242,7 +242,7 @@ export class HuiViewHeader extends LitElement {
                           <hui-card-edit-mode
                             @ll-edit-card=${this._editCard}
                             @ll-delete-card=${this._deleteCard}
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .lovelace=${this.lovelace!}
                             .path=${[0]}
                             no-duplicate
@@ -255,7 +255,7 @@ export class HuiViewHeader extends LitElement {
                           <button class="add" @click=${this._addCard}>
                             <ha-ripple></ha-ripple>
                             <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.lovelace.editor.edit_view_header.add_title"
                             )}
                           </button>
@@ -271,7 +271,7 @@ export class HuiViewHeader extends LitElement {
                 >
                   <hui-view-badges
                     .badges=${this.badges}
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .lovelace=${this.lovelace!}
                     .viewIndex=${this.viewIndex!}
                     .showAddLabel=${this.badges.length === 0}

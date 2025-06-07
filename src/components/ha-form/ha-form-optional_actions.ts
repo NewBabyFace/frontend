@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { stopPropagation } from "../../common/dom/stop_propagation";
 import type { LocalizeFunc } from "../../common/translations/localize";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./ha-form";
 import "../ha-list-item";
 import type {
@@ -20,7 +20,7 @@ const NO_ACTIONS = [];
 export class HaFormOptionalActions extends LitElement implements HaFormElement {
   @property({ attribute: false }) public localize?: LocalizeFunc;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public data!: HaFormDataContainer;
 
@@ -101,7 +101,7 @@ export class HaFormOptionalActions extends LitElement implements HaFormElement {
       ${schema.length > 0
         ? html`
             <ha-form
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .data=${this.data}
               .schema=${schema}
               .disabled=${this.disabled}

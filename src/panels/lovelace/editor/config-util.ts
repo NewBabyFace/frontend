@@ -5,7 +5,7 @@ import type { LovelaceSectionRawConfig } from "../../../data/lovelace/config/sec
 import type { LovelaceConfig } from "../../../data/lovelace/config/types";
 import type { LovelaceViewConfig } from "../../../data/lovelace/config/view";
 import { isStrategyView } from "../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardPath, LovelaceContainerPath } from "./lovelace-path";
 import {
   findLovelaceContainer,
@@ -177,7 +177,7 @@ export const moveCard = (
 };
 
 export const addView = (
-  hass: HomeAssistant,
+  menuai: menuai,
   config: LovelaceConfig,
   viewConfig: LovelaceViewConfig,
   tolerantPath = false
@@ -185,7 +185,7 @@ export const addView = (
   if (viewConfig.path && config.views.some((v) => v.path === viewConfig.path)) {
     if (!tolerantPath) {
       throw new Error(
-        hass.localize("ui.panel.lovelace.editor.edit_view.error_same_url")
+        menuai.localize("ui.panel.lovelace.editor.edit_view.error_same_url")
       );
     } else {
       // add a suffix to the path
@@ -202,7 +202,7 @@ export const addView = (
 };
 
 export const replaceView = (
-  hass: HomeAssistant,
+  menuai: menuai,
   config: LovelaceConfig,
   viewIndex: number,
   viewConfig: LovelaceViewConfig
@@ -214,7 +214,7 @@ export const replaceView = (
     )
   ) {
     throw new Error(
-      hass.localize("ui.panel.lovelace.editor.edit_view.error_same_url")
+      menuai.localize("ui.panel.lovelace.editor.edit_view.error_same_url")
     );
   }
   return {
@@ -250,7 +250,7 @@ export const deleteView = (
 });
 
 export const moveViewToDashboard = (
-  hass: HomeAssistant,
+  menuai: menuai,
   fromConfig: LovelaceConfig,
   toConfig: LovelaceConfig,
   viewIndex: number
@@ -259,7 +259,7 @@ export const moveViewToDashboard = (
 
   return [
     deleteView(fromConfig, viewIndex),
-    addView(hass, toConfig, view, true),
+    addView(menuai, toConfig, view, true),
   ];
 };
 

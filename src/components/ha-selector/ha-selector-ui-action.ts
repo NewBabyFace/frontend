@@ -4,11 +4,11 @@ import { fireEvent } from "../../common/dom/fire_event";
 import type { ActionConfig } from "../../data/lovelace/config/action";
 import type { UiActionSelector } from "../../data/selector";
 import "../../panels/lovelace/components/hui-action-editor";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-selector-ui_action")
 export class HaSelectorUiAction extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: UiActionSelector;
 
@@ -22,7 +22,7 @@ export class HaSelectorUiAction extends LitElement {
     return html`
       <hui-action-editor
         .label=${this.label}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .config=${this.value}
         .actions=${this.selector.ui_action?.actions}
         .defaultAction=${this.selector.ui_action?.default_action}

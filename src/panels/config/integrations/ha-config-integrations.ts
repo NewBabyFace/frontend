@@ -10,11 +10,11 @@ import {
 } from "../../../data/config_flow";
 import type { DataEntryFlowProgress } from "../../../data/data_entry_flow";
 import { domainToName } from "../../../data/integration";
-import "../../../layouts/hass-loading-screen";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
+import "../../../layouts/menuai-loading-screen";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 import "./ha-config-integration-page";
 import "./ha-config-integrations-dashboard";
@@ -33,7 +33,7 @@ export interface DataEntryFlowProgressExtended extends DataEntryFlowProgress {
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "entry-updated": ConfigEntryUpdatedEvent;
     "entry-removed": ConfigEntryRemovedEvent;
   }
@@ -44,8 +44,8 @@ export interface ConfigEntryExtended extends ConfigEntry {
 }
 
 @customElement("ha-config-integrations")
-class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigIntegrations extends SubscribeMixin(menuaiRouterPage) {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -72,10 +72,10 @@ class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
 
   private _loadTranslationsPromise?: Promise<LocalizeFunc>;
 
-  public hassSubscribe() {
+  public menuaiSubscribe() {
     return [
       subscribeConfigEntries(
-        this.hass,
+        this.menuai,
         async (messages) => {
           if (messages.length === 0) {
             this._configEntries = [];
@@ -85,7 +85,7 @@ class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
           const newEntries: ConfigEntryExtended[] = [];
           await this._loadTranslationsPromise?.then(
             () =>
-              // allow hass to update
+              // allow menuai to update
               new Promise((resolve) => {
                 window.setTimeout(resolve, 0);
               })
@@ -95,7 +95,7 @@ class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
               newEntries.push({
                 ...message.entry,
                 localized_domain_name: domainToName(
-                  this.hass.localize,
+                  this.menuai.localize,
                   message.entry.domain
                 ),
               });
@@ -123,7 +123,7 @@ class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
         },
         { type: ["device", "hub", "service", "hardware"] }
       ),
-      subscribeConfigFlowInProgress(this.hass, async (messages) => {
+      subscribeConfigFlowInProgress(this.menuai, async (messages) => {
         if (messages.length === 0) {
           this._configEntriesInProgress = [];
           return;
@@ -162,8 +162,8 @@ class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
           .filter((flow) => flow.context.title_placeholders)
           .map((flow) => flow.handler);
         const localize = titleIntegrations.length
-          ? await this.hass.loadBackendTranslation("config", titleIntegrations)
-          : this.hass.localize;
+          ? await this.menuai.loadBackendTranslation("config", titleIntegrations)
+          : this.menuai.localize;
 
         this._configEntriesInProgress = [
           ...existingEntries!,
@@ -181,14 +181,14 @@ class HaConfigIntegrations extends SubscribeMixin(HassRouterPage) {
     if (this.hasUpdated) {
       return;
     }
-    this._loadTranslationsPromise = this.hass.loadBackendTranslation(
+    this._loadTranslationsPromise = this.menuai.loadBackendTranslation(
       "title",
-      this.hass.config.components.map((comp) => comp.split(".")[0])
+      this.menuai.config.components.map((comp) => comp.split(".")[0])
     );
   }
 
   protected updatePageEl(pageEl) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
 
     if (this._currentPage === "integration") {
       if (this.routeTail.path) {

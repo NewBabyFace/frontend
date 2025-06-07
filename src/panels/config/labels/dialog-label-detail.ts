@@ -11,17 +11,17 @@ import "../../../components/ha-switch";
 import "../../../components/ha-textarea";
 import "../../../components/ha-textfield";
 import type { LabelRegistryEntryMutableParams } from "../../../data/label_registry";
-import type { HassDialog } from "../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../dialogs/make-dialog-manager";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LabelDetailDialogParams } from "./show-dialog-label-detail";
 
 @customElement("dialog-label-detail")
 class DialogLabelDetail
   extends LitElement
-  implements HassDialog<LabelDetailDialogParams>
+  implements menuaiDialog<LabelDetailDialogParams>
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _name!: string;
 
@@ -79,10 +79,10 @@ class DialogLabelDetail
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._params.entry
             ? this._params.entry.name || this._params.entry.label_id
-            : this.hass!.localize("ui.panel.config.labels.detail.new_label")
+            : this.menuai!.localize("ui.panel.config.labels.detail.new_label")
         )}
       >
         <div>
@@ -95,29 +95,29 @@ class DialogLabelDetail
               .value=${this._name}
               .configValue=${"name"}
               @input=${this._input}
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.config.labels.detail.name"
               )}
-              .validationMessage=${this.hass!.localize(
+              .validationMessage=${this.menuai!.localize(
                 "ui.panel.config.labels.detail.required_error_msg"
               )}
               required
             ></ha-textfield>
             <ha-icon-picker
               .value=${this._icon}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .configValue=${"icon"}
               @value-changed=${this._valueChanged}
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.config.labels.detail.icon"
               )}
             ></ha-icon-picker>
             <ha-color-picker
               .value=${this._color}
               .configValue=${"color"}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               @value-changed=${this._valueChanged}
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.config.labels.detail.color"
               )}
             ></ha-color-picker>
@@ -125,7 +125,7 @@ class DialogLabelDetail
               .value=${this._description}
               .configValue=${"description"}
               @input=${this._input}
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.config.labels.detail.description"
               )}
             ></ha-textarea>
@@ -139,7 +139,7 @@ class DialogLabelDetail
                 @click=${this._deleteEntry}
                 .disabled=${this._submitting}
               >
-                ${this.hass!.localize("ui.panel.config.labels.detail.delete")}
+                ${this.menuai!.localize("ui.panel.config.labels.detail.delete")}
               </mwc-button>
             `
           : nothing}
@@ -149,8 +149,8 @@ class DialogLabelDetail
           .disabled=${this._submitting || !this._name}
         >
           ${this._params.entry
-            ? this.hass!.localize("ui.panel.config.labels.detail.update")
-            : this.hass!.localize("ui.panel.config.labels.detail.create")}
+            ? this.menuai!.localize("ui.panel.config.labels.detail.update")
+            : this.menuai!.localize("ui.panel.config.labels.detail.create")}
         </mwc-button>
       </ha-dialog>
     `;

@@ -3,7 +3,7 @@ import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { DOMAINS_TOGGLE } from "../../../common/const";
 import { computeDomain } from "../../../common/entity/compute_domain";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { processConfigEntities } from "../common/process-config-entities";
 import "../components/hui-buttons-base";
 import type {
@@ -18,7 +18,7 @@ export class HuiButtonsRow extends LitElement implements LovelaceRow {
     return { entities: [] };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _configEntities?: EntityConfig[];
 
@@ -41,7 +41,7 @@ export class HuiButtonsRow extends LitElement implements LovelaceRow {
   protected render(): TemplateResult | undefined {
     return html`
       <hui-buttons-base
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .configEntities=${this._configEntities}
       ></hui-buttons-base>
     `;

@@ -1,18 +1,18 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { CSSResultGroup } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../components/entity/state-info";
 import { activateScene } from "../data/scene";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { haStyle } from "../resources/styles";
 
 @customElement("state-card-scene")
 class StateCardScene extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -20,12 +20,12 @@ class StateCardScene extends LitElement {
     return html`
       <div class="horizontal justified layout">
         <state-info
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .stateObj=${this.stateObj}
           .inDialog=${this.inDialog}
         ></state-info>
         <mwc-button @click=${this._activateScene}
-          >${this.hass.localize("ui.card.scene.activate")}</mwc-button
+          >${this.menuai.localize("ui.card.scene.activate")}</mwc-button
         >
       </div>
     `;
@@ -33,7 +33,7 @@ class StateCardScene extends LitElement {
 
   private _activateScene(ev) {
     ev.stopPropagation();
-    activateScene(this.hass, this.stateObj.entity_id);
+    activateScene(this.menuai, this.stateObj.entity_id);
   }
 
   static get styles(): CSSResultGroup {

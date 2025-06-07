@@ -1,17 +1,17 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { ExtEntityRegistryEntry } from "../../data/entity_registry";
 import { importMoreInfoControl } from "../../panels/lovelace/custom-card-helpers";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { stateMoreInfoType } from "./state_more_info_control";
 import { dynamicElement } from "../../common/dom/dynamic-element-directive";
 
 @customElement("more-info-content")
 class MoreInfoContent extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property({ attribute: false }) public entry?: ExtEntityRegistryEntry | null;
 
@@ -20,7 +20,7 @@ class MoreInfoContent extends LitElement {
   protected render() {
     let moreInfoType: string | undefined;
 
-    if (!this.stateObj || !this.hass) return nothing;
+    if (!this.stateObj || !this.menuai) return nothing;
     if (
       this.stateObj.attributes &&
       "custom_ui_more_info" in this.stateObj.attributes
@@ -34,7 +34,7 @@ class MoreInfoContent extends LitElement {
 
     if (!moreInfoType) return nothing;
     return dynamicElement(moreInfoType, {
-      hass: this.hass,
+      menuai: this.menuai,
       stateObj: this.stateObj,
       entry: this.entry,
       editMode: this.editMode,

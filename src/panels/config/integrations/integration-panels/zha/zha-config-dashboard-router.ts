@@ -1,12 +1,12 @@
 import { customElement, property } from "lit/decorators";
 import { navigate } from "../../../../../common/navigate";
-import type { RouterOptions } from "../../../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../../../types";
+import type { RouterOptions } from "../../../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../../../layouts/menuai-router-page";
+import type { menuai } from "../../../../../types";
 
 @customElement("zha-config-dashboard-router")
-class ZHAConfigDashboardRouter extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class ZHAConfigDashboardRouter extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -49,7 +49,7 @@ class ZHAConfigDashboardRouter extends HassRouterPage {
 
   protected updatePageEl(el): void {
     el.route = this.routeTail;
-    el.hass = this.hass;
+    el.menuai = this.menuai;
     el.isWide = this.isWide;
     el.narrow = this.narrow;
     el.configEntryId = this._configEntry;

@@ -1,8 +1,8 @@
 import type { getConfigEntries } from "../../../src/data/config_entries";
-import type { MockHomeAssistant } from "../../../src/fake_data/provide_hass";
+import type { Mockmenuai } from "../../../src/fake_data/provide_menuai";
 
-export const mockConfigEntries = (hass: MockHomeAssistant) => {
-  hass.mockWS<typeof getConfigEntries>("config_entries/get", () => [
+export const mockConfigEntries = (menuai: Mockmenuai) => {
+  menuai.mockWS<typeof getConfigEntries>("config_entries/get", () => [
     {
       entry_id: "mock-entry-co2signal",
       domain: "co2signal",

@@ -1,6 +1,6 @@
 import type { ActionConfig } from "../../../data/lovelace/config/action";
 import type { LovelaceConfig } from "../../../data/lovelace/config/types";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 export const EXCLUDED_DOMAINS = ["zone", "persistent_notification"];
 
@@ -81,12 +81,12 @@ export const computeUsedEntities = (config: LovelaceConfig): Set<string> => {
 };
 
 export const calcUnusedEntities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   usedEntities: Set<string>
 ): Set<string> => {
   const unusedEntities = new Set<string>();
 
-  for (const entity of Object.keys(hass.states)) {
+  for (const entity of Object.keys(menuai.states)) {
     if (
       !usedEntities.has(entity) &&
       !EXCLUDED_DOMAINS.includes(entity.split(".", 1)[0])
@@ -99,10 +99,10 @@ export const calcUnusedEntities = (
 };
 
 export const computeUnusedEntities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   config: LovelaceConfig
 ): Set<string> => {
   const usedEntities = computeUsedEntities(config);
-  const unusedEntities = calcUnusedEntities(hass, usedEntities);
+  const unusedEntities = calcUnusedEntities(menuai, usedEntities);
   return unusedEntities;
 };

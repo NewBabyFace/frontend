@@ -17,7 +17,7 @@ import type {
   MoreInfoActionConfig,
 } from "../../../data/lovelace/config/action";
 import { SENSOR_DEVICE_CLASS_TIMESTAMP } from "../../../data/sensor";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { findEntities } from "../common/find-entities";
 import { handleAction } from "../common/handle-action";
@@ -38,14 +38,14 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): GlanceCardConfig {
     const includeDomains = ["sensor"];
     const maxEntities = 3;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -55,7 +55,7 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
     return { type: "glance", entities: foundEntities };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: GlanceCardConfig;
 
@@ -109,7 +109,7 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
 
     this._configEntities = entities;
 
-    if (this.hass) {
+    if (this.menuai) {
       this.requestUpdate();
     }
   }
@@ -119,7 +119,7 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
     const { title } = this._config;
@@ -137,22 +137,22 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | GlanceCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
   }
 
@@ -229,21 +229,21 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
   `;
 
   private _renderEntity(entityConf: GlanceConfigEntity): TemplateResult {
-    const stateObj = this.hass!.states[entityConf.entity];
+    const stateObj = this.menuai!.states[entityConf.entity];
 
     if (!stateObj) {
       return html`<div class="entity warning">
         ${this._config!.show_name
           ? html`
               <div class="name">
-                ${createEntityNotFoundWarning(this.hass!, entityConf.entity)}
+                ${createEntityNotFoundWarning(this.menuai!, entityConf.entity)}
               </div>
             `
           : ""}
         ${this._config!.show_icon
           ? html` <hui-warning-element
               .label=${createEntityNotFoundWarning(
-                this.hass!,
+                this.menuai!,
                 entityConf.entity
               )}
             ></hui-warning-element>`
@@ -275,7 +275,7 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
         ${this._config!.show_icon
           ? html`
               <state-badge
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
                 .overrideIcon=${entityConf.icon}
                 .overrideImage=${entityConf.image}
@@ -293,7 +293,7 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
                 !isUnavailableState(stateObj.state)
                   ? html`
                       <hui-timestamp-display
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .ts=${new Date(stateObj.state)}
                         .format=${entityConf.format}
                         capitalize
@@ -302,12 +302,12 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
                   : entityConf.show_last_changed
                     ? html`
                         <ha-relative-time
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                           .datetime=${stateObj.last_changed}
                           capitalize
                         ></ha-relative-time>
                       `
-                    : this.hass!.formatEntityState(stateObj)}
+                    : this.menuai!.formatEntityState(stateObj)}
               </div>
             `
           : ""}
@@ -317,7 +317,7 @@ export class HuiGlanceCard extends LitElement implements LovelaceCard {
 
   private _handleAction(ev: ActionHandlerEvent) {
     const config = (ev.currentTarget as any).config as GlanceConfigEntity;
-    handleAction(this, this.hass!, config, ev.detail.action!);
+    handleAction(this, this.menuai!, config, ev.detail.action!);
   }
 }
 

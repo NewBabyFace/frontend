@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { describe, it, expect } from "vitest";
 import {
   computeStateName,
@@ -10,7 +10,7 @@ describe("computeStateName", () => {
     const stateObj = {
       entity_id: "light.living_room",
       attributes: { friendly_name: "Living Room Light" },
-    } as HassEntity;
+    } as menuaiEntity;
     expect(computeStateName(stateObj)).toBe("Living Room Light");
   });
 
@@ -18,7 +18,7 @@ describe("computeStateName", () => {
     const stateObj = {
       entity_id: "light.living_room",
       attributes: {},
-    } as HassEntity;
+    } as menuaiEntity;
     expect(computeStateName(stateObj)).toBe("living room");
   });
 });

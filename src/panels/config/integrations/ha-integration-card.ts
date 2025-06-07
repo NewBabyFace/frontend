@@ -20,14 +20,14 @@ import type {
 } from "../../../data/integration";
 import { LogSeverity } from "../../../data/integration";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { ConfigEntryExtended } from "./ha-config-integrations";
 import "./ha-integration-header";
 import { PROTOCOL_INTEGRATIONS } from "../../../common/integrations/protocolIntegrationPicked";
 
 @customElement("ha-integration-card")
 export class HaIntegrationCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public domain!: string;
 
@@ -69,21 +69,21 @@ export class HaIntegrationCard extends LitElement {
         >
           <ha-ripple></ha-ripple>
           <ha-integration-header
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .domain=${this.domain}
             .localizedDomainName=${this.items[0].localized_domain_name}
             .error=${ERROR_STATES.includes(entryState)
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   `ui.panel.config.integrations.config_entry.state.${entryState}`
                 )
               : undefined}
             .warning=${entryState !== "loaded" &&
             !ERROR_STATES.includes(entryState)
-              ? this.hass.localize(
+              ? this.menuai.localize(
                   `ui.panel.config.integrations.config_entry.state.${entryState}`
                 )
               : debugLoggingEnabled
-                ? this.hass.localize(
+                ? this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.debug_logging_enabled"
                   )
                 : undefined}
@@ -98,7 +98,7 @@ export class HaIntegrationCard extends LitElement {
   }
 
   private _renderSingleEntry(): TemplateResult {
-    const devices = this._getDevices(this.items, this.hass.devices);
+    const devices = this._getDevices(this.items, this.menuai.devices);
     const entitiesCount = devices.length
       ? 0
       : this._getEntityCount(
@@ -121,7 +121,7 @@ export class HaIntegrationCard extends LitElement {
                 : `/config/devices/dashboard?historyBack=1&domain=${this.domain}`}
             >
               <ha-button>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.integrations.config_entry.${
                     services ? "services" : "devices"
                   }`,
@@ -134,7 +134,7 @@ export class HaIntegrationCard extends LitElement {
                 href=${`/config/entities?historyBack=1&domain=${this.domain}`}
               >
                 <ha-button>
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.integrations.config_entry.entities`,
                     { count: entitiesCount }
                   )}
@@ -145,7 +145,7 @@ export class HaIntegrationCard extends LitElement {
                   href=${`/config/integrations/integration/${this.domain}`}
                 >
                   <ha-button>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       `ui.panel.config.integrations.config_entry.entries`,
                       {
                         count: this.items.filter((itm) => itm.source !== "yaml")
@@ -164,8 +164,8 @@ export class HaIntegrationCard extends LitElement {
               >
                 <ha-tooltip
                   hoist
-                  .placement=${computeRTL(this.hass) ? "right" : "left"}
-                  .content=${this.hass.localize(
+                  .placement=${computeRTL(this.menuai) ? "right" : "left"}
+                  .content=${this.menuai.localize(
                     this.manifest.overwrites_built_in
                       ? "ui.panel.config.integrations.config_entry.custom_overwrites_core"
                       : "ui.panel.config.integrations.config_entry.custom_integration"
@@ -179,8 +179,8 @@ export class HaIntegrationCard extends LitElement {
             ? html`<div class="icon cloud">
                 <ha-tooltip
                   hoist
-                  .placement=${computeRTL(this.hass) ? "right" : "left"}
-                  .content=${this.hass.localize(
+                  .placement=${computeRTL(this.menuai) ? "right" : "left"}
+                  .content=${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.depends_on_cloud"
                   )}
                 >
@@ -194,8 +194,8 @@ export class HaIntegrationCard extends LitElement {
             ? html`<div class="icon yaml">
                 <ha-tooltip
                   hoist
-                  .placement=${computeRTL(this.hass) ? "right" : "left"}
-                  .content=${this.hass.localize(
+                  .placement=${computeRTL(this.menuai) ? "right" : "left"}
+                  .content=${this.menuai.localize(
                     "ui.panel.config.integrations.config_entry.no_config_flow"
                   )}
                 >
@@ -266,7 +266,7 @@ export class HaIntegrationCard extends LitElement {
   private _getDevices = memoizeOne(
     (
       configEntry: ConfigEntry[],
-      deviceRegistryEntries: HomeAssistant["devices"]
+      deviceRegistryEntries: menuai["devices"]
     ): DeviceRegistryEntry[] => {
       if (!deviceRegistryEntries) {
         return [];

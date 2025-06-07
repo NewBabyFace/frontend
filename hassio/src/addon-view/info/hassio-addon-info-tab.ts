@@ -2,24 +2,24 @@ import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../../src/components/ha-spinner";
-import type { HassioAddonDetails } from "../../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../../src/data/menuaiio/addon";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant, Route } from "../../../../src/types";
-import { hassioStyle } from "../../resources/hassio-style";
-import "./hassio-addon-info";
+import type { menuai, Route } from "../../../../src/types";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
+import "./menuaiio-addon-info";
 
-@customElement("hassio-addon-info-tab")
-class HassioAddonInfoDashboard extends LitElement {
+@customElement("menuaiio-addon-info-tab")
+class menuaiioAddonInfoDashboard extends LitElement {
   @property({ type: Boolean }) public narrow = false;
 
   @property({ attribute: false }) public route!: Route;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public addon?: HassioAddonDetails;
+  @property({ attribute: false }) public addon?: menuaiioAddonDetails;
 
   @property({ type: Boolean, attribute: "control-enabled" })
   public controlEnabled = false;
@@ -31,14 +31,14 @@ class HassioAddonInfoDashboard extends LitElement {
 
     return html`
       <div class="content">
-        <hassio-addon-info
+        <menuaiio-addon-info
           .narrow=${this.narrow}
           .route=${this.route}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .supervisor=${this.supervisor}
           .addon=${this.addon}
           .controlEnabled=${this.controlEnabled}
-        ></hassio-addon-info>
+        ></menuaiio-addon-info>
       </div>
     `;
   }
@@ -46,7 +46,7 @@ class HassioAddonInfoDashboard extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         .content {
           margin: auto;
@@ -60,6 +60,6 @@ class HassioAddonInfoDashboard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-info-tab": HassioAddonInfoDashboard;
+    "menuaiio-addon-info-tab": menuaiioAddonInfoDashboard;
   }
 }

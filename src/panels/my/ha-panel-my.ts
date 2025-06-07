@@ -12,8 +12,8 @@ import {
   extractSearchParamsObject,
 } from "../../common/url/search-params";
 import { domainToName } from "../../data/integration";
-import "../../layouts/hass-error-screen";
-import type { HomeAssistant, Route } from "../../types";
+import "../../layouts/menuai-error-screen";
+import type { menuai, Route } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 
 // When a user presses "m", the user is redirected to the first redirect
@@ -339,7 +339,7 @@ export interface Redirect {
 
 @customElement("ha-panel-my")
 class HaPanelMy extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -350,16 +350,16 @@ class HaPanelMy extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     const path = this.route.path.substring(1);
-    const hasSupervisor = isComponentLoaded(this.hass, "hassio");
+    const menuaiupervisor = isComponentLoaded(this.menuai, "menuaiio");
 
     this._redirect = getRedirect(path);
 
     if (path.startsWith("supervisor") && this._redirect === undefined) {
-      if (!hasSupervisor) {
+      if (!menuaiupervisor) {
         this._error = "no_supervisor";
         return;
       }
-      navigate(`/hassio/_my_redirect/${path}${window.location.search}`, {
+      navigate(`/menuaiio/_my_redirect/${path}${window.location.search}`, {
         replace: true,
       });
       return;
@@ -371,8 +371,8 @@ class HaPanelMy extends LitElement {
     }
 
     if (this._redirect.redirect === "#external-app-configuration") {
-      if (this.hass.auth.external?.config.hasSettingsScreen) {
-        this.hass.auth.external!.fireMessage({ type: "config_screen/show" });
+      if (this.menuai.auth.external?.config.menuaiettingsScreen) {
+        this.menuai.auth.external!.fireMessage({ type: "config_screen/show" });
         return;
       }
       this._error = "not_app";
@@ -381,18 +381,18 @@ class HaPanelMy extends LitElement {
 
     if (
       this._redirect.component &&
-      !isComponentLoaded(this.hass, this._redirect.component)
+      !isComponentLoaded(this.menuai, this._redirect.component)
     ) {
-      this.hass.loadBackendTranslation("title", this._redirect.component);
+      this.menuai.loadBackendTranslation("title", this._redirect.component);
       this._error = "no_component";
       const component = this._redirect.component;
       if ((PROTOCOL_INTEGRATIONS as readonly string[]).includes(component)) {
         const params = extractSearchParamsObject();
-        this.hass
+        this.menuai
           .loadFragmentTranslation("config")
           .then()
           .then(() => {
-            protocolIntegrationPicked(this, this.hass, component, {
+            protocolIntegrationPicked(this, this.menuai, component, {
               domain: params.domain,
               brand: params.brand,
             });
@@ -422,62 +422,62 @@ class HaPanelMy extends LitElement {
       switch (this._error) {
         case "not_supported":
           error =
-            this.hass.localize("ui.panel.my.not_supported", {
+            this.menuai.localize("ui.panel.my.not_supported", {
               link: html`<a
                 target="_blank"
                 rel="noreferrer noopener"
                 href="https://my.home-assistant.io/faq.html#supported-pages"
-                >${this.hass.localize("ui.panel.my.faq_link")}</a
+                >${this.menuai.localize("ui.panel.my.faq_link")}</a
               >`,
             }) || "This redirect is not supported.";
           break;
         case "no_component":
           error =
-            this.hass.localize("ui.panel.my.component_not_loaded", {
+            this.menuai.localize("ui.panel.my.component_not_loaded", {
               integration: html`<a
                 target="_blank"
                 rel="noreferrer noopener"
                 href=${documentationUrl(
-                  this.hass,
+                  this.menuai,
                   `/integrations/${this._redirect!.component!}`
                 )}
                 >${domainToName(
-                  this.hass.localize,
+                  this.menuai.localize,
                   this._redirect!.component!
                 )}</a
               >`,
             }) || "This redirect is not supported.";
           break;
         case "no_supervisor":
-          error = this.hass.localize("ui.panel.my.no_supervisor", {
+          error = this.menuai.localize("ui.panel.my.no_supervisor", {
             docs_link: html`<a
               target="_blank"
               rel="noreferrer noopener"
-              href=${documentationUrl(this.hass, "/installation")}
-              >${this.hass.localize("ui.panel.my.documentation")}</a
+              href=${documentationUrl(this.menuai, "/installation")}
+              >${this.menuai.localize("ui.panel.my.documentation")}</a
             >`,
           });
           break;
         case "not_app":
-          error = this.hass.localize("ui.panel.my.not_app", {
+          error = this.menuai.localize("ui.panel.my.not_app", {
             link: html`<a
               target="_blank"
               rel="noreferrer noopener"
               href="https://companion.home-assistant.io/download"
-              >${this.hass.localize("ui.panel.my.download_app")}</a
+              >${this.menuai.localize("ui.panel.my.download_app")}</a
             >`,
           });
           break;
         case "url_error":
-          error = this.hass.localize("ui.panel.my.url_error");
+          error = this.menuai.localize("ui.panel.my.url_error");
           break;
         default:
-          error = this.hass.localize("ui.panel.my.error") || "Unknown error";
+          error = this.menuai.localize("ui.panel.my.error") || "Unknown error";
       }
-      return html`<hass-error-screen
+      return html`<menuai-error-screen
         .error=${error}
-        .hass=${this.hass}
-      ></hass-error-screen>`;
+        .menuai=${this.menuai}
+      ></menuai-error-screen>`;
     }
     return nothing;
   }

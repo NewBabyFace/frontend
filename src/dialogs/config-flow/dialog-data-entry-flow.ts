@@ -4,7 +4,7 @@ import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../common/dom/fire_event";
 import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-dialog";
 import "../../components/ha-dialog-header";
@@ -16,7 +16,7 @@ import {
 } from "../../data/data_entry_flow";
 import type { DeviceRegistryEntry } from "../../data/device_registry";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 import { showAlertDialog } from "../generic/show-dialog-box";
 import type {
@@ -40,18 +40,18 @@ interface FlowUpdateEvent {
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "flow-update": FlowUpdateEvent;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "flow-update": HASSDomEvent<FlowUpdateEvent>;
+    "flow-update": menuaiDomEvent<FlowUpdateEvent>;
   }
 }
 
 @customElement("dialog-data-entry-flow")
 class DataEntryFlowDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: DataEntryFlowDialogParams;
 
@@ -83,7 +83,7 @@ class DataEntryFlowDialog extends LitElement {
       this._handler = params.startFlowHandler;
       try {
         step = await this._params!.flowConfig.createFlow(
-          this.hass,
+          this.menuai,
           params.startFlowHandler
         );
       } catch (err: any) {
@@ -93,10 +93,10 @@ class DataEntryFlowDialog extends LitElement {
           message = JSON.stringify(message);
         }
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.integrations.config_flow.error"
           ),
-          text: `${this.hass.localize(
+          text: `${this.menuai.localize(
             "ui.panel.config.integrations.config_flow.could_not_load"
           )}: ${message}`,
         });
@@ -110,7 +110,7 @@ class DataEntryFlowDialog extends LitElement {
       this._loading = "loading_flow";
       try {
         step = await params.flowConfig.fetchFlow(
-          this.hass,
+          this.menuai,
           params.continueFlowId
         );
       } catch (err: any) {
@@ -120,10 +120,10 @@ class DataEntryFlowDialog extends LitElement {
           message = JSON.stringify(message);
         }
         showAlertDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.config.integrations.config_flow.error"
           ),
-          text: `${this.hass.localize(
+          text: `${this.menuai.localize(
             "ui.panel.config.integrations.config_flow.could_not_load"
           )}: ${message}`,
         });
@@ -152,7 +152,7 @@ class DataEntryFlowDialog extends LitElement {
 
     // If we created this flow, delete it now.
     if (this._step && !flowFinished && !this._params.continueFlowId) {
-      this._params.flowConfig.deleteFlow(this.hass, this._step.flow_id);
+      this._params.flowConfig.deleteFlow(this.menuai, this._step.flow_id);
     }
 
     if (this._step && this._params.dialogClosedCallback) {
@@ -193,29 +193,29 @@ class DataEntryFlowDialog extends LitElement {
     switch (this._step.type) {
       case "form":
         return this._params.flowConfig.renderShowFormStepHeader(
-          this.hass,
+          this.menuai,
           this._step
         );
       case "abort":
         return this._params.flowConfig.renderAbortHeader
-          ? this._params.flowConfig.renderAbortHeader(this.hass, this._step)
-          : this.hass.localize(
+          ? this._params.flowConfig.renderAbortHeader(this.menuai, this._step)
+          : this.menuai.localize(
               `component.${this._params.domain ?? this._step.handler}.title`
             );
       case "progress":
         return this._params.flowConfig.renderShowFormProgressHeader(
-          this.hass,
+          this.menuai,
           this._step
         );
       case "menu":
-        return this._params.flowConfig.renderMenuHeader(this.hass, this._step);
+        return this._params.flowConfig.renderMenuHeader(this.menuai, this._step);
       case "create_entry": {
         const devicesLength = this._devices(
           this._params.flowConfig.showDevices,
-          Object.values(this.hass.devices),
+          Object.values(this.menuai.devices),
           this._step.result?.entry_id
         ).length;
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.integrations.config_flow.${
             devicesLength ? "device_created" : "success"
           }`,
@@ -237,22 +237,22 @@ class DataEntryFlowDialog extends LitElement {
     switch (this._step.type) {
       case "form":
         return this._params.flowConfig.renderShowFormStepSubheader?.(
-          this.hass,
+          this.menuai,
           this._step
         );
       case "abort":
         return this._params.flowConfig.renderAbortSubheader?.(
-          this.hass,
+          this.menuai,
           this._step
         );
       case "progress":
         return this._params.flowConfig.renderShowFormProgressSubheader?.(
-          this.hass,
+          this.menuai,
           this._step
         );
       case "menu":
         return this._params.flowConfig.renderMenuSubheader?.(
-          this.hass,
+          this.menuai,
           this._step
         );
       default:
@@ -290,7 +290,7 @@ class DataEntryFlowDialog extends LitElement {
       >
         <ha-dialog-header slot="heading">
           <ha-icon-button
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
             dialogAction="close"
             slot="navigationIcon"
@@ -314,7 +314,7 @@ class DataEntryFlowDialog extends LitElement {
                   class="help"
                   href=${this._params.manifest!.is_built_in
                     ? documentationUrl(
-                        this.hass,
+                        this.menuai,
                         `/integrations/${this._params.manifest!.domain}`
                       )
                     : this._params.manifest!.documentation}
@@ -322,7 +322,7 @@ class DataEntryFlowDialog extends LitElement {
                   rel="noreferrer noopener"
                 >
                   <ha-icon-button
-                    .label=${this.hass.localize("ui.common.help")}
+                    .label=${this.menuai.localize("ui.common.help")}
                     .path=${mdiHelpCircle}
                   >
                   </ha-icon-button
@@ -335,7 +335,7 @@ class DataEntryFlowDialog extends LitElement {
             ? html`
                 <step-flow-loading
                   .flowConfig=${this._params.flowConfig}
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .loadingReason=${this._loading!}
                   .handler=${this._handler}
                   .step=${this._step}
@@ -352,7 +352,7 @@ class DataEntryFlowDialog extends LitElement {
                           narrow
                           .flowConfig=${this._params.flowConfig}
                           .step=${this._step}
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                         ></step-flow-form>
                       `
                     : this._step.type === "external"
@@ -360,7 +360,7 @@ class DataEntryFlowDialog extends LitElement {
                           <step-flow-external
                             .flowConfig=${this._params.flowConfig}
                             .step=${this._step}
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                           ></step-flow-external>
                         `
                       : this._step.type === "abort"
@@ -368,7 +368,7 @@ class DataEntryFlowDialog extends LitElement {
                             <step-flow-abort
                               .params=${this._params}
                               .step=${this._step}
-                              .hass=${this.hass}
+                              .menuai=${this.menuai}
                               .handler=${this._step.handler}
                               .domain=${this._params.domain ??
                               this._step.handler}
@@ -379,7 +379,7 @@ class DataEntryFlowDialog extends LitElement {
                               <step-flow-progress
                                 .flowConfig=${this._params.flowConfig}
                                 .step=${this._step}
-                                .hass=${this.hass}
+                                .menuai=${this.menuai}
                                 .progress=${this._progress}
                               ></step-flow-progress>
                             `
@@ -388,19 +388,19 @@ class DataEntryFlowDialog extends LitElement {
                                 <step-flow-menu
                                   .flowConfig=${this._params.flowConfig}
                                   .step=${this._step}
-                                  .hass=${this.hass}
+                                  .menuai=${this.menuai}
                                 ></step-flow-menu>
                               `
                             : html`
                                 <step-flow-create-entry
                                   .flowConfig=${this._params.flowConfig}
                                   .step=${this._step}
-                                  .hass=${this.hass}
+                                  .menuai=${this.menuai}
                                   .navigateToResult=${this._params
                                     .navigateToResult ?? false}
                                   .devices=${this._devices(
                                     this._params.flowConfig.showDevices,
-                                    Object.values(this.hass.devices),
+                                    Object.values(this.menuai.devices),
                                     this._step.result?.entry_id
                                   )}
                                 ></step-flow-create-entry>
@@ -445,7 +445,7 @@ class DataEntryFlowDialog extends LitElement {
     } catch (err: any) {
       this.closeDialog();
       showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.error"
         ),
         text: err?.body?.message,
@@ -466,16 +466,16 @@ class DataEntryFlowDialog extends LitElement {
     }
     this._progress = undefined;
     const unsubs = [
-      subscribeDataEntryFlowProgressed(this.hass.connection, (ev) => {
+      subscribeDataEntryFlowProgressed(this.menuai.connection, (ev) => {
         if (ev.data.flow_id !== this._step?.flow_id) {
           return;
         }
         this._processStep(
-          this._params!.flowConfig.fetchFlow(this.hass, this._step.flow_id)
+          this._params!.flowConfig.fetchFlow(this.menuai, this._step.flow_id)
         );
         this._progress = undefined;
       }),
-      subscribeDataEntryFlowProgress(this.hass.connection, (ev) => {
+      subscribeDataEntryFlowProgress(this.menuai.connection, (ev) => {
         // ha-progress-ring has an issue with 0 so we round up
         this._progress = Math.ceil(ev.data.progress * 100);
       }),

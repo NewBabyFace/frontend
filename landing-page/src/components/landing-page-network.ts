@@ -14,7 +14,7 @@ import {
   type NetworkInfo,
 } from "../data/supervisor";
 import { showAlertDialog } from "../../../src/dialogs/generic/show-dialog-box";
-import type { NetworkInterface } from "../../../src/data/hassio/network";
+import type { NetworkInterface } from "../../../src/data/menuaiio/network";
 import { fireEvent } from "../../../src/common/dom/fire_event";
 
 @customElement("landing-page-network")
@@ -142,7 +142,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "landing-page-network": LandingPageNetwork;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "dns-set": undefined;
   }
 }

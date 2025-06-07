@@ -10,7 +10,7 @@ import {
   type RepairsIssue,
 } from "../../../data/repairs";
 import { showConfigFlowDialog } from "../../../dialogs/config-flow/show-dialog-config-flow";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { fixStatisticsIssue } from "../../developer-tools/statistics/fix-statistics";
 import { showRepairsFlowDialog } from "./show-dialog-repair-flow";
@@ -23,7 +23,7 @@ import {
 
 @customElement("ha-config-repairs")
 class HaConfigRepairs extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -42,19 +42,19 @@ class HaConfigRepairs extends LitElement {
 
     return html`
       <div class="title">
-        ${this.hass.localize("ui.panel.config.repairs.title", {
+        ${this.menuai.localize("ui.panel.config.repairs.title", {
           count: this.total || this.repairsIssues.length,
         })}
       </div>
       <ha-md-list>
         ${issues.map((issue) => {
-          const domainName = domainToName(this.hass.localize, issue.domain);
+          const domainName = domainToName(this.menuai.localize, issue.domain);
 
           const createdBy =
             issue.created && domainName
-              ? this.hass.localize("ui.panel.config.repairs.created_at_by", {
+              ? this.menuai.localize("ui.panel.config.repairs.created_at_by", {
                   date: capitalizeFirstLetter(
-                    relativeTime(new Date(issue.created), this.hass.locale)
+                    relativeTime(new Date(issue.created), this.menuai.locale)
                   ),
                   integration: domainName,
                 })
@@ -76,14 +76,14 @@ class HaConfigRepairs extends LitElement {
                   domain: issue.issue_domain || issue.domain,
                   type: "icon",
                   useFallback: true,
-                  darkOptimized: this.hass.themes?.darkMode,
+                  darkOptimized: this.menuai.themes?.darkMode,
                 })}
                 .title=${domainName}
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"
               />
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `component.${issue.domain}.issues.${issue.translation_key || issue.issue_id}.title`,
                   issue.translation_placeholders || {}
                 ) ||
@@ -92,7 +92,7 @@ class HaConfigRepairs extends LitElement {
               <span slot="supporting-text">
                 ${issue.severity === "critical" || issue.severity === "error"
                   ? html`<span class="error"
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         `ui.panel.config.repairs.${issue.severity}`
                       )}</span
                     >`
@@ -106,7 +106,7 @@ class HaConfigRepairs extends LitElement {
                   ? html`<span .title=${createdBy}>${createdBy}</span>`
                   : nothing}
                 ${issue.ignored
-                  ? ` · ${this.hass.localize(
+                  ? ` · ${this.menuai.localize(
                       "ui.panel.config.repairs.dialog.ignored_in_version_short",
                       { version: issue.dismissed_version }
                     )}`
@@ -127,11 +127,11 @@ class HaConfigRepairs extends LitElement {
     if (issue.is_fixable) {
       showRepairsFlowDialog(this, issue);
     } else if (
-      issue.domain === "homeassistant" &&
+      issue.domain === "menuai" &&
       issue.translation_key === "config_entry_reauth"
     ) {
       const data = await fetchRepairsIssueData(
-        this.hass.connection,
+        this.menuai.connection,
         issue.domain,
         issue.issue_id
       );
@@ -145,9 +145,9 @@ class HaConfigRepairs extends LitElement {
       issue.translation_key &&
       STATISTIC_TYPES.includes(issue.translation_key as any)
     ) {
-      this.hass.loadFragmentTranslation("developer-tools");
+      this.menuai.loadFragmentTranslation("developer-tools");
       const data = await fetchRepairsIssueData(
-        this.hass.connection,
+        this.menuai.connection,
         issue.domain,
         issue.issue_id
       );
@@ -157,7 +157,7 @@ class HaConfigRepairs extends LitElement {
             .issue_type as StatisticsValidationResult["type"],
           data: data.issue_data as any,
         });
-        updateStatisticsIssues(this.hass);
+        updateStatisticsIssues(this.menuai);
       }
     } else {
       showRepairsIssueDialog(this, {

@@ -2,23 +2,23 @@ import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../../src/components/ha-spinner";
-import type { HassioAddonDetails } from "../../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../../src/data/menuaiio/addon";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
 import { haStyle } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import { hassioStyle } from "../../resources/hassio-style";
-import "../info/hassio-addon-system-managed";
-import "./hassio-addon-audio";
-import "./hassio-addon-config";
-import "./hassio-addon-network";
+import type { menuai } from "../../../../src/types";
+import { menuaiioStyle } from "../../resources/menuaiio-style";
+import "../info/menuaiio-addon-system-managed";
+import "./menuaiio-addon-audio";
+import "./menuaiio-addon-config";
+import "./menuaiio-addon-network";
 
-@customElement("hassio-addon-config-tab")
-class HassioAddonConfigDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuaiio-addon-config-tab")
+class menuaiioAddonConfigDashboard extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public supervisor!: Supervisor;
 
-  @property({ attribute: false }) public addon?: HassioAddonDetails;
+  @property({ attribute: false }) public addon?: menuaiioAddonDetails;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -38,46 +38,46 @@ class HassioAddonConfigDashboard extends LitElement {
         ${this.addon.system_managed &&
         (hasConfiguration || this.addon.network || this.addon.audio)
           ? html`
-              <hassio-addon-system-managed
+              <menuaiio-addon-system-managed
                 .supervisor=${this.supervisor}
                 .narrow=${this.narrow}
                 .hideButton=${this.controlEnabled}
-              ></hassio-addon-system-managed>
+              ></menuaiio-addon-system-managed>
             `
           : nothing}
         ${hasConfiguration || this.addon.network || this.addon.audio
           ? html`
               ${hasConfiguration
                 ? html`
-                    <hassio-addon-config
-                      .hass=${this.hass}
+                    <menuaiio-addon-config
+                      .menuai=${this.menuai}
                       .addon=${this.addon}
                       .supervisor=${this.supervisor}
                       .disabled=${this.addon.system_managed &&
                       !this.controlEnabled}
-                    ></hassio-addon-config>
+                    ></menuaiio-addon-config>
                   `
                 : nothing}
               ${this.addon.network
                 ? html`
-                    <hassio-addon-network
-                      .hass=${this.hass}
+                    <menuaiio-addon-network
+                      .menuai=${this.menuai}
                       .addon=${this.addon}
                       .supervisor=${this.supervisor}
                       .disabled=${this.addon.system_managed &&
                       !this.controlEnabled}
-                    ></hassio-addon-network>
+                    ></menuaiio-addon-network>
                   `
                 : nothing}
               ${this.addon.audio
                 ? html`
-                    <hassio-addon-audio
-                      .hass=${this.hass}
+                    <menuaiio-addon-audio
+                      .menuai=${this.menuai}
                       .addon=${this.addon}
                       .supervisor=${this.supervisor}
                       .disabled=${this.addon.system_managed &&
                       !this.controlEnabled}
-                    ></hassio-addon-audio>
+                    ></menuaiio-addon-audio>
                   `
                 : nothing}
             `
@@ -89,16 +89,16 @@ class HassioAddonConfigDashboard extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       haStyle,
-      hassioStyle,
+      menuaiioStyle,
       css`
         .content {
           margin: auto;
           padding: 8px;
           max-width: 1024px;
         }
-        hassio-addon-network,
-        hassio-addon-audio,
-        hassio-addon-config {
+        menuaiio-addon-network,
+        menuaiio-addon-audio,
+        menuaiio-addon-config {
           margin-bottom: 24px;
         }
       `,
@@ -108,6 +108,6 @@ class HassioAddonConfigDashboard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hassio-addon-config-tab": HassioAddonConfigDashboard;
+    "menuaiio-addon-config-tab": menuaiioAddonConfigDashboard;
   }
 }

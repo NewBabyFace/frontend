@@ -9,7 +9,7 @@ import { stringCompare } from "../common/string/compare";
 import type { IntegrationManifest } from "../data/integration";
 import { fetchIntegrationManifests } from "../data/integration";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-domain-icon";
 import "./ha-expansion-panel";
@@ -18,7 +18,7 @@ import "./search-input-outlined";
 
 @customElement("ha-filter-integrations")
 export class HaFilterIntegrations extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: string[];
 
@@ -41,7 +41,7 @@ export class HaFilterIntegrations extends LitElement {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize("ui.panel.config.integrations.caption")}
+          ${this.menuai.localize("ui.panel.config.integrations.caption")}
           ${this.value?.length
             ? html`<div class="badge">${this.value?.length}</div>
                 <ha-icon-button
@@ -52,7 +52,7 @@ export class HaFilterIntegrations extends LitElement {
         </div>
         ${this._manifests && this._shouldRender
           ? html`<search-input-outlined
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .filter=${this._filter}
                 @value-changed=${this._handleSearchChange}
               >
@@ -75,7 +75,7 @@ export class HaFilterIntegrations extends LitElement {
                     >
                       <ha-domain-icon
                         slot="graphic"
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .domain=${integration.domain}
                         brand-fallback
                       ></ha-domain-icon>
@@ -107,7 +107,7 @@ export class HaFilterIntegrations extends LitElement {
   }
 
   protected async firstUpdated() {
-    this._manifests = await fetchIntegrationManifests(this.hass);
+    this._manifests = await fetchIntegrationManifests(this.menuai);
   }
 
   private _integrations = memoizeOne(
@@ -127,7 +127,7 @@ export class HaFilterIntegrations extends LitElement {
           stringCompare(
             a.name || a.domain,
             b.name || b.domain,
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         )
   );

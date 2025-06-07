@@ -7,11 +7,11 @@ import { fireEvent } from "../../../../src/common/dom/fire_event";
 import "../../../../src/components/ha-dialog";
 import "../../../../src/components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../src/components/ha-form/types";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import { changeMountOptions } from "../../../../src/data/supervisor/mounts";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
-import type { HassioBackupLocationDialogParams } from "./show-dialog-hassio-backu-location";
+import type { menuai } from "../../../../src/types";
+import type { menuaiioBackupLocationDialogParams } from "./show-dialog-menuaiio-backu-location";
 
 const SCHEMA = memoizeOne(
   () =>
@@ -24,11 +24,11 @@ const SCHEMA = memoizeOne(
     ] as const
 );
 
-@customElement("dialog-hassio-backup-location")
-class HassioBackupLocationDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-backup-location")
+class menuaiioBackupLocationDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private _dialogParams?: HassioBackupLocationDialogParams;
+  @state() private _dialogParams?: menuaiioBackupLocationDialogParams;
 
   @state() private _data?: { default_backup_mount: string | null };
 
@@ -37,7 +37,7 @@ class HassioBackupLocationDialog extends LitElement {
   @state() private _error?: string;
 
   public async showDialog(
-    dialogParams: HassioBackupLocationDialogParams
+    dialogParams: menuaiioBackupLocationDialogParams
   ): Promise<void> {
     this._dialogParams = dialogParams;
   }
@@ -69,7 +69,7 @@ class HassioBackupLocationDialog extends LitElement {
           : nothing}
 
         <ha-form
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .data=${this._data}
           .schema=${SCHEMA()}
           .computeLabel=${this._computeLabelCallback}
@@ -125,7 +125,7 @@ class HassioBackupLocationDialog extends LitElement {
     this._error = undefined;
     this._waiting = true;
     try {
-      await changeMountOptions(this.hass, this._data);
+      await changeMountOptions(this.menuai, this._data);
     } catch (err: any) {
       this._error = extractApiErrorMessage(err);
       this._waiting = false;
@@ -149,6 +149,6 @@ class HassioBackupLocationDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-backup-location": HassioBackupLocationDialog;
+    "dialog-menuaiio-backup-location": menuaiioBackupLocationDialog;
   }
 }

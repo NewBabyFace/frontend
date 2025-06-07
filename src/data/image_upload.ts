@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 interface Image {
   filesize: number;
@@ -43,16 +43,16 @@ export const generateImageThumbnailUrl = (
     : `/api/image/serve/${mediaId}/${size}x${size}`;
 };
 
-export const fetchImages = (hass: HomeAssistant) =>
-  hass.callWS<Image[]>({ type: "image/list" });
+export const fetchImages = (menuai: menuai) =>
+  menuai.callWS<Image[]>({ type: "image/list" });
 
 export const createImage = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   file: File
 ): Promise<Image> => {
   const fd = new FormData();
   fd.append("file", file);
-  const resp = await hass.fetchWithAuth("/api/image/upload", {
+  const resp = await menuai.fetchWithAuth("/api/image/upload", {
     method: "POST",
     body: fd,
   });
@@ -65,24 +65,24 @@ export const createImage = async (
 };
 
 export const updateImage = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<ImageMutableParams>
 ) =>
-  hass.callWS<Image>({
+  menuai.callWS<Image>({
     type: "image/update",
     media_id: id,
     ...updates,
   });
 
-export const deleteImage = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteImage = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "image/delete",
     image_id: id,
   });
 
-export const getImageData = async (hass: HomeAssistant, url: string) => {
-  const response = await fetch(hass.hassUrl(url));
+export const getImageData = async (menuai: menuai, url: string) => {
+  const response = await fetch(menuai.menuaiUrl(url));
 
   if (!response.ok) {
     throw new Error(

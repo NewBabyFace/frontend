@@ -32,15 +32,15 @@ vi.mock("../../src/data/automation", () => ({
 }));
 
 describe("handleExternalMessage", () => {
-  let hassMainEl: any;
+  let menuaiMainEl: any;
   let fireMessage: any;
   let reconnect: any;
 
   beforeEach(() => {
     fireMessage = vi.fn();
     reconnect = vi.fn();
-    hassMainEl = {
-      hass: {
+    menuaiMainEl = {
+      menuai: {
         auth: {
           external: {
             fireMessage,
@@ -60,7 +60,7 @@ describe("handleExternalMessage", () => {
       command: "restart",
       id: 1,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(reconnect).toHaveBeenCalledWith(true);
     expect(fireMessage).toHaveBeenCalledWith({
       id: 1,
@@ -78,7 +78,7 @@ describe("handleExternalMessage", () => {
       id: 2,
       payload: { path: "/test", options: { replace: true } },
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(navigate).toHaveBeenCalledWith("/test", { replace: true });
     expect(fireMessage).toHaveBeenCalledWith({
       id: 2,
@@ -95,10 +95,10 @@ describe("handleExternalMessage", () => {
       command: "notifications/show",
       id: 3,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(fireEvent).toHaveBeenCalledWith(
-      hassMainEl,
-      "hass-show-notifications"
+      menuaiMainEl,
+      "menuai-show-notifications"
     );
     expect(fireMessage).toHaveBeenCalledWith({
       id: 3,
@@ -118,7 +118,7 @@ describe("handleExternalMessage", () => {
       command: "sidebar/toggle",
       id: 4,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(fireEvent).not.toHaveBeenCalled();
     expect(fireMessage).toHaveBeenCalledWith({
       id: 4,
@@ -138,8 +138,8 @@ describe("handleExternalMessage", () => {
       command: "sidebar/toggle",
       id: 5,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
-    expect(fireEvent).toHaveBeenCalledWith(hassMainEl, "hass-toggle-menu");
+    const result = handleExternalMessage(menuaiMainEl, msg);
+    expect(fireEvent).toHaveBeenCalledWith(menuaiMainEl, "menuai-toggle-menu");
     expect(fireMessage).toHaveBeenCalledWith({
       id: 5,
       type: "result",
@@ -158,7 +158,7 @@ describe("handleExternalMessage", () => {
       command: "sidebar/show",
       id: 6,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(fireEvent).not.toHaveBeenCalled();
     expect(fireMessage).toHaveBeenCalledWith({
       id: 6,
@@ -178,8 +178,8 @@ describe("handleExternalMessage", () => {
       command: "sidebar/show",
       id: 7,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
-    expect(fireEvent).toHaveBeenCalledWith(hassMainEl, "hass-toggle-menu", {
+    const result = handleExternalMessage(menuaiMainEl, msg);
+    expect(fireEvent).toHaveBeenCalledWith(menuaiMainEl, "menuai-toggle-menu", {
       open: true,
     });
     expect(fireMessage).toHaveBeenCalledWith({
@@ -198,7 +198,7 @@ describe("handleExternalMessage", () => {
       id: 8,
       payload: { config: { id: "42" } },
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(showAutomationEditor).toHaveBeenCalledWith({ id: "42" });
     expect(fireMessage).toHaveBeenCalledWith({
       id: 8,
@@ -216,7 +216,7 @@ describe("handleExternalMessage", () => {
       id: 9,
       payload: { name: "helloworld" },
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(fireEvent).toHaveBeenCalledWith(window, "improv-discovered-device", {
       name: "helloworld",
     });
@@ -235,7 +235,7 @@ describe("handleExternalMessage", () => {
       command: "improv/device_setup_done",
       id: 10,
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(fireEvent).toHaveBeenCalledWith(window, "improv-device-setup-done");
     expect(fireMessage).toHaveBeenCalledWith({
       id: 10,
@@ -255,7 +255,7 @@ describe("handleExternalMessage", () => {
       id: 11,
       payload: { rawValue: "123456789", format: "aztec" },
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(listener).toHaveBeenCalledWith(msg);
     expect(fireMessage).toHaveBeenCalledWith({
       id: 11,
@@ -275,7 +275,7 @@ describe("handleExternalMessage", () => {
       id: 12,
       payload: { reason: "canceled" },
     };
-    const result = handleExternalMessage(hassMainEl, msg);
+    const result = handleExternalMessage(menuaiMainEl, msg);
     expect(listener).toHaveBeenCalledWith(msg);
     expect(fireMessage).toHaveBeenCalledWith({
       id: 12,

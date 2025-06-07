@@ -19,7 +19,7 @@ import { ensureArray } from "../../../../../common/array/ensure-array";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import { hasTemplate } from "../../../../../common/string/has-template";
 import type { StateTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { baseTriggerStruct, forDictStruct } from "../../structs";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 import "../../../../../components/ha-form/ha-form";
@@ -43,7 +43,7 @@ const ANY_STATE_VALUE = "__ANY_STATE_IGNORE_ATTRIBUTES__";
 
 @customElement("ha-automation-trigger-state")
 export class HaStateTrigger extends LitElement implements TriggerElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: StateTrigger;
 
@@ -177,7 +177,7 @@ export class HaStateTrigger extends LitElement implements TriggerElement {
       fireEvent(
         this,
         "ui-mode-not-available",
-        Error(this.hass.localize("ui.errors.config.no_template_editor_support"))
+        Error(this.menuai.localize("ui.errors.config.no_template_editor_support"))
       );
       return false;
     }
@@ -205,14 +205,14 @@ export class HaStateTrigger extends LitElement implements TriggerElement {
       data.from = ANY_STATE_VALUE;
     }
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this.trigger.entity_id,
       this.trigger.attribute
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         @value-changed=${this._valueChanged}
@@ -245,7 +245,7 @@ export class HaStateTrigger extends LitElement implements TriggerElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       schema.name === "entity_id"
         ? "ui.components.entity.entity-picker.entity"
         : `ui.panel.config.automation.editor.triggers.type.state.${schema.name}`

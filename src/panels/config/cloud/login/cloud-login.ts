@@ -20,12 +20,12 @@ import {
 } from "../../../lovelace/custom-card-helpers";
 import { setAssistPipelinePreferred } from "../../../../data/assist_pipeline";
 import { showCloudAlreadyConnectedDialog } from "../dialog-cloud-already-connected/show-dialog-cloud-already-connected";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { loginHaCloud } from "../../../../data/onboarding";
 
 @customElement("cloud-login")
 export class CloudLogin extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean, attribute: "check-connection" })
   public checkConnection = false;
@@ -217,9 +217,9 @@ export class CloudLogin extends LitElement {
     }
 
     try {
-      if (this.hass) {
+      if (this.menuai) {
         const result = await cloudLogin({
-          hass: this.hass,
+          menuai: this.menuai,
           email,
           ...(code ? { code } : { password }),
           check_connection: checkConnection,
@@ -227,17 +227,17 @@ export class CloudLogin extends LitElement {
         if (result.cloud_pipeline) {
           if (
             await showConfirmationDialog(this, {
-              title: this.hass.localize(
+              title: this.menuai.localize(
                 "ui.panel.config.cloud.login.cloud_pipeline_title"
               ),
-              text: this.hass.localize(
+              text: this.menuai.localize(
                 "ui.panel.config.cloud.login.cloud_pipeline_text"
               ),
-              confirmText: this.hass.localize("ui.common.yes"),
-              dismissText: this.hass.localize("ui.common.no"),
+              confirmText: this.menuai.localize("ui.common.yes"),
+              dismissText: this.menuai.localize("ui.common.no"),
             })
           ) {
-            setAssistPipelinePreferred(this.hass, result.cloud_pipeline);
+            setAssistPipelinePreferred(this.menuai, result.cloud_pipeline);
           }
         }
       } else {
@@ -330,7 +330,7 @@ declare global {
     "cloud-login": CloudLogin;
   }
 
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "cloud-login": {
       email: string;
       password: string;

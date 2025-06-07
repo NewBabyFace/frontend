@@ -11,7 +11,7 @@ import { getFloorAreaLookup } from "../data/floor_registry";
 import type { RelatedResult } from "../data/search";
 import { findRelated } from "../data/search";
 import { haStyleScrollbar } from "../resources/styles";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-check-list-item";
 import "./ha-expansion-panel";
 import "./ha-floor-icon";
@@ -23,7 +23,7 @@ import "./ha-tree-indicator";
 
 @customElement("ha-filter-floor-areas")
 export class HaFilterFloorAreas extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public value?: {
     floors?: string[];
@@ -49,7 +49,7 @@ export class HaFilterFloorAreas extends LitElement {
   }
 
   protected render() {
-    const areas = this._areas(this.hass.areas, this.hass.floors);
+    const areas = this._areas(this.menuai.areas, this.menuai.floors);
 
     return html`
       <ha-expansion-panel
@@ -59,7 +59,7 @@ export class HaFilterFloorAreas extends LitElement {
         @expanded-changed=${this._expandedChanged}
       >
         <div slot="header" class="header">
-          ${this.hass.localize("ui.panel.config.areas.caption")}
+          ${this.menuai.localize("ui.panel.config.areas.caption")}
           ${this.value?.areas?.length || this.value?.floors?.length
             ? html`<div class="badge">
                   ${(this.value?.areas?.length || 0) +
@@ -124,7 +124,7 @@ export class HaFilterFloorAreas extends LitElement {
         graphic="icon"
         @request-selected=${this._handleItemClick}
         class=${classMap({
-          rtl: computeRTL(this.hass),
+          rtl: computeRTL(this.menuai),
           floor: hasFloor,
         })}
       >
@@ -201,7 +201,7 @@ export class HaFilterFloorAreas extends LitElement {
   }
 
   private _areas = memoizeOne(
-    (areaReg: HomeAssistant["areas"], floorReg: HomeAssistant["floors"]) => {
+    (areaReg: menuai["areas"], floorReg: menuai["floors"]) => {
       const areas = Object.values(areaReg);
       const floors = Object.values(floorReg);
       const floorAreaLookup = getFloorAreaLookup(areas);
@@ -236,7 +236,7 @@ export class HaFilterFloorAreas extends LitElement {
     if (this.value.areas) {
       for (const areaId of this.value.areas) {
         if (this.type) {
-          relatedPromises.push(findRelated(this.hass, "area", areaId));
+          relatedPromises.push(findRelated(this.menuai, "area", areaId));
         }
       }
     }
@@ -244,7 +244,7 @@ export class HaFilterFloorAreas extends LitElement {
     if (this.value.floors) {
       for (const floorId of this.value.floors) {
         if (this.type) {
-          relatedPromises.push(findRelated(this.hass, "floor", floorId));
+          relatedPromises.push(findRelated(this.menuai, "floor", floorId));
         }
       }
     }
@@ -344,7 +344,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-filter-floor-areas": HaFilterFloorAreas;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "data-table-filter-changed": { value: any; items: Set<string> | undefined };
   }
 }

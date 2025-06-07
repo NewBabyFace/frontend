@@ -3,12 +3,12 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../common/dom/fire_event";
 import type { AttributeSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../entity/ha-entity-attribute-picker";
 
 @customElement("ha-selector-attribute")
 export class HaSelectorAttribute extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: AttributeSelector;
 
@@ -29,7 +29,7 @@ export class HaSelectorAttribute extends LitElement {
   protected render() {
     return html`
       <ha-entity-attribute-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entityId=${this.selector.attribute?.entity_id ||
         this.context?.filter_entity}
         .hideAttributes=${this.selector.attribute?.hide_attributes}
@@ -69,7 +69,7 @@ export class HaSelectorAttribute extends LitElement {
     // Validate that that the attribute is still valid for this entity, else unselect.
     let invalid = false;
     if (this.context.filter_entity) {
-      const stateObj = this.hass.states[this.context.filter_entity];
+      const stateObj = this.menuai.states[this.context.filter_entity];
 
       if (!(stateObj && this.value in stateObj.attributes)) {
         invalid = true;

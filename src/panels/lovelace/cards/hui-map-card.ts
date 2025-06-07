@@ -3,7 +3,7 @@ import {
   mdiGoogleCirclesCommunities,
   mdiImageFilterCenterFocus,
 } from "@mdi/js";
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { LatLngTuple } from "leaflet";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
@@ -28,7 +28,7 @@ import type {
 } from "../../../components/map/ha-map";
 import type { HistoryStates } from "../../../data/history";
 import { subscribeHistoryStatesTimeWindow } from "../../../data/history";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import {
   hasConfigChanged,
@@ -59,7 +59,7 @@ interface GeoEntity {
 
 @customElement("hui-map-card")
 class HuiMapCard extends LitElement implements LovelaceCard {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public layout?: string;
 
@@ -86,10 +86,10 @@ class HuiMapCard extends LitElement implements LovelaceCard {
   private _subscribed?: Promise<(() => Promise<void>) | undefined>;
 
   private _getAllEntities(): string[] {
-    const hass = this.hass!;
+    const menuai = this.menuai!;
     const personSources = new Set<string>();
     const locationEntities: string[] = [];
-    Object.values(hass.states).forEach((entity) => {
+    Object.values(menuai.states).forEach((entity) => {
       if (
         !("latitude" in entity.attributes) ||
         !("longitude" in entity.attributes)
@@ -134,7 +134,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
       );
     }
     this._config = { ...config };
-    if (this.hass && config.show_all) {
+    if (this.menuai && config.show_all) {
       this._config.entities = this._getAllEntities();
     }
     this._configEntities = this._config.entities
@@ -164,14 +164,14 @@ class HuiMapCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): MapCardConfig {
     const includeDomains = ["device_tracker"];
     const maxEntities = 2;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -187,7 +187,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
     }
     if (this._error) {
       return html`<ha-alert alert-type="error">
-        ${this.hass.localize("ui.components.map.error")}: ${this._error.message}
+        ${this.menuai.localize("ui.components.map.error")}: ${this._error.message}
         (${this._error.code})
       </ha-alert>`;
     }
@@ -197,7 +197,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
         ? true
         : this._config.theme_mode === "light"
           ? false
-          : this.hass.themes.darkMode;
+          : this.menuai.themes.darkMode;
 
     const themeMode =
       this._config.theme_mode || (this._config.dark_mode ? "dark" : "auto");
@@ -206,7 +206,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
       <ha-card id="card" .header=${this._config.title}>
         <div id="root">
           <ha-map
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .entities=${this._mapEntities}
             .zoom=${this._config.default_zoom ?? DEFAULT_ZOOM}
             .paths=${this._getHistoryPaths(this._config, this._stateHistory)}
@@ -221,7 +221,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
             ${this._mapEntities.length > 1
               ? html`
                   <ha-icon-button
-                    .label=${this.hass!.localize(
+                    .label=${this.menuai!.localize(
                       "ui.panel.lovelace.cards.map.toggle_grouping"
                     )}
                     .path=${this._clusterMarkers
@@ -234,7 +234,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
                 `
               : nothing}
             <ha-icon-button
-              .label=${this.hass!.localize(
+              .label=${this.menuai!.localize(
                 "ui.panel.lovelace.cards.map.reset_focus"
               )}
               .path=${mdiImageFilterCenterFocus}
@@ -249,17 +249,17 @@ class HuiMapCard extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues) {
-    if (!changedProps.has("hass") || changedProps.size > 1) {
+    if (!changedProps.has("menuai") || changedProps.size > 1) {
       return true;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
-    if (!oldHass || !this._configEntities) {
+    if (!oldmenuai || !this._configEntities) {
       return true;
     }
 
-    if (oldHass.themes.darkMode !== this.hass.themes.darkMode) {
+    if (oldmenuai.themes.darkMode !== this.menuai.themes.darkMode) {
       return true;
     }
 
@@ -268,7 +268,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
     }
 
     if (this._config?.geo_location_sources) {
-      if (oldHass.states !== this.hass.states) {
+      if (oldmenuai.states !== this.menuai.states) {
         return true;
       }
     }
@@ -283,8 +283,8 @@ class HuiMapCard extends LitElement implements LovelaceCard {
     if (
       this._config?.show_all &&
       !this._config?.entities &&
-      this.hass &&
-      changedProps.has("hass")
+      this.menuai &&
+      changedProps.has("menuai")
     ) {
       this._config.entities = this._getAllEntities();
       this._configEntities = processConfigEntities<MapEntityConfig>(
@@ -293,11 +293,11 @@ class HuiMapCard extends LitElement implements LovelaceCard {
       this._mapEntities = this._getMapEntities();
     }
     if (
-      changedProps.has("hass") &&
+      changedProps.has("menuai") &&
       this._config?.geo_location_sources &&
       !deepEqual(
-        this._getSourceEntities(changedProps.get("hass")?.states),
-        this._getSourceEntities(this.hass.states)
+        this._getSourceEntities(changedProps.get("menuai")?.states),
+        this._getSourceEntities(this.menuai.states)
       )
     ) {
       this._mapEntities = this._getMapEntities();
@@ -318,14 +318,14 @@ class HuiMapCard extends LitElement implements LovelaceCard {
 
   private _subscribeHistory() {
     if (
-      !isComponentLoaded(this.hass!, "history") ||
+      !isComponentLoaded(this.menuai!, "history") ||
       this._subscribed ||
       !(this._config?.hours_to_show ?? DEFAULT_HOURS_TO_SHOW)
     ) {
       return;
     }
     this._subscribed = subscribeHistoryStatesTimeWindow(
-      this.hass!,
+      this.menuai!,
       (combinedHistory) => {
         if (!this._subscribed) {
           // Message came in before we had a chance to unload
@@ -408,7 +408,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
     return color;
   }
 
-  private _getSourceEntities(states?: HassEntities): GeoEntity[] {
+  private _getSourceEntities(states?: menuaiEntities): GeoEntity[] {
     if (!states || !this._config?.geo_location_sources) {
       return [];
     }
@@ -453,7 +453,7 @@ class HuiMapCard extends LitElement implements LovelaceCard {
         focus: entityConf.focus,
         name: entityConf.name,
       })),
-      ...this._getSourceEntities(this.hass?.states).map((entity) => ({
+      ...this._getSourceEntities(this.menuai?.states).map((entity) => ({
         ...entity,
         color: this._getColor(entity.entity_id),
       })),
@@ -498,8 +498,8 @@ class HuiMapCard extends LitElement implements LovelaceCard {
         );
         const name =
           entityConfig?.name ??
-          (entityId in this.hass.states
-            ? computeStateName(this.hass.states[entityId])
+          (entityId in this.menuai.states
+            ? computeStateName(this.menuai.states[entityId])
             : entityId);
 
         paths.push({

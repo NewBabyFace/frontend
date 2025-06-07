@@ -21,12 +21,12 @@ import type { ZHADevice } from "../../../../../data/zha";
 import { showAlertDialog } from "../../../../../dialogs/generic/show-dialog-box";
 import { SubscribeMixin } from "../../../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { EntityRegistryStateEntry } from "../../../devices/ha-config-device-page";
 
 @customElement("zha-device-card")
 class ZHADeviceCard extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device?: ZHADevice;
 
@@ -49,21 +49,21 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
           stringCompare(
             ent1.stateName || `zzz${ent1.entity_id}`,
             ent2.stateName || `zzz${ent2.entity_id}`,
-            this.hass.locale.language
+            this.menuai.locale.language
           )
         )
   );
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      subscribeEntityRegistry(this.hass.connection, (entities) => {
+      subscribeEntityRegistry(this.menuai.connection, (entities) => {
         this._entities = entities;
       }),
     ];
   }
 
   protected render() {
-    if (!this.hass || !this.device) {
+    if (!this.menuai || !this.device) {
       return nothing;
     }
     const entities = this._deviceEntities(
@@ -77,7 +77,7 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
           <div>
             <div class="model">${this.device.model}</div>
             <div class="manuf">
-              ${this.hass.localize("ui.dialogs.zha_device_info.manuf", {
+              ${this.menuai.localize("ui.dialogs.zha_device_info.manuf", {
                 manufacturer: this.device.manufacturer,
               })}
             </div>
@@ -90,8 +90,8 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
                     <state-badge
                       @click=${this._openMoreInfo}
                       .title=${entity.stateName!}
-                      .hass=${this.hass}
-                      .stateObj=${this.hass!.states[entity.entity_id]}
+                      .menuai=${this.menuai}
+                      .stateObj=${this.menuai!.states[entity.entity_id]}
                       slot="item-icon"
                     ></state-badge>
                   `
@@ -102,12 +102,12 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
             type="string"
             @change=${this._rename}
             .value=${this.device.user_given_name || this.device.name}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.dialogs.zha_device_info.zha_device_card.device_name_placeholder"
             )}
           ></ha-textfield>
           <ha-area-picker
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .device=${this.device.device_reg_id}
             @value-changed=${this._areaPicked}
           ></ha-area-picker>
@@ -117,7 +117,7 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
   }
 
   private async _rename(event): Promise<void> {
-    if (!this.hass || !this.device) {
+    if (!this.menuai || !this.device) {
       return;
     }
     const device = this.device;
@@ -125,7 +125,7 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
     const oldDeviceName = device.user_given_name || device.name;
     const newDeviceName = event.target.value;
     this.device.user_given_name = newDeviceName;
-    await updateDeviceRegistryEntry(this.hass, device.device_reg_id, {
+    await updateDeviceRegistryEntry(this.menuai, device.device_reg_id, {
       name_by_user: newDeviceName,
     });
 
@@ -135,7 +135,7 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
     const entities = this._deviceEntities(device.device_reg_id, this._entities);
 
     const entityIdsMapping = getAutomaticEntityIds(
-      this.hass,
+      this.menuai,
       entities.map((entity) => entity.entity_id)
     );
 
@@ -160,7 +160,7 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
         return undefined;
       }
 
-      return updateEntityRegistryEntry(this.hass!, entity.entity_id, {
+      return updateEntityRegistryEntry(this.menuai!, entity.entity_id, {
         name: newName,
         new_entity_id: newEntityId || undefined,
       });
@@ -169,14 +169,14 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
   }
 
   private _openMoreInfo(ev: MouseEvent): void {
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: (ev.currentTarget as any).stateObj.entity_id,
     });
   }
 
   private _computeEntityName(entity: EntityRegistryEntry): string | null {
-    if (this.hass.states[entity.entity_id]) {
-      return computeStateName(this.hass.states[entity.entity_id]);
+    if (this.menuai.states[entity.entity_id]) {
+      return computeStateName(this.menuai.states[entity.entity_id]);
     }
     return entity.name;
   }
@@ -186,13 +186,13 @@ class ZHADeviceCard extends SubscribeMixin(LitElement) {
 
     const area = ev.detail.value;
     try {
-      await updateDeviceRegistryEntry(this.hass, this.device!.device_reg_id, {
+      await updateDeviceRegistryEntry(this.menuai, this.device!.device_reg_id, {
         area_id: area,
       });
       this.device!.area_id = area;
     } catch (err: any) {
       showAlertDialog(this, {
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.config.integrations.config_flow.error_saving_device",
           { error: err.message }
         ),

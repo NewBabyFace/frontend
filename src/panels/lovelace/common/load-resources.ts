@@ -1,6 +1,6 @@
 import { loadCSS, loadJS, loadModule } from "../../../common/dom/load_resource";
 import type { LovelaceResource } from "../../../data/lovelace/resource";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 // CSS and JS should only be imported once. Modules and HTML are safe.
 const CSS_CACHE = {};
@@ -8,12 +8,12 @@ const JS_CACHE = {};
 
 export const loadLovelaceResources = (
   resources: NonNullable<LovelaceResource[]>,
-  hass: HomeAssistant
+  menuai: menuai
 ) => {
   resources.forEach((resource) => {
     const normalizedUrl = new URL(
       resource.url,
-      hass.auth.data.hassUrl
+      menuai.auth.data.menuaiUrl
     ).toString();
     switch (resource.type) {
       case "css":

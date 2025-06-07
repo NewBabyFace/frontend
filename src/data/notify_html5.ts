@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -13,8 +13,8 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
-export const getAppKey = async (hass: HomeAssistant) => {
-  const res = await hass.callWS<string>({
+export const getAppKey = async (menuai: menuai) => {
+  const res = await menuai.callWS<string>({
     type: "notify/html5/appkey",
   });
   return res ? urlBase64ToUint8Array(res) : null;

@@ -5,22 +5,22 @@ import {
   canCommissionMatterExternal,
   startExternalCommissioning,
 } from "../../../../../../data/matter";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { sharedStyles } from "./matter-add-device-shared-styles";
 
 @customElement("matter-add-device-new")
 class MatterAddDeviceNew extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   protected firstUpdated(): void {
-    if (!canCommissionMatterExternal(this.hass)) {
+    if (!canCommissionMatterExternal(this.menuai)) {
       return;
     }
-    startExternalCommissioning(this.hass);
+    startExternalCommissioning(this.menuai);
   }
 
   render() {
-    if (canCommissionMatterExternal(this.hass)) {
+    if (canCommissionMatterExternal(this.menuai)) {
       return html`
         <div class="content">
           <ha-spinner size="medium"></ha-spinner>
@@ -30,9 +30,9 @@ class MatterAddDeviceNew extends LitElement {
 
     return html`
       <div class="content">
-        <p>${this.hass.localize("ui.dialogs.matter-add-device.new.note")}</p>
+        <p>${this.menuai.localize("ui.dialogs.matter-add-device.new.note")}</p>
         <p>
-          ${this.hass.localize("ui.dialogs.matter-add-device.new.download_app")}
+          ${this.menuai.localize("ui.dialogs.matter-add-device.new.download_app")}
         </p>
         <div class="app-qr">
           <a
@@ -43,7 +43,7 @@ class MatterAddDeviceNew extends LitElement {
             <img
               loading="lazy"
               src="/static/images/appstore.svg"
-              alt=${this.hass.localize(
+              alt=${this.menuai.localize(
                 "ui.dialogs.matter-add-device.new.appstore"
               )}
               class="icon"
@@ -51,7 +51,7 @@ class MatterAddDeviceNew extends LitElement {
             <img
               loading="lazy"
               src="/static/images/qr-appstore.svg"
-              alt=${this.hass.localize(
+              alt=${this.menuai.localize(
                 "ui.dialogs.matter-add-device.new.appstore"
               )}
             />
@@ -59,12 +59,12 @@ class MatterAddDeviceNew extends LitElement {
           <a
             target="_blank"
             rel="noreferrer noopener"
-            href="https://play.google.com/store/apps/details?id=io.homeassistant.companion.android"
+            href="https://play.google.com/store/apps/details?id=io.menuai.companion.android"
           >
             <img
               loading="lazy"
               src="/static/images/playstore.svg"
-              alt=${this.hass.localize(
+              alt=${this.menuai.localize(
                 "ui.dialogs.matter-add-device.new.playstore"
               )}
               class="icon"
@@ -72,7 +72,7 @@ class MatterAddDeviceNew extends LitElement {
             <img
               loading="lazy"
               src="/static/images/qr-playstore.svg"
-              alt=${this.hass.localize(
+              alt=${this.menuai.localize(
                 "ui.dialogs.matter-add-device.new.playstore"
               )}
             />

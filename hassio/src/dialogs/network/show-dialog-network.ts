@@ -1,19 +1,19 @@
 import { fireEvent } from "../../../../src/common/dom/fire_event";
 import type { Supervisor } from "../../../../src/data/supervisor/supervisor";
-import "./dialog-hassio-network";
+import "./dialog-menuaiio-network";
 
-export interface HassioNetworkDialogParams {
+export interface menuaiioNetworkDialogParams {
   supervisor: Supervisor;
   loadData: () => Promise<void>;
 }
 
 export const showNetworkDialog = (
   element: HTMLElement,
-  dialogParams: HassioNetworkDialogParams
+  dialogParams: menuaiioNetworkDialogParams
 ): void => {
   fireEvent(element, "show-dialog", {
-    dialogTag: "dialog-hassio-network",
-    dialogImport: () => import("./dialog-hassio-network"),
+    dialogTag: "dialog-menuaiio-network",
+    dialogImport: () => import("./dialog-menuaiio-network"),
     dialogParams,
   });
 };

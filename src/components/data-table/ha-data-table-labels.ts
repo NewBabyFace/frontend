@@ -127,7 +127,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-data-table-labels": HaDataTableLabels;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "label-clicked": { label: LabelRegistryEntry };
   }
 }

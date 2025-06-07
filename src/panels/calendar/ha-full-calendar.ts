@@ -36,7 +36,7 @@ import { haStyle } from "../../resources/styles";
 import type {
   CalendarViewChanged,
   FullCalendarView,
-  HomeAssistant,
+  menuai,
   ToggleButton,
 } from "../../types";
 import { showCalendarEventDetailDialog } from "./show-dialog-calendar-event-detail";
@@ -47,7 +47,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-full-calendar": HAFullCalendar;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "view-changed": CalendarViewChanged;
   }
 }
@@ -70,7 +70,7 @@ const defaultFullCalendarConfig: CalendarOptions = {
 
 @customElement("ha-full-calendar")
 export class HAFullCalendar extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -120,14 +120,14 @@ export class HAFullCalendar extends LitElement {
   protected render() {
     const viewToggleButtons = this._viewToggleButtons(
       this.views,
-      this.hass.localize
+      this.menuai.localize
     );
 
     return html`
       ${this.calendar
         ? html`
             ${this.error
-              ? html`<hui-warning .hass=${this.hass} severity="warning"
+              ? html`<hui-warning .menuai=${this.menuai} severity="warning"
                   >${this.error}</hui-warning
                 >`
               : ""}
@@ -139,18 +139,18 @@ export class HAFullCalendar extends LitElement {
                         outlined
                         class="today"
                         @click=${this._handleToday}
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.components.calendar.today"
                         )}</mwc-button
                       >
                       <ha-icon-button-prev
-                        .label=${this.hass.localize("ui.common.previous")}
+                        .label=${this.menuai.localize("ui.common.previous")}
                         class="prev"
                         @click=${this._handlePrev}
                       >
                       </ha-icon-button-prev>
                       <ha-icon-button-next
-                        .label=${this.hass.localize("ui.common.next")}
+                        .label=${this.menuai.localize("ui.common.next")}
                         class="next"
                         @click=${this._handleNext}
                       >
@@ -168,13 +168,13 @@ export class HAFullCalendar extends LitElement {
                       <h1>${this.calendar.view.title}</h1>
                       <div>
                         <ha-icon-button-prev
-                          .label=${this.hass.localize("ui.common.previous")}
+                          .label=${this.menuai.localize("ui.common.previous")}
                           class="prev"
                           @click=${this._handlePrev}
                         >
                         </ha-icon-button-prev>
                         <ha-icon-button-next
-                          .label=${this.hass.localize("ui.common.next")}
+                          .label=${this.menuai.localize("ui.common.next")}
                           class="next"
                           @click=${this._handleNext}
                         >
@@ -186,7 +186,7 @@ export class HAFullCalendar extends LitElement {
                         outlined
                         class="today"
                         @click=${this._handleToday}
-                        >${this.hass.localize(
+                        >${this.menuai.localize(
                           "ui.components.calendar.today"
                         )}</mwc-button
                       >
@@ -205,7 +205,7 @@ export class HAFullCalendar extends LitElement {
       ${this._hasMutableCalendars
         ? html`<ha-fab
             slot="fab"
-            .label=${this.hass.localize("ui.components.calendar.event.add")}
+            .label=${this.menuai.localize("ui.components.calendar.event.add")}
             extended
             @click=${this._createEvent}
           >
@@ -240,10 +240,10 @@ export class HAFullCalendar extends LitElement {
       this.calendar!.setOption("eventDisplay", this.eventDisplay);
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant;
+    const oldmenuai = changedProps.get("menuai") as menuai;
 
-    if (oldHass && oldHass.language !== this.hass.language) {
-      this.calendar.setOption("locale", this.hass.language);
+    if (oldmenuai && oldmenuai.language !== this.menuai.language) {
+      this.calendar.setOption("locale", this.menuai.language);
     }
   }
 
@@ -254,28 +254,28 @@ export class HAFullCalendar extends LitElement {
 
   private async _loadCalendar(initialView: FullCalendarView) {
     const luxonPlugin =
-      this.hass.locale.time_zone === TimeZone.local
+      this.menuai.locale.time_zone === TimeZone.local
         ? undefined
         : (await import("@fullcalendar/luxon3")).default;
 
     const config: CalendarOptions = {
       ...defaultFullCalendarConfig,
       plugins:
-        this.hass.locale.time_zone === TimeZone.local
+        this.menuai.locale.time_zone === TimeZone.local
           ? defaultFullCalendarConfig.plugins
           : [...defaultFullCalendarConfig.plugins!, luxonPlugin!],
-      locale: this.hass.language,
+      locale: this.menuai.language,
       timeZone:
-        this.hass.locale.time_zone === TimeZone.local
+        this.menuai.locale.time_zone === TimeZone.local
           ? "local"
-          : this.hass.config.time_zone,
-      firstDay: firstWeekdayIndex(this.hass.locale),
+          : this.menuai.config.time_zone,
+      firstDay: firstWeekdayIndex(this.menuai.locale),
       initialView,
       eventDisplay: this.eventDisplay,
       eventTimeFormat: {
-        hour: useAmPm(this.hass.locale) ? "numeric" : "2-digit",
-        minute: useAmPm(this.hass.locale) ? "numeric" : "2-digit",
-        hour12: useAmPm(this.hass.locale),
+        hour: useAmPm(this.menuai.locale) ? "numeric" : "2-digit",
+        minute: useAmPm(this.menuai.locale) ? "numeric" : "2-digit",
+        hour12: useAmPm(this.menuai.locale),
       },
     };
 
@@ -293,7 +293,7 @@ export class HAFullCalendar extends LitElement {
   // Return if there are calendars that support creating events
   private get _hasMutableCalendars(): boolean {
     return this.calendars.some((selCal) => {
-      const entityStateObj = this.hass.states[selCal.entity_id];
+      const entityStateObj = this.menuai.states[selCal.entity_id];
       return (
         entityStateObj &&
         supportsFeature(entityStateObj, CalendarEntityFeature.CREATE_EVENT)
@@ -321,7 +321,7 @@ export class HAFullCalendar extends LitElement {
   }
 
   private _handleEventClick(info): void {
-    const entityStateObj = this.hass.states[info.event.extendedProps.calendar];
+    const entityStateObj = this.menuai.states[info.event.extendedProps.calendar];
     const canEdit =
       entityStateObj &&
       supportsFeature(entityStateObj, CalendarEntityFeature.UPDATE_EVENT);

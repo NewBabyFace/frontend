@@ -2,7 +2,7 @@ import type { PropertyValues, TemplateResult } from "lit";
 import { html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../components/demo-cards";
 
 const ENTITIES = [
@@ -171,10 +171,10 @@ class DemoMap extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    const hass = provideHass(this._demoRoot);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("lovelace", "en");
-    hass.addEntities(ENTITIES);
+    const menuai = providemenuai(this._demoRoot);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("lovelace", "en");
+    menuai.addEntities(ENTITIES);
   }
 }
 

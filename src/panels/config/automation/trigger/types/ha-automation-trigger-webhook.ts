@@ -17,7 +17,7 @@ import type {
   AutomationConfig,
   WebhookTrigger,
 } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { showToast } from "../../../../../util/toast";
 import { handleChangeEvent } from "../ha-automation-trigger-row";
 
@@ -27,7 +27,7 @@ const DEFAULT_WEBHOOK_ID = "";
 
 @customElement("ha-automation-trigger-webhook")
 export class HaWebhookTrigger extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trigger!: WebhookTrigger;
 
@@ -105,10 +105,10 @@ export class HaWebhookTrigger extends LitElement {
       <div class="flex">
         <ha-textfield
           name="webhook_id"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.panel.config.automation.editor.triggers.type.webhook.webhook_id"
           )}
-          .helper=${this.hass.localize(
+          .helper=${this.menuai.localize(
             "ui.panel.config.automation.editor.triggers.type.webhook.webhook_id_helper"
           )}
           .disabled=${this.disabled}
@@ -119,7 +119,7 @@ export class HaWebhookTrigger extends LitElement {
           <ha-icon-button
             @click=${this._copyUrl}
             slot="trailingIcon"
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.config.automation.editor.triggers.type.webhook.copy_url"
             )}
             .path=${mdiContentCopy}
@@ -128,7 +128,7 @@ export class HaWebhookTrigger extends LitElement {
         <ha-button-menu multi @closed=${stopPropagation}>
           <ha-icon-button
             slot="trigger"
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.panel.config.automation.editor.triggers.type.webhook.webhook_settings"
             )}
             .path=${mdiCog}
@@ -151,7 +151,7 @@ export class HaWebhookTrigger extends LitElement {
             @request-selected=${this._localOnlyChanged}
             .selected=${localOnly!}
           >
-            ${this.hass!.localize(
+            ${this.menuai!.localize(
               "ui.panel.config.automation.editor.triggers.type.webhook.local_only"
             )}
           </ha-check-list-item>
@@ -199,11 +199,11 @@ export class HaWebhookTrigger extends LitElement {
 
   private async _copyUrl(ev): Promise<void> {
     const inputElement = ev.target.parentElement as HaTextField;
-    const url = this.hass.hassUrl(`/api/webhook/${inputElement.value}`);
+    const url = this.menuai.menuaiUrl(`/api/webhook/${inputElement.value}`);
 
     await copyToClipboard(url);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 

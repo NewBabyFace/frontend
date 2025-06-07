@@ -5,12 +5,12 @@ import "./hat-logbook-note";
 import "./hat-trace-timeline";
 import type { LogbookEntry } from "../../data/logbook";
 import type { TraceExtended } from "../../data/trace";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { NodeInfo } from "./hat-script-graph";
 
 @customElement("ha-trace-timeline")
 export class HaTraceTimeline extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public trace!: TraceExtended;
 
@@ -21,7 +21,7 @@ export class HaTraceTimeline extends LitElement {
   protected render(): TemplateResult {
     return html`
       <hat-trace-timeline
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .trace=${this.trace}
         .logbookEntries=${this.logbookEntries}
         .selectedPath=${this.selected.path}
@@ -29,7 +29,7 @@ export class HaTraceTimeline extends LitElement {
       >
       </hat-trace-timeline>
       <hat-logbook-note
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .domain=${this.trace.domain}
       ></hat-logbook-note>
     `;

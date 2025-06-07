@@ -7,7 +7,7 @@ import "../../../../components/ha-yaml-editor";
 import type { Condition } from "../../../../data/automation";
 import { expandConditionWithShorthand } from "../../../../data/automation";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import "./types/ha-automation-condition-and";
 import "./types/ha-automation-condition-device";
 import "./types/ha-automation-condition-not";
@@ -22,7 +22,7 @@ import "./types/ha-automation-condition-zone";
 
 @customElement("ha-automation-condition-editor")
 export default class HaAutomationConditionEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) condition!: Condition;
 
@@ -45,14 +45,14 @@ export default class HaAutomationConditionEditor extends LitElement {
         ? html`
             ${!supported
               ? html`
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.automation.editor.conditions.unsupported_condition",
                     { condition: condition.condition }
                   )}
                 `
               : ""}
             <ha-yaml-editor
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .defaultValue=${this.condition}
               @value-changed=${this._onYamlChange}
               .readOnly=${this.disabled}
@@ -63,7 +63,7 @@ export default class HaAutomationConditionEditor extends LitElement {
               ${dynamicElement(
                 `ha-automation-condition-${condition.condition}`,
                 {
-                  hass: this.hass,
+                  menuai: this.menuai,
                   condition: condition,
                   disabled: this.disabled,
                 }

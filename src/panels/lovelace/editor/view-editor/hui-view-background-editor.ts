@@ -5,11 +5,11 @@ import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("hui-view-background-editor")
 export class HuiViewBackgroundEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config!: LovelaceViewConfig;
 
@@ -18,7 +18,7 @@ export class HuiViewBackgroundEditor extends LitElement {
   }
 
   private _localizeValueCallback = (key: string) =>
-    this.hass.localize(key as any);
+    this.menuai.localize(key as any);
 
   private _schema = memoizeOne((showSettings: boolean) => [
     {
@@ -102,7 +102,7 @@ export class HuiViewBackgroundEditor extends LitElement {
   ]);
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -136,7 +136,7 @@ export class HuiViewBackgroundEditor extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${background}
         .schema=${this._schema(true)}
         .computeLabel=${this._computeLabelCallback}
@@ -160,31 +160,31 @@ export class HuiViewBackgroundEditor extends LitElement {
   ) => {
     switch (schema.name) {
       case "image":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.background.image"
         );
       case "opacity":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.background.opacity"
         );
       case "alignment":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.background.alignment.name"
         );
       case "size":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.background.size.name"
         );
       case "repeat":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.background.repeat.name"
         );
       case "attachment":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.panel.lovelace.editor.edit_view.background.attachment.name"
         );
       default:
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.lovelace.editor.edit_view.background.${schema.name}`
         );
     }

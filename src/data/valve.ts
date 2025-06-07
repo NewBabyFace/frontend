@@ -1,10 +1,10 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { UNAVAILABLE } from "./entity";
 import { stateActive } from "../common/entity/state_active";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const enum ValveEntityFeature {
   OPEN = 1,
@@ -61,18 +61,18 @@ export function canStop(stateObj: ValveEntity): boolean {
   return stateObj.state !== UNAVAILABLE;
 }
 
-interface ValveEntityAttributes extends HassEntityAttributeBase {
+interface ValveEntityAttributes extends menuaiEntityAttributeBase {
   current_position?: number;
   position?: number;
 }
 
-export interface ValveEntity extends HassEntityBase {
+export interface ValveEntity extends menuaiEntityBase {
   attributes: ValveEntityAttributes;
 }
 
 export function computeValvePositionStateDisplay(
   stateObj: ValveEntity,
-  hass: HomeAssistant,
+  menuai: menuai,
   position?: number
 ) {
   const statePosition = stateActive(stateObj)
@@ -82,7 +82,7 @@ export function computeValvePositionStateDisplay(
   const currentPosition = position ?? statePosition;
 
   return currentPosition && currentPosition !== 100
-    ? hass.formatEntityAttributeValue(
+    ? menuai.formatEntityAttributeValue(
         stateObj,
         "current_position",
         Math.round(currentPosition)

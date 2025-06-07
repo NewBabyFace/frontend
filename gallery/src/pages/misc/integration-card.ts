@@ -8,7 +8,7 @@ import type { IntegrationManifest } from "../../../../src/data/integration";
 
 import type { DeviceRegistryEntry } from "../../../../src/data/device_registry";
 import type { EntityRegistryEntry } from "../../../../src/data/entity_registry";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../../../src/panels/config/integrations/ha-config-flow-card";
 import type {
   ConfigEntryExtended,
@@ -16,7 +16,7 @@ import type {
 } from "../../../../src/panels/config/integrations/ha-config-integrations";
 import "../../../../src/panels/config/integrations/ha-ignored-config-entry-card";
 import "../../../../src/panels/config/integrations/ha-integration-card";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 
 const createConfigEntry = (
   title: string,
@@ -242,14 +242,14 @@ const createDeviceRegistryEntries = (
 
 @customElement("demo-misc-integration-card")
 export class DemoIntegrationCard extends LitElement {
-  @property({ attribute: false }) hass?: HomeAssistant;
+  @property({ attribute: false }) menuai?: menuai;
 
   @state() isCustomIntegration = false;
 
   @state() isCloud = false;
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
     return html`
@@ -264,7 +264,7 @@ export class DemoIntegrationCard extends LitElement {
         </div>
 
         <ha-ignored-config-entry-card
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .entry=${createConfigEntry("Ignored Entry")}
           .manifest=${createManifest(this.isCustomIntegration, this.isCloud)}
         ></ha-ignored-config-entry-card>
@@ -272,7 +272,7 @@ export class DemoIntegrationCard extends LitElement {
         ${configFlows.map(
           (flow) => html`
             <ha-config-flow-card
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .flow=${flow}
               .manifest=${createManifest(
                 this.isCustomIntegration,
@@ -290,7 +290,7 @@ export class DemoIntegrationCard extends LitElement {
               class=${classMap({
                 highlight: info.highlight !== undefined,
               })}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               domain="esphome"
               .items=${info.items}
               .manifest=${createManifest(
@@ -313,7 +313,7 @@ export class DemoIntegrationCard extends LitElement {
         <!-- One that is standalone to see how it increases height if height
            not defined by other cards. -->
         <ha-integration-card
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           domain="esphome"
           .items=${[
             loadedEntry,
@@ -332,11 +332,11 @@ export class DemoIntegrationCard extends LitElement {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
     // Normally this string is loaded from backend
-    hass.addTranslations(
+    menuai.addTranslations(
       {
         "component.esphome.config.error.connection_error":
           "Can't connect to ESP. Please make sure your YAML file contains an 'api:' line.",

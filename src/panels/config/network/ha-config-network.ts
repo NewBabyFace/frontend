@@ -8,15 +8,15 @@ import "../../../components/ha-card";
 import "../../../components/ha-checkbox";
 import "../../../components/ha-network";
 import "../../../components/ha-settings-row";
-import { fetchNetworkInfo } from "../../../data/hassio/network";
+import { fetchNetworkInfo } from "../../../data/menuaiio/network";
 import type { NetworkConfig } from "../../../data/network";
 import { getNetworkConfig, setNetworkConfig } from "../../../data/network";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("ha-config-network")
 class ConfigNetwork extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _networkConfig?: NetworkConfig;
 
@@ -24,8 +24,8 @@ class ConfigNetwork extends LitElement {
 
   protected render() {
     if (
-      !this.hass.userData?.showAdvanced ||
-      !isComponentLoaded(this.hass, "network")
+      !this.menuai.userData?.showAdvanced ||
+      !isComponentLoaded(this.menuai, "network")
     ) {
       return nothing;
     }
@@ -33,7 +33,7 @@ class ConfigNetwork extends LitElement {
     return html`
       <ha-card
         outlined
-        header=${this.hass.localize("ui.panel.config.network.network_adapter")}
+        header=${this.menuai.localize("ui.panel.config.network.network_adapter")}
       >
         <div class="card-content">
           ${this._error
@@ -44,19 +44,19 @@ class ConfigNetwork extends LitElement {
               `
             : ""}
           <p>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.network.network_adapter_info"
             )}
           </p>
           <ha-network
             @network-config-changed=${this._configChanged}
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .networkConfig=${this._networkConfig}
           ></ha-network>
         </div>
         <div class="card-actions">
           <mwc-button @click=${this._save}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.config.core.section.core.core_config.save_button"
             )}
           </mwc-button>
@@ -67,7 +67,7 @@ class ConfigNetwork extends LitElement {
 
   protected firstUpdated(changedProps: PropertyValues) {
     super.firstUpdated(changedProps);
-    if (isComponentLoaded(this.hass, "network")) {
+    if (isComponentLoaded(this.menuai, "network")) {
       this._load();
     }
   }
@@ -75,9 +75,9 @@ class ConfigNetwork extends LitElement {
   private async _load() {
     this._error = undefined;
     try {
-      const coreNetwork = await getNetworkConfig(this.hass);
-      if (isComponentLoaded(this.hass, "hassio")) {
-        const supervisorNetwork = await fetchNetworkInfo(this.hass);
+      const coreNetwork = await getNetworkConfig(this.menuai);
+      if (isComponentLoaded(this.menuai, "menuaiio")) {
+        const supervisorNetwork = await fetchNetworkInfo(this.menuai);
         const interfaces = new Set(
           supervisorNetwork.interfaces.map((int) => int.interface)
         );
@@ -97,7 +97,7 @@ class ConfigNetwork extends LitElement {
     this._error = undefined;
     try {
       await setNetworkConfig(
-        this.hass,
+        this.menuai,
         this._networkConfig?.configured_adapters || []
       );
     } catch (err: any) {

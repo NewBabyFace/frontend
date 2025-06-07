@@ -1,9 +1,9 @@
 import type { LovelaceCardConfig } from "../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { getCardElementClass } from "../create-element/create-card-element";
 
 export const getCardStubConfig = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   type: string,
   entities: string[],
   entitiesFallback: string[]
@@ -14,7 +14,7 @@ export const getCardStubConfig = async (
 
   if (elClass && elClass.getStubConfig) {
     const classStubConfig = await elClass.getStubConfig(
-      hass,
+      menuai,
       entities,
       entitiesFallback
     );

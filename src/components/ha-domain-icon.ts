@@ -6,13 +6,13 @@ import {
   domainIcon,
   FALLBACK_DOMAIN_ICONS,
 } from "../data/icons";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { brandsUrl } from "../util/brands-url";
 import "./ha-icon";
 
 @customElement("ha-domain-icon")
 export class HaDomainIcon extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public domain?: string;
 
@@ -32,11 +32,11 @@ export class HaDomainIcon extends LitElement {
       return nothing;
     }
 
-    if (!this.hass) {
+    if (!this.menuai) {
       return this._renderFallback();
     }
 
-    const icon = domainIcon(this.hass, this.domain, this.deviceClass).then(
+    const icon = domainIcon(this.menuai, this.domain, this.deviceClass).then(
       (icn) => {
         if (icn) {
           return html`<ha-icon .icon=${icn}></ha-icon>`;
@@ -58,7 +58,7 @@ export class HaDomainIcon extends LitElement {
       const image = brandsUrl({
         domain: this.domain!,
         type: "icon",
-        darkOptimized: this.hass.themes?.darkMode,
+        darkOptimized: this.menuai.themes?.darkMode,
       });
       return html`
         <img

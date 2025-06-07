@@ -26,10 +26,10 @@ import {
 } from "../../data/lovelace/config/types";
 import { fetchResources } from "../../data/lovelace/resource";
 import type { WindowWithPreloads } from "../../data/preloads";
-import "../../layouts/hass-error-screen";
-import "../../layouts/hass-loading-screen";
+import "../../layouts/menuai-error-screen";
+import "../../layouts/menuai-loading-screen";
 import type { ShowToastParams } from "../../managers/notification-manager";
-import type { HomeAssistant, PanelInfo, Route } from "../../types";
+import type { menuai, PanelInfo, Route } from "../../types";
 import { showToast } from "../../util/toast";
 import { checkLovelaceConfig } from "./common/check-lovelace-config";
 import { loadLovelaceResources } from "./common/load-resources";
@@ -54,7 +54,7 @@ let editorLoaded = false;
 let resourcesLoaded = false;
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "strategy-config-changed": undefined;
   }
 }
@@ -63,7 +63,7 @@ declare global {
 export class LovelacePanel extends LitElement {
   @property({ attribute: false }) public panel?: PanelInfo<LovelacePanelConfig>;
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -88,8 +88,8 @@ export class LovelacePanel extends LitElement {
     super.connectedCallback();
     if (
       this.lovelace &&
-      this.hass &&
-      this.lovelace.locale !== this.hass.locale
+      this.menuai &&
+      this.lovelace.locale !== this.menuai.locale
     ) {
       // language has been changed, rebuild UI
       this._setLovelaceConfig(
@@ -130,7 +130,7 @@ export class LovelacePanel extends LitElement {
       return html`
         <hui-root
           .panel=${this.panel}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .lovelace=${this.lovelace}
           .route=${this.route}
           .narrow=${this.narrow}
@@ -142,22 +142,22 @@ export class LovelacePanel extends LitElement {
 
     if (panelState === "error") {
       return html`
-        <hass-error-screen
-          .hass=${this.hass}
-          title=${domainToName(this.hass!.localize, "lovelace")}
+        <menuai-error-screen
+          .menuai=${this.menuai}
+          title=${domainToName(this.menuai!.localize, "lovelace")}
           .error=${this._errorMsg}
         >
           <mwc-button raised @click=${this._forceFetchConfig}>
-            ${this.hass!.localize("ui.panel.lovelace.reload_lovelace")}
+            ${this.menuai!.localize("ui.panel.lovelace.reload_lovelace")}
           </mwc-button>
-        </hass-error-screen>
+        </menuai-error-screen>
       `;
     }
 
     if (panelState === "yaml-editor") {
       return html`
         <hui-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .lovelace=${this.lovelace}
           .closeEditor=${this._closeEditor}
         ></hui-editor>
@@ -165,11 +165,11 @@ export class LovelacePanel extends LitElement {
     }
 
     return html`
-      <hass-loading-screen
+      <menuai-loading-screen
         rootnav
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-      ></hass-loading-screen>
+      ></menuai-loading-screen>
     `;
   }
 
@@ -189,32 +189,32 @@ export class LovelacePanel extends LitElement {
 
   protected updated(changedProperties: PropertyValues): void {
     super.updated(changedProperties);
-    if (!changedProperties.has("hass")) {
+    if (!changedProperties.has("menuai")) {
       return;
     }
 
-    const oldHass = changedProperties.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProperties.get("menuai") as menuai | undefined;
     if (
-      oldHass &&
-      this.hass &&
+      oldmenuai &&
+      this.menuai &&
       this.lovelace &&
       isStrategyDashboard(this.lovelace.rawConfig)
     ) {
       // If the entity registry changed, ask the user if they want to refresh the config
       if (
-        oldHass.entities !== this.hass.entities ||
-        oldHass.devices !== this.hass.devices ||
-        oldHass.areas !== this.hass.areas ||
-        oldHass.floors !== this.hass.floors
+        oldmenuai.entities !== this.menuai.entities ||
+        oldmenuai.devices !== this.menuai.devices ||
+        oldmenuai.areas !== this.menuai.areas ||
+        oldmenuai.floors !== this.menuai.floors
       ) {
-        if (this.hass.config.state === "RUNNING") {
+        if (this.menuai.config.state === "RUNNING") {
           this._debounceRegistriesChanged();
         }
       }
       // If ha started, refresh the config
       if (
-        this.hass.config.state === "RUNNING" &&
-        oldHass.config.state !== "RUNNING"
+        this.menuai.config.state === "RUNNING" &&
+        oldmenuai.config.state !== "RUNNING"
       ) {
         this._regenerateStrategyConfig();
       }
@@ -227,7 +227,7 @@ export class LovelacePanel extends LitElement {
   );
 
   private _registriesChanged = async () => {
-    if (!this.hass || !this.lovelace) {
+    if (!this.menuai || !this.lovelace) {
       return;
     }
     const rawConfig = this.lovelace.rawConfig;
@@ -239,7 +239,7 @@ export class LovelacePanel extends LitElement {
     const oldConfig = this.lovelace.config;
     const generatedConfig = await generateLovelaceDashboardStrategy(
       rawConfig,
-      this.hass!
+      this.menuai!
     );
 
     const newConfig = checkLovelaceConfig(generatedConfig) as LovelaceConfig;
@@ -257,10 +257,10 @@ export class LovelacePanel extends LitElement {
 
   private _askRegenerateStrategyConfig = () => {
     showToast(this, {
-      message: this.hass!.localize("ui.panel.lovelace.changed_toast.message"),
+      message: this.menuai!.localize("ui.panel.lovelace.changed_toast.message"),
       action: {
         action: () => this._regenerateStrategyConfig(),
-        text: this.hass!.localize("ui.common.refresh"),
+        text: this.menuai!.localize("ui.common.refresh"),
       },
       duration: -1,
       id: "regenerate-strategy-config",
@@ -269,7 +269,7 @@ export class LovelacePanel extends LitElement {
   };
 
   private async _regenerateStrategyConfig() {
-    if (!this.hass || !this.lovelace) {
+    if (!this.menuai || !this.lovelace) {
       return;
     }
 
@@ -280,7 +280,7 @@ export class LovelacePanel extends LitElement {
     }
 
     try {
-      const conf = await generateLovelaceDashboardStrategy(rawConf, this.hass!);
+      const conf = await generateLovelaceDashboardStrategy(rawConf, this.menuai!);
       this._setLovelaceConfig(conf, rawConf, "generated");
     } catch (err: any) {
       // eslint-disable-next-line no-console
@@ -298,7 +298,7 @@ export class LovelacePanel extends LitElement {
   private async _regenerateConfig() {
     const conf = await generateLovelaceDashboardStrategy(
       DEFAULT_CONFIG,
-      this.hass!
+      this.menuai!
     );
     this._setLovelaceConfig(conf, DEFAULT_CONFIG, "generated");
     this._panelState = "loaded";
@@ -306,7 +306,7 @@ export class LovelacePanel extends LitElement {
 
   private async _subscribeUpdates() {
     this._unsubUpdates = subscribeLovelaceUpdates(
-      this.hass!.connection,
+      this.menuai!.connection,
       this.urlPath,
       () => this._lovelaceChanged()
     );
@@ -328,10 +328,10 @@ export class LovelacePanel extends LitElement {
       return;
     }
     showToast(this, {
-      message: this.hass!.localize("ui.panel.lovelace.changed_toast.message"),
+      message: this.menuai!.localize("ui.panel.lovelace.changed_toast.message"),
       action: {
         action: () => this._fetchConfig(false),
-        text: this.hass!.localize("ui.common.refresh"),
+        text: this.menuai!.localize("ui.common.refresh"),
       },
       duration: -1,
       dismissable: false,
@@ -362,8 +362,8 @@ export class LovelacePanel extends LitElement {
     }
     if (!resourcesLoaded) {
       resourcesLoaded = true;
-      (preloadWindow.llResProm || fetchResources(this.hass!.connection)).then(
-        (resources) => loadLovelaceResources(resources, this.hass!)
+      (preloadWindow.llResProm || fetchResources(this.menuai!.connection)).then(
+        (resources) => loadLovelaceResources(resources, this.menuai!)
       );
     }
 
@@ -376,7 +376,7 @@ export class LovelacePanel extends LitElement {
       }
 
       confProm = fetchConfig(
-        this.hass!.connection,
+        this.menuai!.connection,
         this.urlPath,
         forceDiskRefresh
       );
@@ -387,11 +387,11 @@ export class LovelacePanel extends LitElement {
 
       // If strategy defined, apply it here.
       if (isStrategyDashboard(rawConf)) {
-        if (!this.hass?.entities || !this.hass.devices || !this.hass.areas) {
+        if (!this.menuai?.entities || !this.menuai.devices || !this.menuai.areas) {
           // We need these to generate a dashboard, wait for them
           return;
         }
-        conf = await generateLovelaceDashboardStrategy(rawConf, this.hass!);
+        conf = await generateLovelaceDashboardStrategy(rawConf, this.menuai!);
       } else {
         conf = rawConf;
       }
@@ -403,13 +403,13 @@ export class LovelacePanel extends LitElement {
         this._errorMsg = err.message;
         return;
       }
-      if (!this.hass?.entities || !this.hass.devices || !this.hass.areas) {
+      if (!this.menuai?.entities || !this.menuai.devices || !this.menuai.areas) {
         // We need these to generate a dashboard, wait for them
         return;
       }
       conf = await generateLovelaceDashboardStrategy(
         DEFAULT_CONFIG,
-        this.hass!
+        this.menuai!
       );
       rawConf = DEFAULT_CONFIG;
       confMode = "generated";
@@ -446,7 +446,7 @@ export class LovelacePanel extends LitElement {
       mode,
       urlPath: this.urlPath,
       editMode: this.lovelace ? this.lovelace.editMode : false,
-      locale: this.hass!.locale,
+      locale: this.menuai!.locale,
       enableFullEditMode: () => {
         if (!editorLoaded) {
           editorLoaded = true;
@@ -485,7 +485,7 @@ export class LovelacePanel extends LitElement {
         let conf: LovelaceConfig;
         // If strategy defined, apply it here.
         if (isStrategyDashboard(newConfig)) {
-          conf = await generateLovelaceDashboardStrategy(newConfig, this.hass!);
+          conf = await generateLovelaceDashboardStrategy(newConfig, this.menuai!);
         } else {
           conf = newConfig;
         }
@@ -497,7 +497,7 @@ export class LovelacePanel extends LitElement {
             mode: "storage",
           });
           this._ignoreNextUpdateEvent = true;
-          await saveConfig(this.hass!, urlPath, newConfig);
+          await saveConfig(this.menuai!, urlPath, newConfig);
         } catch (err: any) {
           // eslint-disable-next-line
           console.error(err);
@@ -520,7 +520,7 @@ export class LovelacePanel extends LitElement {
           // Optimistic update
           const generatedConf = await generateLovelaceDashboardStrategy(
             DEFAULT_CONFIG,
-            this.hass!
+            this.menuai!
           );
           this._updateLovelace({
             config: generatedConf,
@@ -529,7 +529,7 @@ export class LovelacePanel extends LitElement {
             editMode: false,
           });
           this._ignoreNextUpdateEvent = true;
-          await deleteConfig(this.hass!, urlPath);
+          await deleteConfig(this.menuai!, urlPath);
         } catch (err: any) {
           // eslint-disable-next-line
           console.error(err);

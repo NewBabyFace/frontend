@@ -11,7 +11,7 @@ import "../../../../../components/ha-dialog-header";
 import type { ZHADevice, ZHAGroup } from "../../../../../data/zha";
 import { fetchBindableDevices, fetchGroups } from "../../../../../data/zha";
 import { haStyleDialog } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { sortZHADevices, sortZHAGroups } from "./functions";
 import type {
   Tab,
@@ -27,7 +27,7 @@ import "./zha-manage-clusters";
 
 @customElement("dialog-zha-manage-zigbee-device")
 class DialogZHAManageZigbeeDevice extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public large = false;
 
@@ -87,21 +87,21 @@ class DialogZHAManageZigbeeDevice extends LitElement {
         open
         hideActions
         @closed=${this.closeDialog}
-        .heading=${this.hass.localize("ui.dialogs.zha_manage_device.heading")}
+        .heading=${this.menuai.localize("ui.dialogs.zha_manage_device.heading")}
       >
         <ha-dialog-header show-border slot="heading">
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <span
             slot="title"
-            .title=${this.hass.localize("ui.dialogs.zha_manage_device.heading")}
+            .title=${this.menuai.localize("ui.dialogs.zha_manage_device.heading")}
             @click=${this._enlarge}
           >
-            ${this.hass.localize("ui.dialogs.zha_manage_device.heading")}
+            ${this.menuai.localize("ui.dialogs.zha_manage_device.heading")}
           </span>
           <sl-tab-group @sl-tab-show=${this._handleTabChanged}>
             ${tabs.map(
@@ -111,7 +111,7 @@ class DialogZHAManageZigbeeDevice extends LitElement {
                   .panel=${tab}
                   .active=${this._currTab === tab}
                 >
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.dialogs.zha_manage_device.tabs.${tab}`
                   )}
                 </sl-tab>
@@ -124,7 +124,7 @@ class DialogZHAManageZigbeeDevice extends LitElement {
             this._currTab === "clusters"
               ? html`
                   <zha-manage-clusters
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .device=${this._device}
                   ></zha-manage-clusters>
                 `
@@ -133,7 +133,7 @@ class DialogZHAManageZigbeeDevice extends LitElement {
                     ${this._bindableDevices.length > 0
                       ? html`
                           <zha-device-binding-control
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .device=${this._device}
                             .bindableDevices=${this._bindableDevices}
                           ></zha-device-binding-control>
@@ -142,7 +142,7 @@ class DialogZHAManageZigbeeDevice extends LitElement {
                     ${this._device && this._groups.length > 0
                       ? html`
                           <zha-group-binding-control
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                             .device=${this._device}
                             .groups=${this._groups}
                           ></zha-group-binding-control>
@@ -152,13 +152,13 @@ class DialogZHAManageZigbeeDevice extends LitElement {
                 : this._currTab === "signature"
                   ? html`
                       <zha-device-zigbee-info
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .device=${this._device}
                       ></zha-device-zigbee-info>
                     `
                   : html`
                       <zha-device-neighbors
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .device=${this._device}
                         .narrow=${!this.large}
                       ></zha-device-neighbors>
@@ -170,14 +170,14 @@ class DialogZHAManageZigbeeDevice extends LitElement {
   }
 
   private async _fetchData(): Promise<void> {
-    if (this._device && this.hass) {
+    if (this._device && this.menuai) {
       this._bindableDevices =
         this._device && this._device.device_type !== "Coordinator"
-          ? (await fetchBindableDevices(this.hass, this._device.ieee)).sort(
+          ? (await fetchBindableDevices(this.menuai, this._device.ieee)).sort(
               sortZHADevices
             )
           : [];
-      this._groups = (await fetchGroups(this.hass!)).sort(sortZHAGroups);
+      this._groups = (await fetchGroups(this.menuai!)).sort(sortZHAGroups);
     }
   }
 

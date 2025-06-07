@@ -1,12 +1,12 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { TTSVoiceSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-tts-voice-picker";
 
 @customElement("ha-selector-tts_voice")
 export class HaTTSVoiceSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: TTSVoiceSelector;
 
@@ -27,7 +27,7 @@ export class HaTTSVoiceSelector extends LitElement {
 
   protected render() {
     return html`<ha-tts-voice-picker
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .value=${this.value}
       .label=${this.label}
       .helper=${this.helper}

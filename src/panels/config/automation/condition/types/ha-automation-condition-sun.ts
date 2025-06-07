@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../../../common/dom/fire_event";
 import type { SunCondition } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { ConditionElement } from "../ha-automation-condition-row";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import "../../../../../components/ha-form/ha-form";
@@ -11,7 +11,7 @@ import type { SchemaUnion } from "../../../../../components/ha-form/types";
 
 @customElement("ha-automation-condition-sun")
 export class HaSunCondition extends LitElement implements ConditionElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: SunCondition;
 
@@ -68,12 +68,12 @@ export class HaSunCondition extends LitElement implements ConditionElement {
   );
 
   protected render() {
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
     return html`
       <ha-form
         .schema=${schema}
         .data=${this.condition}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -90,7 +90,7 @@ export class HaSunCondition extends LitElement implements ConditionElement {
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.conditions.type.sun.${schema.name}`
     );
 }

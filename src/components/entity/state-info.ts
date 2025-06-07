@@ -1,31 +1,31 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { computeStateName } from "../../common/entity/compute_state_name";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-relative-time";
 import "./state-badge";
 import "../ha-tooltip";
 
 @customElement("state-info")
 class StateInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
   @property() public color?: string;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
     const name = computeStateName(this.stateObj);
 
     return html`<state-badge
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .stateColor=${true}
         .color=${this.color}
@@ -38,31 +38,31 @@ class StateInfo extends LitElement {
           ? html`<div class="time-ago">
               <ha-tooltip>
                 <ha-relative-time
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .datetime=${this.stateObj.last_changed}
                   capitalize
                 ></ha-relative-time>
                 <div slot="content">
                   <div class="row">
                     <span class="column-name">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.dialogs.more_info_control.last_changed"
                       )}:
                     </span>
                     <ha-relative-time
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .datetime=${this.stateObj.last_changed}
                       capitalize
                     ></ha-relative-time>
                   </div>
                   <div class="row">
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.dialogs.more_info_control.last_updated"
                       )}:
                     </span>
                     <ha-relative-time
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .datetime=${this.stateObj.last_updated}
                       capitalize
                     ></ha-relative-time>

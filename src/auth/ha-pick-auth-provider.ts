@@ -11,7 +11,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-pick-auth-provider": HaPickAuthProvider;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "pick-auth-provider": AuthProvider;
   }
 }

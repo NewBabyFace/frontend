@@ -1,7 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import type { DeviceRegistryEntry } from "../../../../../../data/device_registry";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { invokeZWaveCCApi } from "../../../../../../data/zwave_js";
 import "../../../../../../components/ha-button";
 import "../../../../../../components/buttons/ha-progress-button";
@@ -11,7 +11,7 @@ import "../../../../../../components/ha-list-item";
 import "../../../../../../components/ha-alert";
 import type { HaSelect } from "../../../../../../components/ha-select";
 import type { HaTextField } from "../../../../../../components/ha-textfield";
-import { extractApiErrorMessage } from "../../../../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../../../../data/menuaiio/common";
 import type { HaProgressButton } from "../../../../../../components/buttons/ha-progress-button";
 
 // enum with special states
@@ -25,7 +25,7 @@ const SETBACK_TYPE_OPTIONS = ["none", "temporary", "permanent"];
 
 @customElement("zwave_js-capability-control-thermostat_setback")
 class ZWaveJSCapabilityThermostatSetback extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -51,7 +51,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
   protected render() {
     return html`
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.title`
         )}
       </h3>
@@ -59,7 +59,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
         ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
         : ""}
       <ha-select
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.setback_type.label`
         )}
         id="setback_type"
@@ -69,7 +69,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
         ${SETBACK_TYPE_OPTIONS.map(
           (translationKey, index) =>
             html`<ha-list-item .value=${String(index)}>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.setback_type.${translationKey}`
               )}
             </ha-list-item>`
@@ -80,19 +80,19 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
           type="number"
           id="setback_state"
           value="0"
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.setback_state_label`
           )}
           min="-12.8"
           max="12.0"
           step=".1"
-          .helper=${this.hass.localize(
+          .helper=${this.menuai.localize(
             `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.setback_state_helper`
           )}
           .disabled=${this._disableSetbackState || this._loading}
         ></ha-textfield>
         <ha-select
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.setback_special_state.label`
           )}
           id="setback_special_state"
@@ -103,7 +103,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
           ${Object.entries(SpecialState).map(
             ([translationKey, value]) =>
               html`<ha-list-item .value=${value}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   `ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.setback_special_state.${translationKey}`
                 )}
               </ha-list-item>`
@@ -115,13 +115,13 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
           class="clear-button"
           @click=${this._clear}
           .disabled=${this._loading}
-          >${this.hass.localize("ui.common.clear")}</ha-button
+          >${this.menuai.localize("ui.common.clear")}</ha-button
         >
         <ha-progress-button
           @click=${this._saveSetback}
           .disabled=${this._loading}
         >
-          ${this.hass.localize("ui.common.save")}
+          ${this.menuai.localize("ui.common.save")}
         </ha-progress-button>
       </div>
     `;
@@ -135,7 +135,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
     this._loading = true;
     try {
       const { setbackType, setbackState } = (await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -152,7 +152,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
         this._setbackSpecialStateSelect.value = setbackState;
       }
     } catch (err) {
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.get_setback_failed",
         { error: extractApiErrorMessage(err) }
       );
@@ -179,7 +179,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
 
     try {
       await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -191,7 +191,7 @@ class ZWaveJSCapabilityThermostatSetback extends LitElement {
       button.actionSuccess();
     } catch (err) {
       button.actionError();
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.node_installer.capability_controls.thermostat_setback.save_setback_failed",
         { error: extractApiErrorMessage(err) }
       );

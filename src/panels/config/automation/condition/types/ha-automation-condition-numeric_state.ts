@@ -17,7 +17,7 @@ import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import "../../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
 import type { NumericStateCondition } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { NON_NUMERIC_ATTRIBUTES } from "../../../../../data/entity_attributes";
 
 const numericStateConditionStruct = object({
@@ -33,7 +33,7 @@ const numericStateConditionStruct = object({
 
 @customElement("ha-automation-condition-numeric_state")
 export default class HaNumericStateCondition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public condition!: NumericStateCondition;
 
@@ -199,7 +199,7 @@ export default class HaNumericStateCondition extends LitElement {
 
   public render() {
     const schema = this._schema(
-      this.hass.localize,
+      this.menuai.localize,
       this._inputAboveIsEntity,
       this._inputBelowIsEntity
     );
@@ -212,7 +212,7 @@ export default class HaNumericStateCondition extends LitElement {
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .disabled=${this.disabled}
@@ -244,13 +244,13 @@ export default class HaNumericStateCondition extends LitElement {
   ): string => {
     switch (schema.name) {
       case "entity_id":
-        return this.hass.localize("ui.components.entity.entity-picker.entity");
+        return this.menuai.localize("ui.components.entity.entity-picker.entity");
       case "attribute":
-        return this.hass.localize(
+        return this.menuai.localize(
           "ui.components.entity.entity-attribute-picker.attribute"
         );
       default:
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.config.automation.editor.triggers.type.numeric_state.${schema.name}`
         );
     }

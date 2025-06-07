@@ -8,7 +8,7 @@ import "../../../../../components/ha-check-list-item";
 import "../../../../../components/ha-icon-button";
 import "../../../../../components/ha-textfield";
 import type { PersistentNotificationTrigger } from "../../../../../data/automation";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import type { TriggerElement } from "../ha-automation-trigger-row";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import type { SchemaUnion } from "../../../../../components/ha-form/types";
@@ -22,7 +22,7 @@ export class HaPersistentNotificationTrigger
   extends LitElement
   implements TriggerElement
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false })
   public trigger!: PersistentNotificationTrigger;
@@ -80,12 +80,12 @@ export class HaPersistentNotificationTrigger
   }
 
   protected render() {
-    const schema = this._schema(this.hass.localize);
+    const schema = this._schema(this.menuai.localize);
     return html`
       <ha-form
         .schema=${schema}
         .data=${this.trigger}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
@@ -102,7 +102,7 @@ export class HaPersistentNotificationTrigger
   private _computeLabelCallback = (
     schema: SchemaUnion<ReturnType<typeof this._schema>>
   ): string =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.automation.editor.triggers.type.persistent_notification.${schema.name}`
     );
 

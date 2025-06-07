@@ -10,7 +10,7 @@ import type { HaYamlEditor } from "../../../../components/ha-yaml-editor";
 import type { LovelaceBadgeConfig } from "../../../../data/lovelace/config/badge";
 import type { LovelaceConfig } from "../../../../data/lovelace/config/types";
 import { haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showSaveSuccessToast } from "../../../../util/toast-saved-success";
 import "../../badges/hui-badge";
 import { addBadges } from "../config-util";
@@ -20,7 +20,7 @@ import type { SuggestBadgeDialogParams } from "./show-suggest-badge-dialog";
 
 @customElement("hui-dialog-suggest-badge")
 export class HuiDialogSuggestBadge extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: SuggestBadgeDialogParams;
 
@@ -54,7 +54,7 @@ export class HuiDialogSuggestBadge extends LitElement {
           ${this._badgeConfig.map(
             (badgeConfig) => html`
               <hui-badge
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .config=${badgeConfig}
                 preview
               ></hui-badge>
@@ -75,7 +75,7 @@ export class HuiDialogSuggestBadge extends LitElement {
         open
         scrimClickAction
         @closed=${this.closeDialog}
-        .heading=${this.hass!.localize(
+        .heading=${this.menuai!.localize(
           "ui.panel.lovelace.editor.suggest_badge.header"
         )}
       >
@@ -85,7 +85,7 @@ export class HuiDialogSuggestBadge extends LitElement {
             ? html`
                 <div class="editor">
                   <ha-yaml-editor
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .defaultValue=${this._badgeConfig}
                   ></ha-yaml-editor>
                 </div>
@@ -98,8 +98,8 @@ export class HuiDialogSuggestBadge extends LitElement {
           dialogInitialFocus
         >
           ${this._params.yaml
-            ? this.hass!.localize("ui.common.close")
-            : this.hass!.localize("ui.common.cancel")}
+            ? this.menuai!.localize("ui.common.close")
+            : this.menuai!.localize("ui.common.cancel")}
         </mwc-button>
         ${!this._params.yaml
           ? html`
@@ -112,7 +112,7 @@ export class HuiDialogSuggestBadge extends LitElement {
                   ? html`
                       <ha-spinner aria-label="Saving" size="small"></ha-spinner>
                     `
-                  : this.hass!.localize(
+                  : this.menuai!.localize(
                       "ui.panel.lovelace.editor.suggest_badge.add"
                     )}
               </mwc-button>
@@ -188,7 +188,7 @@ export class HuiDialogSuggestBadge extends LitElement {
     );
     await this._params!.saveConfig(newConfig);
     this._saving = false;
-    showSaveSuccessToast(this, this.hass);
+    showSaveSuccessToast(this, this.menuai);
     this.closeDialog();
   }
 }

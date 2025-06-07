@@ -1,17 +1,17 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { supportsFeature } from "../common/entity/supports-feature";
 import { cleanupMediaTitle } from "../data/media-player";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export default class MediaPlayerEntity {
-  public hass: HomeAssistant;
+  public menuai: menuai;
 
-  public stateObj: HassEntity;
+  public stateObj: menuaiEntity;
 
   private _attr: Record<string, any>;
 
-  constructor(hass: HomeAssistant, stateObj: HassEntity) {
-    this.hass = hass;
+  constructor(menuai: menuai, stateObj: menuaiEntity) {
+    this.menuai = menuai;
     this.stateObj = stateObj;
     this._attr = stateObj.attributes;
   }
@@ -228,6 +228,6 @@ export default class MediaPlayerEntity {
 
   callService(service, data: any = {}) {
     data.entity_id = this.stateObj.entity_id;
-    this.hass.callService("media_player", service, data);
+    this.menuai.callService("media_player", service, data);
   }
 }

@@ -14,7 +14,7 @@ import "../../../../components/ha-svg-icon";
 import { getService, isService } from "../../../../data/action";
 import type { AutomationClipboard } from "../../../../data/automation";
 import type { Action } from "../../../../data/script";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   PASTE_VALUE,
   showAddAutomationElementDialog,
@@ -24,7 +24,7 @@ import { getType } from "./ha-automation-action-row";
 
 @customElement("ha-automation-action")
 export default class HaAutomationAction extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -93,7 +93,7 @@ export default class HaAutomationAction extends LitElement {
                 @move-down=${this._moveDown}
                 @move-up=${this._moveUp}
                 @value-changed=${this._actionChanged}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 ?highlight=${this.highlightedActions?.includes(action)}
               >
                 ${this._showReorder && !this.disabled
@@ -110,7 +110,7 @@ export default class HaAutomationAction extends LitElement {
             <ha-button
               outlined
               .disabled=${this.disabled}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.add"
               )}
               @click=${this._addActionDialog}
@@ -119,7 +119,7 @@ export default class HaAutomationAction extends LitElement {
             </ha-button>
             <ha-button
               .disabled=${this.disabled}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.actions.add_building_block"
               )}
               @click=${this._addActionBuildingBlockDialog}

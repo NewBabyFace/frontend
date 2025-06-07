@@ -4,7 +4,7 @@ import type { CSSResultGroup, PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
-import type { HASSDomEvent } from "../../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../../common/dom/fire_event";
 import { navigate } from "../../../../../common/navigate";
 import type { LocalizeFunc } from "../../../../../common/translations/localize";
 import type {
@@ -15,9 +15,9 @@ import "../../../../../components/ha-fab";
 import "../../../../../components/ha-icon-button";
 import type { ZHAGroup } from "../../../../../data/zha";
 import { fetchGroups } from "../../../../../data/zha";
-import "../../../../../layouts/hass-tabs-subpage-data-table";
+import "../../../../../layouts/menuai-tabs-subpage-data-table";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../../../types";
+import type { menuai, Route } from "../../../../../types";
 import { formatAsPaddedHex, sortZHAGroups } from "./functions";
 import { zhaTabs } from "./zha-config-dashboard";
 
@@ -28,7 +28,7 @@ export interface GroupRowData extends ZHAGroup {
 
 @customElement("zha-groups-dashboard")
 export class ZHAGroupsDashboard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route!: Route;
 
@@ -42,14 +42,14 @@ export class ZHAGroupsDashboard extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
-    if (this.hass && this._firstUpdatedCalled) {
+    if (this.menuai && this._firstUpdatedCalled) {
       this._fetchGroups();
     }
   }
 
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
-    if (this.hass) {
+    if (this.menuai) {
       this._fetchGroups();
     }
     this._firstUpdatedCalled = true;
@@ -100,12 +100,12 @@ export class ZHAGroupsDashboard extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-tabs-subpage-data-table
+      <menuai-tabs-subpage-data-table
         .tabs=${zhaTabs}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .route=${this.route}
-        .columns=${this._columns(this.hass.localize)}
+        .columns=${this._columns(this.menuai.localize)}
         .data=${this._formattedGroups(this._groups)}
         @row-click=${this._handleRowClicked}
         clickable
@@ -113,7 +113,7 @@ export class ZHAGroupsDashboard extends LitElement {
       >
         <a href="/config/zha/group-add" slot="fab">
           <ha-fab
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.panel.config.zha.groups.add_group"
             )}
             extended
@@ -121,15 +121,15 @@ export class ZHAGroupsDashboard extends LitElement {
             <ha-svg-icon slot="icon" .path=${mdiPlus}></ha-svg-icon>
           </ha-fab>
         </a>
-      </hass-tabs-subpage-data-table>
+      </menuai-tabs-subpage-data-table>
     `;
   }
 
   private async _fetchGroups() {
-    this._groups = (await fetchGroups(this.hass!)).sort(sortZHAGroups);
+    this._groups = (await fetchGroups(this.menuai!)).sort(sortZHAGroups);
   }
 
-  private _handleRowClicked(ev: HASSDomEvent<RowClickedEvent>) {
+  private _handleRowClicked(ev: menuaiDomEvent<RowClickedEvent>) {
     const groupId = ev.detail.id;
     navigate(`/config/zha/group/${groupId}`);
   }

@@ -13,7 +13,7 @@ import type {
   LovelaceViewConfig,
   LovelaceViewHeaderConfig,
 } from "../../../../data/lovelace/config/view";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   DEFAULT_VIEW_HEADER_BADGES_POSITION,
   DEFAULT_VIEW_HEADER_BADGES_WRAP,
@@ -23,7 +23,7 @@ import { listenMediaQuery } from "../../../../common/dom/media_query";
 
 @customElement("hui-view-header-settings-editor")
 export class HuiViewHeaderSettingsEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public config?: LovelaceViewHeaderConfig;
 
@@ -121,7 +121,7 @@ export class HuiViewHeaderSettingsEditor extends LitElement {
   );
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -133,12 +133,12 @@ export class HuiViewHeaderSettingsEditor extends LitElement {
     };
 
     const narrow = this.narrow;
-    const isRTL = computeRTL(this.hass);
-    const schema = this._schema(this.hass.localize, isRTL, narrow);
+    const isRTL = computeRTL(this.menuai);
+    const schema = this._schema(this.menuai.localize, isRTL, narrow);
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabel}
@@ -166,7 +166,7 @@ export class HuiViewHeaderSettingsEditor extends LitElement {
       case "layout":
       case "badges_position":
       case "badges_wrap":
-        return this.hass.localize(
+        return this.menuai.localize(
           `ui.panel.lovelace.editor.edit_view_header.settings.${schema.name}`
         );
       default:

@@ -1,5 +1,5 @@
 import { ensureArray } from "../common/array/ensure-array";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export const enum ConversationEntityFeature {
   CONTROL = 1,
@@ -79,13 +79,13 @@ export interface AssistDebugResponse {
 }
 
 export const processConversationInput = (
-  hass: HomeAssistant,
+  menuai: menuai,
   text: string,
   // eslint-disable-next-line: variable-name
   conversation_id: string | null,
   language: string
 ): Promise<ConversationResult> =>
-  hass.callWS({
+  menuai.callWS({
     type: "conversation/process",
     text,
     conversation_id,
@@ -93,33 +93,33 @@ export const processConversationInput = (
   });
 
 export const listAgents = (
-  hass: HomeAssistant,
+  menuai: menuai,
   language?: string,
   country?: string
 ): Promise<{ agents: Agent[] }> =>
-  hass.callWS({
+  menuai.callWS({
     type: "conversation/agent/list",
     language,
     country,
   });
 
 export const prepareConversation = (
-  hass: HomeAssistant,
+  menuai: menuai,
   language?: string
 ): Promise<void> =>
-  hass.callWS({
+  menuai.callWS({
     type: "conversation/prepare",
     language,
   });
 
 export const debugAgent = (
-  hass: HomeAssistant,
+  menuai: menuai,
   sentences: string[] | string,
   language: string,
   device_id?: string
 ): Promise<AssistDebugResponse> =>
-  hass.callWS({
-    type: "conversation/agent/homeassistant/debug",
+  menuai.callWS({
+    type: "conversation/agent/menuai/debug",
     sentences: ensureArray(sentences),
     language,
     device_id,
@@ -134,12 +134,12 @@ export interface LanguageScore {
 export type LanguageScores = Record<string, LanguageScore>;
 
 export const getLanguageScores = (
-  hass: HomeAssistant,
+  menuai: menuai,
   language?: string,
   country?: string
 ): Promise<{ languages: LanguageScores; preferred_language: string | null }> =>
-  hass.callWS({
-    type: "conversation/agent/homeassistant/language_scores",
+  menuai.callWS({
+    type: "conversation/agent/menuai/language_scores",
     language,
     country,
   });

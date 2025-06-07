@@ -5,7 +5,7 @@ import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-icon-next";
 import "../../components/ha-list-item";
 import type { DataEntryFlowStepMenu } from "../../data/data_entry_flow";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { FlowConfig } from "./show-dialog-data-entry-flow";
 import { configFlowContentStyles } from "./styles";
 
@@ -13,7 +13,7 @@ import { configFlowContentStyles } from "./styles";
 class StepFlowMenu extends LitElement {
   @property({ attribute: false }) public flowConfig!: FlowConfig;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public step!: DataEntryFlowStepMenu;
 
@@ -26,7 +26,7 @@ class StepFlowMenu extends LitElement {
       translations = {};
       for (const option of options) {
         translations[option] = this.flowConfig.renderMenuOption(
-          this.hass,
+          this.menuai,
           this.step,
           option
         );
@@ -37,7 +37,7 @@ class StepFlowMenu extends LitElement {
     }
 
     const description = this.flowConfig.renderMenuDescription(
-      this.hass,
+      this.menuai,
       this.step
     );
 
@@ -59,7 +59,7 @@ class StepFlowMenu extends LitElement {
   private _handleStep(ev) {
     fireEvent(this, "flow-update", {
       stepPromise: this.flowConfig.handleFlowStep(
-        this.hass,
+        this.menuai,
         this.step.flow_id,
         {
           next_step_id: ev.currentTarget.step,

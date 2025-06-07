@@ -10,7 +10,7 @@ import { UNAVAILABLE } from "../../../data/entity";
 import type { UpdateEntity } from "../../../data/update";
 import { UpdateEntityFeature, updateIsInstalling } from "../../../data/update";
 import { showUpdateBackupDialogParams } from "../../../dialogs/update_backup/show-update-backup-dialog";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { LovelaceCardFeature, LovelaceCardFeatureEditor } from "../types";
 import { cardFeatureStyles } from "./common/card-feature-styles";
 import type {
@@ -21,11 +21,11 @@ import type {
 export const DEFAULT_UPDATE_BACKUP_OPTION = "no";
 
 export const supportsUpdateActionsCardFeature = (
-  hass: HomeAssistant,
+  menuai: menuai,
   context: LovelaceCardFeatureContext
 ) => {
   const stateObj = context.entity_id
-    ? hass.states[context.entity_id]
+    ? menuai.states[context.entity_id]
     : undefined;
   if (!stateObj) return false;
   const domain = computeDomain(stateObj.entity_id);
@@ -40,17 +40,17 @@ class HuiUpdateActionsCardFeature
   extends LitElement
   implements LovelaceCardFeature
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @state() private _config?: UpdateActionsCardFeatureConfig;
 
   private get _stateObj() {
-    if (!this.hass || !this.context || !this.context.entity_id) {
+    if (!this.menuai || !this.context || !this.context.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id!] as
+    return this.menuai.states[this.context.entity_id!] as
       | UpdateEntity
       | undefined;
   }
@@ -118,14 +118,14 @@ class HuiUpdateActionsCardFeature
       backup = response;
     }
 
-    this.hass!.callService("update", "install", {
+    this.menuai!.callService("update", "install", {
       entity_id: this._stateObj!.entity_id,
       backup: backup,
     });
   }
 
   private async _skip(): Promise<void> {
-    this.hass!.callService("update", "skip", {
+    this.menuai!.callService("update", "skip", {
       entity_id: this._stateObj!.entity_id,
     });
   }
@@ -133,10 +133,10 @@ class HuiUpdateActionsCardFeature
   protected render() {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this.context ||
       !this._stateObj ||
-      !supportsUpdateActionsCardFeature(this.hass, this.context)
+      !supportsUpdateActionsCardFeature(this.menuai, this.context)
     ) {
       return nothing;
     }
@@ -144,7 +144,7 @@ class HuiUpdateActionsCardFeature
     return html`
       <ha-control-button-group>
         <ha-control-button
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.dialogs.more_info_control.update.skip"
           )}
           @click=${this._skip}
@@ -153,7 +153,7 @@ class HuiUpdateActionsCardFeature
           <ha-svg-icon .path=${mdiCancel}></ha-svg-icon>
         </ha-control-button>
         <ha-control-button
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.dialogs.more_info_control.update.install"
           )}
           @click=${this._install}

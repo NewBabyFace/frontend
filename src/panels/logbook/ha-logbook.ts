@@ -11,7 +11,7 @@ import { subscribeLogbook } from "../../data/logbook";
 import type { TraceContexts } from "../../data/trace";
 import { loadTraceContexts } from "../../data/trace";
 import { fetchUsers } from "../../data/user";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "./ha-logbook-renderer";
 
 interface LogbookTimePeriod {
@@ -39,7 +39,7 @@ const idsChanged = (oldIds?: string[], newIds?: string[]) => {
 
 @customElement("ha-logbook")
 export class HaLogbook extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public time!:
     | { range: [Date, Date] }
@@ -89,13 +89,13 @@ export class HaLogbook extends LitElement {
   );
 
   protected render() {
-    if (!isComponentLoaded(this.hass, "logbook")) {
+    if (!isComponentLoaded(this.menuai, "logbook")) {
       return nothing;
     }
 
     if (this._error) {
       return html`<div class="no-entries">
-        ${`${this.hass.localize("ui.components.logbook.retrieval_error")}: ${
+        ${`${this.menuai.localize("ui.components.logbook.retrieval_error")}: ${
           this._error
         }`}
       </div>`;
@@ -111,13 +111,13 @@ export class HaLogbook extends LitElement {
 
     if (this._logbookEntries.length === 0) {
       return html`<div class="no-entries">
-        ${this.hass.localize("ui.components.logbook.entries_not_found")}
+        ${this.menuai.localize("ui.components.logbook.entries_not_found")}
       </div>`;
     }
 
     return html`
       <ha-logbook-renderer
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .virtualize=${this.virtualize}
         .noIcon=${this.noIcon}
@@ -127,7 +127,7 @@ export class HaLogbook extends LitElement {
         .entries=${this._logbookEntries}
         .traceContexts=${this._traceContexts}
         .userIdToName=${this._userIdToName}
-        @hass-logbook-live=${this._handleLogbookLive}
+        @menuai-logbook-live=${this._handleLogbookLive}
       ></ha-logbook-renderer>
     `;
   }
@@ -152,12 +152,12 @@ export class HaLogbook extends LitElement {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.size !== 1 || !changedProps.has("hass")) {
+    if (changedProps.size !== 1 || !changedProps.has("menuai")) {
       return true;
     }
-    // We only respond to hass changes if the translations changed
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-    return !oldHass || oldHass.localize !== this.hass.localize;
+    // We only respond to menuai changes if the translations changed
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+    return !oldmenuai || oldmenuai.localize !== this.menuai.localize;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
@@ -279,7 +279,7 @@ export class HaLogbook extends LitElement {
 
     try {
       this._unsubLogbook = subscribeLogbook(
-        this.hass,
+        this.menuai,
         (streamMessage) => {
           this._processOrQueueStreamMessage(streamMessage);
         },
@@ -312,7 +312,7 @@ export class HaLogbook extends LitElement {
     }
 
     this._updateUsers();
-    if (this.hass.user?.is_admin) {
+    if (this.menuai.user?.is_admin) {
       this._updateTraceContexts();
     }
 
@@ -385,17 +385,17 @@ export class HaLogbook extends LitElement {
   };
 
   private _updateTraceContexts = throttle(async () => {
-    this._traceContexts = await loadTraceContexts(this.hass);
+    this._traceContexts = await loadTraceContexts(this.menuai);
   }, 60000);
 
   private _updateUsers = throttle(async () => {
     const userIdToName = {};
 
     // Start loading users
-    const userProm = this.hass.user?.is_admin && fetchUsers(this.hass);
+    const userProm = this.menuai.user?.is_admin && fetchUsers(this.menuai);
 
     // Process persons
-    for (const entity of Object.values(this.hass.states)) {
+    for (const entity of Object.values(this.menuai.states)) {
       if (
         entity.attributes.user_id &&
         computeStateDomain(entity) === "person"

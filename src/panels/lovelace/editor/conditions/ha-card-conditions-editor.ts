@@ -8,7 +8,7 @@ import "../../../../components/ha-button";
 import "../../../../components/ha-list-item";
 import type { HaSelect } from "../../../../components/ha-select";
 import "../../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { ICON_CONDITION } from "../../common/icon-condition";
 import type {
   Condition,
@@ -35,7 +35,7 @@ const UI_CONDITION = [
 
 @customElement("ha-card-conditions-editor")
 export class HaCardConditionsEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public conditions!: (
     | Condition
@@ -82,7 +82,7 @@ export class HaCardConditionsEditor extends LitElement {
             <ha-card-condition-editor
               .index=${idx}
               @value-changed=${this._conditionChanged}
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .condition=${cond}
             ></ha-card-condition-editor>
           `
@@ -96,7 +96,7 @@ export class HaCardConditionsEditor extends LitElement {
             <ha-button
               slot="trigger"
               outlined
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.lovelace.editor.condition-editor.add"
               )}
             >
@@ -105,7 +105,7 @@ export class HaCardConditionsEditor extends LitElement {
             ${UI_CONDITION.map(
               (condition) => html`
                 <ha-list-item .value=${condition} graphic="icon">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     `ui.panel.lovelace.editor.condition-editor.condition.${condition}.label`
                   ) || condition}
                   <ha-svg-icon

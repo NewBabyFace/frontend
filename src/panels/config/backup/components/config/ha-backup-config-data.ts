@@ -20,14 +20,14 @@ import type { HaMdSelect } from "../../../../../components/ha-md-select";
 import "../../../../../components/ha-md-select-option";
 import "../../../../../components/ha-switch";
 import type { HaSwitch } from "../../../../../components/ha-switch";
-import { fetchHassioAddonsInfo } from "../../../../../data/hassio/addon";
-import type { HomeAssistant } from "../../../../../types";
+import { fetchmenuaiioAddonsInfo } from "../../../../../data/menuaiio/addon";
+import type { menuai } from "../../../../../types";
 import "../ha-backup-addons-picker";
 import type { BackupAddonItem } from "../ha-backup-addons-picker";
 import { getRecorderInfo } from "../../../../../data/recorder";
 
 export interface FormData {
-  homeassistant: boolean;
+  menuai: boolean;
   database: boolean;
   media: boolean;
   share: boolean;
@@ -37,7 +37,7 @@ export interface FormData {
 }
 
 const INITIAL_FORM_DATA: FormData = {
-  homeassistant: false,
+  menuai: false,
   database: false,
   media: false,
   share: false,
@@ -47,7 +47,7 @@ const INITIAL_FORM_DATA: FormData = {
 };
 
 export interface BackupConfigData {
-  include_homeassistant?: boolean;
+  include_menuai?: boolean;
   include_database: boolean;
   include_folders?: string[];
   include_all_addons: boolean;
@@ -55,17 +55,17 @@ export interface BackupConfigData {
 }
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "backup-addons-fetched": undefined;
   }
 }
 
 @customElement("ha-backup-config-data")
 class HaBackupConfigData extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, attribute: "force-home-assistant" })
-  public forceHomeAssistant = false;
+  public forcemenuai = false;
 
   @property({ attribute: "hide-addon-version", type: Boolean })
   public hideAddonVersion = false;
@@ -81,14 +81,14 @@ class HaBackupConfigData extends LitElement {
   protected firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties);
     this._checkDbOption();
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       this._fetchAddons();
     }
   }
 
   protected updated(changedProperties: PropertyValues): void {
     if (changedProperties.has("value")) {
-      if (isComponentLoaded(this.hass, "hassio")) {
+      if (isComponentLoaded(this.menuai, "menuaiio")) {
         if (this.value?.include_addons?.length) {
           this._showAddons = true;
         }
@@ -97,14 +97,14 @@ class HaBackupConfigData extends LitElement {
   }
 
   private async _fetchAddons() {
-    const { addons } = await fetchHassioAddonsInfo(this.hass);
+    const { addons } = await fetchmenuaiioAddonsInfo(this.menuai);
     this._addons = addons;
     fireEvent(this, "backup-addons-fetched");
   }
 
   private async _checkDbOption() {
-    if (isComponentLoaded(this.hass, "recorder")) {
-      const info = await getRecorderInfo(this.hass.connection);
+    if (isComponentLoaded(this.menuai, "recorder")) {
+      const info = await getRecorderInfo(this.menuai.connection);
       this._showDbOption = info.db_in_default_location;
       if (!this._showDbOption && this.value?.include_database) {
         this.value.include_database = false;
@@ -129,7 +129,7 @@ class HaBackupConfigData extends LitElement {
       const addons = config.include_addons?.slice() ?? [];
 
       return {
-        homeassistant: config.include_homeassistant || this.forceHomeAssistant,
+        menuai: config.include_menuai || this.forcemenuai,
         database: config.include_database,
         media: config.include_folders?.includes("media") || false,
         share: config.include_folders?.includes("share") || false,
@@ -154,8 +154,8 @@ class HaBackupConfigData extends LitElement {
     const include_addons = data.addons_mode === "custom" ? data.addons : [];
 
     this.value = {
-      include_homeassistant:
-        data.homeassistant || data.database || this.forceHomeAssistant,
+      include_menuai:
+        data.menuai || data.database || this.forcemenuai,
       include_addons: include_addons.length ? include_addons : undefined,
       include_all_addons: data.addons_mode === "all",
       include_database: data.database,
@@ -168,30 +168,30 @@ class HaBackupConfigData extends LitElement {
   protected render() {
     const data = this._getData(this.value, this._showAddons);
 
-    const isHassio = isComponentLoaded(this.hass, "hassio");
+    const ismenuaiio = isComponentLoaded(this.menuai, "menuaiio");
 
     return html`
       <ha-md-list>
         <ha-md-list-item>
           <ha-svg-icon slot="start" .path=${mdiCog}></ha-svg-icon>
           <span slot="headline">
-            ${this.hass.localize("ui.panel.config.backup.data.ha_settings")}
+            ${this.menuai.localize("ui.panel.config.backup.data.ha_settings")}
           </span>
           <span slot="supporting-text">
-            ${this.forceHomeAssistant
-              ? this.hass.localize(
+            ${this.forcemenuai
+              ? this.menuai.localize(
                   "ui.panel.config.backup.data.ha_settings_included_description"
                 )
-              : this.hass.localize(
+              : this.menuai.localize(
                   "ui.panel.config.backup.data.ha_settings_description"
                 )}
           </span>
           <ha-switch
-            id="homeassistant"
+            id="menuai"
             slot="end"
             @change=${this._switchChanged}
-            .checked=${data.homeassistant}
-            .disabled=${this.forceHomeAssistant || data.database}
+            .checked=${data.menuai}
+            .disabled=${this.forcemenuai || data.database}
           ></ha-switch>
         </ha-md-list-item>
 
@@ -199,10 +199,10 @@ class HaBackupConfigData extends LitElement {
           ? html`<ha-md-list-item>
               <ha-svg-icon slot="start" .path=${mdiChartBox}></ha-svg-icon>
               <span slot="headline">
-                ${this.hass.localize("ui.panel.config.backup.data.history")}
+                ${this.menuai.localize("ui.panel.config.backup.data.history")}
               </span>
               <span slot="supporting-text">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.data.history_description"
                 )}
               </span>
@@ -214,7 +214,7 @@ class HaBackupConfigData extends LitElement {
               ></ha-switch>
             </ha-md-list-item>`
           : nothing}
-        ${isHassio
+        ${ismenuaiio
           ? html`
               <ha-md-list-item>
                 <ha-svg-icon
@@ -222,10 +222,10 @@ class HaBackupConfigData extends LitElement {
                   .path=${mdiPlayBoxMultiple}
                 ></ha-svg-icon>
                 <span slot="headline">
-                  ${this.hass.localize("ui.panel.config.backup.data.media")}
+                  ${this.menuai.localize("ui.panel.config.backup.data.media")}
                 </span>
                 <span slot="supporting-text">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.data.media_description"
                   )}
                 </span>
@@ -240,12 +240,12 @@ class HaBackupConfigData extends LitElement {
               <ha-md-list-item>
                 <ha-svg-icon slot="start" .path=${mdiFolder}></ha-svg-icon>
                 <span slot="headline">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.data.share_folder"
                   )}
                 </span>
                 <span slot="supporting-text">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.data.share_folder_description"
                   )}
                 </span>
@@ -265,12 +265,12 @@ class HaBackupConfigData extends LitElement {
                         .path=${mdiFolder}
                       ></ha-svg-icon>
                       <span slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.backup.data.local_addons"
                         )}
                       </span>
                       <span slot="supporting-text">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.backup.data.local_addons_description"
                         )}
                       </span>
@@ -291,12 +291,12 @@ class HaBackupConfigData extends LitElement {
                         .path=${mdiPuzzle}
                       ></ha-svg-icon>
                       <span slot="headline">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.backup.data.addons"
                         )}
                       </span>
                       <span slot="supporting-text">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.backup.data.addons_description"
                         )}
                       </span>
@@ -308,21 +308,21 @@ class HaBackupConfigData extends LitElement {
                       >
                         <ha-md-select-option value="all">
                           <div slot="headline">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.backup.data.addons_all"
                             )}
                           </div>
                         </ha-md-select-option>
                         <ha-md-select-option value="none">
                           <div slot="headline">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.backup.data.addons_none"
                             )}
                           </div>
                         </ha-md-select-option>
                         <ha-md-select-option value="custom">
                           <div slot="headline">
-                            ${this.hass.localize(
+                            ${this.menuai.localize(
                               "ui.panel.config.backup.data.addons_custom"
                             )}
                           </div>
@@ -334,11 +334,11 @@ class HaBackupConfigData extends LitElement {
             `
           : nothing}
       </ha-md-list>
-      ${isHassio && this._showAddons && this._addons.length
+      ${ismenuaiio && this._showAddons && this._addons.length
         ? html`
             <ha-expansion-panel .header=${"Add-ons"} outlined expanded>
               <ha-backup-addons-picker
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .value=${data.addons}
                 @value-changed=${this._addonsChanged}
                 .addons=${this._addons}

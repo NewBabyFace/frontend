@@ -1,5 +1,5 @@
 import type { Connection, UnsubscribeFunc } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface RenderTemplateResult {
   result: string;
@@ -51,13 +51,13 @@ export const subscribeRenderTemplate = (
   );
 
 export const subscribePreviewTemplate = (
-  hass: HomeAssistant,
+  menuai: menuai,
   flow_id: string,
   flow_type: "config_flow" | "options_flow",
   user_input: Record<string, any>,
   callback: (preview: TemplatePreview) => void
 ): Promise<UnsubscribeFunc> =>
-  hass.connection.subscribeMessage(callback, {
+  menuai.connection.subscribeMessage(callback, {
     type: "template/start_preview",
     flow_id,
     flow_type,

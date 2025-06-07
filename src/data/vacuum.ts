@@ -1,6 +1,6 @@
 import type {
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import { UNAVAILABLE } from "./entity";
 
@@ -31,13 +31,13 @@ export const enum VacuumEntityFeature {
   START = 8192,
 }
 
-interface VacuumEntityAttributes extends HassEntityAttributeBase {
+interface VacuumEntityAttributes extends menuaiEntityAttributeBase {
   battery_level?: number;
   fan_speed?: any;
   [key: string]: any;
 }
 
-export interface VacuumEntity extends HassEntityBase {
+export interface VacuumEntity extends menuaiEntityBase {
   attributes: VacuumEntityAttributes;
 }
 

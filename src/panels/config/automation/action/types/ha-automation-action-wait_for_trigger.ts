@@ -8,7 +8,7 @@ import "../../../../../components/ha-duration-input";
 import "../../../../../components/ha-formfield";
 import "../../../../../components/ha-textfield";
 import type { WaitForTriggerAction } from "../../../../../data/script";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import "../../trigger/ha-automation-trigger";
 import type { ActionElement } from "../ha-automation-action-row";
 import { handleChangeEvent } from "../ha-automation-action-row";
@@ -18,7 +18,7 @@ export class HaWaitForTriggerAction
   extends LitElement
   implements ActionElement
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public action!: WaitForTriggerAction;
 
@@ -33,7 +33,7 @@ export class HaWaitForTriggerAction
 
     return html`
       <ha-duration-input
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.wait_for_trigger.timeout"
         )}
         .data=${timeData}
@@ -43,7 +43,7 @@ export class HaWaitForTriggerAction
       ></ha-duration-input>
       <ha-formfield
         .disabled=${this.disabled}
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.automation.editor.actions.type.wait_for_trigger.continue_timeout"
         )}
       >
@@ -55,7 +55,7 @@ export class HaWaitForTriggerAction
       </ha-formfield>
       <ha-automation-trigger
         .triggers=${ensureArray(this.action.wait_for_trigger)}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .disabled=${this.disabled}
         .name=${"wait_for_trigger"}
         @value-changed=${this._valueChanged}

@@ -1,11 +1,11 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { ifDefined } from "lit/directives/if-defined";
 import { findEntities } from "../common/find-entities";
 import type { ActionHandlerEvent } from "../../../data/lovelace/action_handler";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { computeTooltip } from "../common/compute-tooltip";
 import { actionHandler } from "../common/directives/action-handler-directive";
 import { handleAction } from "../common/handle-action";
@@ -27,16 +27,16 @@ class HuiStateLabelElement extends LitElement implements LovelaceElement {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): StateLabelElementConfig {
     const includeDomains = ["light", "switch", "sensor"];
     const maxEntities = 1;
-    const entityFilter = (stateObj: HassEntity): boolean =>
+    const entityFilter = (stateObj: menuaiEntity): boolean =>
       !isUnavailableState(stateObj.state);
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -47,7 +47,7 @@ class HuiStateLabelElement extends LitElement implements LovelaceElement {
     return { type: "state-label", entity: foundEntities[0] || "" };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: StateLabelElementConfig;
 
@@ -68,16 +68,16 @@ class HuiStateLabelElement extends LitElement implements LovelaceElement {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity!];
+    const stateObj = this.menuai.states[this._config.entity!];
 
     if (!stateObj) {
       return html`
         <hui-warning-element
-          .label=${createEntityNotFoundWarning(this.hass, this._config.entity!)}
+          .label=${createEntityNotFoundWarning(this.menuai, this._config.entity!)}
         ></hui-warning-element>
       `;
     }
@@ -88,7 +88,7 @@ class HuiStateLabelElement extends LitElement implements LovelaceElement {
     ) {
       return html`
         <hui-warning-element
-          label=${this.hass.localize(
+          label=${this.menuai.localize(
             "ui.panel.lovelace.warning.attribute_not_found",
             { attribute: this._config.attribute, entity: this._config.entity }
           )}
@@ -98,7 +98,7 @@ class HuiStateLabelElement extends LitElement implements LovelaceElement {
 
     return html`
       <div
-        .title=${computeTooltip(this.hass, this._config)}
+        .title=${computeTooltip(this.menuai, this._config)}
         @action=${this._handleAction}
         .actionHandler=${actionHandler({
           hasHold: hasAction(this._config!.hold_action),
@@ -109,14 +109,14 @@ class HuiStateLabelElement extends LitElement implements LovelaceElement {
         )}
       >
         ${this._config.prefix}${!this._config.attribute
-          ? this.hass.formatEntityState(stateObj)
+          ? this.menuai.formatEntityState(stateObj)
           : stateObj.attributes[this._config.attribute]}${this._config.suffix}
       </div>
     `;
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
-    handleAction(this, this.hass!, this._config!, ev.detail.action!);
+    handleAction(this, this.menuai!, this._config!, ev.detail.action!);
   }
 
   static styles = css`

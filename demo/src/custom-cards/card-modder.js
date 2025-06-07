@@ -63,8 +63,8 @@ class CardModder extends LitElement {
     this.target = target;
   }
 
-  set hass(hass) {
-    if (this.card) this.card.hass = hass;
+  set menuai(menuai) {
+    if (this.card) this.card.menuai = menuai;
     if (this.templated)
       this.templated.forEach((k) => {
         this.target.style.setProperty(

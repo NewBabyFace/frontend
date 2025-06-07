@@ -15,7 +15,7 @@ import {
 import { fireEvent } from "../../../../common/dom/fire_event";
 import "../../../../components/ha-form/ha-form";
 import type { SchemaUnion } from "../../../../components/ha-form/types";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { HistoryGraphCardConfig } from "../../cards/types";
 import "../../components/hui-entity-editor";
 import type { EntityConfig } from "../../entity-rows/types";
@@ -45,7 +45,7 @@ export class HuiHistoryGraphCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: HistoryGraphCardConfig;
 
@@ -106,7 +106,7 @@ export class HuiHistoryGraphCardEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -117,14 +117,14 @@ export class HuiHistoryGraphCardEditor
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${this._config}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
       <hui-entity-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .entities=${this._configEntities}
         @entities-changed=${this._entitiesChanged}
       ></hui-entity-editor>
@@ -152,11 +152,11 @@ export class HuiHistoryGraphCardEditor
       case "min_y_axis":
       case "max_y_axis":
       case "fit_y_data":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.history-graph.${schema.name}`
         );
       default:
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.card.generic.${schema.name}`
         );
     }

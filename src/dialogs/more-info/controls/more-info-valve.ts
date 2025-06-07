@@ -14,7 +14,7 @@ import {
 import "../../../state-control/valve/ha-state-control-valve-buttons";
 import "../../../state-control/valve/ha-state-control-valve-position";
 import "../../../state-control/valve/ha-state-control-valve-toggle";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../components/ha-more-info-state-header";
 import { moreInfoControlStyle } from "../components/more-info-control-style";
 
@@ -22,7 +22,7 @@ type Mode = "position" | "button";
 
 @customElement("more-info-valve")
 class MoreInfoValve extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: ValveEntity;
 
@@ -49,11 +49,11 @@ class MoreInfoValve extends LitElement {
   }
 
   private get _stateOverride() {
-    const stateDisplay = this.hass.formatEntityState(this.stateObj!);
+    const stateDisplay = this.menuai.formatEntityState(this.stateObj!);
 
     const positionStateDisplay = computeValvePositionStateDisplay(
       this.stateObj!,
-      this.hass
+      this.menuai
     );
 
     if (positionStateDisplay) {
@@ -63,7 +63,7 @@ class MoreInfoValve extends LitElement {
   }
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -85,7 +85,7 @@ class MoreInfoValve extends LitElement {
 
     return html`
       <ha-more-info-state-header
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .stateOverride=${this._stateOverride}
       ></ha-more-info-state-header>
@@ -98,7 +98,7 @@ class MoreInfoValve extends LitElement {
                     ? html`
                         <ha-state-control-valve-position
                           .stateObj=${this.stateObj}
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                         ></ha-state-control-valve-position>
                       `
                     : nothing}
@@ -112,14 +112,14 @@ class MoreInfoValve extends LitElement {
                     ? html`
                         <ha-state-control-valve-toggle
                           .stateObj=${this.stateObj}
-                          .hass=${this.hass}
+                          .menuai=${this.menuai}
                         ></ha-state-control-valve-toggle>
                       `
                     : supportsOpenClose
                       ? html`
                           <ha-state-control-valve-buttons
                             .stateObj=${this.stateObj}
-                            .hass=${this.hass}
+                            .menuai=${this.menuai}
                           ></ha-state-control-valve-buttons>
                         `
                       : nothing}
@@ -132,7 +132,7 @@ class MoreInfoValve extends LitElement {
               ? html`
                   <ha-icon-button-group>
                     <ha-icon-button-toggle
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.dialogs.more_info_control.valve.switch_mode.position`
                       )}
                       .selected=${this._mode === "position"}
@@ -141,7 +141,7 @@ class MoreInfoValve extends LitElement {
                       @click=${this._setMode}
                     ></ha-icon-button-toggle>
                     <ha-icon-button-toggle
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.dialogs.more_info_control.valve.switch_mode.button`
                       )}
                       .selected=${this._mode === "button"}
@@ -156,7 +156,7 @@ class MoreInfoValve extends LitElement {
         </div>
       </div>
       <ha-attributes
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         extra-filters="current_position,current_tilt_position"
       ></ha-attributes>

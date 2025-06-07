@@ -1,5 +1,5 @@
-import type { HassEntity } from "home-assistant-js-websocket";
-import type { HomeAssistant } from "../types";
+import type { menuaiEntity } from "home-assistant-js-websocket";
+import type { menuai } from "../types";
 import { supportsFeature } from "../common/entity/supports-feature";
 import { UNAVAILABLE } from "./entity";
 
@@ -26,20 +26,20 @@ export interface AssistSatelliteConfiguration {
 }
 
 export const interceptWakeWord = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   callback: (result: WakeWordInterceptMessage) => void
 ) =>
-  hass.connection.subscribeMessage(callback, {
+  menuai.connection.subscribeMessage(callback, {
     type: "assist_satellite/intercept_wake_word",
     entity_id,
   });
 
 export const testAssistSatelliteConnection = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string
 ) =>
-  hass.callWS<{
+  menuai.callWS<{
     status: "success" | "timeout";
   }>({
     type: "assist_satellite/test_connection",
@@ -47,7 +47,7 @@ export const testAssistSatelliteConnection = (
   });
 
 export const assistSatelliteAnnounce = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   args: {
     message?: string;
@@ -55,30 +55,30 @@ export const assistSatelliteAnnounce = (
     preannounce?: boolean;
     preannounce_media_id?: string;
   }
-) => hass.callService("assist_satellite", "announce", args, { entity_id });
+) => menuai.callService("assist_satellite", "announce", args, { entity_id });
 
-export const fetchAssistSatelliteConfiguration = (
-  hass: HomeAssistant,
+export const fetcmenuaiistSatelliteConfiguration = (
+  menuai: menuai,
   entity_id: string
 ) =>
-  hass.callWS<AssistSatelliteConfiguration>({
+  menuai.callWS<AssistSatelliteConfiguration>({
     type: "assist_satellite/get_configuration",
     entity_id,
   });
 
 export const setWakeWords = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entity_id: string,
   wake_word_ids: string[]
 ) =>
-  hass.callWS({
+  menuai.callWS({
     type: "assist_satellite/set_wake_words",
     entity_id,
     wake_word_ids,
   });
 
 export const assistSatelliteSupportsSetupFlow = (
-  assistSatelliteEntity: HassEntity | undefined
+  assistSatelliteEntity: menuaiEntity | undefined
 ) =>
   assistSatelliteEntity &&
   assistSatelliteEntity.state !== UNAVAILABLE &&

@@ -1,30 +1,30 @@
 import type { PropertyValues, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
-import type { HASSDomEvent } from "../common/dom/fire_event";
+import type { menuaiDomEvent } from "../common/dom/fire_event";
 import { fireEvent } from "../common/dom/fire_event";
 import { listenMediaQuery } from "../common/dom/media_query";
 import { toggleAttribute } from "../common/dom/toggle_attribute";
 import { computeRTLDirection } from "../common/util/compute_rtl";
 import "../components/ha-drawer";
 import { showNotificationDrawer } from "../dialogs/notifications/show-notification-drawer";
-import type { HomeAssistant, Route } from "../types";
+import type { menuai, Route } from "../types";
 import "./partial-panel-resolver";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
-    "hass-toggle-menu": undefined | { open?: boolean };
-    "hass-show-notifications": undefined;
+  interface menuaiDomEvents {
+    "menuai-toggle-menu": undefined | { open?: boolean };
+    "menuai-show-notifications": undefined;
   }
   interface HTMLElementEventMap {
-    "hass-toggle-menu": HASSDomEvent<HASSDomEvents["hass-toggle-menu"]>;
+    "menuai-toggle-menu": menuaiDomEvent<menuaiDomEvents["menuai-toggle-menu"]>;
   }
 }
 
 @customElement("home-assistant-main")
-export class HomeAssistantMain extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+export class menuaiMain extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public route?: Route;
 
@@ -50,18 +50,18 @@ export class HomeAssistantMain extends LitElement {
       <ha-drawer
         .type=${sidebarNarrow ? "modal" : ""}
         .open=${sidebarNarrow ? this._drawerOpen : undefined}
-        .direction=${computeRTLDirection(this.hass)}
+        .direction=${computeRTLDirection(this.menuai)}
         @MDCDrawer:closed=${this._drawerClosed}
       >
         <ha-sidebar
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .narrow=${sidebarNarrow}
           .route=${this.route}
-          .alwaysExpand=${sidebarNarrow || this.hass.dockedSidebar === "docked"}
+          .alwaysExpand=${sidebarNarrow || this.menuai.dockedSidebar === "docked"}
         ></ha-sidebar>
         <partial-panel-resolver
           .narrow=${this.narrow}
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .route=${this.route}
           slot="appContent"
         ></partial-panel-resolver>
@@ -72,20 +72,20 @@ export class HomeAssistantMain extends LitElement {
   protected firstUpdated() {
     import(/* webpackPreload: true */ "../components/ha-sidebar");
 
-    if (this.hass.auth.external) {
+    if (this.menuai.auth.external) {
       this._externalSidebar =
-        this.hass.auth.external.config.hasSidebar === true;
+        this.menuai.auth.external.config.menuaiidebar === true;
       import("../external_app/external_app_entrypoint").then((mod) =>
         mod.attachExternalToApp(this)
       );
     }
 
-    this.addEventListener("hass-toggle-menu", (ev) => {
+    this.addEventListener("menuai-toggle-menu", (ev) => {
       if (this._sidebarEditMode) {
         return;
       }
       if (this._externalSidebar) {
-        this.hass.auth.external!.fireMessage({
+        this.menuai.auth.external!.fireMessage({
           type: "sidebar/show",
         });
         return;
@@ -93,19 +93,19 @@ export class HomeAssistantMain extends LitElement {
       if (this._sidebarNarrow) {
         this._drawerOpen = ev.detail?.open ?? !this._drawerOpen;
       } else {
-        fireEvent(this, "hass-dock-sidebar", {
+        fireEvent(this, "menuai-dock-sidebar", {
           dock: ev.detail?.open
             ? "docked"
             : ev.detail?.open === false
               ? "auto"
-              : this.hass.dockedSidebar === "auto"
+              : this.menuai.dockedSidebar === "auto"
                 ? "docked"
                 : "auto",
         });
       }
     });
 
-    this.addEventListener("hass-show-notifications", () => {
+    this.addEventListener("menuai-show-notifications", () => {
       showNotificationDrawer(this, {
         narrow: this.narrow,
       });
@@ -121,7 +121,7 @@ export class HomeAssistantMain extends LitElement {
   protected updated(changedProps: PropertyValues) {
     super.updated(changedProps);
 
-    toggleAttribute(this, "expanded", this.hass.dockedSidebar === "docked");
+    toggleAttribute(this, "expanded", this.menuai.dockedSidebar === "docked");
 
     toggleAttribute(
       this,
@@ -131,7 +131,7 @@ export class HomeAssistantMain extends LitElement {
   }
 
   private get _sidebarNarrow() {
-    return this.narrow || this.hass.dockedSidebar === "always_hidden";
+    return this.narrow || this.menuai.dockedSidebar === "always_hidden";
   }
 
   private _drawerClosed() {
@@ -164,6 +164,6 @@ export class HomeAssistantMain extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "home-assistant-main": HomeAssistantMain;
+    "home-assistant-main": menuaiMain;
   }
 }

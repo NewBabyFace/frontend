@@ -7,7 +7,7 @@ import { orderCompare } from "../../../../../common/string/compare";
 import type { AreaRegistryEntry } from "../../../../../data/area_registry";
 import { areaCompare } from "../../../../../data/area_registry";
 import type { LovelaceCardConfig } from "../../../../../data/lovelace/config/card";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { supportsAlarmModesCardFeature } from "../../../card-features/hui-alarm-modes-card-feature";
 import { supportsCoverOpenCloseCardFeature } from "../../../card-features/hui-cover-open-close-card-feature";
 import { supportsLightBrightnessCardFeature } from "../../../card-features/hui-light-brightness-card-feature";
@@ -54,26 +54,26 @@ type AreaGroupsDisplayOptions = Record<string, DisplayOptions>;
 
 export const getAreaGroupedEntities = (
   area: string,
-  hass: HomeAssistant,
+  menuai: menuai,
   displayOptions?: AreaGroupsDisplayOptions
 ): AreaEntitiesByGroup => {
-  const allEntities = Object.keys(hass.states);
+  const allEntities = Object.keys(menuai.states);
 
   const groupedFilters: AreaFilteredByGroup = {
     lights: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "light",
         area: area,
         entity_category: "none",
       }),
     ],
     covers: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "cover",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "binary_sensor",
         area: area,
         device_class: ["door", "garage_door", "window"],
@@ -81,85 +81,85 @@ export const getAreaGroupedEntities = (
       }),
     ],
     climate: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "climate",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "humidifier",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "water_heater",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "fan",
         area: area,
         entity_category: "none",
       }),
     ],
     media_players: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "media_player",
         area: area,
         entity_category: "none",
       }),
     ],
     security: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "alarm_control_panel",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "lock",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "camera",
         area: area,
         entity_category: "none",
       }),
     ],
     actions: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: ["script", "scene"],
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: ["automation"],
         area: area,
         entity_category: "none",
       }),
     ],
     others: [
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "vacuum",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "lawn_mower",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: "valve",
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: ["switch", "button", "input_boolean", "input_button"],
         area: area,
         entity_category: "none",
       }),
-      generateEntityFilter(hass, {
+      generateEntityFilter(menuai, {
         domain: [
           "select",
           "number",
@@ -205,9 +205,9 @@ export const getAreaGroupedEntities = (
 };
 
 export const computeAreaTileCardConfig =
-  (hass: HomeAssistant, prefix: string, includeFeature?: boolean) =>
+  (menuai: menuai, prefix: string, includeFeature?: boolean) =>
   (entity: string): LovelaceCardConfig => {
-    const stateObj = hass.states[entity];
+    const stateObj = menuai.states[entity];
 
     const context: LovelaceCardFeatureContext = {
       entity_id: entity,
@@ -232,23 +232,23 @@ export const computeAreaTileCardConfig =
 
     let feature: LovelaceCardFeatureConfig | undefined;
     if (includeFeature) {
-      if (supportsLightBrightnessCardFeature(hass, context)) {
+      if (supportsLightBrightnessCardFeature(menuai, context)) {
         feature = {
           type: "light-brightness",
         };
-      } else if (supportsCoverOpenCloseCardFeature(hass, context)) {
+      } else if (supportsCoverOpenCloseCardFeature(menuai, context)) {
         feature = {
           type: "cover-open-close",
         };
-      } else if (supportsTargetTemperatureCardFeature(hass, context)) {
+      } else if (supportsTargetTemperatureCardFeature(menuai, context)) {
         feature = {
           type: "target-temperature",
         };
-      } else if (supportsAlarmModesCardFeature(hass, context)) {
+      } else if (supportsAlarmModesCardFeature(menuai, context)) {
         feature = {
           type: "alarm-modes",
         };
-      } else if (supportsLockCommandsCardFeature(hass, context)) {
+      } else if (supportsLockCommandsCardFeature(menuai, context)) {
         feature = {
           type: "lock-commands",
         };
@@ -271,7 +271,7 @@ export const computeAreaTileCardConfig =
   };
 
 export const getAreas = (
-  entries: HomeAssistant["areas"],
+  entries: menuai["areas"],
   hiddenAreas?: string[],
   areasOrder?: string[]
 ): AreaRegistryEntry[] => {

@@ -7,7 +7,7 @@ import { LockEntityFeature } from "../../../../src/data/lock";
 import { MediaPlayerEntityFeature } from "../../../../src/data/media-player";
 import { VacuumEntityFeature } from "../../../../src/data/vacuum";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
 import "../../components/demo-cards";
 import { mockIcons } from "../../../../demo/src/stubs/icons";
 import { ClimateEntityFeature } from "../../../../src/data/climate";
@@ -273,11 +273,11 @@ class DemoTile extends LitElement {
 
   protected firstUpdated(changedProperties: PropertyValues) {
     super.firstUpdated(changedProperties);
-    const hass = provideHass(this._demoRoot);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("lovelace", "en");
-    hass.addEntities(ENTITIES);
-    mockIcons(hass);
+    const menuai = providemenuai(this._demoRoot);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("lovelace", "en");
+    menuai.addEntities(ENTITIES);
+    mockIcons(menuai);
   }
 }
 

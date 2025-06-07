@@ -6,7 +6,7 @@ import { showConfigFlowDialog } from "../../dialogs/config-flow/show-dialog-conf
 import { showConfirmationDialog } from "../../dialogs/generic/show-dialog-box";
 import { showMatterAddDeviceDialog } from "../../panels/config/integrations/integration-panels/matter/show-dialog-add-matter-device";
 import { showZWaveJSAddNodeDialog } from "../../panels/config/integrations/integration-panels/zwave_js/add-node/show-dialog-zwave_js-add-node";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { documentationUrl } from "../../util/documentation-url";
 import { isComponentLoaded } from "../config/is_component_loaded";
 import { navigate } from "../navigate";
@@ -15,17 +15,17 @@ export const PROTOCOL_INTEGRATIONS = ["zha", "zwave_js", "matter"] as const;
 
 export const protocolIntegrationPicked = async (
   element: HTMLElement,
-  hass: HomeAssistant,
+  menuai: menuai,
   domain: string,
   options?: { brand?: string; domain?: string; config_entry?: string }
 ) => {
   if (options?.domain) {
-    const localize = await hass.loadBackendTranslation("title", options.domain);
+    const localize = await menuai.loadBackendTranslation("title", options.domain);
     options.domain = domainToName(localize, options.domain);
   }
 
   if (options?.brand) {
-    const integrationDescriptions = await getIntegrationDescriptions(hass);
+    const integrationDescriptions = await getIntegrationDescriptions(menuai);
     options.brand =
       integrationDescriptions.core.integration[options.brand]?.name ||
       options.brand;
@@ -35,37 +35,37 @@ export const protocolIntegrationPicked = async (
     const entries = options?.config_entry
       ? undefined
       : (
-          await getConfigEntries(hass, {
+          await getConfigEntries(menuai, {
             domain,
           })
         ).filter((e) => !e.disabled_by);
 
     if (
-      !isComponentLoaded(hass, "zwave_js") ||
+      !isComponentLoaded(menuai, "zwave_js") ||
       (!options?.config_entry && !entries?.length)
     ) {
       // If the component isn't loaded, ask them to load the integration first
       showConfirmationDialog(element, {
-        title: hass.localize(
+        title: menuai.localize(
           "ui.panel.config.integrations.config_flow.missing_zwave_zigbee_title",
           { integration: "Z-Wave" }
         ),
-        text: hass.localize(
+        text: menuai.localize(
           "ui.panel.config.integrations.config_flow.missing_zwave_zigbee",
           {
             integration: "Z-Wave",
             brand: options?.brand || options?.domain || "Z-Wave",
             supported_hardware_link: html`<a
-              href=${documentationUrl(hass, "/docs/z-wave/controllers")}
+              href=${documentationUrl(menuai, "/docs/z-wave/controllers")}
               target="_blank"
               rel="noreferrer"
-              >${hass.localize(
+              >${menuai.localize(
                 "ui.panel.config.integrations.config_flow.supported_hardware"
               )}</a
             >`,
           }
         ),
-        confirmText: hass.localize(
+        confirmText: menuai.localize(
           "ui.panel.config.integrations.config_flow.proceed"
         ),
         confirm: () => {
@@ -84,40 +84,40 @@ export const protocolIntegrationPicked = async (
     const entries = options?.config_entry
       ? undefined
       : (
-          await getConfigEntries(hass, {
+          await getConfigEntries(menuai, {
             domain,
           })
         ).filter((e) => !e.disabled_by);
 
     if (
-      !isComponentLoaded(hass, "zha") ||
+      !isComponentLoaded(menuai, "zha") ||
       (!options?.config_entry && !entries?.length)
     ) {
       // If the component isn't loaded, ask them to load the integration first
       showConfirmationDialog(element, {
-        title: hass.localize(
+        title: menuai.localize(
           "ui.panel.config.integrations.config_flow.missing_zwave_zigbee_title",
           { integration: "Zigbee" }
         ),
-        text: hass.localize(
+        text: menuai.localize(
           "ui.panel.config.integrations.config_flow.missing_zwave_zigbee",
           {
             integration: "Zigbee",
             brand: options?.brand || options?.domain || "Zigbee",
             supported_hardware_link: html`<a
               href=${documentationUrl(
-                hass,
+                menuai,
                 "/integrations/zha/#known-working-zigbee-radio-modules"
               )}
               target="_blank"
               rel="noreferrer"
-              >${hass.localize(
+              >${menuai.localize(
                 "ui.panel.config.integrations.config_flow.supported_hardware"
               )}</a
             >`,
           }
         ),
-        confirmText: hass.localize(
+        confirmText: menuai.localize(
           "ui.panel.config.integrations.config_flow.proceed"
         ),
         confirm: () => {
@@ -134,36 +134,36 @@ export const protocolIntegrationPicked = async (
     const entries = options?.config_entry
       ? undefined
       : (
-          await getConfigEntries(hass, {
+          await getConfigEntries(menuai, {
             domain,
           })
         ).filter((e) => !e.disabled_by);
     if (
-      !isComponentLoaded(hass, domain) ||
+      !isComponentLoaded(menuai, domain) ||
       (!options?.config_entry && !entries?.length)
     ) {
       // If the component isn't loaded, ask them to load the integration first
       showConfirmationDialog(element, {
-        title: hass.localize(
+        title: menuai.localize(
           "ui.panel.config.integrations.config_flow.missing_zwave_zigbee_title",
           { integration: "Matter" }
         ),
-        text: hass.localize(
+        text: menuai.localize(
           "ui.panel.config.integrations.config_flow.missing_matter",
           {
             integration: "Matter",
             brand: options?.brand || options?.domain || "Matter",
             supported_hardware_link: html`<a
-              href=${documentationUrl(hass, "/integrations/matter")}
+              href=${documentationUrl(menuai, "/integrations/matter")}
               target="_blank"
               rel="noreferrer"
-              >${hass.localize(
+              >${menuai.localize(
                 "ui.panel.config.integrations.config_flow.supported_hardware"
               )}</a
             >`,
           }
         ),
-        confirmText: hass.localize(
+        confirmText: menuai.localize(
           "ui.panel.config.integrations.config_flow.proceed"
         ),
         confirm: () => {

@@ -2,7 +2,7 @@ import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import "../../../../../../components/buttons/ha-progress-button";
 import type { DeviceRegistryEntry } from "../../../../../../data/device_registry";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 import { invokeZWaveCCApi } from "../../../../../../data/zwave_js";
 import "../../../../../../components/ha-textfield";
 import "../../../../../../components/ha-select";
@@ -14,11 +14,11 @@ import type { HaProgressButton } from "../../../../../../components/buttons/ha-p
 import type { HaSelect } from "../../../../../../components/ha-select";
 import type { HaTextField } from "../../../../../../components/ha-textfield";
 import type { HaSwitch } from "../../../../../../components/ha-switch";
-import { extractApiErrorMessage } from "../../../../../../data/hassio/common";
+import { extractApiErrorMessage } from "../../../../../../data/menuaiio/common";
 
 @customElement("zwave_js-capability-control-multilevel_switch")
 class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public device!: DeviceRegistryEntry;
 
@@ -38,7 +38,7 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
   protected render() {
     return html`
       <h3>
-        ${this.hass.localize(
+        ${this.menuai.localize(
           "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.title"
         )}
       </h3>
@@ -46,24 +46,24 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
         ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
         : ""}
       <ha-select
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.direction"
         )}
         id="direction"
       >
         <ha-list-item .value=${"up"} selected
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.up"
           )}</ha-list-item
         >
         <ha-list-item .value=${"down"}
-          >${this.hass.localize(
+          >${this.menuai.localize(
             "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.down"
           )}</ha-list-item
         >
       </ha-select>
       <ha-formfield
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.ignore_start_level"
         )}
       >
@@ -73,7 +73,7 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
         type="number"
         id="start_level"
         value="0"
-        .label=${this.hass.localize(
+        .label=${this.menuai.localize(
           "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.start_level"
         )}
       ></ha-textfield>
@@ -82,7 +82,7 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
           .control=${"startLevelChange"}
           @click=${this._controlTransition}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.start_transition"
           )}
         </ha-progress-button>
@@ -90,7 +90,7 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
           .control=${"stopLevelChange"}
           @click=${this._controlTransition}
         >
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.stop_transition"
           )}
         </ha-progress-button>
@@ -123,7 +123,7 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
     try {
       button.actionSuccess();
       await invokeZWaveCCApi(
-        this.hass,
+        this.menuai,
         this.device.id,
         this.command_class,
         this.endpoint,
@@ -137,7 +137,7 @@ class ZWaveJSCapabilityMultiLevelSwitch extends LitElement {
       );
     } catch (err) {
       button.actionError();
-      this._error = this.hass.localize(
+      this._error = this.menuai.localize(
         "ui.panel.config.zwave_js.node_installer.capability_controls.multilevel_switch.control_failed",
         { error: extractApiErrorMessage(err) }
       );

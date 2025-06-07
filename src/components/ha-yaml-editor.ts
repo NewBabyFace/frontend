@@ -4,7 +4,7 @@ import type { CSSResultGroup, PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import { haStyle } from "../resources/styles";
 import "./ha-code-editor";
 import { showToast } from "../util/toast";
@@ -26,7 +26,7 @@ const isEmpty = (obj: Record<string, unknown>): boolean => {
 
 @customElement("ha-yaml-editor")
 export class HaYamlEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property() public value?: any;
 
@@ -99,7 +99,7 @@ export class HaYamlEditor extends LitElement {
         ? html`<p>${this.label}${this.required ? " *" : ""}</p>`
         : nothing}
       <ha-code-editor
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this._yaml}
         .readOnly=${this.readOnly}
         mode="yaml"
@@ -115,7 +115,7 @@ export class HaYamlEditor extends LitElement {
               ${this.copyClipboard
                 ? html`
                     <ha-button @click=${this._copyYaml}>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.components.yaml-editor.copy_to_clipboard"
                       )}
                     </ha-button>
@@ -141,7 +141,7 @@ export class HaYamlEditor extends LitElement {
       } catch (err: any) {
         // Invalid YAML
         isValid = false;
-        errorMsg = `${this.hass.localize("ui.components.yaml-editor.error", { reason: err.reason })}${err.mark ? ` (${this.hass.localize("ui.components.yaml-editor.error_location", { line: err.mark.line + 1, column: err.mark.column + 1 })})` : ""}`;
+        errorMsg = `${this.menuai.localize("ui.components.yaml-editor.error", { reason: err.reason })}${err.mark ? ` (${this.menuai.localize("ui.components.yaml-editor.error_location", { line: err.mark.line + 1, column: err.mark.column + 1 })})` : ""}`;
       }
     } else {
       parsed = {};
@@ -165,7 +165,7 @@ export class HaYamlEditor extends LitElement {
     if (this.yaml) {
       await copyToClipboard(this.yaml);
       showToast(this, {
-        message: this.hass.localize("ui.common.copied_clipboard"),
+        message: this.menuai.localize("ui.common.copied_clipboard"),
       });
     }
   }

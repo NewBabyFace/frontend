@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../common/dom/fire_event";
 import type { MediaQueriesListener } from "../../../common/dom/media_query";
 import "../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import {
   attachConditionMediaQueriesListeners,
   checkConditionsMet,
@@ -14,7 +14,7 @@ import type { LovelaceHeadingBadge } from "../types";
 import type { LovelaceHeadingBadgeConfig } from "./types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "heading-badge-visibility-changed": { value: boolean };
     "heading-badge-updated": undefined;
   }
@@ -26,7 +26,7 @@ export class HuiHeadingBadge extends ReactiveElement {
 
   @property({ attribute: false }) public config?: LovelaceHeadingBadgeConfig;
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   private _elementConfig?: LovelaceHeadingBadgeConfig;
 
@@ -68,15 +68,15 @@ export class HuiHeadingBadge extends ReactiveElement {
   private _loadElement(config: LovelaceHeadingBadgeConfig) {
     this._element = createHeadingBadgeElement(config);
     this._elementConfig = config;
-    if (this.hass) {
-      this._element.hass = this.hass;
+    if (this.menuai) {
+      this._element.menuai = this.menuai;
     }
     this._element.addEventListener(
       "ll-upgrade",
       (ev: Event) => {
         ev.stopPropagation();
-        if (this.hass) {
-          this._element!.hass = this.hass;
+        if (this.menuai) {
+          this._element!.menuai = this.menuai;
         }
         fireEvent(this, "heading-badge-updated");
       },
@@ -120,10 +120,10 @@ export class HuiHeadingBadge extends ReactiveElement {
           }
         }
       }
-      if (changedProps.has("hass")) {
+      if (changedProps.has("menuai")) {
         try {
-          if (this.hass) {
-            this._element.hass = this.hass;
+          if (this.menuai) {
+            this._element.menuai = this.menuai;
           }
         } catch (_e: any) {
           this._element = undefined;
@@ -132,7 +132,7 @@ export class HuiHeadingBadge extends ReactiveElement {
       }
     }
 
-    if (changedProps.has("hass") || changedProps.has("preview")) {
+    if (changedProps.has("menuai") || changedProps.has("preview")) {
       this._updateVisibility();
     }
   }
@@ -162,7 +162,7 @@ export class HuiHeadingBadge extends ReactiveElement {
   }
 
   private _updateVisibility(forceVisible?: boolean) {
-    if (!this._element || !this.hass) {
+    if (!this._element || !this.menuai) {
       return;
     }
 
@@ -175,7 +175,7 @@ export class HuiHeadingBadge extends ReactiveElement {
       forceVisible ||
       this.preview ||
       !this.config?.visibility ||
-      checkConditionsMet(this.config.visibility, this.hass);
+      checkConditionsMet(this.config.visibility, this.menuai);
     this._setElementVisibility(visible);
   }
 

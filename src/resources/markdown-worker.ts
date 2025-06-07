@@ -10,7 +10,7 @@ let whiteListSvg: IWhiteList | undefined;
 const renderMarkdown = async (
   content: string,
   markedOptions: MarkedOptions,
-  hassOptions: {
+  menuaiOptions: {
     // Do not allow SVG on untrusted content, it allows XSS.
     allowSvg?: boolean;
     allowDataUrl?: boolean;
@@ -36,7 +36,7 @@ const renderMarkdown = async (
 
   let whiteList: IWhiteList | undefined;
 
-  if (hassOptions.allowSvg) {
+  if (menuaiOptions.allowSvg) {
     if (!whiteListSvg) {
       whiteListSvg = {
         ...whiteListNormal,
@@ -49,7 +49,7 @@ const renderMarkdown = async (
   } else {
     whiteList = whiteListNormal;
   }
-  if (hassOptions.allowDataUrl && whiteList.a) {
+  if (menuaiOptions.allowDataUrl && whiteList.a) {
     whiteList.a.push("download");
   }
 
@@ -75,7 +75,7 @@ const renderMarkdown = async (
         return "";
       }
       if (
-        hassOptions.allowDataUrl &&
+        menuaiOptions.allowDataUrl &&
         tag === "a" &&
         name === "href" &&
         value.startsWith("data:")

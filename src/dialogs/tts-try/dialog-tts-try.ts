@@ -7,14 +7,14 @@ import { createCloseHeading } from "../../components/ha-dialog";
 import "../../components/ha-textarea";
 import type { HaTextArea } from "../../components/ha-textarea";
 import { convertTextToSpeech } from "../../data/tts";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { showAlertDialog } from "../generic/show-dialog-box";
 import type { TTSTryDialogParams } from "./show-dialog-tts-try";
 import "../../components/buttons/ha-progress-button";
 
 @customElement("dialog-tts-try")
 export class TTSTryDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _loadingExample = false;
 
@@ -43,14 +43,14 @@ export class TTSTryDialog extends LitElement {
 
   private get _defaultMessage() {
     const language = this._params!.language?.substring(0, 2);
-    const userLanguage = this.hass.locale.language.substring(0, 2);
+    const userLanguage = this.menuai.locale.language.substring(0, 2);
     // Load previous message in the right language
     if (language && this._messages?.[language]) {
       return this._messages[language];
     }
     // Only display example message if it's interface language
     if (language === userLanguage) {
-      return this.hass.localize("ui.dialogs.tts-try.message_example");
+      return this.menuai.localize("ui.dialogs.tts-try.message_example");
     }
     return "";
   }
@@ -64,15 +64,15 @@ export class TTSTryDialog extends LitElement {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.dialogs.tts-try.header")
+          this.menuai,
+          this.menuai.localize("ui.dialogs.tts-try.header")
         )}
       >
         <ha-textarea
           autogrow
           id="message"
-          .label=${this.hass.localize("ui.dialogs.tts-try.message")}
-          .placeholder=${this.hass.localize(
+          .label=${this.menuai.localize("ui.dialogs.tts-try.message")}
+          .placeholder=${this.menuai.localize(
             "ui.dialogs.tts-try.message_placeholder"
           )}
           .value=${this._defaultMessage}
@@ -85,7 +85,7 @@ export class TTSTryDialog extends LitElement {
           .progress=${this._loadingExample}
           ?dialogInitialFocus=${Boolean(this._defaultMessage)}
           slot="primaryAction"
-          .label=${this.hass.localize("ui.dialogs.tts-try.play")}
+          .label=${this.menuai.localize("ui.dialogs.tts-try.play")}
           @click=${this._playExample}
           .disabled=${!this._valid}
         >
@@ -123,7 +123,7 @@ export class TTSTryDialog extends LitElement {
 
     let url;
     try {
-      const result = await convertTextToSpeech(this.hass, {
+      const result = await convertTextToSpeech(this.menuai, {
         platform,
         message,
         language,

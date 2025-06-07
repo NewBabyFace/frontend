@@ -33,11 +33,11 @@ import {
   handleMediaControlClick,
   mediaPlayerPlayMedia,
 } from "../../../data/media-player";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-media_player")
 class MoreInfoMediaPlayer extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
@@ -61,7 +61,7 @@ class MoreInfoMediaPlayer extends LitElement {
                     action=${control.action}
                     @click=${this._handleClick}
                     .path=${control.icon}
-                    .label=${this.hass.localize(
+                    .label=${this.menuai.localize(
                       `ui.card.media_player.${control.action}`
                     )}
                   >
@@ -73,7 +73,7 @@ class MoreInfoMediaPlayer extends LitElement {
         supportsFeature(stateObj, MediaPlayerEntityFeature.BROWSE_MEDIA)
           ? html`
               <ha-button
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.card.media_player.browse_media"
                 )}
                 @click=${this._showBrowseMedia}
@@ -89,7 +89,7 @@ class MoreInfoMediaPlayer extends LitElement {
         supportsFeature(stateObj, MediaPlayerEntityFeature.GROUPING)
           ? html`
               <ha-button
-                .label=${this.hass.localize("ui.card.media_player.join")}
+                .label=${this.menuai.localize("ui.card.media_player.join")}
                 @click=${this._showGroupMediaPlayers}
               >
                 <ha-svg-icon
@@ -116,7 +116,7 @@ class MoreInfoMediaPlayer extends LitElement {
                       .path=${stateObj.attributes.is_volume_muted
                         ? mdiVolumeOff
                         : mdiVolumeHigh}
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         `ui.card.media_player.${
                           stateObj.attributes.is_volume_muted
                             ? "media_volume_unmute"
@@ -136,7 +136,7 @@ class MoreInfoMediaPlayer extends LitElement {
                     <ha-icon-button
                       action="volume_down"
                       .path=${mdiVolumeMinus}
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.card.media_player.media_volume_down"
                       )}
                       @click=${this._handleClick}
@@ -144,7 +144,7 @@ class MoreInfoMediaPlayer extends LitElement {
                     <ha-icon-button
                       action="volume_up"
                       .path=${mdiVolumePlus}
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.card.media_player.media_volume_up"
                       )}
                       @click=${this._handleClick}
@@ -170,7 +170,7 @@ class MoreInfoMediaPlayer extends LitElement {
         ? html`
             <div class="source-input">
               <ha-select
-                .label=${this.hass.localize("ui.card.media_player.source")}
+                .label=${this.menuai.localize("ui.card.media_player.source")}
                 icon
                 .value=${stateObj.attributes.source!}
                 @selected=${this._handleSourceChanged}
@@ -181,7 +181,7 @@ class MoreInfoMediaPlayer extends LitElement {
                 ${stateObj.attributes.source_list!.map(
                   (source) => html`
                     <ha-list-item .value=${source}>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj,
                         "source",
                         source
@@ -200,7 +200,7 @@ class MoreInfoMediaPlayer extends LitElement {
         ? html`
             <div class="sound-input">
               <ha-select
-                .label=${this.hass.localize("ui.card.media_player.sound_mode")}
+                .label=${this.menuai.localize("ui.card.media_player.sound_mode")}
                 .value=${stateObj.attributes.sound_mode!}
                 icon
                 fixedMenuPosition
@@ -211,7 +211,7 @@ class MoreInfoMediaPlayer extends LitElement {
                 ${stateObj.attributes.sound_mode_list.map(
                   (mode) => html`
                     <ha-list-item .value=${mode}>
-                      ${this.hass.formatEntityAttributeValue(
+                      ${this.menuai.formatEntityAttributeValue(
                         stateObj,
                         "sound_mode",
                         mode
@@ -308,21 +308,21 @@ class MoreInfoMediaPlayer extends LitElement {
 
   private _handleClick(e: MouseEvent): void {
     handleMediaControlClick(
-      this.hass!,
+      this.menuai!,
       this.stateObj!,
       (e.currentTarget as HTMLElement).getAttribute("action")!
     );
   }
 
   private _toggleMute() {
-    this.hass!.callService("media_player", "volume_mute", {
+    this.menuai!.callService("media_player", "volume_mute", {
       entity_id: this.stateObj!.entity_id,
       is_volume_muted: !this.stateObj!.attributes.is_volume_muted,
     });
   }
 
   private _selectedValueChanged(e: Event): void {
-    this.hass!.callService("media_player", "volume_set", {
+    this.menuai!.callService("media_player", "volume_set", {
       entity_id: this.stateObj!.entity_id,
       volume_level: (e.target as any).value / 100,
     });
@@ -335,7 +335,7 @@ class MoreInfoMediaPlayer extends LitElement {
       return;
     }
 
-    this.hass.callService("media_player", "select_source", {
+    this.menuai.callService("media_player", "select_source", {
       entity_id: this.stateObj!.entity_id,
       source: newVal,
     });
@@ -348,7 +348,7 @@ class MoreInfoMediaPlayer extends LitElement {
       return;
     }
 
-    this.hass.callService("media_player", "select_sound_mode", {
+    this.menuai.callService("media_player", "select_sound_mode", {
       entity_id: this.stateObj!.entity_id,
       sound_mode: newVal,
     });
@@ -360,7 +360,7 @@ class MoreInfoMediaPlayer extends LitElement {
       entityId: this.stateObj!.entity_id,
       mediaPickedCallback: (pickedMedia: MediaPickedEvent) =>
         mediaPlayerPlayMedia(
-          this.hass,
+          this.menuai,
           this.stateObj!.entity_id,
           pickedMedia.item.media_content_id,
           pickedMedia.item.media_content_type

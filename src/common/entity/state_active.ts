@@ -1,8 +1,8 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { isUnavailableState, OFF, UNAVAILABLE } from "../../data/entity";
 import { computeDomain } from "./compute_domain";
 
-export function stateActive(stateObj: HassEntity, state?: string): boolean {
+export function stateActive(stateObj: menuaiEntity, state?: string): boolean {
   const domain = computeDomain(stateObj.entity_id);
   const compareState = state !== undefined ? state : stateObj?.state;
 

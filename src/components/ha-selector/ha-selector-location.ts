@@ -6,7 +6,7 @@ import type {
   LocationSelector,
   LocationSelectorValue,
 } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { SchemaUnion } from "../ha-form/types";
 import type { MarkerLocation } from "../map/ha-locations-editor";
 import "../map/ha-locations-editor";
@@ -15,7 +15,7 @@ import type { LocalizeFunc } from "../../common/translations/localize";
 
 @customElement("ha-selector-location")
 export class HaLocationSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: LocationSelector;
 
@@ -72,8 +72,8 @@ export class HaLocationSelector extends LitElement {
   protected willUpdate() {
     if (!this.value) {
       this.value = {
-        latitude: this.hass.config.latitude,
-        longitude: this.hass.config.longitude,
+        latitude: this.menuai.config.latitude,
+        longitude: this.menuai.config.longitude,
         radius: this.selector.location?.radius ? 1000 : undefined,
       };
     }
@@ -84,7 +84,7 @@ export class HaLocationSelector extends LitElement {
       <p>${this.label ? this.label : ""}</p>
       <ha-locations-editor
         class="flex"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .helper=${this.helper}
         .locations=${this._location(this.selector, this.value)}
         @location-updated=${this._locationChanged}
@@ -92,9 +92,9 @@ export class HaLocationSelector extends LitElement {
         pin-on-click
       ></ha-locations-editor>
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .schema=${this._schema(
-          this.hass.localize,
+          this.menuai.localize,
           this.selector.location?.radius,
           this.selector.location?.radius_readonly
         )}
@@ -121,11 +121,11 @@ export class HaLocationSelector extends LitElement {
           id: "location",
           latitude:
             !value || isNaN(value.latitude)
-              ? this.hass.config.latitude
+              ? this.menuai.config.latitude
               : value.latitude,
           longitude:
             !value || isNaN(value.longitude)
-              ? this.hass.config.longitude
+              ? this.menuai.config.longitude
               : value.longitude,
           radius: selector.location?.radius ? value?.radius || 1000 : undefined,
           radius_color: zoneRadiusColor,
@@ -176,7 +176,7 @@ export class HaLocationSelector extends LitElement {
     entry: SchemaUnion<ReturnType<typeof this._schema>>
   ): string => {
     if (entry.name) {
-      return this.hass.localize(
+      return this.menuai.localize(
         `ui.components.selectors.location.${entry.name}`
       );
     }

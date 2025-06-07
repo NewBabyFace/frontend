@@ -1,18 +1,18 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { formatTime } from "../../../common/datetime/format_time";
 import "../../../components/ha-relative-time";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-sun")
 class MoreInfoSun extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
@@ -28,23 +28,23 @@ class MoreInfoSun extends LitElement {
             <div class="key">
               <span
                 >${item === "ris"
-                  ? this.hass.localize(
+                  ? this.menuai.localize(
                       "ui.dialogs.more_info_control.sun.rising"
                     )
-                  : this.hass.localize(
+                  : this.menuai.localize(
                       "ui.dialogs.more_info_control.sun.setting"
                     )}</span
               >
               <ha-relative-time
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .datetime=${item === "ris" ? risingDate : settingDate}
               ></ha-relative-time>
             </div>
             <div class="value">
               ${formatTime(
                 item === "ris" ? risingDate : settingDate,
-                this.hass.locale,
-                this.hass.config
+                this.menuai.locale,
+                this.menuai.config
               )}
             </div>
           </div>
@@ -52,18 +52,18 @@ class MoreInfoSun extends LitElement {
       )}
       <div class="row">
         <div class="key">
-          ${this.hass.localize("ui.dialogs.more_info_control.sun.elevation")}
+          ${this.menuai.localize("ui.dialogs.more_info_control.sun.elevation")}
         </div>
         <div class="value">
-          ${this.hass.formatEntityAttributeValue(this.stateObj, "elevation")}
+          ${this.menuai.formatEntityAttributeValue(this.stateObj, "elevation")}
         </div>
       </div>
       <div class="row">
         <div class="key">
-          ${this.hass.localize("ui.dialogs.more_info_control.sun.azimuth")}
+          ${this.menuai.localize("ui.dialogs.more_info_control.sun.azimuth")}
         </div>
         <div class="value">
-          ${this.hass.formatEntityAttributeValue(this.stateObj, "azimuth")}
+          ${this.menuai.formatEntityAttributeValue(this.stateObj, "azimuth")}
         </div>
       </div>
     `;

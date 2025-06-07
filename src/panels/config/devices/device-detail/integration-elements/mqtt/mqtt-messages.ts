@@ -5,11 +5,11 @@ import { customElement, property, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import { formatTimeWithSeconds } from "../../../../../../common/datetime/format_time";
 import type { MQTTMessage } from "../../../../../../data/mqtt";
-import type { HomeAssistant } from "../../../../../../types";
+import type { menuai } from "../../../../../../types";
 
 @customElement("mqtt-messages")
 class MQTTMessages extends LitElement {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property({ attribute: false }) public messages!: MQTTMessage[];
 
@@ -58,8 +58,8 @@ class MQTTMessages extends LitElement {
                       ${this.direction}
                       ${formatTimeWithSeconds(
                         new Date(message.time),
-                        this.hass.locale,
-                        this.hass.config
+                        this.menuai.locale,
+                        this.menuai.config
                       )}
                     </div>
                     ${this._renderSingleMessage(message)}

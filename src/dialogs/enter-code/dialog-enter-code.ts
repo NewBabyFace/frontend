@@ -8,8 +8,8 @@ import "../../components/ha-control-button";
 import { createCloseHeading } from "../../components/ha-dialog";
 import "../../components/ha-textfield";
 import type { HaTextField } from "../../components/ha-textfield";
-import type { HomeAssistant } from "../../types";
-import type { HassDialog } from "../make-dialog-manager";
+import type { menuai } from "../../types";
+import type { menuaiDialog } from "../make-dialog-manager";
 import type { EnterCodeDialogParams } from "./show-enter-code-dialog";
 
 const BUTTONS = [
@@ -30,9 +30,9 @@ const BUTTONS = [
 @customElement("dialog-enter-code")
 export class DialogEnterCode
   extends LitElement
-  implements HassDialog<EnterCodeDialogParams>
+  implements menuaiDialog<EnterCodeDialogParams>
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _dialogParams?: EnterCodeDialogParams;
 
@@ -85,7 +85,7 @@ export class DialogEnterCode
   }
 
   protected render() {
-    if (!this._dialogParams || !this.hass) {
+    if (!this._dialogParams || !this.menuai) {
       return nothing;
     }
 
@@ -97,13 +97,13 @@ export class DialogEnterCode
           open
           @closed=${this._cancel}
           .heading=${this._dialogParams.title ??
-          this.hass.localize("ui.dialogs.enter_code.title")}
+          this.menuai.localize("ui.dialogs.enter_code.title")}
         >
           <ha-textfield
             class="input"
             ?dialogInitialFocus=${!this._narrow}
             id="code"
-            .label=${this.hass.localize("ui.dialogs.enter_code.input_label")}
+            .label=${this.menuai.localize("ui.dialogs.enter_code.input_label")}
             type="password"
             autoValidate
             validateOnInitialRender
@@ -112,11 +112,11 @@ export class DialogEnterCode
           ></ha-textfield>
           <ha-button slot="secondaryAction" dialogAction="cancel">
             ${this._dialogParams.cancelText ??
-            this.hass.localize("ui.common.cancel")}
+            this.menuai.localize("ui.common.cancel")}
           </ha-button>
           <ha-button @click=${this._submit} slot="primaryAction">
             ${this._dialogParams.submitText ??
-            this.hass.localize("ui.common.submit")}
+            this.menuai.localize("ui.common.submit")}
           </ha-button>
         </ha-dialog>
       `;
@@ -126,7 +126,7 @@ export class DialogEnterCode
       <ha-dialog
         open
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._dialogParams.title ?? "Enter code"
         )}
         @closed=${this._cancel}
@@ -136,7 +136,7 @@ export class DialogEnterCode
           <ha-textfield
             @input=${this._inputValueChange}
             id="code"
-            .label=${this.hass.localize("ui.dialogs.enter_code.input_label")}
+            .label=${this.menuai.localize("ui.dialogs.enter_code.input_label")}
             type="password"
             inputmode="numeric"
             ?dialogInitialFocus=${!this._narrow}
@@ -151,7 +151,7 @@ export class DialogEnterCode
                         @click=${this._clear}
                         class="clear"
                         .disabled=${!this._showClearButton}
-                        .label=${this.hass!.localize("ui.common.clear")}
+                        .label=${this.menuai!.localize("ui.common.clear")}
                       >
                         <ha-svg-icon path=${mdiClose}></ha-svg-icon>
                       </ha-control-button>
@@ -162,7 +162,7 @@ export class DialogEnterCode
                           @click=${this._submit}
                           class="submit"
                           .label=${this._dialogParams!.submitText ??
-                          this.hass!.localize("ui.common.submit")}
+                          this.menuai!.localize("ui.common.submit")}
                         >
                           <ha-svg-icon path=${mdiCheck}></ha-svg-icon>
                         </ha-control-button>

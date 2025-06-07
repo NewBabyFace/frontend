@@ -5,13 +5,13 @@ import "../../components/ha-dialog";
 import "../../components/ha-svg-icon";
 import "../../components/ha-switch";
 import { RecurrenceRange } from "../../data/calendar";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { ConfirmEventDialogBoxParams } from "./show-confirm-event-dialog-box";
 import "../../components/ha-button";
 
 @customElement("confirm-event-dialog-box")
 class ConfirmEventDialogBox extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: ConfirmEventDialogBoxParams;
 
@@ -41,7 +41,7 @@ class ConfirmEventDialogBox extends LitElement {
           <p>${this._params.text}</p>
         </div>
         <ha-button @click=${this._dismiss} slot="secondaryAction">
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </ha-button>
         <ha-button
           slot="primaryAction"

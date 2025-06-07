@@ -7,7 +7,7 @@ import { mockConfigEntries } from "../../../../demo/src/stubs/config_entries";
 import { mockDeviceRegistry } from "../../../../demo/src/stubs/device_registry";
 import { mockEntityRegistry } from "../../../../demo/src/stubs/entity_registry";
 import { mockFloorRegistry } from "../../../../demo/src/stubs/floor_registry";
-import { mockHassioSupervisor } from "../../../../demo/src/stubs/hassio_supervisor";
+import { mockmenuaiioSupervisor } from "../../../../demo/src/stubs/menuaiio_supervisor";
 import { mockLabelRegistry } from "../../../../demo/src/stubs/label_registry";
 import "../../../../src/components/ha-formfield";
 import "../../../../src/components/ha-selector/ha-selector";
@@ -19,9 +19,9 @@ import type { FloorRegistryEntry } from "../../../../src/data/floor_registry";
 import type { LabelRegistryEntry } from "../../../../src/data/label_registry";
 import { showDialog } from "../../../../src/dialogs/make-dialog-manager";
 import { getEntity } from "../../../../src/fake_data/entity";
-import { provideHass } from "../../../../src/fake_data/provide_hass";
-import type { ProvideHassElement } from "../../../../src/mixins/provide-hass-lit-mixin";
-import type { HomeAssistant } from "../../../../src/types";
+import { providemenuai } from "../../../../src/fake_data/provide_menuai";
+import type { ProvidemenuaiElement } from "../../../../src/mixins/provide-menuai-lit-mixin";
+import type { menuai } from "../../../../src/types";
 import "../../components/demo-black-white-row";
 
 const ENTITIES = [
@@ -421,8 +421,8 @@ const SCHEMAS: {
 ];
 
 @customElement("demo-components-ha-selector")
-class DemoHaSelector extends LitElement implements ProvideHassElement {
-  @state() public hass!: HomeAssistant;
+class DemoHaSelector extends LitElement implements ProvidemenuaiElement {
+  @state() public menuai!: menuai;
 
   @state() private _disabled = false;
 
@@ -436,23 +436,23 @@ class DemoHaSelector extends LitElement implements ProvideHassElement {
 
   constructor() {
     super();
-    const hass = provideHass(this);
-    hass.updateTranslations(null, "en");
-    hass.updateTranslations("config", "en");
-    hass.addEntities(ENTITIES);
-    mockEntityRegistry(hass);
-    mockDeviceRegistry(hass, DEVICES);
-    mockConfigEntries(hass);
-    mockAreaRegistry(hass, AREAS);
-    mockFloorRegistry(hass, FLOORS);
-    mockLabelRegistry(hass, LABELS);
-    mockHassioSupervisor(hass);
-    hass.mockWS("auth/sign_path", (params) => params);
-    hass.mockWS("media_player/browse_media", this._browseMedia);
+    const menuai = providemenuai(this);
+    menuai.updateTranslations(null, "en");
+    menuai.updateTranslations("config", "en");
+    menuai.addEntities(ENTITIES);
+    mockEntityRegistry(menuai);
+    mockDeviceRegistry(menuai, DEVICES);
+    mockConfigEntries(menuai);
+    mockAreaRegistry(menuai, AREAS);
+    mockFloorRegistry(menuai, FLOORS);
+    mockLabelRegistry(menuai, LABELS);
+    mockmenuaiioSupervisor(menuai);
+    menuai.mockWS("auth/sign_path", (params) => params);
+    menuai.mockWS("media_player/browse_media", this._browseMedia);
   }
 
-  public provideHass(el) {
-    el.hass = this.hass;
+  public providemenuai(el) {
+    el.menuai = this.menuai;
   }
 
   public connectedCallback() {
@@ -609,7 +609,7 @@ class DemoHaSelector extends LitElement implements ProvideHassElement {
                     <span slot="heading">${value?.name || key}</span>
                     <span slot="description">${value?.description}</span>
                     <ha-selector
-                      .hass=${this.hass}
+                      .menuai=${this.menuai}
                       .selector=${value!.selector}
                       .key=${key}
                       .label=${this._label ? value!.name : undefined}

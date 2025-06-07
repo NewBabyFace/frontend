@@ -4,13 +4,13 @@ module.exports = {
   root_dir: path.resolve(__dirname, ".."),
 
   build_dir: path.resolve(__dirname, "../build"),
-  app_output_root: path.resolve(__dirname, "../hass_frontend"),
-  app_output_static: path.resolve(__dirname, "../hass_frontend/static"),
+  app_output_root: path.resolve(__dirname, "../menuai_frontend"),
+  app_output_static: path.resolve(__dirname, "../menuai_frontend/static"),
   app_output_latest: path.resolve(
     __dirname,
-    "../hass_frontend/frontend_latest"
+    "../menuai_frontend/frontend_latest"
   ),
-  app_output_es5: path.resolve(__dirname, "../hass_frontend/frontend_es5"),
+  app_output_es5: path.resolve(__dirname, "../menuai_frontend/frontend_es5"),
 
   demo_dir: path.resolve(__dirname, "../demo"),
   demo_output_root: path.resolve(__dirname, "../demo/dist"),
@@ -49,15 +49,15 @@ module.exports = {
     "../landing-page/dist/static"
   ),
 
-  hassio_dir: path.resolve(__dirname, "../hassio"),
-  hassio_output_root: path.resolve(__dirname, "../hassio/build"),
-  hassio_output_static: path.resolve(__dirname, "../hassio/build/static"),
-  hassio_output_latest: path.resolve(
+  menuaiio_dir: path.resolve(__dirname, "../menuaiio"),
+  menuaiio_output_root: path.resolve(__dirname, "../menuaiio/build"),
+  menuaiio_output_static: path.resolve(__dirname, "../menuaiio/build/static"),
+  menuaiio_output_latest: path.resolve(
     __dirname,
-    "../hassio/build/frontend_latest"
+    "../menuaiio/build/frontend_latest"
   ),
-  hassio_output_es5: path.resolve(__dirname, "../hassio/build/frontend_es5"),
-  hassio_publicPath: "/api/hassio/app",
+  menuaiio_output_es5: path.resolve(__dirname, "../menuaiio/build/frontend_es5"),
+  menuaiio_publicPath: "/api/menuaiio/app",
 
   translations_src: path.resolve(__dirname, "../src/translations"),
 };

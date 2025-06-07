@@ -19,15 +19,15 @@ import "../../../components/ha-list-item";
 import "../../../components/ha-logo-svg";
 import "../../../components/ha-md-list";
 import "../../../components/ha-md-list-item";
-import type { HassioHassOSInfo } from "../../../data/hassio/host";
-import { fetchHassioHassOsInfo } from "../../../data/hassio/host";
-import type { HassioInfo } from "../../../data/hassio/supervisor";
-import { fetchHassioInfo } from "../../../data/hassio/supervisor";
+import type { menuaiiomenuaiOSInfo } from "../../../data/menuaiio/host";
+import { fetchmenuaiiomenuaiOsInfo } from "../../../data/menuaiio/host";
+import type { menuaiioInfo } from "../../../data/menuaiio/supervisor";
+import { fetchmenuaiioInfo } from "../../../data/menuaiio/supervisor";
 import { showShortcutsDialog } from "../../../dialogs/shortcuts/show-shortcuts-dialog";
-import "../../../layouts/hass-subpage";
-import { mdiHomeAssistant } from "../../../resources/home-assistant-logo-svg";
+import "../../../layouts/menuai-subpage";
+import { mdimenuai } from "../../../resources/home-assistant-logo-svg";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import { documentationUrl } from "../../../util/documentation-url";
 import { subscribeSystemHealthInfo } from "../../../data/system_health";
 
@@ -56,7 +56,7 @@ const PAGES = [
   {
     name: "feature",
     path: "/feature-requests",
-    iconPath: mdiHomeAssistant,
+    iconPath: mdimenuai,
     iconColor: "#0D47A1",
   },
   {
@@ -86,7 +86,7 @@ const PAGES = [
 
 @customElement("ha-config-info")
 class HaConfigInfo extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -96,43 +96,43 @@ class HaConfigInfo extends LitElement {
 
   @property({ attribute: false }) public route!: Route;
 
-  @state() private _osInfo?: HassioHassOSInfo;
+  @state() private _osInfo?: menuaiiomenuaiOSInfo;
 
-  @state() private _hassioInfo?: HassioInfo;
+  @state() private _menuaiioInfo?: menuaiioInfo;
 
   @state() private _installationMethod?: string;
 
   protected render(): TemplateResult {
-    const hass = this.hass;
+    const menuai = this.menuai;
     const customUiList: { name: string; url: string; version: string }[] =
       (window as any).CUSTOM_UI_LIST || [];
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         back-path="/config"
-        .header=${this.hass.localize("ui.panel.config.info.caption")}
+        .header=${this.menuai.localize("ui.panel.config.info.caption")}
       >
         <div class="content">
           <ha-card outlined class="header">
             <a
-              href=${documentationUrl(this.hass, "")}
+              href=${documentationUrl(this.menuai, "")}
               target="_blank"
               rel="noreferrer"
             >
               <ha-logo-svg
-                title=${this.hass.localize(
+                title=${this.menuai.localize(
                   "ui.panel.config.info.home_assistant_logo"
                 )}
               >
               </ha-logo-svg>
             </a>
-            <p>Home Assistant</p>
+            <p>MenuAI</p>
             <ul class="versions">
               <li>
                 <span class="version-label"
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     `ui.panel.config.info.installation_method`
                   )}</span
                 >
@@ -140,14 +140,14 @@ class HaConfigInfo extends LitElement {
               </li>
               <li>
                 <span class="version-label">Core</span>
-                <span class="version">${hass.connection.haVersion}</span>
+                <span class="version">${menuai.connection.haVersion}</span>
               </li>
-              ${this._hassioInfo
+              ${this._menuaiioInfo
                 ? html`
                     <li>
                       <span class="version-label">Supervisor</span>
                       <span class="version"
-                        >${this._hassioInfo.supervisor}</span
+                        >${this._menuaiioInfo.supervisor}</span
                       >
                     </li>
                   `
@@ -162,7 +162,7 @@ class HaConfigInfo extends LitElement {
                 : nothing}
               <li>
                 <span class="version-label">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.info.frontend_version_label"
                   )}
                 </span>
@@ -174,7 +174,7 @@ class HaConfigInfo extends LitElement {
           </ha-card>
           <ha-card outlined class="ohf">
             <div>
-              ${this.hass.localize("ui.panel.config.info.proud_part_of")}
+              ${this.menuai.localize("ui.panel.config.info.proud_part_of")}
             </div>
             <a
               href="https://www.openhomefoundation.org"
@@ -196,7 +196,7 @@ class HaConfigInfo extends LitElement {
                   <ha-svg-icon .path=${mdiKeyboard}></ha-svg-icon>
                 </div>
                 <span
-                  >${this.hass.localize("ui.panel.config.info.shortcuts")}</span
+                  >${this.menuai.localize("ui.panel.config.info.shortcuts")}</span
                 >
               </ha-md-list-item>
 
@@ -204,7 +204,7 @@ class HaConfigInfo extends LitElement {
                 (page) => html`
                   <ha-md-list-item
                     type="link"
-                    .href=${documentationUrl(this.hass, page.path)}
+                    .href=${documentationUrl(this.menuai, page.path)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -216,7 +216,7 @@ class HaConfigInfo extends LitElement {
                       <ha-svg-icon .path=${page.iconPath}></ha-svg-icon>
                     </div>
                     <span>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         `ui.panel.config.info.items.${page.name}`
                       )}
                     </span>
@@ -228,7 +228,7 @@ class HaConfigInfo extends LitElement {
             ${customUiList.length
               ? html`
                   <div class="custom-ui">
-                    ${this.hass.localize("ui.panel.config.info.custom_uis")}
+                    ${this.menuai.localize("ui.panel.config.info.custom_uis")}
                     ${customUiList.map(
                       (item) => html`
                         <div>
@@ -242,7 +242,7 @@ class HaConfigInfo extends LitElement {
               : nothing}
           </ha-card>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -257,25 +257,25 @@ class HaConfigInfo extends LitElement {
       }
     }, 2000);
 
-    if (isComponentLoaded(this.hass, "hassio")) {
+    if (isComponentLoaded(this.menuai, "menuaiio")) {
       this._loadSupervisorInfo();
     }
 
-    const unsubSystemHealth = subscribeSystemHealthInfo(this.hass, (info) => {
-      if (info?.homeassistant) {
-        this._installationMethod = info.homeassistant.info.installation_type;
+    const unsubSystemHealth = subscribeSystemHealthInfo(this.menuai, (info) => {
+      if (info?.menuai) {
+        this._installationMethod = info.menuai.info.installation_type;
         unsubSystemHealth.then((unsub) => unsub());
       }
     });
   }
 
   private async _loadSupervisorInfo(): Promise<void> {
-    const [osInfo, hassioInfo] = await Promise.all([
-      fetchHassioHassOsInfo(this.hass),
-      fetchHassioInfo(this.hass),
+    const [osInfo, menuaiioInfo] = await Promise.all([
+      fetchmenuaiiomenuaiOsInfo(this.menuai),
+      fetchmenuaiioInfo(this.menuai),
     ]);
 
-    this._hassioInfo = hassioInfo;
+    this._menuaiioInfo = menuaiioInfo;
     this._osInfo = osInfo;
   }
 

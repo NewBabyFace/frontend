@@ -8,11 +8,11 @@ import "../../components/ha-control-slider";
 import type { CoverEntity } from "../../data/cover";
 import { UNAVAILABLE } from "../../data/entity";
 import { DOMAIN_ATTRIBUTES_UNITS } from "../../data/entity_attributes";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-state-control-cover-position")
 export class HaStateControlCoverPosition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public stateObj!: CoverEntity;
 
@@ -30,7 +30,7 @@ export class HaStateControlCoverPosition extends LitElement {
     const value = (ev.detail as any).value;
     if (isNaN(value)) return;
 
-    this.hass.callService("cover", "set_cover_position", {
+    this.menuai.callService("cover", "set_cover_position", {
       entity_id: this.stateObj!.entity_id,
       position: value,
     });
@@ -51,9 +51,9 @@ export class HaStateControlCoverPosition extends LitElement {
         mode="end"
         @value-changed=${this._valueChanged}
         .ariaLabel=${computeAttributeNameDisplay(
-          this.hass.localize,
+          this.menuai.localize,
           this.stateObj,
-          this.hass.entities,
+          this.menuai.entities,
           "current_position"
         )}
         style=${styleMap({
@@ -64,7 +64,7 @@ export class HaStateControlCoverPosition extends LitElement {
         })}
         .disabled=${this.stateObj.state === UNAVAILABLE}
         .unit=${DOMAIN_ATTRIBUTES_UNITS.cover.current_position}
-        .locale=${this.hass.locale}
+        .locale=${this.menuai.locale}
       >
       </ha-control-slider>
     `;

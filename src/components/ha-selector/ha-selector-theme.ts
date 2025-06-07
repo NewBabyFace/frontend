@@ -1,12 +1,12 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import type { ThemeSelector } from "../../data/selector";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../ha-theme-picker";
 
 @customElement("ha-selector-theme")
 export class HaThemeSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public selector!: ThemeSelector;
 
@@ -21,7 +21,7 @@ export class HaThemeSelector extends LitElement {
   protected render() {
     return html`
       <ha-theme-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .value=${this.value}
         .label=${this.label}
         .includeDefault=${this.selector.theme?.include_default}

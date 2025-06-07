@@ -36,14 +36,14 @@ import type { GoogleEntity } from "../../../data/google_assistant";
 import { fetchCloudGoogleEntity } from "../../../data/google_assistant";
 import { SubscribeMixin } from "../../../mixins/subscribe-mixin";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { documentationUrl } from "../../../util/documentation-url";
 import type { EntityRegistrySettings } from "../entities/entity-registry-settings";
 
 @customElement("entity-voice-settings")
 export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public entityId!: string;
 
@@ -62,14 +62,14 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
   > = {};
 
   protected willUpdate(changedProps: PropertyValues<this>) {
-    if (!isComponentLoaded(this.hass, "cloud")) {
+    if (!isComponentLoaded(this.menuai, "cloud")) {
       return;
     }
     if (changedProps.has("entityId") && this.entityId) {
       this._fetchEntities();
     }
     if (!this.hasUpdated) {
-      fetchCloudStatus(this.hass).then((status) => {
+      fetchCloudStatus(this.menuai).then((status) => {
         this._cloudStatus = status;
       });
     }
@@ -78,7 +78,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
   private async _fetchEntities() {
     try {
       const googleEntity = await fetchCloudGoogleEntity(
-        this.hass,
+        this.menuai,
         this.entityId
       );
       this._googleEntity = googleEntity;
@@ -91,7 +91,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
     }
 
     try {
-      await fetchCloudAlexaEntity(this.hass, this.entityId);
+      await fetchCloudAlexaEntity(this.menuai, this.entityId);
     } catch (err: any) {
       if (err.code === "not_supported") {
         this._unsupported["cloud.alexa"] = true;
@@ -182,7 +182,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
     return html`
       <ha-settings-row>
         <h3 slot="heading">
-          ${this.hass.localize("ui.dialogs.voice-settings.expose_header")}
+          ${this.menuai.localize("ui.dialogs.voice-settings.expose_header")}
         </h3>
         <ha-switch
           @change=${this._toggleAll}
@@ -218,7 +218,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
                   src=${brandsUrl({
                     domain: voiceAssistants[key].domain,
                     type: "icon",
-                    darkOptimized: this.hass.themes?.darkMode,
+                    darkOptimized: this.menuai.themes?.darkMode,
                   })}
                   crossorigin="anonymous"
                   referrerpolicy="no-referrer"
@@ -228,7 +228,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
                 ${!supported
                   ? html`<div slot="description" class="unsupported">
                       <ha-svg-icon .path=${mdiAlertCircle}></ha-svg-icon>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.dialogs.voice-settings.unsupported"
                       )}
                     </div>`
@@ -236,7 +236,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
                 ${manualConfig
                   ? html`
                       <div slot="description">
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.dialogs.voice-settings.manual_config"
                         )}
                       </div>
@@ -246,7 +246,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
                   ? html`
                       <ha-formfield
                         slot="description"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.dialogs.voice-settings.ask_pin"
                         )}
                       >
@@ -269,29 +269,29 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
         : nothing}
 
       <h3 class="header">
-        ${this.hass.localize("ui.dialogs.voice-settings.aliases_header")}
+        ${this.menuai.localize("ui.dialogs.voice-settings.aliases_header")}
       </h3>
 
       <p class="description">
-        ${this.hass.localize("ui.dialogs.voice-settings.aliases_description")}
+        ${this.menuai.localize("ui.dialogs.voice-settings.aliases_description")}
       </p>
 
       ${!this.entry
         ? html`<ha-alert alert-type="warning">
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.dialogs.voice-settings.aliases_no_unique_id",
               {
                 faq_link: html`<a
-                  href=${documentationUrl(this.hass, "/faq/unique_id")}
+                  href=${documentationUrl(this.menuai, "/faq/unique_id")}
                   target="_blank"
                   rel="noreferrer"
-                  >${this.hass.localize("ui.dialogs.entity_registry.faq")}</a
+                  >${this.menuai.localize("ui.dialogs.entity_registry.faq")}</a
                 >`,
               }
             )}
           </ha-alert>`
         : html`<ha-aliases-editor
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .aliases=${this._aliases ?? this.entry.aliases}
             @value-changed=${this._aliasesChanged}
             @blur=${this._saveAliases}
@@ -314,7 +314,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
   private async _2faChanged(ev) {
     try {
       await updateCloudGoogleEntityConfig(
-        this.hass,
+        this.menuai,
         this.entityId,
         !ev.target.checked
       );
@@ -327,7 +327,7 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
     if (!this._aliases) {
       return;
     }
-    const result = await updateEntityRegistryEntry(this.hass, this.entityId, {
+    const result = await updateEntityRegistryEntry(this.menuai, this.entityId, {
       aliases: this._aliases
         .map((alias) => alias.trim())
         .filter((alias) => alias),
@@ -337,14 +337,14 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
 
   private async _toggleAssistant(ev) {
     exposeEntities(
-      this.hass,
+      this.menuai,
       [ev.target.assistant],
       [this.entityId],
       ev.target.checked
     );
     if (this.entry) {
       const entry = await getExtendedEntityRegistryEntry(
-        this.hass,
+        this.menuai,
         this.entityId
       );
       fireEvent(this, "entity-entry-updated", entry);
@@ -359,10 +359,10 @@ export class EntityVoiceSettings extends SubscribeMixin(LitElement) {
       ? ev.target.assistants.filter((key) => !this._unsupported[key])
       : ev.target.assistants;
 
-    exposeEntities(this.hass, assistants, [this.entityId], ev.target.checked);
+    exposeEntities(this.menuai, assistants, [this.entityId], ev.target.checked);
     if (this.entry) {
       const entry = await getExtendedEntityRegistryEntry(
-        this.hass,
+        this.menuai,
         this.entityId
       );
       fireEvent(this, "entity-entry-updated", entry);
@@ -437,7 +437,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "entity-registry-settings": EntityRegistrySettings;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "entity-entry-updated": ExtEntityRegistryEntry;
   }
 }

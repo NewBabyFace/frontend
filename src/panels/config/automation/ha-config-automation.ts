@@ -1,13 +1,13 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { computeStateDomain } from "../../../common/entity/compute_state_domain";
 import { debounce } from "../../../common/util/debounce";
 import type { AutomationEntity } from "../../../data/automation";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 import "./ha-automation-editor";
 import "./ha-automation-picker";
 
@@ -19,8 +19,8 @@ const equal = (a: AutomationEntity[], b: AutomationEntity[]): boolean => {
 };
 
 @customElement("ha-config-automation")
-class HaConfigAutomation extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigAutomation extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -31,7 +31,7 @@ class HaConfigAutomation extends HassRouterPage {
   @property({ attribute: false }) public automations: AutomationEntity[] = [];
 
   private _debouncedUpdateAutomations = debounce((pageEl) => {
-    const newAutomations = this._getAutomations(this.hass.states);
+    const newAutomations = this._getAutomations(this.menuai.states);
     if (!equal(newAutomations, pageEl.automations)) {
       pageEl.automations = newAutomations;
     }
@@ -58,7 +58,7 @@ class HaConfigAutomation extends HassRouterPage {
   };
 
   private _getAutomations = memoizeOne(
-    (states: HassEntities): AutomationEntity[] =>
+    (states: menuaiEntities): AutomationEntity[] =>
       Object.values(states).filter(
         (entity) =>
           computeStateDomain(entity) === "automation" &&
@@ -68,20 +68,20 @@ class HaConfigAutomation extends HassRouterPage {
 
   protected firstUpdated(changedProps) {
     super.firstUpdated(changedProps);
-    this.hass.loadBackendTranslation("device_automation");
+    this.menuai.loadBackendTranslation("device_automation");
   }
 
   protected updatePageEl(pageEl, changedProps: PropertyValues) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.narrow = this.narrow;
     pageEl.isWide = this.isWide;
     pageEl.route = this.routeTail;
     pageEl.showAdvanced = this.showAdvanced;
 
-    if (this.hass) {
+    if (this.menuai) {
       if (!pageEl.automations || !changedProps) {
-        pageEl.automations = this._getAutomations(this.hass.states);
-      } else if (changedProps.has("hass")) {
+        pageEl.automations = this._getAutomations(this.menuai.states);
+      } else if (changedProps.has("menuai")) {
         this._debouncedUpdateAutomations(pageEl);
       }
     }

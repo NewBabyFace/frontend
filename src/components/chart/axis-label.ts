@@ -1,4 +1,4 @@
-import type { HassConfig } from "home-assistant-js-websocket";
+import type { menuaiConfig } from "home-assistant-js-websocket";
 import type { FrontendLocaleData } from "../../data/translation";
 import {
   formatDateMonth,
@@ -14,7 +14,7 @@ import {
 export function formatTimeLabel(
   value: number | Date,
   locale: FrontendLocaleData,
-  config: HassConfig,
+  config: menuaiConfig,
   minutesDifference: number
 ) {
   const dayDifference = minutesDifference / 60 / 24;

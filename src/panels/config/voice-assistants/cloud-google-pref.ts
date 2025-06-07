@@ -19,12 +19,12 @@ import {
   getExposeNewEntities,
   setExposeNewEntities,
 } from "../../../data/expose";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import { showSaveSuccessToast } from "../../../util/toast-saved-success";
 
 export class CloudGooglePref extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public exposedEntities?: Record<
     string,
@@ -37,7 +37,7 @@ export class CloudGooglePref extends LitElement {
 
   protected willUpdate() {
     if (!this.hasUpdated) {
-      getExposeNewEntities(this.hass, "cloud.google_assistant").then(
+      getExposeNewEntities(this.menuai, "cloud.google_assistant").then(
         (value) => {
           this._exposeNew = value.expose_new;
         }
@@ -49,7 +49,7 @@ export class CloudGooglePref extends LitElement {
     (exposedEntities: Record<string, ExposeEntitySettings>) =>
       Object.entries(exposedEntities).filter(
         ([entityId, expose]) =>
-          expose["cloud.google_assistant"] && entityId in this.hass.states
+          expose["cloud.google_assistant"] && entityId in this.menuai.states
       ).length
   );
 
@@ -74,11 +74,11 @@ export class CloudGooglePref extends LitElement {
             src=${brandsUrl({
               domain: "google_assistant",
               type: "icon",
-              darkOptimized: this.hass.themes?.darkMode,
+              darkOptimized: this.menuai.themes?.darkMode,
             })}
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
-          />${this.hass.localize("ui.panel.config.cloud.account.google.title")}
+          />${this.menuai.localize("ui.panel.config.cloud.account.google.title")}
         </h1>
         <div class="header-actions">
           <a
@@ -88,7 +88,7 @@ export class CloudGooglePref extends LitElement {
             class="icon-link"
           >
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.cloud.account.google.link_learn_how_it_works"
               )}
               .path=${mdiHelpCircle}
@@ -101,11 +101,11 @@ export class CloudGooglePref extends LitElement {
         </div>
         <div class="card-content">
           <p>
-            ${this.hass.localize("ui.panel.config.cloud.account.google.info")}
+            ${this.menuai.localize("ui.panel.config.cloud.account.google.info")}
           </p>
           ${manualConfig
             ? html`<ha-alert alert-type="warning">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.cloud.account.google.manual_config"
                 )}
               </ha-alert>`
@@ -115,11 +115,11 @@ export class CloudGooglePref extends LitElement {
             : html`${!google_registered
                   ? html`
                       <ha-alert
-                        .title=${this.hass.localize(
+                        .title=${this.menuai.localize(
                           "ui.panel.config.cloud.account.google.not_configured_title"
                         )}
                       >
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.cloud.account.google.not_configured_text"
                         )}
 
@@ -130,7 +130,7 @@ export class CloudGooglePref extends LitElement {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              ${this.hass.localize(
+                              ${this.menuai.localize(
                                 "ui.panel.config.cloud.account.google.enable_ha_skill"
                               )}
                             </a>
@@ -141,7 +141,7 @@ export class CloudGooglePref extends LitElement {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              ${this.hass.localize(
+                              ${this.menuai.localize(
                                 "ui.panel.config.cloud.account.google.config_documentation"
                               )}
                             </a>
@@ -152,12 +152,12 @@ export class CloudGooglePref extends LitElement {
                   : ""}
                 <ha-settings-row>
                   <span slot="heading">
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.cloud.account.google.expose_new_entities"
                     )}
                   </span>
                   <span slot="description">
-                    ${this.hass!.localize(
+                    ${this.menuai!.localize(
                       "ui.panel.config.cloud.account.google.expose_new_entities_info"
                     )}
                   </span>
@@ -172,18 +172,18 @@ export class CloudGooglePref extends LitElement {
                         ? html`
                             <ha-alert
                               alert-type="warning"
-                              .title=${this.hass.localize(
+                              .title=${this.menuai.localize(
                                 "ui.panel.config.cloud.account.google.http_use_ssl_warning_title"
                               )}
                             >
-                              ${this.hass.localize(
+                              ${this.menuai.localize(
                                 "ui.panel.config.cloud.account.google.http_use_ssl_warning_text"
                               )}
                               <a
                                 href="https://www.nabucasa.com/config/google_assistant/#local-communication"
                                 target="_blank"
                                 rel="noreferrer"
-                                >${this.hass.localize(
+                                >${this.menuai.localize(
                                   "ui.panel.config.common.learn_more"
                                 )}</a
                               >
@@ -193,12 +193,12 @@ export class CloudGooglePref extends LitElement {
 
                       <ha-settings-row>
                         <span slot="heading">
-                          ${this.hass!.localize(
+                          ${this.menuai!.localize(
                             "ui.panel.config.cloud.account.google.enable_state_reporting"
                           )}
                         </span>
                         <span slot="description">
-                          ${this.hass!.localize(
+                          ${this.menuai!.localize(
                             "ui.panel.config.cloud.account.google.info_state_reporting"
                           )}
                         </span>
@@ -210,12 +210,12 @@ export class CloudGooglePref extends LitElement {
 
                       <ha-settings-row>
                         <span slot="heading">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.cloud.account.google.security_devices"
                           )}
                         </span>
                         <span slot="description">
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.cloud.account.google.enter_pin_info"
                           )}
                         </span>
@@ -223,10 +223,10 @@ export class CloudGooglePref extends LitElement {
 
                       <ha-textfield
                         id="google_secure_devices_pin"
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.cloud.account.google.devices_pin"
                         )}
-                        .placeholder=${this.hass.localize(
+                        .placeholder=${this.menuai.localize(
                           "ui.panel.config.cloud.account.google.enter_pin_hint"
                         )}
                         .value=${google_secure_devices_pin || ""}
@@ -242,10 +242,10 @@ export class CloudGooglePref extends LitElement {
               >
                 <mwc-button>
                   ${manualConfig
-                    ? this.hass!.localize(
+                    ? this.menuai!.localize(
                         "ui.panel.config.cloud.account.google.show_entities"
                       )
-                    : this.hass.localize(
+                    : this.menuai.localize(
                         "ui.panel.config.cloud.account.google.exposed_entities",
                         {
                           number: this.exposedEntities
@@ -268,7 +268,7 @@ export class CloudGooglePref extends LitElement {
     }
     try {
       await setExposeNewEntities(
-        this.hass,
+        this.menuai,
         "cloud.google_assistant",
         toggle.checked
       );
@@ -280,7 +280,7 @@ export class CloudGooglePref extends LitElement {
   private async _enabledToggleChanged(ev) {
     const toggle = ev.target as HaSwitch;
     try {
-      await updateCloudPref(this.hass, { google_enabled: toggle.checked! });
+      await updateCloudPref(this.menuai, { google_enabled: toggle.checked! });
       fireEvent(this, "ha-refresh-cloud-status");
     } catch (_err: any) {
       toggle.checked = !toggle.checked;
@@ -290,7 +290,7 @@ export class CloudGooglePref extends LitElement {
   private async _reportToggleChanged(ev) {
     const toggle = ev.target as HaSwitch;
     try {
-      await updateCloudPref(this.hass, {
+      await updateCloudPref(this.menuai, {
         google_report_state: toggle.checked!,
       });
       fireEvent(this, "ha-refresh-cloud-status");
@@ -307,14 +307,14 @@ export class CloudGooglePref extends LitElement {
   private async _pinChanged(ev) {
     const input = ev.target as HaTextField;
     try {
-      await updateCloudPref(this.hass, {
+      await updateCloudPref(this.menuai, {
         [input.id]: input.value || null,
       });
-      showSaveSuccessToast(this, this.hass);
+      showSaveSuccessToast(this, this.menuai);
       fireEvent(this, "ha-refresh-cloud-status");
     } catch (err: any) {
       alert(
-        `${this.hass.localize(
+        `${this.menuai.localize(
           "ui.panel.config.cloud.account.google.enter_pin_error"
         )} ${err.message}`
       );

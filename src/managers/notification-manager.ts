@@ -5,7 +5,7 @@ import "../components/ha-button";
 import "../components/ha-toast";
 import "../components/ha-icon-button";
 import type { HaToast } from "../components/ha-toast";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface ShowToastParams {
   // Unique ID for the toast. If a new toast is shown with the same ID as the previous toast, it will be replaced to avoid flickering.
@@ -22,7 +22,7 @@ export interface ToastActionParams {
 }
 
 class NotificationManager extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _parameters?: ShowToastParams;
 
@@ -78,7 +78,7 @@ class NotificationManager extends LitElement {
         ${this._parameters?.dismissable
           ? html`
               <ha-icon-button
-                .label=${this.hass.localize("ui.common.close")}
+                .label=${this.menuai.localize("ui.common.close")}
                 .path=${mdiClose}
                 dialogAction="close"
                 slot="dismiss"
@@ -105,7 +105,7 @@ declare global {
   }
 
   // for fire event
-  interface HASSDomEvents {
-    "hass-notification": ShowToastParams;
+  interface menuaiDomEvents {
+    "menuai-notification": ShowToastParams;
   }
 }

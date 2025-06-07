@@ -3,7 +3,7 @@ import { css, html, nothing, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../common/dom/fire_event";
 import { stopPropagation } from "../common/dom/stop_propagation";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-select";
 import "./ha-list-item";
 
@@ -18,7 +18,7 @@ export class HaThemePicker extends LitElement {
   @property({ attribute: "include-default", type: Boolean })
   public includeDefault = false;
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ type: Boolean, reflect: true }) public disabled = false;
 
@@ -28,7 +28,7 @@ export class HaThemePicker extends LitElement {
     return html`
       <ha-select
         .label=${this.label ||
-        this.hass!.localize("ui.components.theme-picker.theme")}
+        this.menuai!.localize("ui.components.theme-picker.theme")}
         .value=${this.value}
         .required=${this.required}
         .disabled=${this.disabled}
@@ -40,18 +40,18 @@ export class HaThemePicker extends LitElement {
         ${!this.required
           ? html`
               <ha-list-item value="remove">
-                ${this.hass!.localize("ui.components.theme-picker.no_theme")}
+                ${this.menuai!.localize("ui.components.theme-picker.no_theme")}
               </ha-list-item>
             `
           : nothing}
         ${this.includeDefault
           ? html`
               <ha-list-item .value=${DEFAULT_THEME}>
-                Home Assistant
+                MenuAI
               </ha-list-item>
             `
           : nothing}
-        ${Object.keys(this.hass!.themes.themes)
+        ${Object.keys(this.menuai!.themes.themes)
           .sort()
           .map(
             (theme) =>
@@ -68,7 +68,7 @@ export class HaThemePicker extends LitElement {
   `;
 
   private _changed(ev): void {
-    if (!this.hass || ev.target.value === "") {
+    if (!this.menuai || ev.target.value === "") {
       return;
     }
     this.value = ev.target.value === "remove" ? undefined : ev.target.value;

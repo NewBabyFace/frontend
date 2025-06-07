@@ -10,7 +10,7 @@ import "../../../../../components/ha-md-select-option";
 import "../../../../../components/ha-md-textfield";
 import type { HaMdTextfield } from "../../../../../components/ha-md-textfield";
 import type { BackupConfig, Retention } from "../../../../../data/backup";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 
 export type BackupConfigSchedule = Pick<BackupConfig, "schedule" | "retention">;
 
@@ -40,7 +40,7 @@ export interface RetentionData {
 
 @customElement("ha-backup-config-retention")
 class HaBackupConfigRetention extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public retention?: Retention | null;
 
@@ -108,10 +108,10 @@ class HaBackupConfigRetention extends LitElement {
       <ha-md-list-item>
         <span slot="headline">
           ${this.headline ??
-          this.hass.localize(`ui.panel.config.backup.schedule.retention`)}
+          this.menuai.localize(`ui.panel.config.backup.schedule.retention`)}
         </span>
         <span slot="supporting-text">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.backup.schedule.retention_description`
           )}
         </span>
@@ -124,7 +124,7 @@ class HaBackupConfigRetention extends LitElement {
             (option) => html`
               <ha-md-select-option .value=${option}>
                 <div slot="headline">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.backup.schedule.retention_presets.${option}`
                   )}
                 </div>
@@ -137,14 +137,14 @@ class HaBackupConfigRetention extends LitElement {
       ${this._preset === RetentionPreset.CUSTOM
         ? html`<ha-expansion-panel
             expanded
-            .header=${this.hass.localize(
+            .header=${this.menuai.localize(
               "ui.panel.config.backup.schedule.custom_retention"
             )}
             outlined
           >
             <ha-md-list-item>
               <span slot="headline">
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.backup.schedule.custom_retention_label"
                 )}
               </span>
@@ -167,13 +167,13 @@ class HaBackupConfigRetention extends LitElement {
               >
                 <ha-md-select-option value="days">
                   <div slot="headline">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.backup.schedule.retention_units.days"
                     )}
                   </div>
                 </ha-md-select-option>
                 <ha-md-select-option value="copies">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     "ui.panel.config.backup.schedule.retention_units.copies"
                   )}
                 </ha-md-select-option>

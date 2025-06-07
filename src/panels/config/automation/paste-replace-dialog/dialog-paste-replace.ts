@@ -1,7 +1,7 @@
 import { customElement, property, state } from "lit/decorators";
 import { css, type CSSResultGroup, html, LitElement, nothing } from "lit";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
-import type { HomeAssistant } from "../../../../types";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuai } from "../../../../types";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
 import { createCloseHeading } from "../../../../components/ha-dialog";
@@ -9,8 +9,8 @@ import "../trigger/ha-automation-trigger-row";
 import type { PasteReplaceDialogParams } from "./show-dialog-paste-replace";
 
 @customElement("ha-dialog-paste-replace")
-class DialogPasteReplace extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogPasteReplace extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -39,30 +39,30 @@ class DialogPasteReplace extends LitElement implements HassDialog {
         open
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize(
+          this.menuai,
+          this.menuai.localize(
             `ui.panel.config.${this._params.domain}.editor.paste_confirm.title`
           )
         )}
       >
         <p>
-          ${this.hass.localize(
+          ${this.menuai.localize(
             `ui.panel.config.${this._params.domain}.editor.paste_confirm.text`
           )}
         </p>
 
         <ha-yaml-editor
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .defaultValue=${this._params?.pastedConfig}
           read-only
         ></ha-yaml-editor>
 
         <div slot="primaryAction">
           <ha-button @click=${this._handleAppend}>
-            ${this.hass.localize("ui.common.append")}
+            ${this.menuai.localize("ui.common.append")}
           </ha-button>
           <ha-button @click=${this._handleReplace}>
-            ${this.hass.localize("ui.common.replace")}
+            ${this.menuai.localize("ui.common.replace")}
           </ha-button>
         </div>
       </ha-dialog>

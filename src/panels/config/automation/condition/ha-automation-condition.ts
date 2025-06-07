@@ -16,7 +16,7 @@ import type {
   AutomationClipboard,
   Condition,
 } from "../../../../data/automation";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import {
   PASTE_VALUE,
   showAddAutomationElementDialog,
@@ -26,7 +26,7 @@ import type HaAutomationConditionRow from "./ha-automation-condition-row";
 
 @customElement("ha-automation-condition")
 export default class HaAutomationCondition extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public conditions!: Condition[];
 
@@ -142,7 +142,7 @@ export default class HaAutomationCondition extends LitElement {
                 @move-down=${this._moveDown}
                 @move-up=${this._moveUp}
                 @value-changed=${this._conditionChanged}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 ?highlight=${this.highlightedConditions?.includes(cond)}
               >
                 ${this._showReorder && !this.disabled
@@ -159,7 +159,7 @@ export default class HaAutomationCondition extends LitElement {
             <ha-button
               outlined
               .disabled=${this.disabled}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.conditions.add"
               )}
               @click=${this._addConditionDialog}
@@ -168,7 +168,7 @@ export default class HaAutomationCondition extends LitElement {
             </ha-button>
             <ha-button
               .disabled=${this.disabled}
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.conditions.add_building_block"
               )}
               @click=${this._addConditionBuildingBlockDialog}

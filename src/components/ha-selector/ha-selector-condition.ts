@@ -3,11 +3,11 @@ import { customElement, property } from "lit/decorators";
 import type { Condition } from "../../data/automation";
 import type { ConditionSelector } from "../../data/selector";
 import "../../panels/config/automation/condition/ha-automation-condition";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 @customElement("ha-selector-condition")
 export class HaConditionSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -25,7 +25,7 @@ export class HaConditionSelector extends LitElement {
       <ha-automation-condition
         .disabled=${this.disabled}
         .conditions=${this.value || []}
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
       ></ha-automation-condition>
     `;

@@ -8,22 +8,22 @@ import "../../../../src/components/ha-alert";
 import "../../../../src/components/ha-spinner";
 import { createCloseHeading } from "../../../../src/components/ha-dialog";
 import {
-  createHassioFullBackup,
-  createHassioPartialBackup,
-} from "../../../../src/data/hassio/backup";
-import { extractApiErrorMessage } from "../../../../src/data/hassio/common";
+  createmenuaiioFullBackup,
+  createmenuaiioPartialBackup,
+} from "../../../../src/data/menuaiio/backup";
+import { extractApiErrorMessage } from "../../../../src/data/menuaiio/common";
 import { showAlertDialog } from "../../../../src/dialogs/generic/show-dialog-box";
 import { haStyle, haStyleDialog } from "../../../../src/resources/styles";
-import type { HomeAssistant } from "../../../../src/types";
+import type { menuai } from "../../../../src/types";
 import "../../components/supervisor-backup-content";
 import type { SupervisorBackupContent } from "../../components/supervisor-backup-content";
-import type { HassioCreateBackupDialogParams } from "./show-dialog-hassio-create-backup";
+import type { menuaiioCreateBackupDialogParams } from "./show-dialog-menuaiio-create-backup";
 
-@customElement("dialog-hassio-create-backup")
-class HassioCreateBackupDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("dialog-menuaiio-create-backup")
+class menuaiioCreateBackupDialog extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private _dialogParams?: HassioCreateBackupDialogParams;
+  @state() private _dialogParams?: menuaiioCreateBackupDialogParams;
 
   @state() private _error?: string;
 
@@ -32,7 +32,7 @@ class HassioCreateBackupDialog extends LitElement {
   @query("supervisor-backup-content")
   private _backupContent!: SupervisorBackupContent;
 
-  public showDialog(dialogParams: HassioCreateBackupDialogParams) {
+  public showDialog(dialogParams: menuaiioCreateBackupDialogParams) {
     this._dialogParams = dialogParams;
     this._creatingBackup = false;
   }
@@ -54,14 +54,14 @@ class HassioCreateBackupDialog extends LitElement {
         scrimClickAction
         @closed=${this.closeDialog}
         .heading=${createCloseHeading(
-          this.hass,
+          this.menuai,
           this._dialogParams.supervisor.localize("backup.create_backup")
         )}
       >
         ${this._creatingBackup
           ? html`<ha-spinner></ha-spinner>`
           : html`<supervisor-backup-content
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .supervisor=${this._dialogParams.supervisor}
               dialogInitialFocus
             >
@@ -122,9 +122,9 @@ class HassioCreateBackupDialog extends LitElement {
 
     try {
       if (this._backupContent.backupType === "full") {
-        await createHassioFullBackup(this.hass, backupDetails);
+        await createmenuaiioFullBackup(this.menuai, backupDetails);
       } else {
-        await createHassioPartialBackup(this.hass, backupDetails);
+        await createmenuaiioPartialBackup(this.menuai, backupDetails);
       }
 
       this._dialogParams!.onCreate();
@@ -150,6 +150,6 @@ class HassioCreateBackupDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dialog-hassio-create-backup": HassioCreateBackupDialog;
+    "dialog-menuaiio-create-backup": menuaiioCreateBackupDialog;
   }
 }

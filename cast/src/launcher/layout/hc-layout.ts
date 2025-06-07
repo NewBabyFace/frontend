@@ -1,4 +1,4 @@
-import type { Auth, Connection, HassUser } from "home-assistant-js-websocket";
+import type { Auth, Connection, menuaiUser } from "home-assistant-js-websocket";
 import { getUser } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
@@ -13,7 +13,7 @@ class HcLayout extends LitElement {
 
   @property({ attribute: false }) public connection?: Connection;
 
-  @property({ attribute: false }) public user?: HassUser;
+  @property({ attribute: false }) public user?: menuaiUser;
 
   protected render(): TemplateResult {
     return html`
@@ -21,17 +21,17 @@ class HcLayout extends LitElement {
         <div class="layout">
           <img
             class="hero"
-            alt="A Google Nest Hub with a Home Assistant dashboard on its screen"
+            alt="A Google Nest Hub with a MenuAI dashboard on its screen"
             src="/images/google-nest-hub.png"
           />
           <h1 class="card-header">
-            Home Assistant Cast${this.subtitle ? ` – ${this.subtitle}` : ""}
+            MenuAI Cast${this.subtitle ? ` – ${this.subtitle}` : ""}
             ${this.auth
               ? html`
                   <div class="subtitle">
-                    <a href=${this.auth.data.hassUrl} target="_blank"
-                      >${this.auth.data.hassUrl.substr(
-                        this.auth.data.hassUrl.indexOf("//") + 2
+                    <a href=${this.auth.data.menuaiUrl} target="_blank"
+                      >${this.auth.data.menuaiUrl.substr(
+                        this.auth.data.menuaiUrl.indexOf("//") + 2
                       )}</a
                     >
                     ${this.user ? html` – ${this.user.name} ` : ""}

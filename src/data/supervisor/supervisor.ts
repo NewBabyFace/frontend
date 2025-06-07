@@ -6,15 +6,15 @@ import type {
   LocalizeFunc,
 } from "../../common/translations/localize";
 import type { TranslationDict } from "../../types";
-import type { HassioAddonsInfo } from "../hassio/addon";
-import type { HassioHassOSInfo, HassioHostInfo } from "../hassio/host";
-import type { NetworkInfo } from "../hassio/network";
-import type { HassioResolution } from "../hassio/resolution";
+import type { menuaiioAddonsInfo } from "../menuaiio/addon";
+import type { menuaiiomenuaiOSInfo, menuaiioHostInfo } from "../menuaiio/host";
+import type { NetworkInfo } from "../menuaiio/network";
+import type { menuaiioResolution } from "../menuaiio/resolution";
 import type {
-  HassioHomeAssistantInfo,
-  HassioInfo,
-  HassioSupervisorInfo,
-} from "../hassio/supervisor";
+  menuaiiomenuaiInfo,
+  menuaiioInfo,
+  menuaiioSupervisorInfo,
+} from "../menuaiio/supervisor";
 import type { SupervisorStore } from "./store";
 
 export const supervisorWSbaseCommand = {
@@ -64,14 +64,14 @@ export interface SupervisorEvent {
 export type SupervisorKeys = FlattenObjectKeys<TranslationDict["supervisor"]>;
 
 export interface Supervisor {
-  host: HassioHostInfo;
-  supervisor: HassioSupervisorInfo;
-  info: HassioInfo;
-  core: HassioHomeAssistantInfo;
+  host: menuaiioHostInfo;
+  supervisor: menuaiioSupervisorInfo;
+  info: menuaiioInfo;
+  core: menuaiiomenuaiInfo;
   network: NetworkInfo;
-  resolution: HassioResolution;
-  os: HassioHassOSInfo;
-  addon: HassioAddonsInfo;
+  resolution: menuaiioResolution;
+  os: menuaiiomenuaiOSInfo;
+  addon: menuaiioAddonsInfo;
   store: SupervisorStore;
   localize: LocalizeFunc<SupervisorKeys>;
 }

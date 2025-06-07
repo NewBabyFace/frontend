@@ -8,11 +8,11 @@ import type { HaEntityPicker } from "../../../components/entity/ha-entity-picker
 import "../../../components/ha-icon-button";
 import "../../../components/ha-sortable";
 import "../../../components/ha-svg-icon";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import type { EntityConfig, LovelaceRowConfig } from "../entity-rows/types";
 
 declare global {
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "entities-changed": {
       entities: LovelaceRowConfig[];
     };
@@ -21,7 +21,7 @@ declare global {
 
 @customElement("hui-entities-card-row-editor")
 export class HuiEntitiesCardRowEditor extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public entities?: LovelaceRowConfig[];
 
@@ -38,16 +38,16 @@ export class HuiEntitiesCardRowEditor extends LitElement {
   }
 
   protected render() {
-    if (!this.entities || !this.hass) {
+    if (!this.entities || !this.menuai) {
       return nothing;
     }
 
     return html`
       <h3>
         ${this.label ||
-        `${this.hass!.localize(
+        `${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.generic.entities"
-        )} (${this.hass!.localize(
+        )} (${this.menuai!.localize(
           "ui.panel.lovelace.editor.card.config.required"
         )})`}
       </h3>
@@ -66,12 +66,12 @@ export class HuiEntitiesCardRowEditor extends LitElement {
                       <div class="special-row">
                         <div>
                           <span>
-                            ${this.hass!.localize(
+                            ${this.menuai!.localize(
                               `ui.panel.lovelace.editor.card.entities.entity_row.${entityConf.type}`
                             )}
                           </span>
                           <span class="secondary"
-                            >${this.hass!.localize(
+                            >${this.menuai!.localize(
                               "ui.panel.lovelace.editor.card.entities.edit_special_row"
                             )}</span
                           >
@@ -82,14 +82,14 @@ export class HuiEntitiesCardRowEditor extends LitElement {
                       <ha-entity-picker
                         allow-custom-entity
                         hide-clear-icon
-                        .hass=${this.hass}
+                        .menuai=${this.menuai}
                         .value=${(entityConf as EntityConfig).entity}
                         .index=${index}
                         @value-changed=${this._valueChanged}
                       ></ha-entity-picker>
                     `}
                 <ha-icon-button
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.components.entity.entity-picker.clear"
                   )}
                   .path=${mdiClose}
@@ -98,7 +98,7 @@ export class HuiEntitiesCardRowEditor extends LitElement {
                   @click=${this._removeRow}
                 ></ha-icon-button>
                 <ha-icon-button
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.components.entity.entity-picker.edit"
                   )}
                   .path=${mdiPencil}
@@ -113,7 +113,7 @@ export class HuiEntitiesCardRowEditor extends LitElement {
       </ha-sortable>
       <ha-entity-picker
         class="add-entity"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         @value-changed=${this._addEntity}
       ></ha-entity-picker>
     `;

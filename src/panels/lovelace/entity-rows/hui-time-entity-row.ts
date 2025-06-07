@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators";
 import "../../../components/ha-date-input";
 import { isUnavailableState, UNAVAILABLE } from "../../../data/entity";
 import { setTimeValue } from "../../../data/time";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-generic-entity-row";
 import { createEntityNotFoundWarning } from "../components/hui-warning";
@@ -13,7 +13,7 @@ import "../../../components/ha-time-input";
 
 @customElement("hui-time-entity-row")
 class HuiTimeEntityRow extends LitElement implements LovelaceRow {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @state() private _config?: EntityConfig;
 
@@ -29,16 +29,16 @@ class HuiTimeEntityRow extends LitElement implements LovelaceRow {
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this.hass) {
+    if (!this._config || !this.menuai) {
       return nothing;
     }
 
-    const stateObj = this.hass.states[this._config.entity];
+    const stateObj = this.menuai.states[this._config.entity];
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
@@ -46,12 +46,12 @@ class HuiTimeEntityRow extends LitElement implements LovelaceRow {
     const unavailable = stateObj.state === UNAVAILABLE;
 
     return html`
-      <hui-generic-entity-row .hass=${this.hass} .config=${this._config}>
+      <hui-generic-entity-row .menuai=${this.menuai} .config=${this._config}>
         <ha-time-input
           .value=${isUnavailableState(stateObj.state)
             ? undefined
             : stateObj.state}
-          .locale=${this.hass.locale}
+          .locale=${this.menuai.locale}
           .disabled=${unavailable}
           @value-changed=${this._timeChanged}
           @click=${this._stopEventPropagation}
@@ -66,8 +66,8 @@ class HuiTimeEntityRow extends LitElement implements LovelaceRow {
 
   private _timeChanged(ev: CustomEvent<{ value: string }>): void {
     if (ev.detail.value) {
-      const stateObj = this.hass!.states[this._config!.entity];
-      setTimeValue(this.hass!, stateObj.entity_id, ev.detail.value);
+      const stateObj = this.menuai!.states[this._config!.entity];
+      setTimeValue(this.menuai!, stateObj.entity_id, ev.detail.value);
     }
   }
 }

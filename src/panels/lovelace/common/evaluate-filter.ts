@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 
 type FilterOperator =
   | "=="
@@ -22,7 +22,7 @@ export type LegacyStateFilter =
   | string;
 
 export const evaluateStateFilter = (
-  stateObj: HassEntity,
+  stateObj: menuaiEntity,
   filter: LegacyStateFilter
 ): boolean => {
   let operator: FilterOperator;

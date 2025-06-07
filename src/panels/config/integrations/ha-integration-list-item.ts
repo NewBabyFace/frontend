@@ -7,7 +7,7 @@ import { css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
 import { domainToName } from "../../../data/integration";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { brandsUrl } from "../../../util/brands-url";
 import type { IntegrationListItem } from "./dialog-add-integration";
 import "../../../components/ha-svg-icon";
@@ -16,7 +16,7 @@ import "../../../components/ha-tooltip";
 
 @customElement("ha-integration-list-item")
 export class HaIntegrationListItem extends ListItemBase {
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @property({ attribute: false }) public integration?: IntegrationListItem;
 
@@ -33,7 +33,7 @@ export class HaIntegrationListItem extends ListItemBase {
       return nothing;
     }
     return html`${this.integration.name ||
-    domainToName(this.hass.localize, this.integration.domain)}
+    domainToName(this.menuai.localize, this.integration.domain)}
     ${this.integration.is_helper ? " (helper)" : ""}`;
   }
 
@@ -58,7 +58,7 @@ export class HaIntegrationListItem extends ListItemBase {
           domain: this.integration.domain,
           type: "icon",
           useFallback: true,
-          darkOptimized: this.hass.themes?.darkMode,
+          darkOptimized: this.menuai.themes?.darkMode,
           brand: this.brand,
         })}
         crossorigin="anonymous"
@@ -76,7 +76,7 @@ export class HaIntegrationListItem extends ListItemBase {
       ${this.integration.cloud
         ? html`<ha-tooltip
             placement="left"
-            .content=${this.hass.localize(
+            .content=${this.menuai.localize(
               "ui.panel.config.integrations.config_entry.depends_on_cloud"
             )}
             ><ha-svg-icon .path=${mdiWeb}></ha-svg-icon
@@ -89,7 +89,7 @@ export class HaIntegrationListItem extends ListItemBase {
               : "custom"}
             ><ha-tooltip
               placement="left"
-              .content=${this.hass.localize(
+              .content=${this.menuai.localize(
                 this.integration.overwrites_built_in
                   ? "ui.panel.config.integrations.config_entry.custom_overwrites_core"
                   : "ui.panel.config.integrations.config_entry.custom_integration"
@@ -104,7 +104,7 @@ export class HaIntegrationListItem extends ListItemBase {
       !this.integration.iot_standards
         ? html`<ha-tooltip
             placement="left"
-            .content=${this.hass.localize(
+            .content=${this.menuai.localize(
               "ui.panel.config.integrations.config_entry.yaml_only"
             )}
           >

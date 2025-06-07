@@ -15,26 +15,26 @@ import type { CloudStatus } from "../../../data/cloud";
 import { fetchCloudStatus } from "../../../data/cloud";
 import type { HardwareInfo } from "../../../data/hardware";
 import { BOARD_NAMES } from "../../../data/hardware";
-import type { HassioBackup } from "../../../data/hassio/backup";
-import { fetchHassioBackups } from "../../../data/hassio/backup";
+import type { menuaiioBackup } from "../../../data/menuaiio/backup";
+import { fetchmenuaiioBackups } from "../../../data/menuaiio/backup";
 import type {
-  HassioHassOSInfo,
-  HassioHostInfo,
-} from "../../../data/hassio/host";
+  menuaiiomenuaiOSInfo,
+  menuaiioHostInfo,
+} from "../../../data/menuaiio/host";
 import {
-  fetchHassioHassOsInfo,
-  fetchHassioHostInfo,
-} from "../../../data/hassio/host";
+  fetchmenuaiiomenuaiOsInfo,
+  fetchmenuaiioHostInfo,
+} from "../../../data/menuaiio/host";
 import { showRestartDialog } from "../../../dialogs/restart/show-dialog-restart";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-subpage";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import "../ha-config-section";
 import { configSections } from "../ha-panel-config";
 
 @customElement("ha-config-system-navigation")
 class HaConfigSystemNavigation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean, reflect: true }) public narrow = false;
 
@@ -54,39 +54,39 @@ class HaConfigSystemNavigation extends LitElement {
 
   protected render(): TemplateResult {
     const pages = configSections.general
-      .filter((page) => canShowPage(this.hass, page))
+      .filter((page) => canShowPage(this.menuai, page))
       .map((page) => {
         let description = "";
 
         switch (page.translationKey) {
           case "backup":
             description = this._latestBackupDate
-              ? this.hass.localize("ui.panel.config.backup.description", {
+              ? this.menuai.localize("ui.panel.config.backup.description", {
                   relative_time: relativeTime(
                     new Date(this._latestBackupDate),
-                    this.hass.locale
+                    this.menuai.locale
                   ),
                 })
-              : this.hass.localize(
+              : this.menuai.localize(
                   "ui.panel.config.backup.description_no_backup"
                 );
             break;
           case "network":
-            description = this.hass.localize(
+            description = this.menuai.localize(
               "ui.panel.config.network.description",
               {
                 state: this._externalAccess
-                  ? this.hass.localize("ui.panel.config.network.enabled")
-                  : this.hass.localize("ui.panel.config.network.disabled"),
+                  ? this.menuai.localize("ui.panel.config.network.enabled")
+                  : this.menuai.localize("ui.panel.config.network.disabled"),
               }
             );
             break;
           case "storage":
             description = this._storageInfo
-              ? this.hass.localize("ui.panel.config.storage.description", {
+              ? this.menuai.localize("ui.panel.config.storage.description", {
                   percent_used: `${Math.round(
                     (this._storageInfo.used / this._storageInfo.total) * 100
-                  )}${blankBeforePercent(this.hass.locale)}%`,
+                  )}${blankBeforePercent(this.menuai.locale)}%`,
                   free_space: `${this._storageInfo.free} GB`,
                 })
               : "";
@@ -94,11 +94,11 @@ class HaConfigSystemNavigation extends LitElement {
           case "hardware":
             description =
               this._boardName ||
-              this.hass.localize("ui.panel.config.hardware.description");
+              this.menuai.localize("ui.panel.config.hardware.description");
             break;
 
           default:
-            description = this.hass.localize(
+            description = this.menuai.localize(
               `ui.panel.config.${page.translationKey}.description`
             );
             break;
@@ -107,7 +107,7 @@ class HaConfigSystemNavigation extends LitElement {
         return {
           ...page,
           name: page.translationKey
-            ? this.hass.localize(
+            ? this.menuai.localize(
                 `ui.panel.config.${page.translationKey}.caption`
               )
             : page.name,
@@ -116,16 +116,16 @@ class HaConfigSystemNavigation extends LitElement {
       });
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         back-path="/config"
-        .header=${this.hass.localize("ui.panel.config.dashboard.system.main")}
+        .header=${this.menuai.localize("ui.panel.config.dashboard.system.main")}
       >
         <ha-icon-button
           slot="toolbar-icon"
           .path=${mdiPower}
-          .label=${this.hass.localize(
-            "ui.panel.config.system_dashboard.restart_homeassistant"
+          .label=${this.menuai.localize(
+            "ui.panel.config.system_dashboard.restart_menuai"
           )}
           @click=${this._showRestartDialog}
         ></ha-icon-button>
@@ -136,17 +136,17 @@ class HaConfigSystemNavigation extends LitElement {
         >
           <ha-card outlined>
             <ha-navigation-list
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .narrow=${this.narrow}
               .pages=${pages}
               has-secondary
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.dashboard.system.main"
               )}
             ></ha-navigation-list>
           </ha-card>
         </ha-config-section>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -154,19 +154,19 @@ class HaConfigSystemNavigation extends LitElement {
     super.firstUpdated(_changedProperties);
 
     this._fetchNetworkStatus();
-    const isHassioLoaded = isComponentLoaded(this.hass, "hassio");
-    this._fetchBackupInfo(isHassioLoaded);
-    this._fetchHardwareInfo(isHassioLoaded);
-    if (isHassioLoaded) {
+    const ismenuaiioLoaded = isComponentLoaded(this.menuai, "menuaiio");
+    this._fetchBackupInfo(ismenuaiioLoaded);
+    this._fetchHardwareInfo(ismenuaiioLoaded);
+    if (ismenuaiioLoaded) {
       this._fetchStorageInfo();
     }
   }
 
-  private async _fetchBackupInfo(isHassioLoaded: boolean) {
-    const backups: BackupContent[] | HassioBackup[] = isHassioLoaded
-      ? await fetchHassioBackups(this.hass)
-      : isComponentLoaded(this.hass, "backup")
-        ? await fetchBackupInfo(this.hass).then(
+  private async _fetchBackupInfo(ismenuaiioLoaded: boolean) {
+    const backups: BackupContent[] | menuaiioBackup[] = ismenuaiioLoaded
+      ? await fetchmenuaiioBackups(this.menuai)
+      : isComponentLoaded(this.menuai, "backup")
+        ? await fetchBackupInfo(this.menuai).then(
             (backupData) => backupData.backups
           )
         : [];
@@ -178,16 +178,16 @@ class HaConfigSystemNavigation extends LitElement {
     }
   }
 
-  private async _fetchHardwareInfo(isHassioLoaded: boolean) {
-    if (isComponentLoaded(this.hass, "hardware")) {
-      const hardwareInfo: HardwareInfo = await this.hass.callWS({
+  private async _fetchHardwareInfo(ismenuaiioLoaded: boolean) {
+    if (isComponentLoaded(this.menuai, "hardware")) {
+      const hardwareInfo: HardwareInfo = await this.menuai.callWS({
         type: "hardware/info",
       });
       this._boardName = hardwareInfo?.hardware.find(
         (hw) => hw.board !== null
       )?.name;
-    } else if (isHassioLoaded) {
-      const osData: HassioHassOSInfo = await fetchHassioHassOsInfo(this.hass);
+    } else if (ismenuaiioLoaded) {
+      const osData: menuaiiomenuaiOSInfo = await fetchmenuaiiomenuaiOsInfo(this.menuai);
       if (osData.board) {
         this._boardName = BOARD_NAMES[osData.board];
       }
@@ -195,7 +195,7 @@ class HaConfigSystemNavigation extends LitElement {
   }
 
   private async _fetchStorageInfo() {
-    const hostInfo: HassioHostInfo = await fetchHassioHostInfo(this.hass);
+    const hostInfo: menuaiioHostInfo = await fetchmenuaiioHostInfo(this.menuai);
     this._storageInfo = {
       used: hostInfo.disk_used,
       free: hostInfo.disk_free,
@@ -204,14 +204,14 @@ class HaConfigSystemNavigation extends LitElement {
   }
 
   private async _fetchNetworkStatus() {
-    if (isComponentLoaded(this.hass, "cloud")) {
-      const cloudStatus = await fetchCloudStatus(this.hass);
+    if (isComponentLoaded(this.menuai, "cloud")) {
+      const cloudStatus = await fetchCloudStatus(this.menuai);
       if (cloudStatus.logged_in) {
         this._externalAccess = true;
         return;
       }
     }
-    this._externalAccess = this.hass.config.external_url !== null;
+    this._externalAccess = this.menuai.config.external_url !== null;
   }
 
   private async _showRestartDialog() {

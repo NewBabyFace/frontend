@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
@@ -8,13 +8,13 @@ import "../components/ha-slider";
 import "../components/ha-textfield";
 import { isUnavailableState } from "../data/entity";
 import { setValue } from "../data/input_text";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 @customElement("state-card-input_number")
 class StateCardInputNumber extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj!: HassEntity;
+  @property({ attribute: false }) public stateObj!: menuaiEntity;
 
   @property({ attribute: "in-dialog", type: Boolean }) public inDialog = false;
 
@@ -48,7 +48,7 @@ class StateCardInputNumber extends LitElement {
   protected render(): TemplateResult {
     return html`
       <state-info
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${this.stateObj}
         .inDialog=${this.inDialog}
       ></state-info>
@@ -65,7 +65,7 @@ class StateCardInputNumber extends LitElement {
                 @change=${this._selectedValueChanged}
               ></ha-slider>
               <span class="state">
-                ${this.hass.formatEntityState(this.stateObj)}
+                ${this.menuai.formatEntityState(this.stateObj)}
               </span>
             </div>
           `
@@ -142,7 +142,7 @@ class StateCardInputNumber extends LitElement {
   private _selectedValueChanged(ev: Event): void {
     if ((ev.target as HTMLInputElement).value !== this.stateObj.state) {
       setValue(
-        this.hass!,
+        this.menuai!,
         this.stateObj.entity_id,
         (ev.target as HTMLInputElement).value
       );

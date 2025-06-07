@@ -1,19 +1,19 @@
 import { STATES_OFF } from "../../../../common/const";
 import { computeDomain } from "../../../../common/entity/compute_domain";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 export const turnOnOffEntities = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityIds: string[],
   turnOn = true
 ): void => {
   const domainsToCall = {};
   entityIds.forEach((entityId) => {
-    if (STATES_OFF.includes(hass.states[entityId].state) === turnOn) {
+    if (STATES_OFF.includes(menuai.states[entityId].state) === turnOn) {
       const stateDomain = computeDomain(entityId);
       const serviceDomain = ["cover", "lock"].includes(stateDomain)
         ? stateDomain
-        : "homeassistant";
+        : "menuai";
 
       if (!(serviceDomain in domainsToCall)) {
         domainsToCall[serviceDomain] = [];
@@ -36,6 +36,6 @@ export const turnOnOffEntities = (
     }
 
     const entities = domainsToCall[domain];
-    hass.callService(domain, service, { entity_id: entities });
+    menuai.callService(domain, service, { entity_id: entities });
   });
 };

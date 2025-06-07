@@ -18,15 +18,15 @@ import {
   AUTOMATION_DEFAULT_MODE,
 } from "../../../../data/automation";
 import { MODES, isMaxMode } from "../../../../data/script";
-import type { HassDialog } from "../../../../dialogs/make-dialog-manager";
+import type { menuaiDialog } from "../../../../dialogs/make-dialog-manager";
 import { haStyle, haStyleDialog } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { documentationUrl } from "../../../../util/documentation-url";
 import type { AutomationModeDialog } from "./show-dialog-automation-mode";
 
 @customElement("ha-dialog-automation-mode")
-class DialogAutomationMode extends LitElement implements HassDialog {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class DialogAutomationMode extends LitElement implements menuaiDialog {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _opened = false;
 
@@ -60,7 +60,7 @@ class DialogAutomationMode extends LitElement implements HassDialog {
       return nothing;
     }
 
-    const title = this.hass.localize(
+    const title = this.menuai.localize(
       "ui.panel.config.automation.editor.change_mode"
     );
 
@@ -75,18 +75,18 @@ class DialogAutomationMode extends LitElement implements HassDialog {
           <ha-icon-button
             slot="navigationIcon"
             dialogAction="cancel"
-            .label=${this.hass.localize("ui.common.close")}
+            .label=${this.menuai.localize("ui.common.close")}
             .path=${mdiClose}
           ></ha-icon-button>
           <div slot="title">${title}</div>
           <a
-            href=${documentationUrl(this.hass, "/docs/automation/modes/")}
+            href=${documentationUrl(this.menuai, "/docs/automation/modes/")}
             slot="actionItems"
             target="_blank"
             rel="noopener noreferer"
           >
             <ha-icon-button
-              .label=${this.hass.localize(
+              .label=${this.menuai.localize(
                 "ui.panel.config.automation.editor.modes.learn_more"
               )}
               .path=${mdiHelpCircle}
@@ -97,12 +97,12 @@ class DialogAutomationMode extends LitElement implements HassDialog {
           role="listbox"
           tabindex="0"
           aria-activedescendant="option-${this._newMode}"
-          aria-label=${this.hass.localize(
+          aria-label=${this.menuai.localize(
             "ui.panel.config.automation.editor.modes.label"
           )}
         >
           ${MODES.map((mode) => {
-            const label = this.hass.localize(
+            const label = this.menuai.localize(
               `ui.panel.config.automation.editor.modes.${mode}`
             );
             return html`
@@ -126,12 +126,12 @@ class DialogAutomationMode extends LitElement implements HassDialog {
                   ></ha-radio>
                 </div>
                 <div slot="headline">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.automation.editor.modes.${mode}`
                   )}
                 </div>
                 <div slot="supporting-text">
-                  ${this.hass.localize(
+                  ${this.menuai.localize(
                     `ui.panel.config.automation.editor.modes.${mode}_description`
                   )}
                 </div>
@@ -144,7 +144,7 @@ class DialogAutomationMode extends LitElement implements HassDialog {
           ? html`
               <div class="options">
                 <ha-textfield
-                  .label=${this.hass.localize(
+                  .label=${this.menuai.localize(
                     `ui.panel.config.automation.editor.max.${this._newMode}`
                   )}
                   type="number"
@@ -159,10 +159,10 @@ class DialogAutomationMode extends LitElement implements HassDialog {
           : nothing}
 
         <mwc-button @click=${this.closeDialog} slot="secondaryAction">
-          ${this.hass.localize("ui.common.cancel")}
+          ${this.menuai.localize("ui.common.cancel")}
         </mwc-button>
         <mwc-button @click=${this._save} slot="primaryAction">
-          ${this.hass.localize("ui.panel.config.automation.editor.change_mode")}
+          ${this.menuai.localize("ui.panel.config.automation.editor.change_mode")}
         </mwc-button>
       </ha-dialog>
     `;

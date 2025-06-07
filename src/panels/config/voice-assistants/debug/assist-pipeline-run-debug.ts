@@ -18,16 +18,16 @@ import {
   showAlertDialog,
   showPromptDialog,
 } from "../../../../dialogs/generic/show-dialog-box";
-import "../../../../layouts/hass-subpage";
+import "../../../../layouts/menuai-subpage";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { AudioRecorder } from "../../../../util/audio-recorder";
 import { fileDownload } from "../../../../util/file_download";
 import "./assist-render-pipeline-run";
 
 @customElement("assist-pipeline-run-debug")
 export class AssistPipelineRunDebug extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -48,10 +48,10 @@ export class AssistPipelineRunDebug extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <hass-subpage
+      <menuai-subpage
         .narrow=${this.narrow}
-        .hass=${this.hass}
-        .header=${this.hass.localize(
+        .menuai=${this.menuai}
+        .header=${this.menuai.localize(
           "ui.panel.config.voice_assistants.debug.pipeline.header"
         )}
       >
@@ -62,13 +62,13 @@ export class AssistPipelineRunDebug extends LitElement {
                 @click=${this._clearConversation}
                 .disabled=${!this._finished}
               >
-                ${this.hass.localize("ui.common.clear")}
+                ${this.menuai.localize("ui.common.clear")}
               </ha-button>
               <ha-button
                 slot="toolbar-icon"
                 @click=${this._downloadConversation}
               >
-                ${this.hass.localize("ui.common.download")}
+                ${this.menuai.localize("ui.common.download")}
               </ha-button>
             `
           : ""}
@@ -78,13 +78,13 @@ export class AssistPipelineRunDebug extends LitElement {
             ${this._pipelineRuns.length === 0
               ? html`
                   <ha-assist-pipeline-picker
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .value=${this._pipelineId}
                     @value-changed=${this._pipelinePicked}
                   ></ha-assist-pipeline-picker>
                   <div class="start-buttons">
                     <ha-button raised @click=${this._runTextPipeline}>
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.voice_assistants.debug.pipeline.run_text_pipeline"
                       )}
                     </ha-button>
@@ -95,7 +95,7 @@ export class AssistPipelineRunDebug extends LitElement {
                       // @ts-ignore-next-line
                       !(window.AudioContext || window.webkitAudioContext)}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.voice_assistants.debug.pipeline.run_audio_pipeline"
                       )}
                     </ha-button>
@@ -106,7 +106,7 @@ export class AssistPipelineRunDebug extends LitElement {
                       // @ts-ignore-next-line
                       !(window.AudioContext || window.webkitAudioContext)}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.voice_assistants.debug.pipeline.run_audio_with_wake"
                       )}
                     </ha-button>
@@ -116,7 +116,7 @@ export class AssistPipelineRunDebug extends LitElement {
                 ? html`
                     <ha-textfield
                       id="continue-conversation-text"
-                      .label=${this.hass.localize(
+                      .label=${this.menuai.localize(
                         "ui.panel.config.voice_assistants.debug.pipeline.response"
                       )}
                       .disabled=${!this._finished}
@@ -126,7 +126,7 @@ export class AssistPipelineRunDebug extends LitElement {
                       @click=${this._runTextPipeline}
                       .disabled=${!this._finished}
                     >
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.config.voice_assistants.debug.pipeline.send"
                       )}
                     </ha-button>
@@ -136,19 +136,19 @@ export class AssistPipelineRunDebug extends LitElement {
                     "wake_word"
                     ? html`
                         <ha-button @click=${this._runAudioWakeWordPipeline}>
-                          ${this.hass.localize(
+                          ${this.menuai.localize(
                             "ui.panel.config.voice_assistants.debug.pipeline.continue_listening"
                           )}
                         </ha-button>
                       `
                     : html`<ha-button @click=${this._runAudioPipeline}>
-                        ${this.hass.localize(
+                        ${this.menuai.localize(
                           "ui.panel.config.voice_assistants.debug.pipeline.continue_talking"
                         )}
                       </ha-button>`
                   : html`
                       <ha-formfield
-                        .label=${this.hass.localize(
+                        .label=${this.menuai.localize(
                           "ui.panel.config.voice_assistants.debug.pipeline.continue_conversation"
                         )}
                       >
@@ -165,13 +165,13 @@ export class AssistPipelineRunDebug extends LitElement {
               ? ""
               : html`
                   <assist-render-pipeline-run
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .pipelineRun=${run}
                   ></assist-render-pipeline-run>
                 `
           )}
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
@@ -190,10 +190,10 @@ export class AssistPipelineRunDebug extends LitElement {
       text = textfield.value;
     } else {
       text = await showPromptDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.voice_assistants.debug.pipeline.input_text"
         ),
-        confirmText: this.hass.localize(
+        confirmText: this.menuai.localize(
           "ui.panel.config.voice_assistants.debug.pipeline.run"
         ),
       });
@@ -388,7 +388,7 @@ export class AssistPipelineRunDebug extends LitElement {
     let added = false;
     try {
       await runDebugAssistPipeline(
-        this.hass,
+        this.menuai,
         (updatedRun) => {
           if (added) {
             this._pipelineRuns = [updatedRun, ...this._pipelineRuns.slice(1)];
@@ -406,7 +406,7 @@ export class AssistPipelineRunDebug extends LitElement {
       );
     } catch (err: any) {
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.config.voice_assistants.debug.pipeline.error_starting"
         ),
         text: err.message || err,
@@ -415,13 +415,13 @@ export class AssistPipelineRunDebug extends LitElement {
   }
 
   private _sendAudioChunk(chunk: Int16Array) {
-    this.hass.connection.socket!.binaryType = "arraybuffer";
+    this.menuai.connection.socket!.binaryType = "arraybuffer";
     // Turn into 8 bit so we can prefix our handler ID.
     const data = new Uint8Array(1 + chunk.length * 2);
     data[0] = this._pipelineRuns[0].run.runner_data.stt_binary_handler_id!;
     data.set(new Uint8Array(chunk.buffer), 1);
 
-    this.hass.connection.socket!.send(data);
+    this.menuai.connection.socket!.send(data);
   }
 
   private _handleContinueKeyDown(ev) {

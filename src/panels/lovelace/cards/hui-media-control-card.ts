@@ -35,7 +35,7 @@ import {
   MediaPlayerEntityFeature,
   mediaPlayerPlayMedia,
 } from "../../../data/media-player";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { findEntities } from "../common/find-entities";
 import { hasConfigOrEntityChanged } from "../common/has-changed";
 import "../components/hui-marquee";
@@ -52,14 +52,14 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(
-    hass: HomeAssistant,
+    menuai: menuai,
     entities: string[],
     entitiesFallback: string[]
   ): MediaControlCardConfig {
     const includeDomains = ["media_player"];
     const maxEntities = 1;
     const foundEntities = findEntities(
-      hass,
+      menuai,
       maxEntities,
       entities,
       entitiesFallback,
@@ -69,7 +69,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
     return { type: "media-control", entity: foundEntities[0] || "" };
   }
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: MediaControlCardConfig;
 
@@ -109,7 +109,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
     super.connectedCallback();
     this.updateComplete.then(() => this._attachObserver());
 
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return;
     }
 
@@ -143,22 +143,22 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
     const stateObj = this._stateObj;
 
     if (!stateObj) {
       return html`
-        <hui-warning .hass=${this.hass}>
-          ${createEntityNotFoundWarning(this.hass, this._config.entity)}
+        <hui-warning .menuai=${this.menuai}>
+          ${createEntityNotFoundWarning(this.menuai, this._config.entity)}
         </hui-warning>
       `;
     }
 
     const imageStyle = {
       "background-image": this._image
-        ? `url(${this.hass.hassUrl(this._image)})`
+        ? `url(${this.menuai.menuaiUrl(this._image)})`
         : "none",
       width: `${this._cardHeight}px`,
       "background-color": this._backgroundColor || "",
@@ -239,17 +239,17 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
               <ha-state-icon
                 class="icon"
                 .stateObj=${stateObj}
-                .hass=${this.hass}
+                .menuai=${this.menuai}
               ></ha-state-icon>
               <div>
                 ${this._config!.name ||
-                computeStateName(this.hass!.states[this._config!.entity])}
+                computeStateName(this.menuai!.states[this._config!.entity])}
               </div>
             </div>
             <div>
               <ha-icon-button
                 .path=${mdiDotsVertical}
-                .label=${this.hass.localize(
+                .label=${this.menuai.localize(
                   "ui.panel.lovelace.cards.show_more_info"
                 )}
                 class="more-info"
@@ -283,7 +283,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
                               ${controls!.map(
                                 (control) => html`
                                   <ha-icon-button
-                                    .label=${this.hass.localize(
+                                    .label=${this.menuai.localize(
                                       `ui.card.media_player.${control.action}`
                                     )}
                                     .path=${control.icon}
@@ -302,7 +302,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
                                 ? html`
                                     <ha-icon-button
                                       class="browse-media"
-                                      .label=${this.hass.localize(
+                                      .label=${this.menuai.localize(
                                         "ui.card.media_player.browse_media"
                                       )}
                                       .path=${mdiPlayBoxMultiple}
@@ -317,7 +317,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
                                 ? html`
                                     <ha-icon-button
                                       class="join-media"
-                                      .label=${this.hass.localize(
+                                      .label=${this.menuai.localize(
                                         "ui.card.media_player.join"
                                       )}
                                       @click=${this._handleJoinMediaPlayers}
@@ -369,7 +369,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
     return (
       hasConfigOrEntityChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
@@ -383,8 +383,8 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
 
     if (
       !this._config ||
-      !this.hass ||
-      (!changedProps.has("_config") && !changedProps.has("hass"))
+      !this.menuai ||
+      (!changedProps.has("_config") && !changedProps.has("menuai"))
     ) {
       return;
     }
@@ -401,11 +401,11 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
       return;
     }
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
     const oldImage =
-      oldHass?.states[this._config.entity]?.attributes.entity_picture_local ||
-      oldHass?.states[this._config.entity]?.attributes.entity_picture;
+      oldmenuai?.states[this._config.entity]?.attributes.entity_picture_local ||
+      oldmenuai?.states[this._config.entity]?.attributes.entity_picture;
 
     if (!this._image) {
       this._foregroundColor = undefined;
@@ -421,27 +421,27 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   protected updated(changedProps: PropertyValues) {
     if (
       !this._config ||
-      !this.hass ||
+      !this.menuai ||
       !this._stateObj ||
-      (!changedProps.has("_config") && !changedProps.has("hass"))
+      (!changedProps.has("_config") && !changedProps.has("menuai"))
     ) {
       return;
     }
 
     const stateObj = this._stateObj;
 
-    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+    const oldmenuai = changedProps.get("menuai") as menuai | undefined;
     const oldConfig = changedProps.get("_config") as
       | MediaControlCardConfig
       | undefined;
 
     if (
-      !oldHass ||
+      !oldmenuai ||
       !oldConfig ||
-      oldHass.themes !== this.hass.themes ||
+      oldmenuai.themes !== this.menuai.themes ||
       oldConfig.theme !== this._config.theme
     ) {
-      applyThemesOnElement(this, this.hass.themes, this._config.theme);
+      applyThemesOnElement(this, this.menuai.themes, this._config.theme);
     }
 
     this._updateProgressBar();
@@ -465,7 +465,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   }
 
   private get _image() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return undefined;
     }
 
@@ -482,7 +482,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   }
 
   private get _showProgressBar() {
-    if (!this.hass || !this._config || this._narrow) {
+    if (!this.menuai || !this._config || this._narrow) {
       return false;
     }
 
@@ -525,7 +525,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   }
 
   private _handleMoreInfo(): void {
-    fireEvent(this, "hass-more-info", {
+    fireEvent(this, "menuai-more-info", {
       entityId: this._config!.entity,
     });
   }
@@ -536,7 +536,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
       entityId: this._config!.entity,
       mediaPickedCallback: (pickedMedia: MediaPickedEvent) =>
         mediaPlayerPlayMedia(
-          this.hass,
+          this.menuai,
           this._config!.entity,
           pickedMedia.item.media_content_id,
           pickedMedia.item.media_content_type
@@ -552,7 +552,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
 
   private _handleClick(e: MouseEvent): void {
     handleMediaControlClick(
-      this.hass!,
+      this.menuai!,
       this._stateObj!,
       (e.currentTarget as HTMLElement).getAttribute("action")!
     );
@@ -567,7 +567,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
   }
 
   private get _stateObj(): MediaPlayerEntity | undefined {
-    return this.hass!.states[this._config!.entity] as MediaPlayerEntity;
+    return this.menuai!.states[this._config!.entity] as MediaPlayerEntity;
   }
 
   private _handleSeek(e: MouseEvent): void {
@@ -582,7 +582,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
     const percent = e.offsetX / progressWidth;
     const position = this._stateObj!.attributes.media_duration! * percent;
 
-    this.hass!.callService("media_player", "media_seek", {
+    this.menuai!.callService("media_player", "media_seek", {
       entity_id: this._config!.entity,
       seek_position: position,
     });
@@ -595,7 +595,7 @@ export class HuiMediaControlCard extends LitElement implements LovelaceCard {
 
     try {
       const { foreground, background } = await extractColors(
-        this.hass.hassUrl(this._image)
+        this.menuai.menuaiUrl(this._image)
       );
       this._backgroundColor = background.hex;
       this._foregroundColor = foreground.hex;

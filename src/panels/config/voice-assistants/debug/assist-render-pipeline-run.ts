@@ -7,7 +7,7 @@ import "../../../../components/ha-button";
 import "../../../../components/ha-spinner";
 import "../../../../components/ha-expansion-panel";
 import type { PipelineRun } from "../../../../data/assist_pipeline";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { formatNumber } from "../../../../common/number/format_number";
 import "../../../../components/ha-yaml-editor";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
@@ -47,7 +47,7 @@ const STAGES: Record<PipelineRun["stage"], number> = {
   error: 6,
 };
 
-const hasStage = (run: PipelineRun, stage: PipelineRun["stage"]) =>
+const menuaitage = (run: PipelineRun, stage: PipelineRun["stage"]) =>
   run.init_options
     ? STAGES[run.init_options.start_stage] <= STAGES[stage] &&
       STAGES[stage] <= STAGES[run.init_options.end_stage]
@@ -70,7 +70,7 @@ const maybeRenderError = (
 };
 
 const renderProgress = (
-  hass: HomeAssistant,
+  menuai: menuai,
   pipelineRun: PipelineRun,
   stage: PipelineRun["stage"],
   start_suffix = "-start"
@@ -96,7 +96,7 @@ const renderProgress = (
   const duration =
     new Date(finishEvent.timestamp).getTime() -
     new Date(startEvent.timestamp).getTime();
-  const durationString = formatNumber(duration / 1000, hass.locale, {
+  const durationString = formatNumber(duration / 1000, menuai.locale, {
     maximumFractionDigits: 2,
   });
   return html`${durationString}s ✅`;
@@ -135,7 +135,7 @@ const dataMinusKeysRender = (
 
 @customElement("assist-render-pipeline-run")
 export class AssistPipelineDebug extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public pipelineRun!: PipelineRun;
 
@@ -167,7 +167,7 @@ export class AssistPipelineDebug extends LitElement {
       this.pipelineRun?.intent?.intent_output?.response?.speech?.plain?.speech
     ) {
       messages.push({
-        from: "hass",
+        from: "menuai",
         text: this.pipelineRun.intent.intent_output.response.speech.plain
           .speech,
       });
@@ -198,13 +198,13 @@ export class AssistPipelineDebug extends LitElement {
       </ha-card>
 
       ${maybeRenderError(this.pipelineRun, "ready", lastRunStage)}
-      ${hasStage(this.pipelineRun, "wake_word")
+      ${menuaitage(this.pipelineRun, "wake_word")
         ? html`
             <ha-card>
               <div class="card-content">
                 <div class="row heading">
                   <span>Wake word</span>
-                  ${renderProgress(this.hass, this.pipelineRun, "wake_word")}
+                  ${renderProgress(this.menuai, this.pipelineRun, "wake_word")}
                 </div>
                 ${this.pipelineRun.wake_word
                   ? html`
@@ -238,14 +238,14 @@ export class AssistPipelineDebug extends LitElement {
           `
         : ""}
       ${maybeRenderError(this.pipelineRun, "wake_word", lastRunStage)}
-      ${hasStage(this.pipelineRun, "stt")
+      ${menuaitage(this.pipelineRun, "stt")
         ? html`
             <ha-card>
               <div class="card-content">
                 <div class="row heading">
                   <span>Speech-to-text</span>
                   ${renderProgress(
-                    this.hass,
+                    this.menuai,
                     this.pipelineRun,
                     "stt",
                     "-vad-end"
@@ -274,13 +274,13 @@ export class AssistPipelineDebug extends LitElement {
           `
         : ""}
       ${maybeRenderError(this.pipelineRun, "stt", lastRunStage)}
-      ${hasStage(this.pipelineRun, "intent")
+      ${menuaitage(this.pipelineRun, "intent")
         ? html`
             <ha-card>
               <div class="card-content">
                 <div class="row heading">
                   <span>Natural Language Processing</span>
-                  ${renderProgress(this.hass, this.pipelineRun, "intent")}
+                  ${renderProgress(this.menuai, this.pipelineRun, "intent")}
                 </div>
                 ${this.pipelineRun.intent
                   ? html`
@@ -329,13 +329,13 @@ export class AssistPipelineDebug extends LitElement {
           `
         : ""}
       ${maybeRenderError(this.pipelineRun, "intent", lastRunStage)}
-      ${hasStage(this.pipelineRun, "tts")
+      ${menuaitage(this.pipelineRun, "tts")
         ? html`
             <ha-card>
               <div class="card-content">
                 <div class="row heading">
                   <span>Text-to-speech</span>
-                  ${renderProgress(this.hass, this.pipelineRun, "tts")}
+                  ${renderProgress(this.menuai, this.pipelineRun, "tts")}
                 </div>
                 ${this.pipelineRun.tts
                   ? html`
@@ -440,7 +440,7 @@ export class AssistPipelineDebug extends LitElement {
       direction: var(--direction);
     }
 
-    .message.hass {
+    .message.menuai {
       margin-right: 24px;
       margin-inline-end: 24px;
       margin-inline-start: initial;

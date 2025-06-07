@@ -1,47 +1,47 @@
 import { isComponentLoaded } from "../common/config/is_component_loaded";
 import { computeFormatFunctions } from "../common/translations/entity-state";
 import { getSensorNumericDeviceClasses } from "../data/sensor";
-import type { Constructor, HomeAssistant } from "../types";
-import type { HassBaseEl } from "./hass-base-mixin";
+import type { Constructor, menuai } from "../types";
+import type { menuaiBaseEl } from "./menuai-base-mixin";
 
-export default <T extends Constructor<HassBaseEl>>(superClass: T) => {
+export default <T extends Constructor<menuaiBaseEl>>(superClass: T) => {
   class StateDisplayMixin extends superClass {
-    protected hassConnected() {
-      super.hassConnected();
+    protected menuaiConnected() {
+      super.menuaiConnected();
       this._updateStateDisplay();
     }
 
     protected willUpdate(changedProps) {
       super.willUpdate(changedProps);
 
-      if (!changedProps.has("hass")) {
+      if (!changedProps.has("menuai")) {
         return;
       }
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+      const oldmenuai = changedProps.get("menuai") as menuai | undefined;
 
       if (
-        this.hass &&
-        (!oldHass ||
-          this.hass.localize !== oldHass.localize ||
-          this.hass.locale !== oldHass.locale ||
-          this.hass.config !== oldHass.config ||
-          this.hass.entities !== oldHass.entities)
+        this.menuai &&
+        (!oldmenuai ||
+          this.menuai.localize !== oldmenuai.localize ||
+          this.menuai.locale !== oldmenuai.locale ||
+          this.menuai.config !== oldmenuai.config ||
+          this.menuai.entities !== oldmenuai.entities)
       ) {
         this._updateStateDisplay();
       }
     }
 
     private _updateStateDisplay = async () => {
-      if (!this.hass || !this.hass.config) {
+      if (!this.menuai || !this.menuai.config) {
         return;
       }
 
       let sensorNumericDeviceClasses: string[] = [];
 
-      if (isComponentLoaded(this.hass, "sensor")) {
+      if (isComponentLoaded(this.menuai, "sensor")) {
         try {
           sensorNumericDeviceClasses = (
-            await getSensorNumericDeviceClasses(this.hass)
+            await getSensorNumericDeviceClasses(this.menuai)
           ).numeric_device_classes;
         } catch (_err: any) {
           // ignore
@@ -53,13 +53,13 @@ export default <T extends Constructor<HassBaseEl>>(superClass: T) => {
         formatEntityAttributeName,
         formatEntityAttributeValue,
       } = await computeFormatFunctions(
-        this.hass.localize,
-        this.hass.locale,
-        this.hass.config,
-        this.hass.entities,
+        this.menuai.localize,
+        this.menuai.locale,
+        this.menuai.config,
+        this.menuai.entities,
         sensorNumericDeviceClasses
       );
-      this._updateHass({
+      this._updatemenuai({
         formatEntityState,
         formatEntityAttributeName,
         formatEntityAttributeValue,

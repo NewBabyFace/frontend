@@ -5,18 +5,18 @@ import type { TemplateResult } from "lit";
 import { css, html } from "lit";
 import { customElement } from "lit/decorators";
 import { FOCUS_TARGET } from "../dialogs/make-dialog-manager";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "./ha-icon-button";
 
 const SUPPRESS_DEFAULT_PRESS_SELECTOR = ["button", "ha-list-item"];
 
 export const createCloseHeading = (
-  hass: HomeAssistant | undefined,
+  menuai: menuai | undefined,
   title: string | TemplateResult
 ) => html`
   <div class="header_title">
     <ha-icon-button
-      .label=${hass?.localize("ui.common.close") ?? "Close"}
+      .label=${menuai?.localize("ui.common.close") ?? "Close"}
       .path=${mdiClose}
       dialogAction="close"
       class="header_button"

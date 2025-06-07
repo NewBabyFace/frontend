@@ -1,20 +1,20 @@
 import type { UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues, ReactiveElement } from "lit";
 import { property } from "lit/decorators";
-import type { Constructor, HomeAssistant } from "../types";
+import type { Constructor, menuai } from "../types";
 
-export interface HassSubscribeElement {
-  hassSubscribe(): UnsubscribeFunc[];
+export interface menuaiSubscribeElement {
+  menuaiSubscribe(): UnsubscribeFunc[];
 }
 
 export const SubscribeMixin = <T extends Constructor<ReactiveElement>>(
   superClass: T
 ) => {
   class SubscribeClass extends superClass {
-    @property({ attribute: false }) public hass?: HomeAssistant;
+    @property({ attribute: false }) public menuai?: menuai;
 
     // we wait with subscribing till these properties are set on the host element
-    protected hassSubscribeRequiredHostProps?: string[];
+    protected menuaiSubscribeRequiredHostProps?: string[];
 
     private __unsubs?: (UnsubscribeFunc | Promise<UnsubscribeFunc>)[];
 
@@ -40,22 +40,22 @@ export const SubscribeMixin = <T extends Constructor<ReactiveElement>>(
 
     protected updated(changedProps: PropertyValues) {
       super.updated(changedProps);
-      if (changedProps.has("hass")) {
+      if (changedProps.has("menuai")) {
         this._checkSubscribed();
         return;
       }
-      if (!this.hassSubscribeRequiredHostProps) {
+      if (!this.menuaiSubscribeRequiredHostProps) {
         return;
       }
       for (const key of changedProps.keys()) {
-        if (this.hassSubscribeRequiredHostProps.includes(key as string)) {
+        if (this.menuaiSubscribeRequiredHostProps.includes(key as string)) {
           this._checkSubscribed();
           return;
         }
       }
     }
 
-    protected hassSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
+    protected menuaiSubscribe(): (UnsubscribeFunc | Promise<UnsubscribeFunc>)[] {
       return [];
     }
 
@@ -63,14 +63,14 @@ export const SubscribeMixin = <T extends Constructor<ReactiveElement>>(
       if (
         this.__unsubs !== undefined ||
         !(this as unknown as Element).isConnected ||
-        this.hass === undefined ||
-        this.hassSubscribeRequiredHostProps?.some(
+        this.menuai === undefined ||
+        this.menuaiSubscribeRequiredHostProps?.some(
           (prop) => this[prop] === undefined
         )
       ) {
         return;
       }
-      this.__unsubs = this.hassSubscribe();
+      this.__unsubs = this.menuaiSubscribe();
     }
   }
   return SubscribeClass;

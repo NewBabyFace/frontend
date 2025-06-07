@@ -37,7 +37,7 @@ describe("computeDeviceName", () => {
 });
 
 describe("computeDeviceNameDisplay", () => {
-  const hass = {
+  const menuai = {
     localize: vi.fn((key, params) => {
       if (key === "ui.panel.config.devices.unnamed_device") {
         return `Unnamed (${params?.type})`;
@@ -56,27 +56,27 @@ describe("computeDeviceNameDisplay", () => {
   } as any;
 
   it("returns device name if present", () => {
-    expect(computeDeviceNameDisplay({ name: "Device" } as any, hass)).toBe(
+    expect(computeDeviceNameDisplay({ name: "Device" } as any, menuai)).toBe(
       "Device"
     );
   });
 
   it("returns fallback name from entities if device name not present", () => {
     const entities: any = [{ entity_id: "light.test" }];
-    expect(computeDeviceNameDisplay({} as any, hass, entities)).toBe(
+    expect(computeDeviceNameDisplay({} as any, menuai, entities)).toBe(
       "Test Light"
     );
   });
 
   it("returns localized unnamed device if no name or entities", () => {
     expect(
-      computeDeviceNameDisplay({ entry_type: "router" } as any, hass)
+      computeDeviceNameDisplay({ entry_type: "router" } as any, menuai)
     ).toBe("Unnamed (router)");
   });
 });
 
 describe("fallbackDeviceName", () => {
-  const hass = {
+  const menuai = {
     states: {
       "sensor.temp": {
         entity_id: "sensor.temp",
@@ -94,7 +94,7 @@ describe("fallbackDeviceName", () => {
       { entity_id: "sensor.temp" },
       { entity_id: "light.lamp" },
     ];
-    expect(fallbackDeviceName(hass, entities)).toBe("Temperature");
+    expect(fallbackDeviceName(menuai, entities)).toBe("Temperature");
   });
 
   it("returns undefined if no entities have state", () => {
@@ -104,7 +104,7 @@ describe("fallbackDeviceName", () => {
   });
 
   it("works with string entity ids", () => {
-    expect(fallbackDeviceName(hass, ["light.lamp"])).toBe("Lamp");
+    expect(fallbackDeviceName(menuai, ["light.lamp"])).toBe("Lamp");
   });
 });
 

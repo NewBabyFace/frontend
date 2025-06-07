@@ -18,7 +18,7 @@ import "../../components/ha-time-input";
 import type { CalendarEventMutableParams } from "../../data/calendar";
 import { deleteCalendarEvent } from "../../data/calendar";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import "../lovelace/components/hui-generic-entity-row";
 import { renderRRuleAsText } from "./recurrence";
 import { showConfirmEventDialog } from "./show-confirm-event-dialog-box";
@@ -27,7 +27,7 @@ import { showCalendarEventEditDialog } from "./show-dialog-calendar-event-editor
 import { resolveTimeZone } from "../../common/datetime/resolve-time-zone";
 
 class DialogCalendarEventDetail extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: CalendarEventDetailDialogParams;
 
@@ -60,14 +60,14 @@ class DialogCalendarEventDetail extends LitElement {
     if (!this._params) {
       return nothing;
     }
-    const stateObj = this.hass.states[this._calendarId!];
+    const stateObj = this.menuai.states[this._calendarId!];
     return html`
       <ha-dialog
         open
         @closed=${this.closeDialog}
         scrimClickAction
         escapeKeyAction
-        .heading=${createCloseHeading(this.hass, this._data!.summary)}
+        .heading=${createCloseHeading(this.menuai, this._data!.summary)}
       >
         <div class="content">
           ${this._error
@@ -90,7 +90,7 @@ class DialogCalendarEventDetail extends LitElement {
 
           <div class="attribute">
             <state-info
-              .hass=${this.hass}
+              .menuai=${this.menuai}
               .stateObj=${stateObj}
               .color=${this._params.color}
               in-dialog
@@ -105,7 +105,7 @@ class DialogCalendarEventDetail extends LitElement {
                 @click=${this._deleteEvent}
                 .disabled=${this._submitting}
               >
-                ${this.hass.localize("ui.components.calendar.event.delete")}
+                ${this.menuai.localize("ui.components.calendar.event.delete")}
               </mwc-button>
             `
           : ""}
@@ -115,7 +115,7 @@ class DialogCalendarEventDetail extends LitElement {
               @click=${this._editEvent}
               .disabled=${this._submitting}
             >
-              ${this.hass.localize("ui.components.calendar.event.edit")}
+              ${this.menuai.localize("ui.components.calendar.event.edit")}
             </mwc-button>`
           : ""}
       </ha-dialog>
@@ -127,7 +127,7 @@ class DialogCalendarEventDetail extends LitElement {
       return "";
     }
     try {
-      const ruleText = renderRRuleAsText(this.hass, value);
+      const ruleText = renderRRuleAsText(this.menuai, value);
       if (ruleText !== undefined) {
         return html`<div id="text">${ruleText}</div>`;
       }
@@ -139,8 +139,8 @@ class DialogCalendarEventDetail extends LitElement {
 
   private _formatDateRange() {
     const timeZone = resolveTimeZone(
-      this.hass.locale.time_zone,
-      this.hass.config.time_zone
+      this.menuai.locale.time_zone,
+      this.menuai.config.time_zone
     );
     const start = toDate(this._data!.dtstart, { timeZone: timeZone });
     const endValue = toDate(this._data!.dtend, { timeZone: timeZone });
@@ -150,28 +150,28 @@ class DialogCalendarEventDetail extends LitElement {
     if (isSameDay(start, end)) {
       if (isDate(this._data.dtstart)) {
         // Single date string only
-        return formatDate(start, this.hass.locale, this.hass.config);
+        return formatDate(start, this.menuai.locale, this.menuai.config);
       }
       // Single day with a start/end time range
       return `${formatDate(
         start,
-        this.hass.locale,
-        this.hass.config
+        this.menuai.locale,
+        this.menuai.config
       )} ${formatTime(
         start,
-        this.hass.locale,
-        this.hass.config
-      )} - ${formatTime(end, this.hass.locale, this.hass.config)}`;
+        this.menuai.locale,
+        this.menuai.config
+      )} - ${formatTime(end, this.menuai.locale, this.menuai.config)}`;
     }
     // An event across multiple dates, optionally with a time range
     return `${
       isDate(this._data.dtstart)
-        ? formatDate(start, this.hass.locale, this.hass.config)
-        : formatDateTime(start, this.hass.locale, this.hass.config)
+        ? formatDate(start, this.menuai.locale, this.menuai.config)
+        : formatDateTime(start, this.menuai.locale, this.menuai.config)
     } - ${
       isDate(this._data.dtend)
-        ? formatDate(end, this.hass.locale, this.hass.config)
-        : formatDateTime(end, this.hass.locale, this.hass.config)
+        ? formatDate(end, this.menuai.locale, this.menuai.config)
+        : formatDateTime(end, this.menuai.locale, this.menuai.config)
     }`;
   }
 
@@ -184,25 +184,25 @@ class DialogCalendarEventDetail extends LitElement {
     this._submitting = true;
     const entry = this._params!.entry!;
     const range = await showConfirmEventDialog(this, {
-      title: this.hass.localize(
+      title: this.menuai.localize(
         "ui.components.calendar.event.confirm_delete.delete"
       ),
       text: entry.recurrence_id
-        ? this.hass.localize(
+        ? this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.recurring_prompt"
           )
-        : this.hass.localize(
+        : this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.prompt"
           ),
       confirmText: entry.recurrence_id
-        ? this.hass.localize(
+        ? this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.delete_this"
           )
-        : this.hass.localize(
+        : this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.delete"
           ),
       confirmFutureText: entry.recurrence_id
-        ? this.hass.localize(
+        ? this.menuai.localize(
             "ui.components.calendar.event.confirm_delete.delete_future"
           )
         : undefined,
@@ -214,7 +214,7 @@ class DialogCalendarEventDetail extends LitElement {
     }
     try {
       await deleteCalendarEvent(
-        this.hass!,
+        this.menuai!,
         this._calendarId!,
         entry.uid!,
         entry.recurrence_id || "",

@@ -1,10 +1,10 @@
-import type { Connection, HassEventBase } from "home-assistant-js-websocket";
+import type { Connection, menuaiEventBase } from "home-assistant-js-websocket";
 import { getCollection } from "home-assistant-js-websocket";
 import type { HuiBadge } from "../panels/lovelace/badges/hui-badge";
 import type { HuiCard } from "../panels/lovelace/cards/hui-card";
 import type { HuiSection } from "../panels/lovelace/sections/hui-section";
 import type { Lovelace } from "../panels/lovelace/types";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { LovelaceSectionConfig } from "./lovelace/config/section";
 import type { LegacyLovelaceConfig } from "./lovelace/config/types";
 import { fetchConfig } from "./lovelace/config/types";
@@ -15,7 +15,7 @@ export interface LovelacePanelConfig {
 }
 
 export interface LovelaceViewElement extends HTMLElement {
-  hass?: HomeAssistant;
+  menuai?: menuai;
   lovelace?: Lovelace;
   narrow?: boolean;
   index?: number;
@@ -27,7 +27,7 @@ export interface LovelaceViewElement extends HTMLElement {
 }
 
 export interface LovelaceSectionElement extends HTMLElement {
-  hass?: HomeAssistant;
+  menuai?: menuai;
   lovelace?: Lovelace;
   preview?: boolean;
   viewIndex?: number;
@@ -38,7 +38,7 @@ export interface LovelaceSectionElement extends HTMLElement {
   setConfig(config: LovelaceSectionConfig): void;
 }
 
-type LovelaceUpdatedEvent = HassEventBase & {
+type LovelaceUpdatedEvent = menuaiEventBase & {
   event_type: "lovelace_updated";
   data: {
     url_path: string | null;

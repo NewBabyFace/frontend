@@ -1,4 +1,4 @@
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
 export interface OpenStreetMapPlace {
   place_id: number;
@@ -31,7 +31,7 @@ export interface OpenStreetMapPlace {
 
 export const searchPlaces = (
   address: string,
-  hass: HomeAssistant,
+  menuai: menuai,
   addressdetails?: boolean,
   limit?: number
 ): Promise<OpenStreetMapPlace[]> =>
@@ -39,9 +39,9 @@ export const searchPlaces = (
     `https://nominatim.openstreetmap.org/search.php?q=${address}&format=jsonv2${
       limit ? `&limit=${limit}` : ""
     }${addressdetails ? "&addressdetails=1" : ""}&accept-language=${
-      hass.locale.language
+      menuai.locale.language
     }&email=abuse@home-assistant.io`,
-    { headers: { "User-Agent": `HomeAssistant/${hass.config.version}` } }
+    { headers: { "User-Agent": `menuai/${menuai.config.version}` } }
   ).then((res) => {
     if (res.ok) {
       return res.json();
@@ -51,16 +51,16 @@ export const searchPlaces = (
 
 export const reverseGeocode = (
   location: [number, number],
-  hass: HomeAssistant,
+  menuai: menuai,
   zoom?: number
 ): Promise<OpenStreetMapPlace> =>
   fetch(
     `https://nominatim.openstreetmap.org/reverse.php?lat=${location[0]}&lon=${
       location[1]
-    }&accept-language=${hass.locale.language}&zoom=${
+    }&accept-language=${menuai.locale.language}&zoom=${
       zoom ?? 18
     }&format=jsonv2&email=abuse@home-assistant.io`,
-    { headers: { "User-Agent": `HomeAssistant/${hass.config.version}` } }
+    { headers: { "User-Agent": `menuai/${menuai.config.version}` } }
   ).then((res) => {
     if (res.ok) {
       return res.json();

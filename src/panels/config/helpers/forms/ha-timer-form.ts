@@ -8,11 +8,11 @@ import "../../../../components/ha-icon-picker";
 import "../../../../components/ha-textfield";
 import type { DurationDict, Timer } from "../../../../data/timer";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 @customElement("ha-timer-form")
 class HaTimerForm extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public new = false;
 
@@ -50,7 +50,7 @@ class HaTimerForm extends LitElement {
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.menuai) {
       return nothing;
     }
 
@@ -60,22 +60,22 @@ class HaTimerForm extends LitElement {
           .value=${this._name}
           .configValue=${"name"}
           @input=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.name"
           )}
           autoValidate
           required
-          .validationMessage=${this.hass!.localize(
+          .validationMessage=${this.menuai!.localize(
             "ui.dialogs.helper_settings.required_error_msg"
           )}
           dialogInitialFocus
         ></ha-textfield>
         <ha-icon-picker
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .value=${this._icon}
           .configValue=${"icon"}
           @value-changed=${this._valueChanged}
-          .label=${this.hass!.localize(
+          .label=${this.menuai!.localize(
             "ui.dialogs.helper_settings.generic.icon"
           )}
         ></ha-icon-picker>
@@ -83,12 +83,12 @@ class HaTimerForm extends LitElement {
           .configValue=${"duration"}
           .value=${this._duration}
           @input=${this._valueChanged}
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.dialogs.helper_settings.timer.duration"
           )}
         ></ha-textfield>
         <ha-formfield
-          .label=${this.hass.localize(
+          .label=${this.menuai.localize(
             "ui.dialogs.helper_settings.timer.restore"
           )}
         >

@@ -8,7 +8,7 @@ import { isValidServiceId } from "../common/entity/valid_service_id";
 import type { LocalizeFunc } from "../common/translations/localize";
 import { getServiceIcons } from "../data/icons";
 import { domainToName } from "../data/integration";
-import type { HomeAssistant, ValueChangedEvent } from "../types";
+import type { menuai, ValueChangedEvent } from "../types";
 import "./ha-combo-box-item";
 import "./ha-generic-picker";
 import type { HaGenericPicker } from "./ha-generic-picker";
@@ -23,7 +23,7 @@ interface ServiceComboBoxItem extends PickerComboBoxItem {
 
 @customElement("ha-service-picker")
 class HaServicePicker extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public disabled = false;
 
@@ -45,8 +45,8 @@ class HaServicePicker extends LitElement {
 
   protected firstUpdated(props) {
     super.firstUpdated(props);
-    this.hass.loadBackendTranslation("services");
-    getServiceIcons(this.hass);
+    this.menuai.loadBackendTranslation("services");
+    getServiceIcons(this.menuai);
   }
 
   private _rowRenderer: ComboBoxLitRenderer<ServiceComboBoxItem> = (
@@ -56,7 +56,7 @@ class HaServicePicker extends LitElement {
     <ha-combo-box-item type="button" border-top .borderTop=${index !== 0}>
       <ha-service-icon
         slot="start"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .service=${item.id}
       ></ha-service-icon>
       <span slot="headline">${item.primary}</span>
@@ -80,7 +80,7 @@ class HaServicePicker extends LitElement {
     const serviceId = value;
     const [domain, service] = serviceId.split(".");
 
-    if (!this.hass.services[domain]?.[service]) {
+    if (!this.menuai.services[domain]?.[service]) {
       return html`
         <ha-svg-icon slot="start" .path=${mdiRoomService}></ha-svg-icon>
         <span slot="headline">${value}</span>
@@ -88,14 +88,14 @@ class HaServicePicker extends LitElement {
     }
 
     const serviceName =
-      this.hass.localize(`component.${domain}.services.${service}.name`) ||
-      this.hass.services[domain][service].name ||
+      this.menuai.localize(`component.${domain}.services.${service}.name`) ||
+      this.menuai.services[domain][service].name ||
       service;
 
     return html`
       <ha-service-icon
         slot="start"
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .service=${serviceId}
       ></ha-service-icon>
       <span slot="headline">${serviceName}</span>
@@ -108,14 +108,14 @@ class HaServicePicker extends LitElement {
   protected render(): TemplateResult {
     const placeholder =
       this.placeholder ??
-      this.hass.localize("ui.components.service-picker.action");
+      this.menuai.localize("ui.components.service-picker.action");
 
     return html`
       <ha-generic-picker
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .autofocus=${this.autofocus}
         allow-custom-value
-        .notFoundLabel=${this.hass.localize(
+        .notFoundLabel=${this.menuai.localize(
           "ui.components.service-picker.no_match"
         )}
         .label=${this.label}
@@ -131,12 +131,12 @@ class HaServicePicker extends LitElement {
   }
 
   private _getItems = () =>
-    this._services(this.hass.localize, this.hass.services);
+    this._services(this.menuai.localize, this.menuai.services);
 
   private _services = memoizeOne(
     (
       localize: LocalizeFunc,
-      services: HomeAssistant["services"]
+      services: menuai["services"]
     ): ServiceComboBoxItem[] => {
       if (!services) {
         return [];
@@ -153,14 +153,14 @@ class HaServicePicker extends LitElement {
             const domainName = domainToName(localize, domain);
 
             const name =
-              this.hass.localize(
+              this.menuai.localize(
                 `component.${domain}.services.${service}.name`
               ) ||
               services[domain][service].name ||
               service;
 
             const description =
-              this.hass.localize(
+              this.menuai.localize(
                 `component.${domain}.services.${service}.description`
               ) || services[domain][service].description;
 

@@ -53,7 +53,7 @@ class DialogApp extends LitElement {
           <a
             target="_blank"
             rel="noreferrer noopener"
-            href="https://play.google.com/store/apps/details?id=io.homeassistant.companion.android"
+            href="https://play.google.com/store/apps/details?id=io.menuai.companion.android"
           >
             <img
               loading="lazy"

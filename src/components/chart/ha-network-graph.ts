@@ -9,7 +9,7 @@ import { listenMediaQuery } from "../../common/dom/media_query";
 import type { ECOption } from "../../resources/echarts";
 import "./ha-chart-base";
 import type { HaChartBase } from "./ha-chart-base";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 export interface NetworkNode {
   id: string;
@@ -69,7 +69,7 @@ export class HaNetworkGraph extends LitElement {
     params: TopLevelFormatterParams
   ) => string;
 
-  public hass!: HomeAssistant;
+  public menuai!: menuai;
 
   @state() private _reducedMotion = false;
 
@@ -116,7 +116,7 @@ export class HaNetworkGraph extends LitElement {
       return nothing;
     }
     return html`<ha-chart-base
-      .hass=${this.hass}
+      .menuai=${this.menuai}
       .data=${this._getSeries(
         this.data,
         this._physicsEnabled,
@@ -133,7 +133,7 @@ export class HaNetworkGraph extends LitElement {
         class=${this._physicsEnabled ? "active" : "inactive"}
         .path=${mdiGoogleCirclesGroup}
         @click=${this._togglePhysics}
-        label=${this.hass.localize(
+        label=${this.menuai.localize(
           "ui.panel.config.common.graph.toggle_physics"
         )}
       ></ha-icon-button>
@@ -142,7 +142,7 @@ export class HaNetworkGraph extends LitElement {
         class=${this._showLabels ? "active" : "inactive"}
         .path=${mdiFormatTextVariant}
         @click=${this._toggleLabels}
-        label=${this.hass.localize(
+        label=${this.menuai.localize(
           "ui.panel.config.common.graph.toggle_labels"
         )}
       ></ha-icon-button>
@@ -293,7 +293,7 @@ declare global {
   interface HTMLElementTagNameMap {
     "ha-network-graph": HaNetworkGraph;
   }
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "node-selected": { id: string };
   }
 }

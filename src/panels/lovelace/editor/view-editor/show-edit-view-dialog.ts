@@ -1,17 +1,17 @@
-import type { HASSDomEvent } from "../../../../common/dom/fire_event";
+import type { menuaiDomEvent } from "../../../../common/dom/fire_event";
 import { fireEvent } from "../../../../common/dom/fire_event";
 import type { LovelaceViewConfig } from "../../../../data/lovelace/config/view";
 import type { Lovelace } from "../../types";
 
 declare global {
   // for fire event
-  interface HASSDomEvents {
+  interface menuaiDomEvents {
     "reload-lovelace": undefined;
     "show-edit-view": EditViewDialogParams;
   }
   // for add event listener
   interface HTMLElementEventMap {
-    "reload-lovelace": HASSDomEvent<undefined>;
+    "reload-lovelace": menuaiDomEvent<undefined>;
   }
 }
 

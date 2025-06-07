@@ -10,7 +10,7 @@ import {
   URL_PREFIX,
   MEDIA_PREFIX,
 } from "../../src/data/image_upload";
-import type { HomeAssistant } from "../../src/types";
+import type { menuai } from "../../src/types";
 
 describe("image_upload", () => {
   afterEach(() => {
@@ -57,11 +57,11 @@ describe("image_upload", () => {
 
   describe("fetchImages", () => {
     it("should fetch images", async () => {
-      const hass = {
+      const menuai = {
         callWS: vi.fn().mockResolvedValue([]),
-      } as unknown as HomeAssistant;
-      const images = await fetchImages(hass);
-      expect(hass.callWS).toHaveBeenCalledWith({ type: "image/list" });
+      } as unknown as menuai;
+      const images = await fetchImages(menuai);
+      expect(menuai.callWS).toHaveBeenCalledWith({ type: "image/list" });
       expect(images).toEqual([]);
     });
   });
@@ -69,44 +69,44 @@ describe("image_upload", () => {
   describe("createImage", () => {
     it("should create an image", async () => {
       const file = new File([""], "image.png", { type: "image/png" });
-      const hass = {
+      const menuai = {
         fetchWithAuth: vi.fn().mockResolvedValue({
           status: 200,
           json: vi.fn().mockResolvedValue({ id: "12345" }),
         }),
-      } as unknown as HomeAssistant;
-      const image = await createImage(hass, file);
-      expect(hass.fetchWithAuth).toHaveBeenCalled();
+      } as unknown as menuai;
+      const image = await createImage(menuai, file);
+      expect(menuai.fetchWithAuth).toHaveBeenCalled();
       expect(image).toEqual({ id: "12345" });
     });
 
     it("should throw error if image is too large", async () => {
       const file = new File([""], "image.png", { type: "image/png" });
-      const hass = {
+      const menuai = {
         fetchWithAuth: vi.fn().mockResolvedValue({ status: 413 }),
-      } as unknown as HomeAssistant;
-      await expect(createImage(hass, file)).rejects.toThrow(
+      } as unknown as menuai;
+      await expect(createImage(menuai, file)).rejects.toThrow(
         "Uploaded image is too large (image.png)"
       );
     });
 
     it("should throw error if fetch fails", async () => {
       const file = new File([""], "image.png", { type: "image/png" });
-      const hass = {
+      const menuai = {
         fetchWithAuth: vi.fn().mockResolvedValue({ status: 500 }),
-      } as unknown as HomeAssistant;
-      await expect(createImage(hass, file)).rejects.toThrow("Unknown error");
+      } as unknown as menuai;
+      await expect(createImage(menuai, file)).rejects.toThrow("Unknown error");
     });
   });
 
   describe("updateImage", () => {
     it("should update an image", async () => {
-      const hass = {
+      const menuai = {
         callWS: vi.fn().mockResolvedValue({}),
-      } as unknown as HomeAssistant;
+      } as unknown as menuai;
       const updates = { name: "new name" };
-      await updateImage(hass, "12345", updates);
-      expect(hass.callWS).toHaveBeenCalledWith({
+      await updateImage(menuai, "12345", updates);
+      expect(menuai.callWS).toHaveBeenCalledWith({
         type: "image/update",
         media_id: "12345",
         ...updates,
@@ -116,11 +116,11 @@ describe("image_upload", () => {
 
   describe("deleteImage", () => {
     it("should delete an image", async () => {
-      const hass = {
+      const menuai = {
         callWS: vi.fn().mockResolvedValue({}),
-      } as unknown as HomeAssistant;
-      await deleteImage(hass, "12345");
-      expect(hass.callWS).toHaveBeenCalledWith({
+      } as unknown as menuai;
+      await deleteImage(menuai, "12345");
+      expect(menuai.callWS).toHaveBeenCalledWith({
         type: "image/delete",
         image_id: "12345",
       });
@@ -128,15 +128,15 @@ describe("image_upload", () => {
   });
 
   describe("getImageData", () => {
-    const hass = {
-      hassUrl: vi.fn((url) => url),
-    } as unknown as HomeAssistant;
+    const menuai = {
+      menuaiUrl: vi.fn((url) => url),
+    } as unknown as menuai;
     it("should fetch image data", async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         blob: vi.fn().mockResolvedValue(new Blob()),
       });
-      const data = await getImageData(hass, "http://example.com/image.png");
+      const data = await getImageData(menuai, "http://example.com/image.png");
       expect(global.fetch).toHaveBeenCalledWith("http://example.com/image.png");
       expect(data).toBeInstanceOf(Blob);
     });
@@ -146,7 +146,7 @@ describe("image_upload", () => {
         .fn()
         .mockResolvedValue({ ok: false, statusText: "Not Found" });
       await expect(
-        getImageData(hass, "http://example.com/image.png")
+        getImageData(menuai, "http://example.com/image.png")
       ).rejects.toThrow("Failed to fetch image: Not Found");
     });
   });

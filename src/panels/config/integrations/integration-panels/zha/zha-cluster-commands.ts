@@ -11,12 +11,12 @@ import "../../../../../components/ha-textfield";
 import type { Cluster, Command, ZHADevice } from "../../../../../data/zha";
 import { fetchCommandsForCluster } from "../../../../../data/zha";
 import { haStyle } from "../../../../../resources/styles";
-import type { HomeAssistant } from "../../../../../types";
+import type { menuai } from "../../../../../types";
 import { formatAsPaddedHex } from "./functions";
 import type { IssueCommandServiceData } from "./types";
 
 export class ZHAClusterCommands extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: "is-wide", type: Boolean }) public isWide = false;
 
@@ -57,7 +57,7 @@ export class ZHAClusterCommands extends LitElement {
       <ha-card class="content">
         <div class="command-picker">
           <ha-select
-            .label=${this.hass!.localize(
+            .label=${this.menuai!.localize(
               "ui.panel.config.zha.cluster_commands.commands_of_cluster"
             )}
             class="menu"
@@ -80,20 +80,20 @@ export class ZHAClusterCommands extends LitElement {
           ? html`
               <div class="input-text">
                 <ha-textfield
-                  .label=${this.hass!.localize(
+                  .label=${this.menuai!.localize(
                     "ui.panel.config.zha.common.manufacturer_code_override"
                   )}
                   type="number"
                   .value=${this._manufacturerCodeOverride}
                   @change=${this._onManufacturerCodeOverrideChanged}
-                  .placeholder=${this.hass!.localize(
+                  .placeholder=${this.menuai!.localize(
                     "ui.panel.config.zha.common.value"
                   )}
                 ></ha-textfield>
               </div>
               <div class="command-form">
                 <ha-form
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   .schema=${this._commands.find(
                     (command) => command.id === this._selectedCommandId
                   )!.schema}
@@ -103,13 +103,13 @@ export class ZHAClusterCommands extends LitElement {
               </div>
               <div class="card-actions">
                 <ha-call-service-button
-                  .hass=${this.hass}
+                  .menuai=${this.menuai}
                   domain="zha"
                   service="issue_zigbee_cluster_command"
                   .data=${this._issueClusterCommandServiceData}
                   .disabled=${!this._canIssueCommand}
                 >
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.zha.cluster_commands.issue_zigbee_command"
                   )}
                 </ha-call-service-button>
@@ -121,9 +121,9 @@ export class ZHAClusterCommands extends LitElement {
   }
 
   private async _fetchCommandsForCluster(): Promise<void> {
-    if (this.device && this.selectedCluster && this.hass) {
+    if (this.device && this.selectedCluster && this.menuai) {
       this._commands = await fetchCommandsForCluster(
-        this.hass,
+        this.menuai,
         this.device!.ieee,
         this.selectedCluster!.endpoint_id,
         this.selectedCluster!.id,

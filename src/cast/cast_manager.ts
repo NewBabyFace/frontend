@@ -3,8 +3,8 @@
 import type { Auth } from "home-assistant-js-websocket";
 import { castApiAvailable } from "./cast_framework";
 import { CAST_APP_ID, CAST_DEV, CAST_NS } from "./const";
-import { CAST_DEV_HASS_URL } from "./dev_const";
-import type { HassMessage as ReceiverMessage } from "./receiver_messages";
+import { CAST_DEV_menuai_URL } from "./dev_const";
+import type { menuaiMessage as ReceiverMessage } from "./receiver_messages";
 import { castSendAuth } from "./receiver_messages";
 import type { ReceiverStatusMessage, SenderMessage } from "./sender_messages";
 
@@ -29,7 +29,7 @@ type CastEvent = "connection-changed" | "state-changed";
 export class CastManager {
   public auth?: Auth;
 
-  // If the cast connection is connected to our Hass.
+  // If the cast connection is connected to our menuai.
   public status?: ReceiverStatusMessage;
 
   private _eventListeners: Record<string, CastEventListener[]> = {};
@@ -64,13 +64,13 @@ export class CastManager {
     };
   }
 
-  public get castConnectedToOurHass(): boolean {
+  public get castConnectedToOurmenuai(): boolean {
     return (
       this.status !== undefined &&
       this.auth !== undefined &&
       this.status.connected &&
-      (this.status.hassUrl === this.auth.data.hassUrl ||
-        (CAST_DEV && this.status.hassUrl === CAST_DEV_HASS_URL))
+      (this.status.menuaiUrl === this.auth.data.menuaiUrl ||
+        (CAST_DEV && this.status.menuaiUrl === CAST_DEV_menuai_URL))
     );
   }
 

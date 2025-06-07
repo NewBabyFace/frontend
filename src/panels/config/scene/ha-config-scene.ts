@@ -1,13 +1,13 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { menuaiEntities } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { computeStateDomain } from "../../../common/entity/compute_state_domain";
 import { debounce } from "../../../common/util/debounce";
 import type { SceneEntity } from "../../../data/scene";
-import type { RouterOptions } from "../../../layouts/hass-router-page";
-import { HassRouterPage } from "../../../layouts/hass-router-page";
-import type { HomeAssistant } from "../../../types";
+import type { RouterOptions } from "../../../layouts/menuai-router-page";
+import { menuaiRouterPage } from "../../../layouts/menuai-router-page";
+import type { menuai } from "../../../types";
 import "./ha-scene-dashboard";
 import "./ha-scene-editor";
 
@@ -19,8 +19,8 @@ const equal = (a: SceneEntity[], b: SceneEntity[]): boolean => {
 };
 
 @customElement("ha-config-scene")
-class HaConfigScene extends HassRouterPage {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+class HaConfigScene extends menuaiRouterPage {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -42,29 +42,29 @@ class HaConfigScene extends HassRouterPage {
   };
 
   private _debouncedUpdateScenes = debounce((pageEl) => {
-    const newScenes = this._getScenes(this.hass.states);
+    const newScenes = this._getScenes(this.menuai.states);
     if (!equal(newScenes, pageEl.scenes)) {
       pageEl.scenes = newScenes;
     }
   }, 10);
 
   private _getScenes = memoizeOne(
-    (states: HassEntities): SceneEntity[] =>
+    (states: menuaiEntities): SceneEntity[] =>
       Object.values(states).filter(
         (entity) => computeStateDomain(entity) === "scene"
       ) as SceneEntity[]
   );
 
   protected updatePageEl(pageEl, changedProps: PropertyValues) {
-    pageEl.hass = this.hass;
+    pageEl.menuai = this.menuai;
     pageEl.narrow = this.narrow;
     pageEl.isWide = this.isWide;
     pageEl.route = this.routeTail;
 
-    if (this.hass) {
+    if (this.menuai) {
       if (!pageEl.scenes || !changedProps) {
-        pageEl.scenes = this._getScenes(this.hass.states);
-      } else if (changedProps.has("hass")) {
+        pageEl.scenes = this._getScenes(this.menuai.states);
+      } else if (changedProps.has("menuai")) {
         this._debouncedUpdateScenes(pageEl);
       }
     }

@@ -11,12 +11,12 @@ import { createCloudhook, deleteCloudhook } from "../../../../data/cloud";
 import type { Webhook, WebhookError } from "../../../../data/webhook";
 import { fetchWebhooks } from "../../../../data/webhook";
 import { haStyle } from "../../../../resources/styles";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import { showManageCloudhookDialog } from "../dialog-manage-cloudhook/show-dialog-manage-cloudhook";
 
 @customElement("cloud-webhooks")
 export class CloudWebhooks extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatusLoggedIn;
 
@@ -37,19 +37,19 @@ export class CloudWebhooks extends LitElement {
     return html`
       <ha-card
         outlined
-        header=${this.hass!.localize(
+        header=${this.menuai!.localize(
           "ui.panel.config.cloud.account.webhooks.title"
         )}
       >
         <div class="card-content">
-          ${this.hass!.localize("ui.panel.config.cloud.account.webhooks.info")}
+          ${this.menuai!.localize("ui.panel.config.cloud.account.webhooks.info")}
           ${!this.cloudStatus ||
           !this._localHooks ||
           !this._cloudHooks ||
-          !this.hass
+          !this.menuai
             ? html`
                 <div class="body-text">
-                  ${this.hass!.localize(
+                  ${this.menuai!.localize(
                     "ui.panel.config.cloud.account.webhooks.loading"
                   )}
                 </div>
@@ -57,19 +57,19 @@ export class CloudWebhooks extends LitElement {
             : this._localHooks.length === 0
               ? html`
                   <div class="body-text">
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.cloud.account.webhooks.no_hooks_yet"
                     )}
                     <a href="/config/integrations"
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.cloud.account.webhooks.no_hooks_yet_link_integration"
                       )}
                     </a>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.config.cloud.account.webhooks.no_hooks_yet2"
                     )}
                     <a href="/config/automation/edit/new"
-                      >${this.hass.localize(
+                      >${this.menuai.localize(
                         "ui.panel.config.cloud.account.webhooks.no_hooks_yet_link_automation"
                       )}</a
                     >.
@@ -94,7 +94,7 @@ export class CloudWebhooks extends LitElement {
                         : this._cloudHooks![entry.webhook_id]
                           ? html`
                               <mwc-button @click=${this._handleManageButton}>
-                                ${this.hass!.localize(
+                                ${this.menuai!.localize(
                                   "ui.panel.config.cloud.account.webhooks.manage"
                                 )}
                               </mwc-button>
@@ -110,7 +110,7 @@ export class CloudWebhooks extends LitElement {
               target="_blank"
               rel="noreferrer"
             >
-              ${this.hass!.localize(
+              ${this.menuai!.localize(
                 "ui.panel.config.cloud.account.webhooks.link_learn_more"
               )}
             </a>
@@ -150,7 +150,7 @@ export class CloudWebhooks extends LitElement {
     let updatedWebhook;
 
     try {
-      updatedWebhook = await createCloudhook(this.hass!, entry.webhook_id);
+      updatedWebhook = await createCloudhook(this.menuai!, entry.webhook_id);
     } catch (err: any) {
       alert((err as WebhookError).message);
       return;
@@ -172,10 +172,10 @@ export class CloudWebhooks extends LitElement {
   private async _disableWebhook(webhookId: string) {
     this._progress = [...this._progress, webhookId];
     try {
-      await deleteCloudhook(this.hass!, webhookId!);
+      await deleteCloudhook(this.menuai!, webhookId!);
     } catch (err: any) {
       alert(
-        `${this.hass!.localize(
+        `${this.menuai!.localize(
           "ui.panel.config.cloud.account.webhooks.disable_hook_error_msg"
         )} ${(err as WebhookError).message}`
       );
@@ -190,11 +190,11 @@ export class CloudWebhooks extends LitElement {
   }
 
   private async _fetchData() {
-    if (!isComponentLoaded(this.hass!, "webhook")) {
+    if (!isComponentLoaded(this.menuai!, "webhook")) {
       this._localHooks = [];
       return;
     }
-    const hooks = await fetchWebhooks(this.hass!);
+    const hooks = await fetchWebhooks(this.menuai!);
     this._localHooks = hooks.filter(
       (hook) =>
         // Only hooks that are not limited to local requests are relevant

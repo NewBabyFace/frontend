@@ -53,9 +53,9 @@ if (!window.externalApp && !window.webkit) {
 export class ExternalAuth extends Auth {
   public external?: ExternalMessaging;
 
-  constructor(hassUrl: string) {
+  constructor(menuaiUrl: string) {
     super({
-      hassUrl,
+      menuaiUrl,
       clientId: "",
       refresh_token: "",
       access_token: "",
@@ -129,8 +129,8 @@ export class ExternalAuth extends Auth {
   }
 }
 
-export const createExternalAuth = async (hassUrl: string) => {
-  const auth = new ExternalAuth(hassUrl);
+export const createExternalAuth = async (menuaiUrl: string) => {
+  const auth = new ExternalAuth(menuaiUrl);
   if (
     window.externalApp?.externalBus ||
     (window.webkit && window.webkit.messageHandlers.externalBus)

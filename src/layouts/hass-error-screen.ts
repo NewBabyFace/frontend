@@ -4,12 +4,12 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../components/ha-icon-button-arrow-prev";
 import "../components/ha-menu-button";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import "../components/ha-alert";
 
-@customElement("hass-error-screen")
-class HassErrorScreen extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+@customElement("menuai-error-screen")
+class menuaiErrorScreen extends LitElement {
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public toolbar = true;
 
@@ -26,13 +26,13 @@ class HassErrorScreen extends LitElement {
             ${this.rootnav || history.state?.root
               ? html`
                   <ha-menu-button
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     .narrow=${this.narrow}
                   ></ha-menu-button>
                 `
               : html`
                   <ha-icon-button-arrow-prev
-                    .hass=${this.hass}
+                    .menuai=${this.menuai}
                     @click=${this._handleBack}
                   ></ha-icon-button-arrow-prev>
                 `}
@@ -42,7 +42,7 @@ class HassErrorScreen extends LitElement {
         <ha-alert alert-type="error">${this.error}</ha-alert>
         <slot>
           <mwc-button @click=${this._handleBack}>
-            ${this.hass?.localize("ui.common.back")}
+            ${this.menuai?.localize("ui.common.back")}
           </mwc-button>
         </slot>
       </div>
@@ -105,6 +105,6 @@ class HassErrorScreen extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hass-error-screen": HassErrorScreen;
+    "menuai-error-screen": menuaiErrorScreen;
   }
 }

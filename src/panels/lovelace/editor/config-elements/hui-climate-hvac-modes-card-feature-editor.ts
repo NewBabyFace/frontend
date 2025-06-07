@@ -1,4 +1,4 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
@@ -11,7 +11,7 @@ import type {
   SchemaUnion,
 } from "../../../../components/ha-form/types";
 import { compareClimateHvacModes } from "../../../../data/climate";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type {
   ClimateHvacModesCardFeatureConfig,
   LovelaceCardFeatureContext,
@@ -27,7 +27,7 @@ export class HuiClimateHvacModesCardFeatureEditor
   extends LitElement
   implements LovelaceCardFeatureEditor
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
+  @property({ attribute: false }) public menuai?: menuai;
 
   @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
@@ -41,7 +41,7 @@ export class HuiClimateHvacModesCardFeatureEditor
     (
       localize: LocalizeFunc,
       formatEntityState: FormatEntityStateFunc,
-      stateObj: HassEntity | undefined,
+      stateObj: menuaiEntity | undefined,
       customizeModes: boolean
     ) =>
       [
@@ -92,12 +92,12 @@ export class HuiClimateHvacModesCardFeatureEditor
   );
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
     const stateObj = this.context?.entity_id
-      ? this.hass.states[this.context?.entity_id]
+      ? this.menuai.states[this.context?.entity_id]
       : undefined;
 
     const data: ClimateHvacModesCardFeatureData = {
@@ -107,15 +107,15 @@ export class HuiClimateHvacModesCardFeatureEditor
     };
 
     const schema = this._schema(
-      this.hass.localize,
-      this.hass.formatEntityState,
+      this.menuai.localize,
+      this.menuai.formatEntityState,
       stateObj,
       data.customize_modes
     );
 
     return html`
       <ha-form
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .data=${data}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
@@ -129,7 +129,7 @@ export class HuiClimateHvacModesCardFeatureEditor
       .value as ClimateHvacModesCardFeatureData;
 
     const stateObj = this.context?.entity_id
-      ? this.hass!.states[this.context?.entity_id]
+      ? this.menuai!.states[this.context?.entity_id]
       : undefined;
 
     if (customize_modes && !config.hvac_modes) {
@@ -152,7 +152,7 @@ export class HuiClimateHvacModesCardFeatureEditor
       case "hvac_modes":
       case "style":
       case "customize_modes":
-        return this.hass!.localize(
+        return this.menuai!.localize(
           `ui.panel.lovelace.editor.features.types.climate-hvac-modes.${schema.name}`
         );
       default:

@@ -5,7 +5,7 @@ import { computeDeviceNameDisplay } from "../common/entity/compute_device_name";
 import { computeStateName } from "../common/entity/compute_state_name";
 import { formatListWithAnds } from "../common/string/format-list";
 import { isTemplate } from "../common/string/has-template";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 import type { Condition } from "./automation";
 import { describeCondition } from "./automation_i18n";
 import { localizeDeviceAutomationAction } from "./device_automation";
@@ -40,7 +40,7 @@ const actionTranslationBaseKey =
   "ui.panel.config.automation.editor.actions.type";
 
 export const describeAction = <T extends ActionType>(
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryEntry[],
   labelRegistry: LabelRegistryEntry[],
   floorRegistry: Record<string, FloorRegistryEntry>,
@@ -50,7 +50,7 @@ export const describeAction = <T extends ActionType>(
 ): string => {
   try {
     const description = tryDescribeAction(
-      hass,
+      menuai,
       entityRegistry,
       labelRegistry,
       floorRegistry,
@@ -74,7 +74,7 @@ export const describeAction = <T extends ActionType>(
 };
 
 const tryDescribeAction = <T extends ActionType>(
-  hass: HomeAssistant,
+  menuai: menuai,
   entityRegistry: EntityRegistryEntry[],
   labelRegistry: LabelRegistryEntry[],
   floorRegistry: Record<string, FloorRegistryEntry>,
@@ -96,7 +96,7 @@ const tryDescribeAction = <T extends ActionType>(
     const targetOrData = config.target || config.data;
     if (typeof targetOrData === "string" && isTemplate(targetOrData)) {
       targets.push(
-        hass.localize(
+        menuai.localize(
           `${actionTranslationBaseKey}.service.description.target_template`,
           { name: "target" }
         )
@@ -117,7 +117,7 @@ const tryDescribeAction = <T extends ActionType>(
         for (const targetThing of keyConf) {
           if (isTemplate(targetThing)) {
             targets.push(
-              hass.localize(
+              menuai.localize(
                 `${actionTranslationBaseKey}.service.description.target_template`,
                 { name }
               )
@@ -125,7 +125,7 @@ const tryDescribeAction = <T extends ActionType>(
             break;
           } else if (key === "entity_id") {
             if (targetThing.includes(".")) {
-              const state = hass.states[targetThing];
+              const state = menuai.states[targetThing];
               if (state) {
                 targets.push(computeStateName(state));
               } else {
@@ -135,40 +135,40 @@ const tryDescribeAction = <T extends ActionType>(
               const entityReg = entityRegistryById(entityRegistry)[targetThing];
               if (entityReg) {
                 targets.push(
-                  computeEntityRegistryName(hass, entityReg) || targetThing
+                  computeEntityRegistryName(menuai, entityReg) || targetThing
                 );
               } else if (targetThing === "all") {
                 targets.push(
-                  hass.localize(
+                  menuai.localize(
                     `${actionTranslationBaseKey}.service.description.target_every_entity`
                   )
                 );
               } else {
                 targets.push(
-                  hass.localize(
+                  menuai.localize(
                     `${actionTranslationBaseKey}.service.description.target_unknown_entity`
                   )
                 );
               }
             }
           } else if (key === "device_id") {
-            const device = hass.devices[targetThing];
+            const device = menuai.devices[targetThing];
             if (device) {
-              targets.push(computeDeviceNameDisplay(device, hass));
+              targets.push(computeDeviceNameDisplay(device, menuai));
             } else {
               targets.push(
-                hass.localize(
+                menuai.localize(
                   `${actionTranslationBaseKey}.service.description.target_unknown_device`
                 )
               );
             }
           } else if (key === "area_id") {
-            const area = hass.areas[targetThing];
+            const area = menuai.areas[targetThing];
             if (area?.name) {
               targets.push(area.name);
             } else {
               targets.push(
-                hass.localize(
+                menuai.localize(
                   `${actionTranslationBaseKey}.service.description.target_unknown_area`
                 )
               );
@@ -179,7 +179,7 @@ const tryDescribeAction = <T extends ActionType>(
               targets.push(floor.name);
             } else {
               targets.push(
-                hass.localize(
+                menuai.localize(
                   `${actionTranslationBaseKey}.service.description.target_unknown_floor`
                 )
               );
@@ -192,7 +192,7 @@ const tryDescribeAction = <T extends ActionType>(
               targets.push(label.name);
             } else {
               targets.push(
-                hass.localize(
+                menuai.localize(
                   `${actionTranslationBaseKey}.service.description.target_unknown_label`
                 )
               );
@@ -208,12 +208,12 @@ const tryDescribeAction = <T extends ActionType>(
       config.service_template ||
       (config.action && isTemplate(config.action))
     ) {
-      return hass.localize(
+      return menuai.localize(
         targets.length
           ? `${actionTranslationBaseKey}.service.description.service_based_on_template`
           : `${actionTranslationBaseKey}.service.description.service_based_on_template_no_targets`,
         {
-          targets: formatListWithAnds(hass.locale, targets),
+          targets: formatListWithAnds(menuai.locale, targets),
         }
       );
     }
@@ -221,35 +221,35 @@ const tryDescribeAction = <T extends ActionType>(
     if (config.action) {
       const [domain, serviceName] = config.action.split(".", 2);
       const service =
-        hass.localize(`component.${domain}.services.${serviceName}.name`) ||
-        hass.services[domain][serviceName]?.name;
+        menuai.localize(`component.${domain}.services.${serviceName}.name`) ||
+        menuai.services[domain][serviceName]?.name;
 
       if (config.metadata) {
-        return hass.localize(
+        return menuai.localize(
           targets.length
             ? `${actionTranslationBaseKey}.service.description.service_name`
             : `${actionTranslationBaseKey}.service.description.service_name_no_targets`,
           {
-            domain: domainToName(hass.localize, domain),
+            domain: domainToName(menuai.localize, domain),
             name: service || config.action,
-            targets: formatListWithAnds(hass.locale, targets),
+            targets: formatListWithAnds(menuai.locale, targets),
           }
         );
       }
 
-      return hass.localize(
+      return menuai.localize(
         targets.length
           ? `${actionTranslationBaseKey}.service.description.service_based_on_name`
           : `${actionTranslationBaseKey}.service.description.service_based_on_name_no_targets`,
         {
           name: service
-            ? `${domainToName(hass.localize, domain)}: ${service}`
+            ? `${domainToName(menuai.localize, domain)}: ${service}`
             : config.action,
-          targets: formatListWithAnds(hass.locale, targets),
+          targets: formatListWithAnds(menuai.locale, targets),
         }
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.service.description.service`
     );
   }
@@ -259,7 +259,7 @@ const tryDescribeAction = <T extends ActionType>(
 
     let duration: string;
     if (typeof config.delay === "number") {
-      duration = hass.localize(
+      duration = menuai.localize(
         `${actionTranslationBaseKey}.delay.description.duration_string`,
         {
           string: secondsToDuration(config.delay)!,
@@ -267,38 +267,38 @@ const tryDescribeAction = <T extends ActionType>(
       );
     } else if (typeof config.delay === "string") {
       duration = isTemplate(config.delay)
-        ? hass.localize(
+        ? menuai.localize(
             `${actionTranslationBaseKey}.delay.description.duration_template`
           )
-        : hass.localize(
+        : menuai.localize(
             `${actionTranslationBaseKey}.delay.description.duration_string`,
             {
               string:
                 config.delay ||
-                hass.localize(
+                menuai.localize(
                   `${actionTranslationBaseKey}.delay.description.duration_unknown`
                 ),
             }
           );
     } else if (config.delay) {
-      duration = hass.localize(
+      duration = menuai.localize(
         `${actionTranslationBaseKey}.delay.description.duration_string`,
         {
-          string: formatNumericDuration(hass.locale, config.delay),
+          string: formatNumericDuration(menuai.locale, config.delay),
         }
       );
     } else {
-      duration = hass.localize(
+      duration = menuai.localize(
         `${actionTranslationBaseKey}.delay.description.duration_string`,
         {
-          string: hass.localize(
+          string: menuai.localize(
             `${actionTranslationBaseKey}.delay.description.duration_unknown`
           ),
         }
       );
     }
 
-    return hass.localize(`${actionTranslationBaseKey}.delay.description.full`, {
+    return menuai.localize(`${actionTranslationBaseKey}.delay.description.full`, {
       duration: duration,
     });
   }
@@ -306,8 +306,8 @@ const tryDescribeAction = <T extends ActionType>(
   if (actionType === "play_media") {
     const config = action as PlayMediaAction;
     const entityId = config.target?.entity_id || config.entity_id;
-    const mediaStateObj = entityId ? hass.states[entityId] : undefined;
-    return hass.localize(
+    const mediaStateObj = entityId ? menuai.states[entityId] : undefined;
+    return menuai.localize(
       `${actionTranslationBaseKey}.play_media.description.full`,
       {
         hasMedia:
@@ -328,11 +328,11 @@ const tryDescribeAction = <T extends ActionType>(
     const config = action as WaitForTriggerAction;
     const triggers = ensureArray(config.wait_for_trigger);
     if (!triggers || triggers.length === 0) {
-      return hass.localize(
+      return menuai.localize(
         `${actionTranslationBaseKey}.wait_for_trigger.description.wait_for_a_trigger`
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.wait_for_trigger.description.wait_for_triggers`,
       { count: triggers.length }
     );
@@ -340,10 +340,10 @@ const tryDescribeAction = <T extends ActionType>(
 
   if (actionType === "variables") {
     const config = action as VariablesAction;
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.variables.description.full`,
       {
-        names: formatListWithAnds(hass.locale, Object.keys(config.variables)),
+        names: formatListWithAnds(menuai.locale, Object.keys(config.variables)),
       }
     );
   }
@@ -351,29 +351,29 @@ const tryDescribeAction = <T extends ActionType>(
   if (actionType === "fire_event") {
     const config = action as EventAction;
     if (isTemplate(config.event)) {
-      return hass.localize(
+      return menuai.localize(
         `${actionTranslationBaseKey}.event.description.full`,
         {
-          name: hass.localize(
+          name: menuai.localize(
             `${actionTranslationBaseKey}.event.description.template`
           ),
         }
       );
     }
-    return hass.localize(`${actionTranslationBaseKey}.event.description.full`, {
+    return menuai.localize(`${actionTranslationBaseKey}.event.description.full`, {
       name: config.event,
     });
   }
 
   if (actionType === "wait_template") {
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.wait_template.description.full`
     );
   }
 
   if (actionType === "stop") {
     const config = action as StopAction;
-    return hass.localize(`${actionTranslationBaseKey}.stop.description.full`, {
+    return menuai.localize(`${actionTranslationBaseKey}.stop.description.full`, {
       hasReason: config.stop !== undefined ? "true" : "false",
       reason: config.stop,
     });
@@ -383,12 +383,12 @@ const tryDescribeAction = <T extends ActionType>(
     const config = action as IfAction;
 
     if (config.else !== undefined) {
-      return hass.localize(
+      return menuai.localize(
         `${actionTranslationBaseKey}.if.description.if_else`
       );
     }
 
-    return hass.localize(`${actionTranslationBaseKey}.if.description.if`);
+    return menuai.localize(`${actionTranslationBaseKey}.if.description.if`);
   }
 
   if (actionType === "choose") {
@@ -396,12 +396,12 @@ const tryDescribeAction = <T extends ActionType>(
     if (config.choose) {
       const numActions =
         ensureArray(config.choose).length + (config.default ? 1 : 0);
-      return hass.localize(
+      return menuai.localize(
         `${actionTranslationBaseKey}.choose.description.full`,
         { number: numActions }
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.choose.description.no_action`
     );
   }
@@ -412,19 +412,19 @@ const tryDescribeAction = <T extends ActionType>(
     let chosenAction = "";
     if ("count" in config.repeat) {
       const count = config.repeat.count;
-      chosenAction = hass.localize(
+      chosenAction = menuai.localize(
         `${actionTranslationBaseKey}.repeat.description.count`,
         { count: count }
       );
     } else if ("while" in config.repeat) {
       const conditions = ensureArray(config.repeat.while);
-      chosenAction = hass.localize(
+      chosenAction = menuai.localize(
         `${actionTranslationBaseKey}.repeat.description.while_count`,
         { count: conditions.length }
       );
     } else if ("until" in config.repeat) {
       const conditions = ensureArray(config.repeat.until);
-      chosenAction = hass.localize(
+      chosenAction = menuai.localize(
         `${actionTranslationBaseKey}.repeat.description.until_count`,
         { count: conditions.length }
       );
@@ -432,22 +432,22 @@ const tryDescribeAction = <T extends ActionType>(
       const items = ensureArray(config.repeat.for_each).map((item) =>
         JSON.stringify(item)
       );
-      chosenAction = hass.localize(
+      chosenAction = menuai.localize(
         `${actionTranslationBaseKey}.repeat.description.for_each`,
-        { items: formatListWithAnds(hass.locale, items) }
+        { items: formatListWithAnds(menuai.locale, items) }
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.repeat.description.full`,
       { chosenAction: chosenAction }
     );
   }
 
   if (actionType === "check_condition") {
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.check_condition.description.full`,
       {
-        condition: describeCondition(action as Condition, hass, entityRegistry),
+        condition: describeCondition(action as Condition, menuai, entityRegistry),
       }
     );
   }
@@ -455,19 +455,19 @@ const tryDescribeAction = <T extends ActionType>(
   if (actionType === "device_action") {
     const config = action as DeviceAction;
     if (!config.device_id) {
-      return hass.localize(
+      return menuai.localize(
         `${actionTranslationBaseKey}.device_id.description.no_device`
       );
     }
     const localized = localizeDeviceAutomationAction(
-      hass,
+      menuai,
       entityRegistry,
       config
     );
     if (localized) {
       return localized;
     }
-    const stateObj = hass.states[config.entity_id];
+    const stateObj = menuai.states[config.entity_id];
     return `${config.type || "Perform action with"} ${
       stateObj ? computeStateName(stateObj) : config.entity_id
     }`;
@@ -476,7 +476,7 @@ const tryDescribeAction = <T extends ActionType>(
   if (actionType === "sequence") {
     const config = action as SequenceAction;
     const numActions = ensureArray(config.sequence).length;
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.sequence.description.full`,
       { number: numActions }
     );
@@ -485,7 +485,7 @@ const tryDescribeAction = <T extends ActionType>(
   if (actionType === "parallel") {
     const config = action as ParallelAction;
     const numActions = ensureArray(config.parallel).length;
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.parallel.description.full`,
       { number: numActions }
     );
@@ -494,11 +494,11 @@ const tryDescribeAction = <T extends ActionType>(
   if (actionType === "set_conversation_response") {
     const config = action as SetConversationResponseAction;
     if (isTemplate(config.set_conversation_response)) {
-      return hass.localize(
+      return menuai.localize(
         `${actionTranslationBaseKey}.set_conversation_response.description.template`
       );
     }
-    return hass.localize(
+    return menuai.localize(
       `${actionTranslationBaseKey}.set_conversation_response.description.full`,
       { response: config.set_conversation_response }
     );

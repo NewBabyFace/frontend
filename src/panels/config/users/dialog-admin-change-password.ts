@@ -10,7 +10,7 @@ import type { SchemaUnion } from "../../../components/ha-form/types";
 import "../../../components/ha-textfield";
 import { adminChangePassword } from "../../../data/auth";
 import { haStyleDialog } from "../../../resources/styles";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { showToast } from "../../../util/toast";
 import type { AdminChangePasswordDialogParams } from "./show-dialog-admin-change-password";
 
@@ -44,7 +44,7 @@ interface FormData {
 
 @customElement("dialog-admin-change-password")
 class DialogAdminChangePassword extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: AdminChangePasswordDialogParams;
 
@@ -72,10 +72,10 @@ class DialogAdminChangePassword extends LitElement {
   }
 
   private _computeLabel = (schema: SchemaUnion<typeof SCHEMA>) =>
-    this.hass.localize(`ui.panel.config.users.change_password.${schema.name}`);
+    this.menuai.localize(`ui.panel.config.users.change_password.${schema.name}`);
 
   private _computeError = (error: string) =>
-    this.hass.localize(
+    this.menuai.localize(
       `ui.panel.config.users.change_password.${error}` as any
     ) || error;
 
@@ -110,24 +110,24 @@ class DialogAdminChangePassword extends LitElement {
         scrimClickAction
         escapeKeyAction
         .heading=${createCloseHeading(
-          this.hass,
-          this.hass.localize("ui.panel.config.users.change_password.caption")
+          this.menuai,
+          this.menuai.localize("ui.panel.config.users.change_password.caption")
         )}
       >
         ${this._success
           ? html`
               <p>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.users.change_password.password_changed"
                 )}
               </p>
               <mwc-button slot="primaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.ok")}
+                ${this.menuai.localize("ui.common.ok")}
               </mwc-button>
             `
           : html`
               <ha-form
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .data=${this._data}
                 .error=${this._error}
                 .schema=${SCHEMA}
@@ -137,14 +137,14 @@ class DialogAdminChangePassword extends LitElement {
                 .disabled=${this._submitting}
               ></ha-form>
               <mwc-button slot="secondaryAction" @click=${this.closeDialog}>
-                ${this.hass.localize("ui.common.cancel")}
+                ${this.menuai.localize("ui.common.cancel")}
               </mwc-button>
               <mwc-button
                 slot="primaryAction"
                 @click=${this._changePassword}
                 .disabled=${this._submitting || !canSubmit}
               >
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.users.change_password.change"
                 )}
               </mwc-button>
@@ -163,7 +163,7 @@ class DialogAdminChangePassword extends LitElement {
     try {
       this._submitting = true;
       await adminChangePassword(
-        this.hass,
+        this.menuai,
         this._userId!,
         this._data.new_password
       );

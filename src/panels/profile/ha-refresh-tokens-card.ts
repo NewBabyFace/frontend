@@ -27,7 +27,7 @@ import {
   showConfirmationDialog,
 } from "../../dialogs/generic/show-dialog-box";
 import { haStyle } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 
 // Client ID used by iOS app
 const iOSclientId = "https://home-assistant.io/iOS";
@@ -48,7 +48,7 @@ const compareTokenLastUsedAt = (tokenA: RefreshToken, tokenB: RefreshToken) => {
 
 @customElement("ha-refresh-tokens-card")
 class HaRefreshTokens extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public refreshTokens?: RefreshToken[];
 
@@ -61,10 +61,10 @@ class HaRefreshTokens extends LitElement {
 
   private _formatTokenName = (token: RefreshToken): string => {
     if (token.client_id === iOSclientId) {
-      return this.hass.localize("ui.panel.profile.refresh_tokens.ios_app");
+      return this.menuai.localize("ui.panel.profile.refresh_tokens.ios_app");
     }
     if (token.client_id === androidClientId) {
-      return this.hass.localize("ui.panel.profile.refresh_tokens.android_app");
+      return this.menuai.localize("ui.panel.profile.refresh_tokens.android_app");
     }
     return token.client_name || token.client_id;
   };
@@ -75,10 +75,10 @@ class HaRefreshTokens extends LitElement {
       : [];
     return html`
       <ha-card
-        .header=${this.hass.localize("ui.panel.profile.refresh_tokens.header")}
+        .header=${this.menuai.localize("ui.panel.profile.refresh_tokens.header")}
       >
         <div class="card-content">
-          ${this.hass.localize("ui.panel.profile.refresh_tokens.description")}
+          ${this.menuai.localize("ui.panel.profile.refresh_tokens.description")}
           ${refreshTokens.length
             ? refreshTokens.map(
                 (token) => html`
@@ -95,12 +95,12 @@ class HaRefreshTokens extends LitElement {
                       ${this._formatTokenName(token)}
                     </span>
                     <div slot="description">
-                      ${this.hass.localize(
+                      ${this.menuai.localize(
                         "ui.panel.profile.refresh_tokens.created_at",
                         {
                           date: relativeTime(
                             new Date(token.created_at),
-                            this.hass.locale
+                            this.menuai.locale
                           ),
                         }
                       )}
@@ -109,38 +109,38 @@ class HaRefreshTokens extends LitElement {
                       ${token.is_current
                         ? html`
                             <span class="current-session">
-                              <span class="dot"></span> ${this.hass.localize(
+                              <span class="dot"></span> ${this.menuai.localize(
                                 "ui.panel.profile.refresh_tokens.current_session"
                               )}
                             </span>
                           `
                         : token.last_used_at
-                          ? this.hass.localize(
+                          ? this.menuai.localize(
                               "ui.panel.profile.refresh_tokens.last_used",
                               {
                                 date: relativeTime(
                                   new Date(token.last_used_at),
-                                  this.hass.locale
+                                  this.menuai.locale
                                 ),
                                 location: token.last_used_ip,
                               }
                             )
-                          : this.hass.localize(
+                          : this.menuai.localize(
                               "ui.panel.profile.refresh_tokens.not_used"
                             )}
                     </div>
                     <div slot="description">
                       ${token.expire_at
-                        ? this.hass.localize(
+                        ? this.menuai.localize(
                             "ui.panel.profile.refresh_tokens.expires_in",
                             {
                               date: relativeTime(
                                 new Date(token.expire_at),
-                                this.hass.locale
+                                this.menuai.locale
                               ),
                             }
                           )
-                        : this.hass.localize(
+                        : this.menuai.localize(
                             "ui.panel.profile.refresh_tokens.never_expires"
                           )}
                     </div>
@@ -153,7 +153,7 @@ class HaRefreshTokens extends LitElement {
                       >
                         <ha-icon-button
                           slot="trigger"
-                          .label=${this.hass.localize("ui.common.menu")}
+                          .label=${this.menuai.localize("ui.common.menu")}
                           .path=${mdiDotsVertical}
                         ></ha-icon-button>
                         <ha-list-item graphic="icon">
@@ -164,10 +164,10 @@ class HaRefreshTokens extends LitElement {
                               : mdiClockCheckOutline}
                           ></ha-svg-icon>
                           ${token.expire_at
-                            ? this.hass.localize(
+                            ? this.menuai.localize(
                                 "ui.panel.profile.refresh_tokens.disable_token_expiration"
                               )
-                            : this.hass.localize(
+                            : this.menuai.localize(
                                 "ui.panel.profile.refresh_tokens.enable_token_expiration"
                               )}
                         </ha-list-item>
@@ -181,7 +181,7 @@ class HaRefreshTokens extends LitElement {
                             slot="graphic"
                             .path=${mdiDelete}
                           ></ha-svg-icon>
-                          ${this.hass.localize("ui.common.delete")}
+                          ${this.menuai.localize("ui.common.delete")}
                         </ha-list-item>
                       </ha-button-menu>
                     </div>
@@ -192,7 +192,7 @@ class HaRefreshTokens extends LitElement {
         </div>
         <div class="card-actions">
           <mwc-button class="warning" @click=${this._deleteAllTokens}>
-            ${this.hass.localize(
+            ${this.menuai.localize(
               "ui.panel.profile.refresh_tokens.delete_all_tokens"
             )}
           </mwc-button>
@@ -218,14 +218,14 @@ class HaRefreshTokens extends LitElement {
     if (!enable) {
       if (
         !(await showConfirmationDialog(this, {
-          title: this.hass.localize(
+          title: this.menuai.localize(
             "ui.panel.profile.refresh_tokens.confirm_disable_token_expiration_title"
           ),
-          text: this.hass.localize(
+          text: this.menuai.localize(
             "ui.panel.profile.refresh_tokens.confirm_disable_token_expiration_text",
             { name: this._formatTokenName(token) }
           ),
-          confirmText: this.hass.localize("ui.common.disable"),
+          confirmText: this.menuai.localize("ui.common.disable"),
           destructive: true,
         }))
       ) {
@@ -234,19 +234,19 @@ class HaRefreshTokens extends LitElement {
     }
 
     try {
-      await this.hass.callWS({
+      await this.menuai.callWS({
         type: "auth/refresh_token_set_expiry",
         refresh_token_id: token.id,
         enable_expiry: enable,
       });
-      fireEvent(this, "hass-refresh-tokens");
+      fireEvent(this, "menuai-refresh-tokens");
     } catch (err: unknown) {
       const message =
         typeof err === "object" && err !== null && "message" in err
           ? (err.message as string)
           : String(err);
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           `ui.panel.profile.refresh_tokens.${enable ? "enable" : "disable"}_expiration_failed`
         ),
         text: message,
@@ -257,28 +257,28 @@ class HaRefreshTokens extends LitElement {
   private async _deleteToken(token: RefreshToken): Promise<void> {
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.refresh_tokens.confirm_delete_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.profile.refresh_tokens.confirm_delete_text",
           { name: this._formatTokenName(token) }
         ),
-        confirmText: this.hass.localize("ui.common.delete"),
+        confirmText: this.menuai.localize("ui.common.delete"),
         destructive: true,
       }))
     ) {
       return;
     }
     try {
-      await this.hass.callWS({
+      await this.menuai.callWS({
         type: "auth/delete_refresh_token",
         refresh_token_id: token.id,
       });
-      fireEvent(this, "hass-refresh-tokens");
+      fireEvent(this, "menuai-refresh-tokens");
     } catch (err: any) {
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.refresh_tokens.delete_failed"
         ),
         text: err.message,
@@ -289,24 +289,24 @@ class HaRefreshTokens extends LitElement {
   private async _deleteAllTokens(): Promise<void> {
     if (
       !(await showConfirmationDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.refresh_tokens.confirm_delete_all_title"
         ),
-        text: this.hass.localize(
+        text: this.menuai.localize(
           "ui.panel.profile.refresh_tokens.confirm_delete_all"
         ),
-        confirmText: this.hass.localize("ui.common.delete_all"),
+        confirmText: this.menuai.localize("ui.common.delete_all"),
         destructive: true,
       }))
     ) {
       return;
     }
     try {
-      await deleteAllRefreshTokens(this.hass, "normal", false);
-      fireEvent(this, "hass-refresh-tokens");
+      await deleteAllRefreshTokens(this.menuai, "normal", false);
+      fireEvent(this, "menuai-refresh-tokens");
     } catch (err: any) {
       await showAlertDialog(this, {
-        title: this.hass.localize(
+        title: this.menuai.localize(
           "ui.panel.profile.refresh_tokens.delete_failed"
         ),
         text: err.message,

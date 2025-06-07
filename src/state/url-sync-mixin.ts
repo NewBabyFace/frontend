@@ -2,13 +2,13 @@
 import type { PropertyValueMap, ReactiveElement } from "lit";
 import { mainWindow } from "../common/dom/get_main_window";
 import { closeLastDialog } from "../dialogs/make-dialog-manager";
-import type { ProvideHassElement } from "../mixins/provide-hass-lit-mixin";
+import type { ProvidemenuaiElement } from "../mixins/provide-menuai-lit-mixin";
 import type { Constructor } from "../types";
 
 const DEBUG = false;
 
 export const urlSyncMixin = <
-  T extends Constructor<ReactiveElement & ProvideHassElement>,
+  T extends Constructor<ReactiveElement & ProvidemenuaiElement>,
 >(
   superClass: T
 ) =>

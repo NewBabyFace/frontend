@@ -1,29 +1,29 @@
 import "@material/mwc-button";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../../components/ha-relative-time";
 import { triggerAutomationActions } from "../../../data/automation";
 import { isUnavailableState } from "../../../data/entity";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("more-info-automation")
 class MoreInfoAutomation extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: menuaiEntity;
 
   protected render() {
-    if (!this.hass || !this.stateObj) {
+    if (!this.menuai || !this.stateObj) {
       return nothing;
     }
 
     return html`
       <hr />
       <div class="flex">
-        <div>${this.hass.localize("ui.card.automation.last_triggered")}:</div>
+        <div>${this.menuai.localize("ui.card.automation.last_triggered")}:</div>
         <ha-relative-time
-          .hass=${this.hass}
+          .menuai=${this.menuai}
           .datetime=${this.stateObj.attributes.last_triggered}
           capitalize
         ></ha-relative-time>
@@ -34,14 +34,14 @@ class MoreInfoAutomation extends LitElement {
           @click=${this._runActions}
           .disabled=${isUnavailableState(this.stateObj!.state)}
         >
-          ${this.hass.localize("ui.card.automation.trigger")}
+          ${this.menuai.localize("ui.card.automation.trigger")}
         </mwc-button>
       </div>
     `;
   }
 
   private _runActions() {
-    triggerAutomationActions(this.hass, this.stateObj!.entity_id);
+    triggerAutomationActions(this.menuai, this.stateObj!.entity_id);
   }
 
   static styles = css`

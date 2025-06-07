@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { TemplateResult } from "lit";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -22,13 +22,13 @@ import type { ImageEntity } from "../../../data/image";
 import { computeImageUrl } from "../../../data/image";
 import { SENSOR_DEVICE_CLASS_TIMESTAMP } from "../../../data/sensor";
 import "../../../panels/lovelace/components/hui-timestamp-display";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 
 @customElement("entity-preview-row")
 class EntityPreviewRow extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
-  @state() private stateObj?: HassEntity;
+  @state() private stateObj?: menuaiEntity;
 
   protected render() {
     if (!this.stateObj) {
@@ -36,7 +36,7 @@ class EntityPreviewRow extends LitElement {
     }
     const stateObj = this.stateObj;
     return html`<state-badge
-        .hass=${this.hass}
+        .menuai=${this.menuai}
         .stateObj=${stateObj}
         stateColor
       ></state-badge>
@@ -102,13 +102,13 @@ class EntityPreviewRow extends LitElement {
     }
   `;
 
-  private _renderEntityState(stateObj: HassEntity): TemplateResult | string {
+  private _renderEntityState(stateObj: menuaiEntity): TemplateResult | string {
     const domain = stateObj.entity_id.split(".", 1)[0];
 
     if (domain === "button") {
       return html`
         <mwc-button .disabled=${isUnavailableState(stateObj.state)}>
-          ${this.hass.localize("ui.card.button.press")}
+          ${this.menuai.localize("ui.card.button.press")}
         </mwc-button>
       `;
     }
@@ -116,7 +116,7 @@ class EntityPreviewRow extends LitElement {
     const climateDomains = ["climate", "water_heater"];
     if (climateDomains.includes(domain)) {
       return html`
-        <ha-climate-state .hass=${this.hass} .stateObj=${stateObj}>
+        <ha-climate-state .menuai=${this.menuai} .stateObj=${stateObj}>
         </ha-climate-state>
       `;
     }
@@ -126,13 +126,13 @@ class EntityPreviewRow extends LitElement {
         ${isTiltOnly(stateObj)
           ? html`
               <ha-cover-tilt-controls
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-cover-tilt-controls>
             `
           : html`
               <ha-cover-controls
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-cover-controls>
             `}
@@ -142,7 +142,7 @@ class EntityPreviewRow extends LitElement {
     if (domain === "date") {
       return html`
         <ha-date-input
-          .locale=${this.hass.locale}
+          .locale=${this.menuai.locale}
           .disabled=${isUnavailableState(stateObj.state)}
           .value=${isUnavailableState(stateObj.state)
             ? undefined
@@ -162,7 +162,7 @@ class EntityPreviewRow extends LitElement {
         <div class="datetimeflex">
           <ha-date-input
             .label=${computeStateName(stateObj)}
-            .locale=${this.hass.locale}
+            .locale=${this.menuai.locale}
             .value=${date}
             .disabled=${isUnavailableState(stateObj.state)}
           >
@@ -170,7 +170,7 @@ class EntityPreviewRow extends LitElement {
           <ha-time-input
             .value=${time}
             .disabled=${isUnavailableState(stateObj.state)}
-            .locale=${this.hass.locale}
+            .locale=${this.menuai.locale}
           ></ha-time-input>
         </div>
       `;
@@ -180,9 +180,9 @@ class EntityPreviewRow extends LitElement {
       return html`
         <div class="when">
           ${isUnavailableState(stateObj.state)
-            ? this.hass.formatEntityState(stateObj)
+            ? this.menuai.formatEntityState(stateObj)
             : html`<hui-timestamp-display
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .ts=${new Date(stateObj.state)}
                 capitalize
               ></hui-timestamp-display>`}
@@ -190,7 +190,7 @@ class EntityPreviewRow extends LitElement {
         <div class="what">
           ${isUnavailableState(stateObj.state)
             ? nothing
-            : this.hass.formatEntityAttributeValue(stateObj, "event_type")}
+            : this.menuai.formatEntityAttributeValue(stateObj, "event_type")}
         </div>
       `;
     }
@@ -205,17 +205,17 @@ class EntityPreviewRow extends LitElement {
         ${showToggle
           ? html`
               <ha-entity-toggle
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .stateObj=${stateObj}
               ></ha-entity-toggle>
             `
-          : this.hass.formatEntityState(stateObj)}
+          : this.menuai.formatEntityState(stateObj)}
       `;
     }
 
     if (domain === "humidifier") {
       return html`
-        <ha-humidifier-state .hass=${this.hass} .stateObj=${stateObj}>
+        <ha-humidifier-state .menuai=${this.menuai} .stateObj=${stateObj}>
         </ha-humidifier-state>
       `;
     }
@@ -225,7 +225,7 @@ class EntityPreviewRow extends LitElement {
       return html`
         <img
           alt=${ifDefined(stateObj?.attributes.friendly_name)}
-          src=${this.hass.hassUrl(image)}
+          src=${this.menuai.menuaiUrl(image)}
         />
       `;
     }
@@ -237,8 +237,8 @@ class EntityPreviewRow extends LitElement {
           class="text-content"
         >
           ${stateObj.state === "locked"
-            ? this.hass!.localize("ui.card.lock.unlock")
-            : this.hass!.localize("ui.card.lock.lock")}
+            ? this.menuai!.localize("ui.card.lock.unlock")
+            : this.menuai!.localize("ui.card.lock.lock")}
         </mwc-button>
       `;
     }
@@ -263,7 +263,7 @@ class EntityPreviewRow extends LitElement {
                   .value=${Number(stateObj.state)}
                 ></ha-slider>
                 <span class="state">
-                  ${this.hass.formatEntityState(stateObj)}
+                  ${this.menuai.formatEntityState(stateObj)}
                 </span>
               </div>
             `
@@ -295,7 +295,7 @@ class EntityPreviewRow extends LitElement {
             ? stateObj.attributes.options.map(
                 (option) => html`
                   <ha-list-item .value=${option}>
-                    ${this.hass!.formatEntityState(stateObj, option)}
+                    ${this.menuai!.formatEntityState(stateObj, option)}
                   </ha-list-item>
                 `
               )
@@ -312,12 +312,12 @@ class EntityPreviewRow extends LitElement {
         ${showSensor
           ? html`
               <hui-timestamp-display
-                .hass=${this.hass}
+                .menuai=${this.menuai}
                 .ts=${new Date(stateObj.state)}
                 capitalize
               ></hui-timestamp-display>
             `
-          : this.hass.formatEntityState(stateObj)}
+          : this.menuai.formatEntityState(stateObj)}
       `;
     }
 
@@ -332,7 +332,7 @@ class EntityPreviewRow extends LitElement {
           .autoValidate=${stateObj.attributes.pattern}
           .pattern=${stateObj.attributes.pattern}
           .type=${stateObj.attributes.mode}
-          placeholder=${this.hass!.localize("ui.card.text.emtpy_value")}
+          placeholder=${this.menuai!.localize("ui.card.text.emtpy_value")}
         ></ha-textfield>
       `;
     }
@@ -343,7 +343,7 @@ class EntityPreviewRow extends LitElement {
           .value=${isUnavailableState(stateObj.state)
             ? undefined
             : stateObj.state}
-          .locale=${this.hass.locale}
+          .locale=${this.menuai.locale}
           .disabled=${isUnavailableState(stateObj.state)}
         ></ha-time-input>
       `;
@@ -355,13 +355,13 @@ class EntityPreviewRow extends LitElement {
           ${isUnavailableState(stateObj.state) ||
           stateObj.attributes.temperature === undefined ||
           stateObj.attributes.temperature === null
-            ? this.hass.formatEntityState(stateObj)
-            : this.hass.formatEntityAttributeValue(stateObj, "temperature")}
+            ? this.menuai.formatEntityState(stateObj)
+            : this.menuai.formatEntityAttributeValue(stateObj, "temperature")}
         </div>
       `;
     }
 
-    return this.hass.formatEntityState(stateObj);
+    return this.menuai.formatEntityState(stateObj);
   }
 }
 

@@ -1,4 +1,4 @@
-import "../../../layouts/hass-error-screen";
+import "../../../layouts/menuai-error-screen";
 import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -15,10 +15,10 @@ import {
 } from "../../../data/energy";
 import type { StatisticsMetaData } from "../../../data/recorder";
 import { getStatisticMetadata } from "../../../data/recorder";
-import "../../../layouts/hass-loading-screen";
-import "../../../layouts/hass-subpage";
+import "../../../layouts/menuai-loading-screen";
+import "../../../layouts/menuai-subpage";
 import { haStyle } from "../../../resources/styles";
-import type { HomeAssistant, Route } from "../../../types";
+import type { menuai, Route } from "../../../types";
 import "../../../components/ha-alert";
 import "./components/ha-energy-device-settings";
 import "./components/ha-energy-grid-settings";
@@ -34,7 +34,7 @@ const INITIAL_CONFIG: EnergyPreferences = {
 
 @customElement("ha-config-energy")
 class HaConfigEnergy extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
@@ -62,42 +62,42 @@ class HaConfigEnergy extends LitElement {
 
   protected render(): TemplateResult {
     if (!this._preferences && !this._error) {
-      return html`<hass-loading-screen
-        .hass=${this.hass}
+      return html`<menuai-loading-screen
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
-      ></hass-loading-screen>`;
+      ></menuai-loading-screen>`;
     }
 
     if (this._error) {
-      return html`<hass-error-screen
-        .hass=${this.hass}
+      return html`<menuai-error-screen
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .error=${this._error}
-      ></hass-error-screen>`;
+      ></menuai-error-screen>`;
     }
 
     return html`
-      <hass-subpage
-        .hass=${this.hass}
+      <menuai-subpage
+        .menuai=${this.menuai}
         .narrow=${this.narrow}
         .backPath=${this._searchParms.has("historyBack")
           ? undefined
           : "/config/lovelace/dashboards"}
-        .header=${this.hass.localize("ui.panel.config.energy.caption")}
+        .header=${this.menuai.localize("ui.panel.config.energy.caption")}
       >
         <ha-alert>
-          ${this.hass.localize("ui.panel.config.energy.new_device_info")}
+          ${this.menuai.localize("ui.panel.config.energy.new_device_info")}
         </ha-alert>
         <div class="container">
           <ha-energy-grid-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences!}
             .statsMetadata=${this._statsMetadata}
             .validationResult=${this._validationResult}
             @value-changed=${this._prefsChanged}
           ></ha-energy-grid-settings>
           <ha-energy-solar-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences!}
             .statsMetadata=${this._statsMetadata}
             .validationResult=${this._validationResult}
@@ -105,45 +105,45 @@ class HaConfigEnergy extends LitElement {
             @value-changed=${this._prefsChanged}
           ></ha-energy-solar-settings>
           <ha-energy-battery-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences!}
             .statsMetadata=${this._statsMetadata}
             .validationResult=${this._validationResult}
             @value-changed=${this._prefsChanged}
           ></ha-energy-battery-settings>
           <ha-energy-gas-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences!}
             .statsMetadata=${this._statsMetadata}
             .validationResult=${this._validationResult}
             @value-changed=${this._prefsChanged}
           ></ha-energy-gas-settings>
           <ha-energy-water-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences!}
             .statsMetadata=${this._statsMetadata}
             .validationResult=${this._validationResult}
             @value-changed=${this._prefsChanged}
           ></ha-energy-water-settings>
           <ha-energy-device-settings
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .preferences=${this._preferences!}
             .statsMetadata=${this._statsMetadata}
             .validationResult=${this._validationResult}
             @value-changed=${this._prefsChanged}
           ></ha-energy-device-settings>
         </div>
-      </hass-subpage>
+      </menuai-subpage>
     `;
   }
 
   private async _fetchConfig() {
     this._error = undefined;
 
-    const validationPromise = getEnergyPreferenceValidation(this.hass);
-    const energyInfoPromise = await getEnergyInfo(this.hass);
+    const validationPromise = getEnergyPreferenceValidation(this.menuai);
+    const energyInfoPromise = await getEnergyInfo(this.menuai);
     try {
-      this._preferences = await getEnergyPreferences(this.hass);
+      this._preferences = await getEnergyPreferences(this.menuai);
     } catch (err: any) {
       if (err.code === "not_found") {
         this._preferences = INITIAL_CONFIG;
@@ -164,11 +164,11 @@ class HaConfigEnergy extends LitElement {
     this._preferences = ev.detail.value;
     this._validationResult = undefined;
     try {
-      this._validationResult = await getEnergyPreferenceValidation(this.hass);
+      this._validationResult = await getEnergyPreferenceValidation(this.menuai);
     } catch (err: any) {
       this._error = err.message;
     }
-    this._info = await getEnergyInfo(this.hass);
+    this._info = await getEnergyInfo(this.menuai);
     await this._fetchMetaData();
   }
 
@@ -177,7 +177,7 @@ class HaConfigEnergy extends LitElement {
       return;
     }
     const statIDs = getReferencedStatisticIds(this._preferences, this._info);
-    const statsMetadataArray = await getStatisticMetadata(this.hass, statIDs);
+    const statsMetadataArray = await getStatisticMetadata(this.menuai, statIDs);
     const statsMetadata: Record<string, StatisticsMetaData> = {};
     statsMetadataArray.forEach((x) => {
       statsMetadata[x.statistic_id] = x;

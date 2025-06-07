@@ -2,8 +2,8 @@ import type { CSSResultGroup, TemplateResult } from "lit";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { ifDefined } from "lit/directives/if-defined";
-import type { PageNavigation } from "../layouts/hass-tabs-subpage";
-import type { HomeAssistant } from "../types";
+import type { PageNavigation } from "../layouts/menuai-tabs-subpage";
+import type { menuai } from "../types";
 import "./ha-icon-next";
 import "./ha-svg-icon";
 import "./ha-md-list";
@@ -11,14 +11,14 @@ import "./ha-md-list-item";
 
 @customElement("ha-navigation-list")
 class HaNavigationList extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ type: Boolean }) public narrow = false;
 
   @property({ attribute: false }) public pages!: PageNavigation[];
 
   @property({ attribute: "has-secondary", type: Boolean })
-  public hasSecondary = false;
+  public menuaiecondary = false;
 
   @property() public label?: string;
 
@@ -45,7 +45,7 @@ class HaNavigationList extends LitElement {
                 <ha-svg-icon .path=${page.iconPath}></ha-svg-icon>
               </div>
               <span>${page.name}</span>
-              ${this.hasSecondary
+              ${this.menuaiecondary
                 ? html`<span slot="supporting-text">${page.description}</span>`
                 : ""}
               ${!this.narrow
@@ -59,7 +59,7 @@ class HaNavigationList extends LitElement {
   }
 
   private _handleExternalApp() {
-    this.hass.auth.external!.fireMessage({ type: "config_screen/show" });
+    this.menuai.auth.external!.fireMessage({ type: "config_screen/show" });
   }
 
   static styles: CSSResultGroup = css`

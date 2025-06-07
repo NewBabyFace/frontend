@@ -1,7 +1,7 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import type { EntityRegistryDisplayEntry } from "../../../data/entity_registry";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { processConfigEntities } from "./process-config-entities";
 
 export function hasConfigChanged(
@@ -12,26 +12,26 @@ export function hasConfigChanged(
     return true;
   }
 
-  if (!changedProps.has("hass")) {
+  if (!changedProps.has("menuai")) {
     return false;
   }
 
-  const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-  if (!oldHass) {
+  const oldmenuai = changedProps.get("menuai") as menuai | undefined;
+  if (!oldmenuai) {
     return true;
   }
 
   if (
-    oldHass.connected !== element.hass!.connected ||
-    oldHass.themes !== element.hass!.themes ||
-    oldHass.locale !== element.hass!.locale ||
-    oldHass.localize !== element.hass.localize ||
-    oldHass.formatEntityState !== element.hass.formatEntityState ||
-    oldHass.formatEntityAttributeName !==
-      element.hass.formatEntityAttributeName ||
-    oldHass.formatEntityAttributeValue !==
-      element.hass.formatEntityAttributeValue ||
-    oldHass.config.state !== element.hass.config.state
+    oldmenuai.connected !== element.menuai!.connected ||
+    oldmenuai.themes !== element.menuai!.themes ||
+    oldmenuai.locale !== element.menuai!.locale ||
+    oldmenuai.localize !== element.menuai.localize ||
+    oldmenuai.formatEntityState !== element.menuai.formatEntityState ||
+    oldmenuai.formatEntityAttributeName !==
+      element.menuai.formatEntityAttributeName ||
+    oldmenuai.formatEntityAttributeValue !==
+      element.menuai.formatEntityAttributeValue ||
+    oldmenuai.config.state !== element.menuai.config.state
   ) {
     return true;
   }
@@ -39,25 +39,25 @@ export function hasConfigChanged(
 }
 
 function compareEntityState(
-  oldHass: HomeAssistant,
-  newHass: HomeAssistant,
+  oldmenuai: menuai,
+  newmenuai: menuai,
   entityId: string
 ) {
-  const oldState = oldHass.states[entityId] as HassEntity | undefined;
-  const newState = newHass.states[entityId] as HassEntity | undefined;
+  const oldState = oldmenuai.states[entityId] as menuaiEntity | undefined;
+  const newState = newmenuai.states[entityId] as menuaiEntity | undefined;
 
   return oldState !== newState;
 }
 
 function compareEntityDisplayEntry(
-  oldHass: HomeAssistant,
-  newHass: HomeAssistant,
+  oldmenuai: menuai,
+  newmenuai: menuai,
   entityId: string
 ) {
-  const oldEntry = oldHass.entities[entityId] as
+  const oldEntry = oldmenuai.entities[entityId] as
     | EntityRegistryDisplayEntry
     | undefined;
-  const newEntry = newHass.entities[entityId] as
+  const newEntry = newmenuai.entities[entityId] as
     | EntityRegistryDisplayEntry
     | undefined;
 
@@ -73,16 +73,16 @@ export function hasConfigOrEntityChanged(
     return true;
   }
 
-  if (!changedProps.has("hass")) {
+  if (!changedProps.has("menuai")) {
     return false;
   }
 
-  const oldHass = changedProps.get("hass") as HomeAssistant;
-  const newHass = element.hass as HomeAssistant;
+  const oldmenuai = changedProps.get("menuai") as menuai;
+  const newmenuai = element.menuai as menuai;
 
   return (
-    compareEntityState(oldHass, newHass, element._config!.entity) ||
-    compareEntityDisplayEntry(oldHass, newHass, element._config!.entity)
+    compareEntityState(oldmenuai, newmenuai, element._config!.entity) ||
+    compareEntityDisplayEntry(oldmenuai, newmenuai, element._config!.entity)
   );
 }
 
@@ -95,12 +95,12 @@ export function hasConfigOrEntitiesChanged(
     return true;
   }
 
-  if (!changedProps.has("hass")) {
+  if (!changedProps.has("menuai")) {
     return false;
   }
 
-  const oldHass = changedProps.get("hass") as HomeAssistant;
-  const newHass = element.hass as HomeAssistant;
+  const oldmenuai = changedProps.get("menuai") as menuai;
+  const newmenuai = element.menuai as menuai;
 
   const entities = processConfigEntities(element._config!.entities, false);
 
@@ -110,8 +110,8 @@ export function hasConfigOrEntitiesChanged(
     }
 
     return (
-      compareEntityState(oldHass, newHass, entity.entity) ||
-      compareEntityDisplayEntry(oldHass, newHass, entity.entity)
+      compareEntityState(oldmenuai, newmenuai, entity.entity) ||
+      compareEntityDisplayEntry(oldmenuai, newmenuai, entity.entity)
     );
   });
 }

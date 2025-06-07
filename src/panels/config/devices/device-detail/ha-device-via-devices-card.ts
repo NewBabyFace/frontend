@@ -7,13 +7,13 @@ import "../../../../components/ha-card";
 import "../../../../components/ha-icon-next";
 import "../../../../components/ha-list-item";
 import type { DeviceRegistryEntry } from "../../../../data/device_registry";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 
 const MAX_VISIBLE_VIA_DEVICES = 10;
 
 @customElement("ha-device-via-devices-card")
 export class HaDeviceViaDevicesCard extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public deviceId!: string;
 
@@ -28,15 +28,15 @@ export class HaDeviceViaDevicesCard extends LitElement {
         .filter((device) => device.via_device_id === deviceId)
         .sort((d1, d2) =>
           caseInsensitiveStringCompare(
-            computeDeviceNameDisplay(d1, this.hass),
-            computeDeviceNameDisplay(d2, this.hass),
-            this.hass.locale.language
+            computeDeviceNameDisplay(d1, this.menuai),
+            computeDeviceNameDisplay(d2, this.menuai),
+            this.menuai.locale.language
           )
         )
   );
 
   protected render() {
-    const viaDevices = this._viaDevices(this.deviceId, this.hass.devices);
+    const viaDevices = this._viaDevices(this.deviceId, this.menuai.devices);
 
     if (viaDevices.length === 0) {
       return nothing;
@@ -45,7 +45,7 @@ export class HaDeviceViaDevicesCard extends LitElement {
     return html`
       <ha-card>
         <h1 class="card-header">
-          ${this.hass.localize(
+          ${this.menuai.localize(
             "ui.panel.config.devices.connected_devices.heading"
           )}
         </h1>
@@ -56,7 +56,7 @@ export class HaDeviceViaDevicesCard extends LitElement {
           (viaDevice) => html`
             <a href=${`/config/devices/device/${viaDevice.id}`}>
               <ha-list-item hasMeta>
-                ${computeDeviceNameDisplay(viaDevice, this.hass)}
+                ${computeDeviceNameDisplay(viaDevice, this.menuai)}
                 <ha-icon-next slot="meta"></ha-icon-next>
               </ha-list-item>
             </a>
@@ -65,7 +65,7 @@ export class HaDeviceViaDevicesCard extends LitElement {
         ${!this._showAll && viaDevices.length > MAX_VISIBLE_VIA_DEVICES
           ? html`
               <button class="show-more" @click=${this._toggleShowAll}>
-                ${this.hass.localize(
+                ${this.menuai.localize(
                   "ui.panel.config.devices.connected_devices.show_more",
                   { count: viaDevices.length - MAX_VISIBLE_VIA_DEVICES }
                 )}

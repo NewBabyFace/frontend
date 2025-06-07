@@ -1,9 +1,9 @@
 import type { LovelaceElementConfig } from "../elements/types";
-import type { HomeAssistant } from "../../../types";
+import type { menuai } from "../../../types";
 import { getPictureElementClass } from "../create-element/create-picture-element";
 
 export const getElementStubConfig = async (
-  hass: HomeAssistant,
+  menuai: menuai,
   type: string,
   entities: string[],
   entitiesFallback: string[]
@@ -18,7 +18,7 @@ export const getElementStubConfig = async (
 
   if (elClass && elClass.getStubConfig) {
     const classStubConfig = await elClass.getStubConfig(
-      hass,
+      menuai,
       entities,
       entitiesFallback
     );

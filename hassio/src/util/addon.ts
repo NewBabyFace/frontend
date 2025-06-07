@@ -1,5 +1,5 @@
 import memoizeOne from "memoize-one";
-import type { HassioAddonDetails } from "../../../src/data/hassio/addon";
+import type { menuaiioAddonDetails } from "../../../src/data/menuaiio/addon";
 import type { SupervisorArch } from "../../../src/data/supervisor/supervisor";
 
 export const addonArchIsSupported = memoizeOne(
@@ -8,7 +8,7 @@ export const addonArchIsSupported = memoizeOne(
 );
 
 export const extractChangelog = (
-  addon: HassioAddonDetails,
+  addon: menuaiioAddonDetails,
   content: string
 ): string => {
   if (content.startsWith("# Changelog")) {

@@ -4,13 +4,13 @@ import { fireEvent } from "../../common/dom/fire_event";
 import "../../components/ha-button";
 import "../../components/ha-spinner";
 import { testAssistSatelliteConnection } from "../../data/assist_satellite";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { AssistantSetupStyles } from "./styles";
 import { documentationUrl } from "../../util/documentation-url";
 
 @customElement("ha-voice-assistant-setup-step-check")
 export class HaVoiceAssistantSetupStepCheck extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public assistEntityId?: string;
 
@@ -26,8 +26,8 @@ export class HaVoiceAssistantSetupStepCheck extends LitElement {
     }
     if (
       this._status === "success" &&
-      changedProperties.has("hass") &&
-      this.hass.states[this.assistEntityId!]?.state === "idle"
+      changedProperties.has("menuai") &&
+      this.menuai.states[this.assistEntityId!]?.state === "idle"
     ) {
       this._nextStep();
     }
@@ -38,47 +38,47 @@ export class HaVoiceAssistantSetupStepCheck extends LitElement {
       ${this._status === "timeout"
         ? html`<img
               src="/static/images/voice-assistant/error.png"
-              alt="Casita Home Assistant error logo"
+              alt="Casita MenuAI error logo"
             />
             <h1>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.satellite_wizard.check.failed_title"
               )}
             </h1>
             <p class="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.satellite_wizard.check.failed_secondary"
               )}
             </p>
             <div class="footer">
               <a
                 href=${documentationUrl(
-                  this.hass,
+                  this.menuai,
                   "/voice_control/troubleshooting/#i-dont-get-a-voice-response"
                 )}
                 ><ha-button
-                  >${this.hass.localize(
+                  >${this.menuai.localize(
                     "ui.panel.config.voice_assistants.satellite_wizard.check.help"
                   )}</ha-button
                 ></a
               >
               <ha-button @click=${this._testConnection}
-                >${this.hass.localize(
+                >${this.menuai.localize(
                   "ui.panel.config.voice_assistants.satellite_wizard.check.retry"
                 )}</ha-button
               >
             </div>`
         : html`<img
               src="/static/images/voice-assistant/hi.png"
-              alt="Casita Home Assistant hi logo"
+              alt="Casita MenuAI hi logo"
             />
             <h1>
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.satellite_wizard.check.title"
               )}
             </h1>
             <p class="secondary">
-              ${this.hass.localize(
+              ${this.menuai.localize(
                 "ui.panel.config.voice_assistants.satellite_wizard.check.secondary"
               )}
             </p>
@@ -94,7 +94,7 @@ export class HaVoiceAssistantSetupStepCheck extends LitElement {
       this._showLoader = true;
     }, 3000);
     const result = await testAssistSatelliteConnection(
-      this.hass,
+      this.menuai,
       this.assistEntityId!
     );
     clearTimeout(timeout);

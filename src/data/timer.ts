@@ -1,14 +1,14 @@
 import type {
-  HassEntity,
-  HassEntityAttributeBase,
-  HassEntityBase,
+  menuaiEntity,
+  menuaiEntityAttributeBase,
+  menuaiEntityBase,
 } from "home-assistant-js-websocket";
 import durationToSeconds from "../common/datetime/duration_to_seconds";
 import secondsToDuration from "../common/datetime/seconds_to_duration";
-import type { HomeAssistant } from "../types";
+import type { menuai } from "../types";
 
-export type TimerEntity = HassEntityBase & {
-  attributes: HassEntityAttributeBase & {
+export type TimerEntity = menuaiEntityBase & {
+  attributes: menuaiEntityAttributeBase & {
     duration: string;
     remaining: string;
     restore: boolean;
@@ -36,34 +36,34 @@ export interface TimerMutableParams {
   restore: boolean;
 }
 
-export const fetchTimer = (hass: HomeAssistant) =>
-  hass.callWS<Timer[]>({ type: "timer/list" });
+export const fetchTimer = (menuai: menuai) =>
+  menuai.callWS<Timer[]>({ type: "timer/list" });
 
-export const createTimer = (hass: HomeAssistant, values: TimerMutableParams) =>
-  hass.callWS<Timer>({
+export const createTimer = (menuai: menuai, values: TimerMutableParams) =>
+  menuai.callWS<Timer>({
     type: "timer/create",
     ...values,
   });
 
 export const updateTimer = (
-  hass: HomeAssistant,
+  menuai: menuai,
   id: string,
   updates: Partial<TimerMutableParams>
 ) =>
-  hass.callWS<Timer>({
+  menuai.callWS<Timer>({
     type: "timer/update",
     timer_id: id,
     ...updates,
   });
 
-export const deleteTimer = (hass: HomeAssistant, id: string) =>
-  hass.callWS({
+export const deleteTimer = (menuai: menuai, id: string) =>
+  menuai.callWS({
     type: "timer/delete",
     timer_id: id,
   });
 
 export const timerTimeRemaining = (
-  stateObj: HassEntity
+  stateObj: menuaiEntity
 ): undefined | number => {
   if (!stateObj.attributes.remaining) {
     return undefined;
@@ -80,8 +80,8 @@ export const timerTimeRemaining = (
 };
 
 export const computeDisplayTimer = (
-  hass: HomeAssistant,
-  stateObj: HassEntity,
+  menuai: menuai,
+  stateObj: menuaiEntity,
   timeRemaining?: number
 ): string | null => {
   if (!stateObj) {
@@ -89,13 +89,13 @@ export const computeDisplayTimer = (
   }
 
   if (stateObj.state === "idle" || timeRemaining === 0) {
-    return hass.formatEntityState(stateObj);
+    return menuai.formatEntityState(stateObj);
   }
 
   let display = secondsToDuration(timeRemaining || 0) || "0";
 
   if (stateObj.state === "paused") {
-    display = `${display} (${hass.formatEntityState(stateObj)})`;
+    display = `${display} (${menuai.formatEntityState(stateObj)})`;
   }
 
   return display;

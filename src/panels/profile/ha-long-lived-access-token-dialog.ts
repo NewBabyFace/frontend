@@ -8,7 +8,7 @@ import { createCloseHeading } from "../../components/ha-dialog";
 import "../../components/ha-textfield";
 import "../../components/ha-icon-button";
 import { haStyleDialog } from "../../resources/styles";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { LongLivedAccessTokenDialogParams } from "./show-long-lived-access-token-dialog";
 import type { HaTextField } from "../../components/ha-textfield";
 import { copyToClipboard } from "../../common/util/copy-clipboard";
@@ -18,7 +18,7 @@ const QR_LOGO_URL = "/static/icons/favicon-192x192.png";
 
 @customElement("ha-long-lived-access-token-dialog")
 export class HaLongLivedAccessTokenDialog extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _params?: LongLivedAccessTokenDialogParams;
 
@@ -43,14 +43,14 @@ export class HaLongLivedAccessTokenDialog extends LitElement {
       <ha-dialog
         open
         hideActions
-        .heading=${createCloseHeading(this.hass, this._params.name)}
+        .heading=${createCloseHeading(this.menuai, this._params.name)}
         @closed=${this.closeDialog}
       >
         <div>
           <ha-textfield
             dialogInitialFocus
             .value=${this._params.token}
-            .label=${this.hass.localize(
+            .label=${this.menuai.localize(
               "ui.panel.profile.long_lived_access_tokens.prompt_copy_token"
             )}
             type="text"
@@ -68,7 +68,7 @@ export class HaLongLivedAccessTokenDialog extends LitElement {
               ? this._qrCode
               : html`
                   <mwc-button @click=${this._generateQR}>
-                    ${this.hass.localize(
+                    ${this.menuai.localize(
                       "ui.panel.profile.long_lived_access_tokens.generate_qr_code"
                     )}
                   </mwc-button>
@@ -83,7 +83,7 @@ export class HaLongLivedAccessTokenDialog extends LitElement {
     const textField = ev.target.parentElement as HaTextField;
     await copyToClipboard(textField.value);
     showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
+      message: this.menuai.localize("ui.common.copied_clipboard"),
     });
   }
 
@@ -109,7 +109,7 @@ export class HaLongLivedAccessTokenDialog extends LitElement {
     );
 
     this._qrCode = html`<img
-        alt=${this.hass.localize(
+        alt=${this.menuai.localize(
           "ui.panel.profile.long_lived_access_tokens.qr_code_image",
           { name: this._params!.name }
         )}

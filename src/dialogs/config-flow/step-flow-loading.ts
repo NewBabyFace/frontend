@@ -3,14 +3,14 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import "../../components/ha-spinner";
 import type { DataEntryFlowStep } from "../../data/data_entry_flow";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import type { FlowConfig, LoadingReason } from "./show-dialog-data-entry-flow";
 
 @customElement("step-flow-loading")
 class StepFlowLoading extends LitElement {
   @property({ attribute: false }) public flowConfig!: FlowConfig;
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @property({ attribute: false }) public loadingReason!: LoadingReason;
 
@@ -20,7 +20,7 @@ class StepFlowLoading extends LitElement {
 
   protected render(): TemplateResult {
     const description = this.flowConfig.renderLoadingDescription(
-      this.hass,
+      this.menuai,
       this.loadingReason,
       this.handler,
       this.step

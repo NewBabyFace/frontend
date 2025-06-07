@@ -1,10 +1,10 @@
-import type { HassEntity } from "home-assistant-js-websocket";
+import type { menuaiEntity } from "home-assistant-js-websocket";
 import { isComponentLoaded } from "../../common/config/is_component_loaded";
 import { computeDomain } from "../../common/entity/compute_domain";
 import type { GroupEntity } from "../../data/group";
 import { computeGroupDomain } from "../../data/group";
 import { CONTINUOUS_DOMAINS } from "../../data/logbook";
-import type { HomeAssistant } from "../../types";
+import type { menuai } from "../../types";
 import { isNumericEntity } from "../../data/history";
 
 export const DOMAINS_NO_INFO = ["camera", "configurator"];
@@ -94,22 +94,22 @@ export const DOMAINS_HIDE_DEFAULT_MORE_INFO = [
 export const DOMAINS_MORE_INFO_NO_HISTORY = ["camera", "configurator"];
 
 export const computeShowHistoryComponent = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string
 ) =>
-  isComponentLoaded(hass, "history") &&
+  isComponentLoaded(menuai, "history") &&
   !DOMAINS_MORE_INFO_NO_HISTORY.includes(computeDomain(entityId));
 
 export const computeShowLogBookComponent = (
-  hass: HomeAssistant,
+  menuai: menuai,
   entityId: string,
   sensorNumericalDeviceClasses: string[] = []
 ): boolean => {
-  if (!isComponentLoaded(hass, "logbook")) {
+  if (!isComponentLoaded(menuai, "logbook")) {
     return false;
   }
 
-  const stateObj = hass.states[entityId];
+  const stateObj = menuai.states[entityId];
   if (!stateObj) {
     return false;
   }
@@ -131,7 +131,7 @@ export const computeShowLogBookComponent = (
   return true;
 };
 
-export const computeShowNewMoreInfo = (stateObj: HassEntity): boolean => {
+export const computeShowNewMoreInfo = (stateObj: menuaiEntity): boolean => {
   const domain = computeDomain(stateObj.entity_id);
   if (domain === "group") {
     const groupDomain = computeGroupDomain(stateObj as GroupEntity);

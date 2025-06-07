@@ -1,5 +1,5 @@
 import { endOfToday, startOfToday } from "date-fns";
-import type { HassConfig, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { menuaiConfig, UnsubscribeFunc } from "home-assistant-js-websocket";
 import type { PropertyValues } from "lit";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
@@ -27,7 +27,7 @@ import {
 } from "../../../../data/recorder";
 import type { FrontendLocaleData } from "../../../../data/translation";
 import { SubscribeMixin } from "../../../../mixins/subscribe-mixin";
-import type { HomeAssistant } from "../../../../types";
+import type { menuai } from "../../../../types";
 import type { LovelaceCard } from "../../types";
 import type { EnergyDevicesDetailGraphCardConfig } from "../types";
 import { hasConfigChanged } from "../../common/has-changed";
@@ -47,7 +47,7 @@ export class HuiEnergyDevicesDetailGraphCard
   extends SubscribeMixin(LitElement)
   implements LovelaceCard
 {
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public menuai!: menuai;
 
   @state() private _config?: EnergyDevicesDetailGraphCardConfig;
 
@@ -73,11 +73,11 @@ export class HuiEnergyDevicesDetailGraphCard
   })
   private _hiddenStats: string[] = [];
 
-  protected hassSubscribeRequiredHostProps = ["_config"];
+  protected menuaiSubscribeRequiredHostProps = ["_config"];
 
-  public hassSubscribe(): UnsubscribeFunc[] {
+  public menuaiSubscribe(): UnsubscribeFunc[] {
     return [
-      getEnergyDataCollection(this.hass, {
+      getEnergyDataCollection(this.menuai, {
         key: this._config?.collection_key,
       }).subscribe((data) => {
         this._data = data;
@@ -98,7 +98,7 @@ export class HuiEnergyDevicesDetailGraphCard
     return (
       hasConfigChanged(this, changedProps) ||
       changedProps.size > 1 ||
-      !changedProps.has("hass")
+      !changedProps.has("menuai")
     );
   }
 
@@ -112,7 +112,7 @@ export class HuiEnergyDevicesDetailGraphCard
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
+    if (!this.menuai || !this._config) {
       return nothing;
     }
 
@@ -127,13 +127,13 @@ export class HuiEnergyDevicesDetailGraphCard
           })}"
         >
           <ha-chart-base
-            .hass=${this.hass}
+            .menuai=${this.menuai}
             .data=${this._chartData}
             .options=${this._createOptions(
               this._start,
               this._end,
-              this.hass.locale,
-              this.hass.config,
+              this.menuai.locale,
+              this.menuai.config,
               UNIT,
               this._compareStart,
               this._compareEnd
@@ -147,9 +147,9 @@ export class HuiEnergyDevicesDetailGraphCard
   }
 
   private _formatTotal = (total: number) =>
-    this.hass.localize(
+    this.menuai.localize(
       "ui.panel.lovelace.cards.energy.energy_usage_graph.total_consumed",
-      { num: formatNumber(total, this.hass.locale), unit: UNIT }
+      { num: formatNumber(total, this.menuai.locale), unit: UNIT }
     );
 
   private _datasetHidden(ev) {
@@ -167,7 +167,7 @@ export class HuiEnergyDevicesDetailGraphCard
       start: Date,
       end: Date,
       locale: FrontendLocaleData,
-      config: HassConfig,
+      config: menuaiConfig,
       unit?: string,
       compareStart?: Date,
       compareEnd?: Date
@@ -384,13 +384,13 @@ export class HuiEnergyDevicesDetailGraphCard
       type: "bar",
       cursor: "default",
       id: compare ? `compare-untracked-${order}` : `untracked-${order}`,
-      name: this.hass.localize(
+      name: this.menuai.localize(
         "ui.panel.lovelace.cards.energy.energy_devices_detail_graph.untracked_consumption"
       ),
       itemStyle: {
         borderColor: getEnergyColor(
           computedStyle,
-          this.hass.themes.darkMode,
+          this.menuai.themes.darkMode,
           false,
           compare,
           "--state-unavailable-color"
@@ -399,7 +399,7 @@ export class HuiEnergyDevicesDetailGraphCard
       barMaxWidth: 50,
       color: getEnergyColor(
         computedStyle,
-        this.hass.themes.darkMode,
+        this.menuai.themes.darkMode,
         true,
         compare,
         "--state-unavailable-color"
@@ -476,12 +476,12 @@ export class HuiEnergyDevicesDetailGraphCard
       const name =
         (source.name ||
           getStatisticLabel(
-            this.hass,
+            this.menuai,
             source.stat_consumption,
             statisticsMetaData[source.stat_consumption]
           )) +
         (source.stat_consumption in childMap
-          ? ` (${this.hass.localize("ui.panel.lovelace.cards.energy.energy_devices_detail_graph.untracked")})`
+          ? ` (${this.menuai.localize("ui.panel.lovelace.cards.energy.energy_devices_detail_graph.untracked")})`
           : "");
 
       data.push({
